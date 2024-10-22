@@ -1,0 +1,20 @@
+{
+    "format_version":"1.17",
+    "minecraft:npc_dialogue":{
+        "scenes":[
+          {
+              "scene_tag":"menu_mods_new",
+              "npc_name":"§lTimer III [Modifiziertes Mod-Menu]",
+              "text":"§l§6          Wähle dein Modifikation \n\n\n\n                  §r§7",
+              "buttons":[
+                  {
+                    "name":"",
+                    "commands":[
+                        "/dialogue open @s @initiator menu_mods"
+                    ]
+                  }
+              ]
+          }
+      ]
+  }
+}

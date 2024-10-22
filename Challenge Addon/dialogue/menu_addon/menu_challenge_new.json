@@ -1,0 +1,282 @@
+{
+    "format_version":"1.17",
+    "minecraft:npc_dialogue":{
+        "scenes":[
+            {
+                "scene_tag":"menu_challenge_new",
+                "npc_name":"§lTimer Ultimate - Challenges",
+                "text":"§l§6Choose your challenge§r\n\n§l§cNo§r = Select actions that aren't allowed to executed\n§l§bIce§r = Each player draws a line of ice behind them\n§l§2Gravity§r = Walk through the air\n§l§aLevel§r = With each level up you can walk further\n\n§r§7Page 1 of 2",
+                "on_close_commands": [
+                    "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                    "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                  ],
+                "buttons":[
+                    {
+                    "name":"§l§cNo",
+                    "commands":[
+                          "/dialogue open @s @initiator menu_challenge_no",
+                          "scoreboard players set action timer_menu 1"
+                        ]
+                    },
+                    {
+                    "name":"§l§9Enchnat",
+                    "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute as @initiator at @s run function ca/addon/enchant",
+                        "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§8Page 2 ->",
+                        "commands":[
+                            "/dialogue open @s @initiator menu_challenge_new_2",
+                            "scoreboard players set action timer_menu 1"
+                            ]
+                    },
+                    {
+                        "name":"§l§bIce",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/ice",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    },
+                    {
+                        "name":"§l§2Gravity",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/gravity",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    },
+                    {
+                        "name":"§l§aLevel",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            
+                            "/execute as @initiator at @s run function ca/addon/levelborder",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_challenge_new_2",
+                "npc_name":"§lTimer Ultimate - Challenges",
+                "text":"§l§6Choose your challenge§r\n\n§l§6Floor is L§r §7(Beta)§r = Each player draws a line of lava behind them\n§l§tSpeed X§r = Every think get Speed X\n§l§fInvis§r = Every think get Invisibility\n§l§4Hardcore§r = If someone died the world is lost!\n\n§r§7Page 2 of 2",
+                "on_close_commands": [
+                    "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                    "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                  ],
+                "buttons":[
+                    {
+                        "name":"§l§tSpeed X",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/speed_x",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    },
+                    {
+                        "name":"§l§fInvis",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/invisibility",
+                            "/scoreboard players set animation_time timer_menu 40"
+                            ]
+                    },
+                    {
+                        "name":"§l§8<- Page 1",
+                        "commands":[
+                            "/dialogue open @s @initiator menu_challenge_new",
+                            "scoreboard players set action timer_menu 1"
+                        ]
+                    },
+                    {
+                        "name":"§l§6Floor is L",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/BiL",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    },
+                    {
+                        "name":"§l§4Hardcore",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function timer/settings/difficulty",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    },
+                    {
+                        "name":"",
+                        "commands":[
+                          "/dialogue open @s @initiator menu_addon",
+                          "scoreboard players set action timer_menu 1"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_challenge_no",
+                "npc_name":"§lTimer Ultimate - Challenges",
+                "text":"§l§6Choose thinks that you aren't allow to!\n\n\n\n\n\n§r§7Page 1 of 2",
+                "on_close_commands": [
+                    "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                    "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                  ],
+                "buttons":[
+                    {
+                        "name":"§lArmor",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/armor",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§cB. break",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/block_break",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§8Page 2 ->",
+                        "commands":[
+                            "/dialogue open @s @initiator menu_challenge_no_2",
+                            "scoreboard players set action timer_menu 1"
+                        ]
+                    },
+                    {
+                        "name":"§l§nCrafting",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/crafting",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§bJump",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/jump",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§fMove",
+                        "commands":[
+                            "/dialogue open @s @initiator menu_challenge_no_move",
+                            "scoreboard players set action timer_menu 1"
+                        ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_challenge_no_2",
+                "npc_name":"§lTimer Ultimate - Challenges",
+                "text":"§l§6Choose thinks that you aren't allow to!\n\n\n\n\n\n§r§7Page 2 of 2",
+                "on_close_commands": [
+                    "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                    "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                  ],
+                "buttons":[
+                    {
+                        "name":"§lSneaking",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/sneak",
+                            "/scoreboard players set animation_time timer_menu 30"
+                            ]
+                    },
+                    {
+                        "name":"§l§9Swimming",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/swimming",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§8<- Page 1",
+                        "commands":[
+                            "/dialogue open @s @initiator menu_challenge_no",
+                            "scoreboard players set action timer_menu 1"
+                        ]
+                    },
+                    {
+                        "name":"",
+                        "commands":[
+                          "/dialogue open @s @initiator menu_challenge_new",
+                          "scoreboard players set action timer_menu 1"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_challenge_no_move",
+                "npc_name":"§lTimer Ultimate - Move",
+                "text":"§l§6Choose your type§r\n\n§8§lNormal§r = Normal Movement\n§l§cMove§r = You can't use WASD\n§b§lCammera§r = Your Cammera freezes",
+                "on_close_commands": [
+                    "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                    "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                  ],
+                "buttons":[
+                    {
+                        "name":"§lNormal",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set no_move timer_addon 2",
+                            "/execute as @initiator at @s run function ca/addon/no/move",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§cMove",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set no_move timer_addon 0",
+                            "/execute as @initiator at @s run function ca/addon/no/move",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§b§lCammera",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set no_move timer_addon 1",
+                            "/execute as @initiator at @s run function ca/addon/no/move",
+                            "/scoreboard players set animation_time timer_menu 40"
+                        ]
+                    },
+                    {
+                        "name":"",
+                        "commands":[
+                          "/dialogue open @s @initiator menu_challenge_no_2",
+                          "scoreboard players set action timer_menu 1"
+                      ]
+                    }
+                ]
+            }
+        ]
+    }
+}

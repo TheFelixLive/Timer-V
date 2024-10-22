@@ -1,0 +1,921 @@
+{
+    "format_version":"1.17",
+    "minecraft:npc_dialogue":{
+        "scenes":[
+          {
+            "scene_tag":"menu_main_welcome", // Main Menü - Page 1
+            "npc_name":"§lTimer Ultimate - Welcome",
+            "text":"§l§6Welcome§r\n\n§8This addon allows you to use a timer in this world. For more detailed explanations you can use the §l§eHelp§r§8 (Dictionary) menu\nHave fun!",
+            "on_open_commands": [
+              // This are soundseffects, which only plays when the menu starts
+              "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0.1 @s",
+              "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 unless score custom_music timer_settings matches 1 run playsound record.far @s ~ ~ ~ 0.3 1",
+              // up to this line
+              "scoreboard players set is_open timer_menu 1", // Response to main_cmo, that the menu is now open
+              "scoreboard players set action timer_menu 0" // Fixes a Bug that prevent the menu from closing
+            ],
+            "on_close_commands": [
+              "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+              "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+            ],
+            "buttons":[
+                {
+                  "name":"§l§9Changelog",
+                  "commands":[
+                  "scoreboard players set action timer_menu 1",
+                  "/stopsound @initiator",
+                  "/playsound random.click @initiator",
+                  "/dialogue open @s @initiator menu_help_text_changelog",
+                  "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                  "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                  ]
+                },
+                {
+                   "name":"§l§eHelp",
+                   "commands":[
+                    "scoreboard players set action timer_menu 1",
+                    "/stopsound @initiator",
+                    "/playsound random.click @initiator",
+                    "/dialogue open @s @initiator menu_help_look_0_page_1",
+                    "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                    "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                   ]
+                 },
+                 {
+                  "name":"§l§fLang",
+                  "commands":[
+                    "scoreboard players set action timer_menu 1",
+                    "execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                    "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                    "dialogue open @s @a[tag=timer_menu_target] menu_lang_main",
+                    "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.lang @p"
+                  ]
+                },
+                 {
+                  "name":"",
+                  "commands":[
+                    "scoreboard players set action timer_menu 1",
+                    "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]", // The execute command change the music, but the nomal music is the same.
+                    "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                    
+                    "dialogue open @s @a[tag=timer_menu_target] menu_main",
+
+                    "execute if score custom_music timer_settings matches 1 as @a[tag=timer_menu_target] at @s run playsound timeru.music.menu_0 @s"
+                  ]
+                }
+            ]
+        },
+            {
+                "scene_tag":"menu_main", // Main Menü - Page 1
+                "npc_name":"§lTimer Ultimate - Mainmenu",
+                "text":"§l§6Choose an option \n\n§5§lGoals§r = Gives you a choice of goals\n§l§aStart Time§r = Makes the timer count backwards\n§l§cDifficulty§r = Relieved or makes the world more difficult\n§l§8Addons§r = Explained in the Dictionary\n\n§r§7Page 1 of 2",
+                "on_open_commands": [
+                  // This are soundseffects, which only plays when the menu starts
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 unless score custom_music timer_settings matches 1 run playsound random.pop2",
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.menu.pop",
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @s",
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 unless score custom_music timer_settings matches 1 run playsound record.far @s ~ ~ ~ 0.3 1",
+                  // up to this line
+                  "scoreboard players set is_open timer_menu 1", // Response to main_cmo, that the menu is now open
+                  "scoreboard players set action timer_menu 0" // Fixes a Bug that prevent the menu from closing
+                ],
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+					          {
+                        "name":"§5§lZiele",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_goal_1"
+                        ]
+                    },
+                    {
+                        "name":"§l§aStart-Zeit",
+                        "commands":[
+                          "/stopsound @initiator",
+                          "/playsound random.click @initiator",
+                          "/execute unless score custom_music timer_settings matches 1 as @a[tag=timer_menu_target] at @s run playsound record.precipice @s ~~~ 0.4 1",
+                          "/execute if score custom_music timer_settings matches 1 run playsound timeru.music.menu.time @a[tag=timer_menu_target]",
+
+                          "scoreboard players set action timer_menu 1",
+                          "execute if score shoud_count_down timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+
+                          "execute if score h timer_time matches 1.. run tag @a[tag=timer_menu_target] add time_recognize",
+                          "execute if score min timer_time matches 1.. run tag @a[tag=timer_menu_target] add time_recognize",
+                          "execute if score sec timer_time matches 1.. run tag @a[tag=timer_menu_target] add time_recognize",
+
+
+
+                          "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=!time_recognize, tag=timer_menu_target] run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off",
+                          
+                          "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=time_recognize, tag=timer_menu_target] run dialogue open @s @a[tag=timer_menu_target] menu_time_disclaimer",
+                          "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=time_recognize, tag=timer_menu_target] unless score custom_music timer_settings matches 1 run playsound random.pop @a[tag=timer_menu_target]",
+                          "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=time_recognize, tag=timer_menu_target] if score custom_music timer_settings matches 1 run playsound timeru.message @a[tag=timer_menu_target]",
+                          "/tag @initiator remove time_recognize"
+                        ]
+                    },
+                    {
+                      "name":"§l§8Page 2 ->",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/dialogue open @s @initiator menu_main_2"
+                      ]
+                    },
+                    {
+                        "name":"§l§cDifficulty",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_difficulty"
+                        ]
+                    },
+                    {
+                      "name":"§l§fStart",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                        "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+
+                        "execute unless score custom_music timer_settings matches 1 run playsound ambient.weather.thunder @a[tag=timer_menu_target]",
+                        "execute if score custom_music timer_settings matches 1 run playsound timeru.message @a[tag=timer_menu_target]",
+                        
+                        "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.start @p",
+                        "/dialogue open @s @initiator menu_main_start_disclaimer"
+                      ]
+                  },
+                  {
+                    "name":"§lAddons",
+                    "commands":[
+                      "scoreboard players set action timer_menu 1",
+                      "/stopsound @initiator",
+                      "/playsound random.click @initiator",
+                      "execute if score enchant timer_addon matches 0.. run dialogue open @s @a[tag=timer_menu_target] menu_addon",
+                      "execute unless score enchant timer_addon matches 0.. run dialogue open @s @a[tag=timer_menu_target] menu_mods",
+                      "/playsound  @initiator",
+                      "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound record.mall @p ~ ~ ~ 0.5 1", // Warning Music
+                      "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.addon @p"
+                    ]
+                  }
+                ]
+            },
+            {
+                "scene_tag":"menu_main_2", // Main Menü - Page 2
+                "npc_name":"§lTimer Ultimate - Mainmenu",
+                "text":"§l§6Choose an option§r\n\n§l§8Speed Run§r = Play Minecraft as quickly as you can!\n§5§lDimension§r = Choose a start dimension\n§l§9Dictionary§r = Detailed explanations for the Timer\n§l§cDelete§r = Erase all Data from the timer\n\n§r§7Page 2 of 2",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                    {
+                      "name":"§lSpeed Run",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute as @initiator at @s run function timer/settings/speed_run",
+                        "/scoreboard players set animation_time timer_menu 30"
+                      ]
+                    },
+                    {
+                      "name":"§5§lDimension",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/dialogue open @s @initiator menu_dimension"
+                      ]
+                    },
+                    {
+                      "name":"§l§8<- Page 1",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/dialogue open @s @initiator menu_main"
+                      ]
+                    },
+                    {
+                      "name":"§l§9Dictionary",
+                      "commands":[
+                       "scoreboard players set action timer_menu 1",
+                       "/stopsound @initiator",
+                       "/playsound random.click @initiator",
+                       "/dialogue open @s @initiator menu_help_main",
+                       "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                       "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                      ]
+                    },
+                    {
+                        "name":"§l§cDelete",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/playsound random.click @initiator",
+                          "/dialogue open @s @initiator menu_main_delete",
+                          "/playsound  @initiator",
+
+                          "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound ambient.cave @p ~ ~ ~ 0.5 1", // Warning Sound
+                          "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.menu.delete @p",
+
+                          "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.game.deep_dark @p ~ ~ ~ 0.5 1", // Warning Music
+                          "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.delete @p"
+                        ]
+                    }
+                ]
+            },
+            {
+              "scene_tag":"menu_main_start_disclaimer", // Warnung beim Start
+              "npc_name":"§lTimer Ultimate - Disclaimer",
+              "text":"§4§lAttention!\n\n§r§8If you continue, the challenges will start and the current settings will be applied. Most settings can no longer be changed!",
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                {
+                    "name":"§lStart",
+                      "commands":[
+                          "/execute as @initiator at @s run function timer/control"
+                      ]
+                  },
+                  {
+                    "name":"",
+                    "commands":[
+                      "scoreboard players set action timer_menu 1",
+                      "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                      "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                      "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
+                      "/dialogue open @s @initiator menu_main"
+                    ]
+                  }
+                ]
+            },
+            {
+              "scene_tag":"menu_main_delete",
+              "npc_name":"§lTimer Ultimate - Delete",
+              "text":"§4§lAttention!\n\n§r§8If you continue, all* data will be deleted from the timer and can no longer be used! To do this, the follow all 3 steps:\n\n1. Select \"§l§cDelete§r§8\"\n2. Disable this Behaviorpack\n3. Run §l/scoreboard objectives remove timer_setup§r§8",
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                {
+                    "name":"§l§cDelete",
+                      "commands":[
+                       "/scoreboard objectives add timer_setup dummy",
+                       "/scoreboard players set look timer_setup 0"
+                      ]
+                  },
+                  {
+                    "name":"",
+                    "commands":[
+                      "/scoreboard players set action timer_menu 1",
+                      "/stopsound @a[tag=timer_menu_target]",
+                      "/playsound random.click @a[tag=timer_menu_target]",
+                      "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound record.far @p ~ ~ ~ 0.3 1",
+                      "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
+                      "/dialogue open @s @initiator menu_main_2"
+                    ]
+                  }
+                ]
+            },
+            {
+              "scene_tag":"menu_dimension",
+              "npc_name":"§lTimer Ultimate - Dimension",
+              "text":"§l§6Select the dimension in which you want to start!\n\n",
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 unless score id timer_menu matches 1 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                {
+                  "name":"§l§aOverworld",
+                      "commands":[
+                        "/scoreboard players set dimension timer_settings 2",
+                        "/stopsound @initiator",
+                        "/scoreboard players set sound timer_settings 1",
+                        "scoreboard players set id timer_menu 1",
+                        "/tag @initiator add target_run_dimension"
+                    ]
+                },
+                  {
+                    "name":"§l§cNether",
+                        "commands":[
+                          "/scoreboard players set dimension timer_settings 0",
+                          "/stopsound @initiator",
+                          "/scoreboard players set sound timer_settings 1",
+                          "scoreboard players set id timer_menu 1",
+                          "/tag @initiator add target_run_dimension"
+                      ]
+                  },
+                  /*
+                  // This is a comment because the teleportation doesn't work realy well
+                  {
+                      "name":"§5§lEnd",
+                        "commands":[
+                          "/scoreboard players set dimension timer_settings 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set sound timer_settings 1",
+                          "scoreboard players set id timer_menu 1",
+                          "/tag @initiator add target_run_dimension"
+                        ]
+                    },*/
+                    {
+                      "name":"",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_main_2"
+                      ]
+                  }
+              ]
+            },
+            {
+                "scene_tag":"menu_difficulty",  // Difficulty Menu
+                "npc_name":"§lTimer Ultimate - Difficulty",
+                "text":"§l§6Choose your difficulty \n\n§aEasy§r = Timer don't effect death\n§l§fNormal§r = (default)\n§l§cHard§4core§r = The world is get lost after one death\n§l§cUltra §4Hard§r = Games without natural regeneration\n§l§7Infinity§r = One damage: It's all over!",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                  {
+                    "name":"§l§aEasy",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set difficulty timer_settings 4",
+                          "/execute as @initiator at @s run function timer/settings/difficulty",
+                          "/scoreboard players set animation_time timer_menu 30"
+                      ]
+                  },
+                    {
+                      "name":"§l§fNormal",
+                          "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set difficulty timer_settings 0",
+                            "/execute as @initiator at @s run function timer/settings/difficulty",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§cHard§4core",
+                          "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set difficulty timer_settings 1",
+                            "/execute as @initiator at @s run function timer/settings/difficulty",
+                            "/scoreboard players set animation_time timer_menu 50"
+                          ]
+                      },
+                      {
+                        "name":"§l§cUltra §4Hard",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set difficulty timer_settings 2",
+                          "/execute as @initiator at @s run function timer/settings/difficulty",
+                          "/scoreboard players set animation_time timer_menu 60"
+                        ]
+                      },
+                      {
+                        "name":"§l§8Infinity",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set difficulty timer_settings 3",
+                          "/execute as @initiator at @s run function timer/settings/difficulty",
+                          "/scoreboard players set animation_time timer_menu 70"
+                        ]
+                      },
+                      {
+                        "name":"",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_main"
+                        ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_goal_1", // Ziel Menü - Page 1
+                "npc_name":"§lTimer Ultimate - Goal",
+                "text":"§l§6Choose your goal\n\n\n\n\n\n\n§r§7Page 1 von 2",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+					          {
+                        "name":"§l§5Ender Dragon",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 0",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 60"
+                        ]
+                    },
+                    {
+                        "name":"§l§5Wither",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set goal timer_settings 1",
+                            "/execute as @initiator at @s run function timer/settings/goal",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+					          {
+                        "name":"§l§8Page 2 ->",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                            "/execute if score shoud_count_down timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_goal_2_time_mode_on",
+                            "/execute if score shoud_count_down timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_goal_2_time_mode_off"
+                        ]
+                    },
+					          {
+                        "name":"§5§lEl. Guardian",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set goal timer_settings 2",
+                            "/execute as @initiator at @s run function timer/settings/goal",
+                            "/scoreboard players set animation_time timer_menu 40"
+                        ]
+                    },
+                    {
+                        "name":"§5§lWarden",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set goal timer_settings 3",
+                            "/execute as @initiator at @s run function timer/settings/goal",
+                            "/scoreboard players set animation_time timer_menu 40"
+                        ]
+                    },
+                    {
+                      "name":"§bR§ga§4n§6d§fom",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 7",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 20"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_goal_2_time_mode_on", // Ziel Menü - Page 2
+                "npc_name":"§lTimer Ultimate - Goal",
+                "text":"§l§6Choose your goal\n\n\n\n\n\n\n§r§7Page 2 von 2",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                      {
+                        "name":"§l§4Raid",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 4",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 80"
+                        ]
+                      },
+                      /*{
+                        "name":"§l§bTrial",
+                        "commands":[
+                        "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set @a[tag=npc_new] goal 5",
+                            "/execute as @initiator at @s run function timer/settings/goal",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                      },*/
+                      {
+                        "name":"§lNot defined",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 8",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                      },
+                      {
+                        "name":"§l§8<- Page 1",
+                          "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/dialogue open @s @initiator menu_goal_1"
+                          ]
+                      },
+                      {
+                        "name":"§l§aTime-Mode",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 6",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 20"
+                        ]
+                      },
+                    {
+                      "name":"",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/dialogue open @s @initiator menu_main"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_goal_2_time_mode_off", // Ziel Menü - Page 2
+                "npc_name":"§lTimer Ultimate - Goal",
+                "text":"§l§6Choose your goal\n\n\n\n\n\n\n§r§7Page 2 von 2",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                      {
+                        "name":"§l§4Raid",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 4",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 80"
+                        ]
+                      },
+                      /*{
+                        "name":"§l§bTrial",
+                        "commands":[
+                        "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set goal timer_settings 5",
+                            "/execute as @initiator at @s run function timer/settings/goal",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                      },*/
+                      {
+                        "name":"§lNot defined",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set goal timer_settings 8",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                      },
+                      {
+                        "name":"§l§8<- Page 1",
+                          "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/dialogue open @s @initiator menu_goal_1"
+                          ]
+                      },
+                    {
+                      "name":"",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_main"
+                      ]
+                    }
+                ]
+            },
+            {
+              "scene_tag":"menu_time_disclaimer", // Warnung bei öffnen vom Time-Menü, wenn vorher die Zeit nicht zurückgesetzt wurde
+              "npc_name":"§lTimer Ultimate - Disclaimer",
+              "text":"§4§lAttention!\n\n§r§8You have previously played a challenge without the time mode. This happens because you completed a goal and reseted the timer. The time will keep it for next run. Would you like to delete this time and open the time menu?",
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                {
+                    "name":"§lOpen",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/scoreboard players set h timer_time 0",
+                        "/scoreboard players set min timer_time 0",
+                        "/scoreboard players set sec timer_time 0",
+                        "/scoreboard players set ms timer_time 0",
+                        "execute unless score custom_music timer_settings matches 1 run playsound beacon.power @a[tag=timer_menu_target]",
+                        "execute if score custom_music timer_settings matches 1 run playsound timeru.reset_false @a[tag=timer_menu_target]",
+
+                        "/dialogue open @s @initiator menu_time_1_time_mode_off"
+                      ]
+                  },
+                  {
+                    "name":"",
+                    "commands":[
+                      "scoreboard players set action timer_menu 1",
+                      "/dialogue open @s @initiator menu_main",
+                      "/stopsound @initiator",
+                      "/playsound random.click @initiator",
+                      "/execute unless score custom_music timer_settings matches 1 run playsound playsound record.far @a[tag=timer_menu_target] ~ ~ ~ 0.3 1",
+                      "/execute if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @a[tag=timer_menu_target]"
+                    ]
+                  }
+                ]
+            },
+            {
+                "scene_tag":"menu_time_1_time_mode_off", // Time Menu - Page 1
+                "npc_name":"§lTimer Ultimate - Timemenu",
+                "text":"§l§6Choose your start time \n\n\n\n\n\n\n§r§7", // ab hier ist dass die function vom cm2
+                "on_close_commands": [
+                  "execute if score h timer_time matches 1.. run scoreboard players set shoud_count_down timer_settings 1", // enable time_mode
+                  "execute if score min timer_time matches 1.. run scoreboard players set shoud_count_down timer_settings 1",
+
+                  "execute if score shoud_count_down timer_settings matches 1 if score speed_run timer_settings matches 1 run tellraw @a[tag=timer_menu_target] {\"rawtext\":[{\"text\":\"§l§u[§dSpeed Run§u]§r The \"Speedrun Mode\" has been deactivated because the §5Timermode§r is incompatible with it.\"}]}",
+                  "execute if score shoud_count_down timer_settings matches 1 if score speed_run timer_settings matches 1 run scoreboard players set speed_run timer_settings 0",
+
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                  {
+                        "name":"§l§a+1 Hour",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "scoreboard players add h timer_time 1",
+
+                          "execute if score h timer_time matches 1000.. unless score custom_music timer_settings matches 1 run playsound note.bassattack @a[tag=timer_menu_target]",
+                          "execute if score h timer_time matches 1000.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.error @a[tag=timer_menu_target]",
+
+                          "execute if score h timer_time matches 0..999 unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                          "execute if score h timer_time matches 0..999 if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+                          "execute if score h timer_time matches 1000.. run scoreboard players set h timer_time 999",
+                          "dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on"
+                        ]
+                    },
+                    {
+                        "name":"§l§a+1 Minute",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "scoreboard players add min timer_time 1",
+
+                          "execute if score min timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.levelup @a[tag=timer_menu_target]",
+                          "execute if score min timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.up @a[tag=timer_menu_target]",
+
+                          "execute unless score min timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                          "execute unless score min timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+
+                          "execute if score min timer_time matches 60.. run scoreboard players add h timer_time 1",
+                          "execute if score min timer_time matches 60.. run scoreboard players remove min timer_time 60",
+                          "dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on"
+                        ]
+                    },/*
+                    {
+                      "name":"§l§a+1 Second", // Seconds wont't save as time mode
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "scoreboard players add sec timer_time 1",
+      
+                        "execute if score sec timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.levelup @a[tag=timer_menu_target]",
+                        "execute if score sec timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.up @a[tag=timer_menu_target]",
+      
+                        "execute unless score sec timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                        "execute unless score sec timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+      
+      
+                        "execute if score sec timer_time matches 60.. run scoreboard players add min timer_time 1",
+
+                        "execute if score sec timer_time matches 60.. run dialogue open @s @a[tag=timer_menu_target] menu_time_2",
+                        "execute unless score sec timer_time matches 60.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off",
+
+                        "execute if score sec timer_time matches 60.. run scoreboard players remove sec timer_time 60"
+                      ]
+                    },*/
+                    {
+                      "name":"§l§dRandom",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute unless score custom_music timer_settings matches 1 run playsound random.levelup @a[tag=timer_menu_target]",
+                        "/execute if score custom_music timer_settings matches 1 run playsound timeru.time_random @a[tag=timer_menu_target]",
+                        "scoreboard players random h timer_time 0 4",
+                        "scoreboard players random min timer_time 0 59",
+                        "scoreboard players random sec timer_time 0 59",
+                        "/scoreboard players set animation_time timer_menu 30",
+      
+                        "/titleraw @a title {\"rawtext\":[{\"text\":\"§f§a\"},{\"score\":{\"name\":\"h\",\"objective\":\"timer_time\"}},{\"text\":\"h \"},{\"score\":{\"name\":\"min\",\"objective\":\"timer_time\"}},{\"text\":\"m \"},{\"score\":{\"name\":\"sec\",\"objective\":\"timer_time\"}},{\"text\":\"s§r\"}]}",
+                        "title @a subtitle -- was chosen --"
+                      ]
+                    },
+                    {
+                      "name":"",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/dialogue open @s @initiator menu_main",
+                        "/stopsound @initiator",
+                        "/playsound random.click @initiator",
+                        "/execute unless score custom_music timer_settings matches 1 as @a[tag=timer_menu_target] at @s run playsound record.far @s ~ ~ ~ 0.3 1",
+                        "/execute if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @a[tag=timer_menu_target]"
+                      ]
+                    }
+                ]
+            },
+            {
+              "scene_tag":"menu_time_1_time_mode_on", // Time Menu - Page 1 with Timemode
+              "npc_name":"§lTimer Ultimate - Timemenu",
+              "text":"§l§6Choose your start time \n\n\n\n\n\n\n§r§7Page 1 von 2",
+              "on_close_commands": [
+                "execute if score h timer_time matches 1.. run scoreboard players set shoud_count_down timer_settings 1", // enable time_mode
+                "execute if score min timer_time matches 1.. run scoreboard players set shoud_count_down timer_settings 1",
+
+                "execute if score shoud_count_down timer_settings matches 1 if score speed_run timer_settings matches 1 run tellraw @a[tag=timer_menu_target] {\"rawtext\":[{\"text\":\"§l§u[§dSpeed Run§u]§r The \"Speedrun Mode\" has been deactivated because the §5Timermode§r is incompatible with it.\"}]}",
+                "execute if score shoud_count_down timer_settings matches 1 if score speed_run timer_settings matches 1 run scoreboard players set speed_run timer_settings 0",
+
+
+                "execute if score h timer_time matches 0 if score min timer_time matches 0 run scoreboard players set shoud_count_down timer_settings 0", // disable time_mode
+
+                "execute if score shoud_count_down timer_settings matches 0 if score goal timer_settings matches 7 run tellraw @a[tag=timer_menu_target] {\"rawtext\":[{\"text\":\"§l§5[§dGoal§5]§r The Goal 'Timemode' can no longer be used, it has been set to not defined\"}]}",
+                "execute if score shoud_count_down timer_settings matches 0 if score goal timer_settings matches 7 run scoreboard players set goal timer_settings 0",
+
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                {
+                      "name":"§l§a+1 Hour",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "scoreboard players add h timer_time 1",
+
+                        "execute if score h timer_time matches 1000.. unless score custom_music timer_settings matches 1 run playsound note.bassattack @a[tag=timer_menu_target]",
+                        "execute if score h timer_time matches 1000.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.error @a[tag=timer_menu_target]",
+
+                        "execute if score h timer_time matches 0..999 unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                        "execute if score h timer_time matches 0..999 if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+                        "execute if score h timer_time matches 1000.. run scoreboard players set h timer_time 999",
+                        "dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on"
+                      ]
+                  },
+                  {
+                      "name":"§l§a+1 Minute",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "scoreboard players add min timer_time 1",
+
+                        "execute if score min timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.levelup @a[tag=timer_menu_target]",
+                        "execute if score min timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.up @a[tag=timer_menu_target]",
+
+                        "execute unless score min timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                        "execute unless score min timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+
+                        "execute if score min timer_time matches 60.. run scoreboard players add h timer_time 1",
+                        "execute if score min timer_time matches 60.. run scoreboard players remove min timer_time 60",
+                        "dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on"
+                      ]
+                  },
+                  {
+                      "name":"§l§8Page 2 ->",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "dialogue open @s @a[tag=timer_menu_target] menu_time_2"
+                      ]
+                  },
+                  {
+                      "name":"§l§4-1 Hour",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "scoreboard players remove h timer_time 1",
+
+                        "execute if score h timer_time matches ..-1 unless score custom_music timer_settings matches 1 run playsound note.bassattack @a[tag=timer_menu_target]",
+                        "execute if score h timer_time matches ..-1 if score custom_music timer_settings matches 1 run playsound timeru.menu.time.error @a[tag=timer_menu_target]",
+
+                        "execute if score h timer_time matches 0.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                        "execute if score h timer_time matches 0.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+
+                        "execute if score h timer_time matches ..-1 run scoreboard players set h timer_time 0",
+
+                        "execute if score h timer_time matches 1.. unless score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on", // "shoud_count_down" can't be used here, because it's updateing is self after those 3 lines
+                        "execute unless score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+                        "execute if score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+                        "execute if score h timer_time matches 0 if score min timer_time matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off"
+                      ]
+                  },
+                  {
+                      "name":"§l§4-1 Minute",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "scoreboard players remove min timer_time 1",
+
+                        "execute if score min timer_time matches ..-1 unless score custom_music timer_settings matches 1 run playsound note.bassattack @a[tag=timer_menu_target]",
+                        "execute if score min timer_time matches ..-1 if score custom_music timer_settings matches 1 run playsound timeru.menu.time.error @a[tag=timer_menu_target]",
+
+                        "execute if score min timer_time matches 0.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                        "execute if score min timer_time matches 0.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+
+                        "execute if score min timer_time matches ..-1 run scoreboard players set min timer_time 0",
+
+                        "execute if score h timer_time matches 1.. unless score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on", // "shoud_count_down" can't be used here, because it's updateing is self after those 3 lines
+                        "execute unless score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+                        "execute if score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+                        "execute if score h timer_time matches 0 if score min timer_time matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off"
+                      ]
+                  }
+              ]
+          },
+          {
+            "scene_tag":"menu_time_2", // Time Menu - Page 2
+            "npc_name":"§lTimer Ultimate - Timemenu",
+            "text":"§l§6Choose your start time \n\n\n\n\n\n\n§r§7Page 2 von 2",
+            "on_close_commands": [
+              "execute if score h timer_time matches 1.. run scoreboard players set shoud_count_down timer_settings 1", // enable time_mode
+              "execute if score min timer_time matches 1.. run scoreboard players set shoud_count_down timer_settings 1",
+
+              "execute if score shoud_count_down timer_settings matches 1 if score speed_run timer_settings matches 1 run tellraw @a[tag=timer_menu_target] {\"rawtext\":[{\"text\":\"§l§u[§dSpeed Run§u]§r The \"Speedrun Mode\" has been deactivated because the §5Timermode§r is incompatible with it.\"}]}",
+              "execute if score shoud_count_down timer_settings matches 1 if score speed_run timer_settings matches 1 run scoreboard players set speed_run timer_settings 0",
+
+              "execute if score h timer_time matches 0 if score min timer_time matches 0 run scoreboard players set shoud_count_down timer_settings 0", // disable time_mode
+              
+
+              "execute if score shoud_count_down timer_settings matches 0 if score goal timer_settings matches 7 run tellraw @a[tag=trust_player_control] {\"rawtext\":[{\"text\":\"§l§5[§dGoal§5]§r The Goal 'Timemode' can no longer be used, it has been set to not defined\"}]}",
+              "execute if score shoud_count_down timer_settings matches 0 if score goal timer_settings matches 7 run scoreboard players set goal timer_settings 0",
+
+              "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+              "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+            ],
+            "buttons":[
+              {
+                "name":"§l§a+1 Second",
+                "commands":[
+                  "scoreboard players set action timer_menu 1",
+                  "scoreboard players add sec timer_time 1",
+
+                  "execute if score sec timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.levelup @a[tag=timer_menu_target]",
+                  "execute if score sec timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.up @a[tag=timer_menu_target]",
+
+                  "execute unless score sec timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                  "execute unless score sec timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+
+                  "execute if score sec timer_time matches 60.. run scoreboard players add min timer_time 1",
+                  "execute if score sec timer_time matches 60.. run scoreboard players remove sec timer_time 60",
+                  "execute if score shoud_count_down timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off",
+                  "execute if score shoud_count_down timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_time_2"
+                ]
+            },
+            {
+              "name":"§l§4Reset",
+              "commands":[
+                "scoreboard players set action timer_menu 1",
+                "/scoreboard players set h timer_time 0",
+                "/scoreboard players set min timer_time 0",
+                "/scoreboard players set sec timer_time 0",
+                "/scoreboard players set ms timer_time 0",
+                "execute unless score custom_music timer_settings matches 1 run playsound beacon.power @a[tag=timer_menu_target]",
+                "execute if score custom_music timer_settings matches 1 run playsound timeru.reset_false @a[tag=timer_menu_target]",
+
+                "/dialogue open @s @initiator menu_time_1_time_mode_off"
+              ]
+            },
+            {
+              "name":"§l§8<- Page 1",
+              "commands":[
+                "scoreboard players set action timer_menu 1",
+                  "/dialogue open @s @initiator menu_time_1_time_mode_on"
+              ]
+            },
+            {
+                "name":"§l§4-1 Second",
+                "commands":[
+                  "scoreboard players set action timer_menu 1",
+                  "scoreboard players remove sec timer_time 1",
+
+                  "execute if score sec timer_time matches ..-1 unless score custom_music timer_settings matches 1 run playsound note.bassattack @a[tag=timer_menu_target]",
+                  "execute if score sec timer_time matches ..-1 if score custom_music timer_settings matches 1 run playsound timeru.menu.time.error @a[tag=timer_menu_target]",
+
+                  "execute if score sec timer_time matches 0.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
+                  "execute if score sec timer_time matches 0.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
+
+
+                  "execute if score sec timer_time matches ..-1 run scoreboard players set sec timer_time 0",
+                  "execute if score shoud_count_down timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off",
+                  "execute if score shoud_count_down timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_time_2"
+                ]
+            },
+            {
+              "name":"",
+              "commands":[
+                "scoreboard players set action timer_menu 1",
+                "/dialogue open @s @initiator menu_main",
+                "/stopsound @initiator",
+                "/playsound random.click @initiator",
+                "/execute unless score custom_music timer_settings matches 1 as @a[tag=timer_menu_target] at @s run playsound record.far @s ~ ~ ~ 0.3 1",
+                "/execute if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @a[tag=timer_menu_target]"
+              ]
+            }
+          ]
+        }
+    ]
+  }
+}

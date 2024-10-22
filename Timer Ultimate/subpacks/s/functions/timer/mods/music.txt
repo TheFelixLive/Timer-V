@@ -1,0 +1,19 @@
+# scoreboard control
+execute if entity @s[tag=trust_player_control] run scoreboard players add custom_music timer_settings 1
+execute if entity @s[tag=trust_player_control] if score custom_music timer_settings matches 2.. run scoreboard players set custom_music timer_settings 0
+
+
+execute if entity @s[tag=trust_player_control] unless score custom_music timer_settings matches 1 run title @s title §l§2Minecraft §nSounds
+execute if entity @s[tag=trust_player_control] unless score custom_music timer_settings matches 1 run title @s subtitle -- will be §cused§f --
+execute if entity @s[tag=trust_player_control] unless score custom_music timer_settings matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§6[§eSounds§6]§r Minecraft's built-in sound library is now used"}]}
+execute if entity @s[tag=trust_player_control] unless score custom_music timer_settings matches 1 run playsound dig.grass @a[tag=trust_player_control]
+
+execute if entity @s[tag=trust_player_control] if score custom_music timer_settings matches 1 run title @s title §l§eCustom §6Music
+execute if entity @s[tag=trust_player_control] if score custom_music timer_settings matches 1 run title @s subtitle -- will be §aused§f --
+execute if entity @s[tag=trust_player_control] if score custom_music timer_settings matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§6[§eSounds§6]§r Custom Music is now used, if you don't hear a test tone, please deactivate Custom Music again!"}]}
+execute if entity @s[tag=trust_player_control] if score custom_music timer_settings matches 1 run playsound timeru.test @a[tag=trust_player_control]
+
+# Error
+execute if entity @s[tag=!trust_player_control] run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r You do not have the necessary permissions for this action. Current players who could grant you this permission: §l"},{"selector": "@a[tag=trust_player_control]"}]}
+execute if entity @s[tag=!trust_player_control] unless score custom_music timer_settings matches 1 run playsound block.false_permissions
+execute if entity @s[tag=!trust_player_control] if score custom_music timer_settings matches 1 run playsound timeru.function_no_permissions @s

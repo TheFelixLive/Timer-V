@@ -1,0 +1,43 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "Adds a timer to your world customized for your game mode.",
+        "name": "§l§fTimer §7Ultimate§r [Public Beta]",
+        "uuid": "f05fdf1b-8866-4ac7-b0f5-646295e8485e",
+        "version": [ 4, 1, 0],
+        "min_engine_version": [1, 21, 0]
+    },
+    "modules": [
+        {
+            "description": "",
+            "type": "data",
+            "uuid": "e91cc390-6fae-448d-a982-7be0d8d442b6",
+            "version": [4, 1, 0]
+        },
+        {
+          "description": "",
+            "type": "script",
+            "uuid": "41b65009-49ce-47cb-bf61-12498606f66f",
+            "version": [1, 0, 0],
+            "entry": "scripts/main.js"
+        }
+    ],
+    "subpacks": [
+    {
+      "folder_name": "s",
+      "name": "§l§gSurvival§r\n§9Description: Counts until the goal is defeated\n§cImportant: This is a public beta, there is a high probability for bugs or wrong translation!\n§b§lDate: 20.07.24§r -- §av.4.1.0 [Public Beta 1]",
+      "memory_tier": 0
+    },
+    {
+      "folder_name": "c",
+      "name": "§l§gCreative§r\n§9Description: Counts the playing time of each player\n§cImportant: This is a public beta, there is a high probability for bugs or wrong translation!\n§b§lDate: 20.07.24§r -- §av.4.1.0 [Public Beta 1]",
+      "memory_tier": 1
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name":"@minecraft/server",
+      "version":"1.5.0"
+    }
+ ]
+}

@@ -1,0 +1,45 @@
+{
+    "format_version":"1.17",
+    "minecraft:npc_dialogue":{
+        "scenes":[
+            {
+                "scene_tag":"menu_help_text_htu_ca",
+                "npc_name":"§lChallenge Addon - How to use",
+                "text":"§3§lVerwendung\n\n§r§8Da das Addon (bzw. die Erweiterung für den Timer III) erkannt wurde, können sie jetzt die über:§r§8\n\n-die /functions\n-das Menü§r§8\n\n Challenges wie die Eis-Challenge oder die Gravity-Challenge aktiviert oder deaktivieren.",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                  {
+                    "name":"",
+                    "commands":[
+                      "scoreboard players set action timer_menu 1",
+                      "execute if score mode timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_help_look_0_page_1",
+                      "execute if score mode timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_help_look_1_page_1",
+                      "execute if score mode timer_settings matches 2 run dialogue open @s @a[tag=timer_menu_target] menu_help_look_2_page_2"
+                    ]
+                  }
+                ]
+            },
+            {
+                "scene_tag":"menu_help_text_changelog_2",
+                "npc_name":"§lCA - Changelog v.4.1.0",
+                "text":"§b§lNew features§r§8\n\n-Added English support\n-Added Speed X Challange\n-Added Invisibility Challange\n-Added Level equals border Challange\n-Added No Armor Challange\n-Added No Block break Challange\n-Added No jump Challange\n-Added No move Challange\n-Added No swimming Challange\n-Added custom music support\n-Added support for 1.21\n\n§a§lGeneral Changes§r§8\n\n-Added & changed some sounds\n-Changelog got a new look\n\n\n§c§lBug fixes§r§8\n\n§7Not documented\n\n\n§7Last Update 01.10.24",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+					        {
+                    "name":"",
+                    "commands":[
+                      "scoreboard players set action timer_menu 1",
+                      "dialogue open @s @a[tag=timer_menu_target] menu_help_main"
+                    ]
+                  }
+                ]
+            }
+        ]
+    }
+}

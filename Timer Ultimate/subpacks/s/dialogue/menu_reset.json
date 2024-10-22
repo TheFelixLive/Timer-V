@@ -1,0 +1,99 @@
+{
+    "format_version":"1.17",
+    "minecraft:npc_dialogue":{
+        "scenes":[
+          {
+              "scene_tag":"menu_reset_false", // This Page is unused
+              "npc_name":"§lTimer Ultimate - Endmenu",
+              "text":"§l§6 Choose an option\n\n§l§8Reset§r = Resets the timer!\n§l§cReset & Menu§r = Resets it and opens the menu\n\n",
+              "on_open_commands": [
+                // This are soundseffects, which only plays when the menu starts
+                "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_2 @s",
+                "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 0 run playsound record.strad @s ~ ~ ~ 0.5 1",
+                // up to this line
+                "scoreboard players set is_open timer_menu 1", // Response to main_cmo, that the menu is now open
+                "scoreboard players set action timer_menu 0" // Fixes a Bug that prevent the menu from closing
+              ],
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                  {
+                      "name":"§lReset",
+                      "commands":[
+                          "/execute as @initiator run function timer/control"
+                      ]
+                  },
+                  {
+                      "name":"§l§cReset & Menu",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute as @initiator run function timer/control",
+                        "/scoreboard players set animation_time timer_menu 40"
+                      ]
+                  },
+                  {
+                    "name":"§l§9Dictionary",
+                    "commands":[
+                     "scoreboard players set action timer_menu 1",
+                     "/stopsound @initiator",
+                     "/playsound random.click @initiator",
+                     "/dialogue open @s @initiator menu_help_main",
+                     "/execute at @initiator if score custom_music timer_settings matches 0 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                     "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                    ]
+                  }
+              ]
+          },
+          {
+              "scene_tag":"menu_reset_true",
+              "npc_name":"§lTimer Ultimate - Endmenu",
+              "text":"§l§6 Choose an option\n\n§l§8Game§r = Prepares the timer for a new goal\n§l§aGame & Menu§r = Prepares it and opens the menu\n\n",
+              "on_open_commands": [
+                // This are soundseffects, which only plays when the menu starts
+                "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 0 run playsound random.pop2",
+                "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.menu.pop",
+                "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_3 @s",
+                "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 0 run playsound record.strad @s ~ ~ ~ 0.5 1",
+                // up to this line
+                "scoreboard players set is_open timer_menu 1", // Response to main_cmo, that the menu is now open
+                "scoreboard players set action timer_menu 0" // Fixes a Bug that prevent the menu from closing
+              ],
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+              ],
+              "buttons":[
+                {
+                    "name":"§l§8Game",
+                    "commands":[
+                        "/execute as @initiator run function timer/control"
+                    ]
+                },
+                {
+                      "name":"§l§aGame & Menu",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute as @initiator run function timer/control",
+                        "/scoreboard players set animation_time timer_menu 40"
+                      ]
+                  },
+                  {
+                    "name":"§l§9Dictionary",
+                    "commands":[
+                     "scoreboard players set action timer_menu 1",
+                     "/stopsound @initiator",
+                     "/playsound random.click @initiator",
+                     "/dialogue open @s @initiator menu_help_main",
+                     "/execute at @initiator if score custom_music timer_settings matches 0 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                     "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                    ]
+                  }
+              ]
+          }
+        ]
+    }
+}

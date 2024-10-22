@@ -1,0 +1,154 @@
+{
+    "format_version":"1.17",
+    "minecraft:npc_dialogue":{
+        "scenes":[
+            {
+                "scene_tag":"menu_game",
+                "npc_name":"§lTimer Ultimate - Gamemenu",
+                "text":"§l§6Select an option\n\n§5§lGoals§r = Shows your goal\n§l§cDifficulty§r = Shows your difficulty\n§l§bStatus§r = Choose options to end the challenge\n§l§9Dictionary§r = Detailed explanations for the Timer\n§l§8Addon§r = Gives you a selection of active extensions",
+                "on_open_commands": [
+                  // This are soundseffects, which only plays when the menu starts
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 0 run playsound random.pop2",
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.menu.pop",
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_1 @s",
+                  "execute as @a[tag=timer_menu_target] at @s if score is_open timer_menu matches 0 if score custom_music timer_settings matches 0 run playsound record.wait @s ~ ~ ~ 0.5 1",
+                  // up to this line
+                  "scoreboard players set is_open timer_menu 1", // Response to main_cmo, that the menu is now open
+                  "scoreboard players set action timer_menu 0" // Fixes a Bug that prevent the menu from closing
+                ],
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+					          {
+                        "name":"§5§lGoal",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/execute as @initiator at @s run function timer/settings/goal",
+                          "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                      "name":"§l§cDifficulty",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute as @initiator at @s run function timer/settings/difficulty",
+                        "/scoreboard players set animation_time timer_menu 30"
+                      ]
+                    },
+                    {
+                      "name":"§l§dDimension",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/execute as @initiator at @s run function timer/settings/dimension",
+                        "/scoreboard players set animation_time timer_menu 30"
+                      ]
+                    },
+                    {
+                        "name":"§l§bStatus",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/execute if score goal timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_game_settings_two",
+                          "/execute if score goal timer_settings matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_game_settings_one"
+                        ]
+                    },
+                    {
+                      "name":"§l§9Dictionary",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/playsound random.click @initiator",
+                        "/dialogue open @s @initiator menu_help_main",
+                        "/execute at @initiator if score custom_music timer_settings matches 0 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                        "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                      ]
+                    },
+                    {
+                      "name":"§lAddons",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                        "/stopsound @initiator",
+                        "/playsound random.click @initiator",
+                        "execute if score enchant timer_addon matches 0.. run dialogue open @s @a[tag=timer_menu_target] menu_addon",
+                        "execute unless score enchant timer_addon matches 0.. run dialogue open @s @a[tag=timer_menu_target] menu_mods",
+                        "/playsound  @initiator",
+                        "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound record.mall @p ~ ~ ~ 0.5 1", // Warning Music
+                        "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.addon @p"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_game_settings_one",
+                "npc_name":"§lTimer Ultimate - Gamemenu",
+                "text":"§l§6Choose an option\n\n§c§lGive up§r = Completes the challenge\n\n",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                    {
+                        "name":"§c§lGive up",
+                        "commands":[   
+                          "/tag @initiator add target_player_end",
+                          "/stopsound @initiator",
+                          "/scoreboard players set reset_type timer_settings 1",
+                          "/scoreboard players set sound timer_menu 1",
+                          "function timer/system_do_not_use/end_cmo"
+                        ]
+                    },
+                    {
+                      "name":"",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_game"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_game_settings_two",
+                "npc_name":"§lTimer Ultimate - Gamemenu",
+                "text":"§l§6 Choose an option\n\n§l§aComplete§r = Completes your goal\n§c§lGive up§r = Completes the challenge",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
+                  {
+                      "name":"§l§aComplete§r",
+                      "commands":[
+                          "/stopsound @initiator",
+                          "/scoreboard players set reset_type timer_settings 2",
+                          "/scoreboard players set sound timer_menu 1",
+                          "function timer/system_do_not_use/end_cmo"
+
+                      ]
+                  },
+                    {
+                        "name":"§c§lGive up",
+                        "commands":[
+                          "/tag @initiator add target_player_end",
+                          "/stopsound @initiator",
+                          "/scoreboard players set reset_type timer_settings 1",
+                          "/scoreboard players set sound timer_menu 1",
+                          "function timer/system_do_not_use/end_cmo"
+
+                        ]
+                    },
+                    {
+                      "name":"",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_game"
+                      ]
+                    }
+                ]
+            }
+        ]
+    }
+}

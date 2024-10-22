@@ -1,0 +1,77 @@
+{
+   "format_version":"1.17",
+   "minecraft:npc_dialogue":{
+       "scenes":[
+           {
+               "scene_tag":"menu_mode",
+               "npc_name":"§lTimer Ultimate - Mode",
+               "text":"§l§6Choose your Displaymode",
+              "on_close_commands": [
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0",
+                "execute if score sound timer_menu matches 1 run tag @a[tag=timer_menu_target] remove mode_0",
+                "execute if score sound timer_menu matches 1 run tag @a[tag=timer_menu_target] remove mode_1",
+                "execute if score sound timer_menu matches 1 run tag @a[tag=timer_menu_target] remove mode_2"
+              ],
+               "buttons":[
+         {
+                       "name":"§l§4Break",
+                       "commands":[
+                        "/stopsound @initiator",
+                         "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 2",
+                         "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 2",
+                         "/scoreboard players set sound timer_menu 1",
+                         "/execute as @initiator at @s run function timer/mode"
+                       ]
+                   },
+                   {
+                       "name":"§l§aVisible",
+                       "commands":[
+                        "/stopsound @initiator",
+                          "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 0",
+                          "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 0",
+                          "/scoreboard players set sound timer_menu 1",
+                         "/execute as @initiator at @s run function timer/mode"
+                       ]
+                   },
+                   {
+                     "name":"§lUnsichtbar",
+                     "commands":[
+                      "/stopsound @initiator",
+                         "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 1",
+                         "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 1",
+                         "/scoreboard players set sound timer_menu 1",
+                         "/execute as @initiator at @s run function timer/mode"
+                     ]
+                   },
+                   {
+                    "name":"§l§9Help",
+                    "commands":[
+                      "scoreboard players set action timer_menu 1",
+                      "/stopsound @initiator",
+                      "/execute at @initiator run playsound random.click @initiator",
+                      "/dialogue open @s @initiator menu_help_text_htu_1",
+                      "/execute as @initiator if entity @s[scores={timer_custom_music=0}] at @s run playsound music.menu @s ~ ~ ~ 0.5 1",
+                      "/execute as @initiator if entity @s[scores={timer_custom_music=1}] at @s run playsound timeru.music.menu.help @s ~ ~ ~ 0.5 1"
+                    ]
+                  },
+                   {
+                     "name":"",
+                     "commands":[
+                      "scoreboard players set action timer_menu 1", // With Sound change
+                      "/stopsound @initiator",
+                      "/execute at @initiator run playsound random.click @initiator",
+                      "/execute if score host_mode timer_menu matches 0 run dialogue open @s @a[tag=timer_menu_target, tag=!trust_player_control] menu_main_0",
+                      "/execute if score host_mode timer_menu matches 0 run dialogue open @s @a[tag=timer_menu_target, tag=trust_player_control] menu_main_2",
+                      "/execute if score host_mode timer_menu matches 1.. run dialogue open @s @a[tag=timer_menu_target, tag=!trust_player_control] menu_main_1",
+                      "/execute if score host_mode timer_menu matches 1 run dialogue open @s @a[tag=timer_menu_target, tag=trust_player_control] menu_main_3",
+                      "/execute if score host_mode timer_menu matches 2 run dialogue open @s @a[tag=timer_menu_target, tag=trust_player_control] menu_main_4",
+                      "/execute at @initiator run playsound music.menu @a[tag=timer_menu_target, scores={timer_custom_music=0}] ~~~ 0.3 1",
+                      "/execute at @initiator run playsound timeru.music.menu_0 @a[tag=timer_menu_target, scores={timer_custom_music=1}]"
+                     ]
+                   }
+               ]
+           }
+       ]
+   }
+}

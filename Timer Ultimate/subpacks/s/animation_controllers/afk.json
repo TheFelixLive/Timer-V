@@ -1,0 +1,65 @@
+{
+	"format_version": "1.10.0",
+	"animation_controllers": {
+		"controller.animation.player.afk": {
+			"states": {
+				"default": {
+					"transitions": [
+						{
+							"stands_still": "!query.is_moving"
+						}
+					]
+				},
+				"stands_still": {
+					"on_entry": [
+							"v.afk = q.life_time;"
+					],
+					"transitions": [
+						{
+							"afk": "(q.life_time - v.afk) >= 30 && !q.is_moving"
+						},
+						{
+							"default": "q.is_moving"
+						}
+					]
+				},
+				"afk": {
+					"on_entry": [
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 run tag @s add type_afk",
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 run tag @s[tag=!trust_player_control] add trust_player_temp",
+						"/tag @a[tag=trust_player_temp] add trust_player_control",
+
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 run scoreboard players remove sec timer_time 30",
+
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score sec timer_time matches ..-1 run scoreboard players remove min timer_time 1",
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score sec timer_time matches ..-1 run scoreboard players add sec timer_time 60",
+
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score min timer_time matches ..-1 run scoreboard players remove h timer_time 1",
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score min timer_time matches ..-1 run scoreboard players add min timer_time 60",
+
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score h timer_time matches ..-1 run scoreboard players set sec timer_time 0",
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score h timer_time matches ..-1 run scoreboard players set min timer_time 0",
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 if score h timer_time matches ..-1 run scoreboard players set h timer_time 0",
+
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score afk timer_settings matches 1 run function timer/control",
+						"/tag @a[tag=trust_player_temp] remove trust_player_control",
+						"/tag @a[tag=trust_player_temp] remove trust_player_temp"
+					],
+					"transitions": [
+						{
+							"default": "query.is_moving"
+						}
+					],
+					"on_exit": [
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 if score afk timer_settings matches 1 if entity @s[tag=type_afk] run tag @s[tag=!trust_player_control] add trust_player_temp",
+						"/tag @a[tag=trust_player_temp] add trust_player_control",
+						"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 if score afk timer_settings matches 1 if entity @s[tag=type_afk] run function timer/control",
+						"/tag @s[tag=type_afk] remove type_afk",
+						"/tag @a[tag=trust_player_temp] remove trust_player_control",
+						"/tag @a[tag=trust_player_temp] remove trust_player_temp"
+					]
+				}
+			}
+		}
+	}
+}
