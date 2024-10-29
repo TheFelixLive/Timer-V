@@ -1,12 +1,12 @@
 # If its execute from a player and the reason isn't death
-execute if entity @s[tag=!trust_player_control, tag=!target_player_end] run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r You do not have the necessary permissions for this action. Current players who could grant you this permission: §l"},{"selector": "@a[tag=trust_player_control]"}]}
-execute if entity @s[tag=!trust_player_control, tag=!target_player_end] unless score custom_music timer_settings matches 1 run playsound block.false_permissions
-execute if entity @s[tag=!trust_player_control, tag=!target_player_end] if score custom_music timer_settings matches 1 run playsound timeru.function_no_permissions @s
+execute unless score reset_type timer_settings matches 1 if entity @s[tag=!trust_player_control, tag=!target_player_end] run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r You do not have the necessary permissions for this action. Current players who could grant you this permission: §l"},{"selector": "@a[tag=trust_player_control]"}]}
+execute unless score reset_type timer_settings matches 1 if entity @s[tag=!trust_player_control, tag=!target_player_end] unless score custom_music timer_settings matches 1 run playsound block.false_permissions
+execute unless score reset_type timer_settings matches 1 if entity @s[tag=!trust_player_control, tag=!target_player_end] if score custom_music timer_settings matches 1 run playsound timeru.function_no_permissions @s
 
 
-execute if entity @s[tag=trust_player_control, tag=!target_player_end] run tellraw @s {"rawtext":[{"text":"§l§4[§cError§4]§r This function is not available"}]}
-execute if entity @s[tag=trust_player_control, tag=!target_player_end] unless score custom_music timer_settings matches 1 run playsound random.enderchestopen @s ~~~ 1 0.5
-execute if entity @s[tag=trust_player_control, tag=!target_player_end] if score custom_music timer_settings matches 1 run playsound timeru.function_system @s
+execute unless score reset_type timer_settings matches 1 if entity @s[tag=trust_player_control, tag=!target_player_end] run tellraw @s {"rawtext":[{"text":"§l§4[§cError§4]§r This function is not available"}]}
+execute unless score reset_type timer_settings matches 1 if entity @s[tag=trust_player_control, tag=!target_player_end] unless score custom_music timer_settings matches 1 run playsound random.enderchestopen @s ~~~ 1 0.5
+execute unless score reset_type timer_settings matches 1 if entity @s[tag=trust_player_control, tag=!target_player_end] if score custom_music timer_settings matches 1 run playsound timeru.function_system @s
 
 ### Win
 execute if score reset_type timer_settings matches 2 if score reset_message_show timer_settings matches 0 run title @a title §aChallenge absolviert

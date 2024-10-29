@@ -13,7 +13,7 @@ function mainTick() {
     is_available = 0;
   }
 
-  // Sync with PlayerDimension
+  
   if (is_available === 1) {
     const players = world.getAllPlayers();
     for (const player of players) {
@@ -73,11 +73,8 @@ function mainTick() {
           }
       
           if (!outsideBorder && MessageBorder) {
-              player.runCommand('playsound random.pop @s');
-              player.runCommand('title @s title §cYou are outside the world border');
-              player.runCommand('effect @s darkness 3 1 true');
-              player.runCommand('title @s subtitle -- Earne §l§a'+ xp_needed +' XP§r§f to expant the world border --');
-              player.sendMessage('§l§c[§bWorld Boader§c]§r You are outside the world border. Earne §l§a'+ xp_needed +' XP§r to expant the world border');
+              player.runCommand('scoreboard players set @s timer_show_actionbar 2');
+              player.runCommand('title @s actionbar Earne §l§a'+ xp_needed +' XP§r§f to expant the world border');
               MessageBorder = false;
           }
       

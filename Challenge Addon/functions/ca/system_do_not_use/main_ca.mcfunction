@@ -40,15 +40,16 @@ execute if score mode timer_settings matches 0..1 if score enchant timer_addon m
 execute if score mode timer_settings matches 0..1 if score enchant timer_addon matches 1.. run enchant @a swift_sneak 3
 
 # speed x
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_x timer_addon matches 1 run effect @e clear
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_x timer_addon matches 1 run effect @e clear speed
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_x timer_addon matches 1 run effect @e speed 83 11 true
 
 # invisibility
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score invisibility timer_addon matches 1 run effect @e clear
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score invisibility timer_addon matches 1 run effect @e clear invisibility
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score invisibility timer_addon matches 1 run effect @e invisibility 83 0 true
 
 # gravity
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e clear
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e clear levitation
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e clear slow_falling
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e[tag=!sneak_for_ice] levitation 83 3 true
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e[tag=sneak_for_ice] slow_falling 83 0 true
 
@@ -63,33 +64,37 @@ execute if score mode timer_settings matches 1 if score do_count timer_settings 
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score floor_is_lava timer_addon matches 1 if score ms timer_time matches 50 at @a unless block ~ ~-1 ~ air unless block ~ ~ ~ water unless block ~ ~ ~ tallgrass run setblock ~ ~-1 ~ lava
 
 # no_crafting
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_crafting timer_addon matches 1 as @a[hasitem={item=crafting_table}] run kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_crafting timer_addon matches 1 as @a[hasitem={item=crafting_table}] run tag @s add kill
 
 # no_armor
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_helmet}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_chestplate}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_leggings}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_boots}] run kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_helmet}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_chestplate}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_leggings}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_boots}] run tag @s add kill
 
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_helmet}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_chestplate}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_leggings}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_boots}] run kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_helmet}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_chestplate}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_leggings}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_boots}] run tag @s add kill
 
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_helmet}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_chestplate}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_leggings}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_boots}] run kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_helmet}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_chestplate}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_leggings}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_boots}] run tag @s add kill
 
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_helmet}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_chestplate}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_leggings}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_boots}] run kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_helmet}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_chestplate}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_leggings}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_boots}] run tag @s add kill
 
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_helmet}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_chestplate}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_leggings}] run kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_boots}] run kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_helmet}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_chestplate}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_leggings}] run tag @s add kill
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_boots}] run tag @s add kill
+
+execute if entity @a[tag=kill] run scoreboard players set reset_type timer_settings 1
+execute if entity @a[tag=kill] run function timer/system_do_not_use/end_cmo
+tag @a[tag=kill] remove kill
 
 # no_move
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_move timer_addon matches 1.. run inputpermission set @a movement disabled
@@ -98,33 +103,33 @@ execute if score mode timer_settings matches 1 if score do_count timer_settings 
 
 ### Feedback at actionbar for Enchant
 # Title when someone in the main-menu is
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 unless score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 1 run titleraw @a[tag=trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §5("},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s) §b§oby TheFelixLive"}]}
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 1 run titleraw @a[tag=trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §c("},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s) §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 unless score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 1 run titleraw @a[scores={timer_show_actionbar=1}, tag=trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §5("},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s) §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 1 run titleraw @a[scores={timer_show_actionbar=1}, tag=trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §c("},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s) §b§oby TheFelixLive"}]}
 
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 unless score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a[tag=trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 unless score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a[scores={timer_show_actionbar=1}, tag=trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §b§oby TheFelixLive"}]}
 
 # for player thay dont have the trust_player_control
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 unless score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. run titleraw @a[tag=!trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 unless score difficulty timer_settings matches 2.. if score enchant timer_addon matches 1.. run titleraw @a[scores={timer_show_actionbar=1}, tag=!trust_player_control] actionbar {"rawtext":[{"text":"§9Enchant§r §b§oby TheFelixLive"}]}
 
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 2 if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a actionbar {"rawtext":[{"text":"§9Enchant §4[§cHardcore Mode§4]§r §b§oby TheFelixLive"}]}
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 3 if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a actionbar {"rawtext":[{"text":"§9Enchant §4[§cUltra Hardcore§4]§r §b§oby TheFelixLive"}]}
-execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 4 if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a actionbar {"rawtext":[{"text":"§9Enchant §4[§7Infinity§4]§r §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 2 if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9Enchant §4[§cHardcore Mode§4]§r §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 3 if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9Enchant §4[§cUltra Hardcore§4]§r §b§oby TheFelixLive"}]}
+execute if score mode timer_settings matches 0 if score speed_run timer_settings matches 0 if score difficulty timer_settings matches 4 if score enchant timer_addon matches 1.. if score shoud_count_down timer_settings matches 0 run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9Enchant §4[§7Infinity§4]§r §b§oby TheFelixLive"}]}
 
 # Normal
 
 # time_second
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0.. if score min timer_time matches 0 if score h timer_time matches 0 run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0.. if score min timer_time matches 0 if score h timer_time matches 0 run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
 
 # time_minuten
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0 if score min timer_time matches 1.. if score h timer_time matches 0 run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"min","objective":"timer_time"}},{"text":"m"}]}
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 1.. if score min timer_time matches 1.. if score h timer_time matches 0 run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0 if score min timer_time matches 1.. if score h timer_time matches 0 run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"min","objective":"timer_time"}},{"text":"m"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 1.. if score min timer_time matches 1.. if score h timer_time matches 0 run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
 
 
 # time_hours
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0 if score min timer_time matches 0 if score h timer_time matches 1.. run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h"}]}
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 1.. if score min timer_time matches 0 if score h timer_time matches 1.. run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0 if score min timer_time matches 1.. if score h timer_time matches 1.. run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m"}]}
-execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 1.. if score min timer_time matches 1.. if score h timer_time matches 1.. run titleraw @a actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0 if score min timer_time matches 0 if score h timer_time matches 1.. run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 1.. if score min timer_time matches 0 if score h timer_time matches 1.. run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 0 if score min timer_time matches 1.. if score h timer_time matches 1.. run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m"}]}
+execute if score do_count timer_settings matches 1 if score speed_run timer_settings matches 0 if score mode timer_settings matches 1 if score difficulty timer_settings matches 0..1 if score enchant timer_addon matches 1.. if score sec timer_time matches 1.. if score min timer_time matches 1.. if score h timer_time matches 1.. run titleraw @a[scores={timer_show_actionbar=1}] actionbar {"rawtext":[{"text":"§9"},{"score":{"name":"h","objective":"timer_time"}},{"text":"h "},{"score":{"name":"min","objective":"timer_time"}},{"text":"m "},{"score":{"name":"sec","objective":"timer_time"}},{"text":"s"}]}
 
 
 ### if the timer lauched before the addon was aktivieren

@@ -206,7 +206,8 @@
                   "/stopsound @initiator",
                   "/playsound random.click @initiator",
                   "/dialogue open @s @initiator menu_help_text_htu_1.1",
-                  "/execute at @initiator run playsound music.menu @p ~ ~ ~ 0.5 1"
+                  "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                  "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
                 ]
               }
             ]
