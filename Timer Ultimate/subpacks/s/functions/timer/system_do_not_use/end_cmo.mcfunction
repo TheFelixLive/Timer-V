@@ -74,10 +74,12 @@ execute if score reset_type timer_settings matches 0..2 if score reset_message_s
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 run tag @a remove type_afk
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 run gamerule dodaylightcycle false
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 run gamerule doweathercycle false
-execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score night_vision timer_settings matches 1 run effect @a clear
-execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score gravity timer_addon matches 1 run effect @e clear
-execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score speed_x timer_addon matches 1 run effect @e clear
-execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score invisibility timer_addon matches 1 run effect @e clear
+
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score night_vision timer_settings matches 1 run effect @a clear night_vision
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score gravity timer_addon matches 1 run effect @e clear levitation
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score gravity timer_addon matches 1 run effect @e clear slow_falling
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score speed_x timer_addon matches 1 run effect @e clear speed
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score invisibility timer_addon matches 1 run effect @e clear invisibility
 
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score no_move timer_addon matches 1.. run inputpermission set @a movement enabled
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score no_move timer_addon matches 2 run inputpermission set @a camera enabled

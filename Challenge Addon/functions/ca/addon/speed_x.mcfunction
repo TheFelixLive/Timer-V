@@ -20,17 +20,11 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score level_equals_border timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§c[§bWorld Boader§c]§r The level equals border challange is not compatible with the Speed X challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score level_equals_border timer_addon matches 1 run scoreboard players set level_equals_border timer_addon 0
 
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score invisibility timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§7[§fInfo§7]§r Invisibility is not compatible with the Speed X challenge and has been disabled!"}]}
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score invisibility timer_addon matches 1 run scoreboard players set invisibility timer_addon 0
-
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score gravity timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§2[§gInfo§2]§r The gravity challange is not compatible with the Speed X challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score gravity timer_addon matches 1 run scoreboard players set gravity timer_addon 0
 
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score no_move timer_addon matches 1.. run tellraw @s {"rawtext":[{"text":"§l§f[§5Info§f]§r The no move challange is not compatible with the Speed X challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score no_move timer_addon matches 1.. run scoreboard players set no_move timer_addon 0
-
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score night_vision timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§1[§9Info§1]§r The mod fullbright is not compatible with the Speed X challenge and has been disabled!"}]}
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score night_vision timer_settings matches 1 run scoreboard players set night_vision timer_settings 0
 
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score afk timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§3[§bAFK§3]§r The mod AFK is not compatible with the gravity challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score afk timer_settings matches 1 run scoreboard players set afk timer_settings 0

@@ -54,10 +54,11 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 if entity @s[tag=type_afk] run tellraw @a {"rawtext":[{"text":"§l§3[§bAFK§3]§r The timer was §4paused§r because §l"},{"selector": "@s"},{"text":"§r went AFK"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 run title @s title §4Timer paused
 
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score night_vision timer_settings matches 1 run effect @a clear
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e clear
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_x timer_addon matches 1 run effect @e clear
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score invisibility timer_addon matches 1 run effect @e clear
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score night_vision timer_settings matches 1 run effect @a clear night_vision
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e clear levitation
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run effect @e clear slow_falling
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_x timer_addon matches 1 run effect @e clear speed
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score invisibility timer_addon matches 1 run effect @e clear invisibility
 
 
 # Speedrun Error
