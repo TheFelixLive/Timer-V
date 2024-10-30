@@ -271,7 +271,7 @@
                     {
                         "name":"",
                         "commands":[
-                          "/dialogue open @s @initiator menu_challenge_no_2",
+                          "/dialogue open @s @initiator menu_challenge_no",
                           "scoreboard players set action timer_menu 1"
                       ]
                     }

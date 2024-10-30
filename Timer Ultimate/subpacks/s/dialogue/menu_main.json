@@ -667,28 +667,7 @@
                           "execute if score min timer_time matches 60.. run scoreboard players remove min timer_time 60",
                           "dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on"
                         ]
-                    },/*
-                    {
-                      "name":"§l§a+1 Second", // Seconds wont't save as time mode
-                      "commands":[
-                        "scoreboard players set action timer_menu 1",
-                        "scoreboard players add sec timer_time 1",
-      
-                        "execute if score sec timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.levelup @a[tag=timer_menu_target]",
-                        "execute if score sec timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.up @a[tag=timer_menu_target]",
-      
-                        "execute unless score sec timer_time matches 60.. unless score custom_music timer_settings matches 1 run playsound random.orb @a[tag=timer_menu_target]",
-                        "execute unless score sec timer_time matches 60.. if score custom_music timer_settings matches 1 run playsound timeru.menu.time.normal @a[tag=timer_menu_target]",
-      
-      
-                        "execute if score sec timer_time matches 60.. run scoreboard players add min timer_time 1",
-
-                        "execute if score sec timer_time matches 60.. run dialogue open @s @a[tag=timer_menu_target] menu_time_2",
-                        "execute unless score sec timer_time matches 60.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off",
-
-                        "execute if score sec timer_time matches 60.. run scoreboard players remove sec timer_time 60"
-                      ]
-                    },*/
+                    },
                     {
                       "name":"§l§dRandom",
                       "commands":[
@@ -798,6 +777,7 @@
                         "execute if score h timer_time matches 1.. unless score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on", // "shoud_count_down" can't be used here, because it's updateing is self after those 3 lines
                         "execute unless score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
                         "execute if score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+                        "execute if score h timer_time matches 0 if score min timer_time matches 0 run scoreboard players set sec timer_time 0",
                         "execute if score h timer_time matches 0 if score min timer_time matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off"
                       ]
                   },
@@ -819,6 +799,7 @@
                         "execute if score h timer_time matches 1.. unless score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on", // "shoud_count_down" can't be used here, because it's updateing is self after those 3 lines
                         "execute unless score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
                         "execute if score h timer_time matches 1.. if score min timer_time matches 1.. run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_on",
+                        "execute if score h timer_time matches 0 if score min timer_time matches 0 run scoreboard players set sec timer_time 0",
                         "execute if score h timer_time matches 0 if score min timer_time matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_time_1_time_mode_off"
                       ]
                   }
