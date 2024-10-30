@@ -30,6 +30,9 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score floor_is_lava timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§c[§6Info§c]§r The floor = lava challenge is not compatible with the gravity challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score floor_is_lava timer_addon matches 1 run scoreboard players set floor_is_lava timer_addon 0
 
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score only timer_addon matches 1.. run tellraw @s {"rawtext":[{"text":"§l§u[§dInfo§u]§r The only challenge is not compatible with the gravity challenge and has been disabled!"}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score only timer_addon matches 1.. run scoreboard players set only timer_addon 0
+
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score afk timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§3[§bAFK§3]§r The mod AFK is not compatible with the gravity challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score afk timer_settings matches 1 run scoreboard players set afk timer_settings 0
 

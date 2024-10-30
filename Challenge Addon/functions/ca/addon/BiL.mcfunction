@@ -23,6 +23,9 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score ice_challenge timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§f[§bInfo§f]§r The ice challenge is not compatible with floor = lava and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score ice_challenge timer_addon matches 1 run scoreboard players set ice_challenge timer_addon 0
 
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score level_equals_border timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§c[§bWorld Boader§c]§r The level equals border challange is not compatible with the Speed X challenge and has been disabled!"}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score level_equals_border timer_addon matches 1 run scoreboard players set level_equals_border timer_addon 0
+
 
 # Error
 execute if entity @s[tag=!trust_player_control] run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r You do not have the necessary permissions for this action. Current players who could grant you this permission: §l"},{"selector": "@a[tag=trust_player_control]"}]}

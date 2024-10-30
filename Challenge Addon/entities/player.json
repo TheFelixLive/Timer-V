@@ -6,8 +6,8 @@
       "spawn_category": "creature",
       "is_spawnable": false,
       "is_summonable": false,
-      "scripts": { "animate": [ "1_heard", "death", "sneak_ons", "afk", "sneak_not", "ground", "speed_x_afk", "swimming", "jump" ] },
-      "animations": { "1_heard": "controller.animation.took_damage.player", "death": "controller.animation.on_death.player", "sneak_ons": "controller.animation.sneak.player_ons", "afk": "controller.animation.player.afk","sneak_not": "controller.animation.sneak.player_not", "ground": "controller.animation.ground", "speed_x_afk": "controller.animation.player.speed_x_afk", "swimming": "controller.animation.swimming", "jump": "controller.animation.jump" }
+      "scripts": { "animate": [ "sprint", "1_heard", "death", "sneak_ons", "afk", "sneak_not", "ground", "speed_x_afk", "swimming", "jump" ] },
+      "animations": { "sprint": "controller.animation.sprinting", "1_heard": "controller.animation.took_damage.player", "death": "controller.animation.on_death.player", "sneak_ons": "controller.animation.sneak.player_ons", "afk": "controller.animation.player.afk","sneak_not": "controller.animation.sneak.player_not", "ground": "controller.animation.ground", "speed_x_afk": "controller.animation.player.speed_x_afk", "swimming": "controller.animation.swimming", "jump": "controller.animation.jump" }
     },
 
     "component_groups": {

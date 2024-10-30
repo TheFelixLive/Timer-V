@@ -141,10 +141,8 @@ execute unless score enchant timer_addon matches 0.. unless score look timer_set
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_block_break timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_block_place timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_armor timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_move timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_swimming timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_jump timer_addon 0
-
+execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set movement timer_addon 0
+execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set only timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set floor_is_lava timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set gravity timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set level_equals_border timer_addon 0

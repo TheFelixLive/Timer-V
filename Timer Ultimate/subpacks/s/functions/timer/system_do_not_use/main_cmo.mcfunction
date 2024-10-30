@@ -221,10 +221,10 @@ execute if score mode timer_settings matches 0 as @a[m=s, tag=!trust_player_cont
 execute if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 as @a[m=!spectator, tag=trust_player_control] at @s run function timer/control
 execute if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 as @a[m=!spectator, tag=!trust_player_control] at @s run gamemode spectator @s
 
-# no_move
+# movement
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score no_move timer_addon matches 1.. run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score no_move timer_addon matches 2 run inputpermission set @a camera disabled
+execute if score mode timer_settings matches 1 if score movement timer_addon matches 4.. run inputpermission set @a movement disabled
+execute if score mode timer_settings matches 1 if score movement timer_addon matches 5 run inputpermission set @a camera disabled
 
 
 # definition

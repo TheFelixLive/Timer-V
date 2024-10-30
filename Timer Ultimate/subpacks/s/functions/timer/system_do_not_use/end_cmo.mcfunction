@@ -81,8 +81,8 @@ execute if score reset_type timer_settings matches 0..2 if score reset_message_s
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score speed_x timer_addon matches 1 run effect @e clear speed
 execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score invisibility timer_addon matches 1 run effect @e clear invisibility
 
-execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score no_move timer_addon matches 1.. run inputpermission set @a movement enabled
-execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score no_move timer_addon matches 2 run inputpermission set @a camera enabled
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score movement timer_addon matches 4.. run inputpermission set @a movement enabled
+execute if score reset_type timer_settings matches 0..2 if score reset_message_show timer_settings matches 0 if score movement timer_addon matches 5 run inputpermission set @a camera enabled
 
 execute if score reset_type timer_settings matches 0..1 if score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 0 run gamemode spectator @a
 execute if score reset_type timer_settings matches 2 if score reset_message_show timer_settings matches 0 run gamemode 1 @a
