@@ -96,10 +96,6 @@ execute if entity @a[tag=kill] run scoreboard players set reset_type timer_setti
 execute if entity @a[tag=kill] run function timer/system_do_not_use/end_cmo
 tag @a[tag=kill] remove kill
 
-# no_move
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_move timer_addon matches 1.. run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_move timer_addon matches 2 run inputpermission set @a camera disabled
-
 
 ### Feedback at actionbar for Enchant
 # Title when someone in the main-menu is
