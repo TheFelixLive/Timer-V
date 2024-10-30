@@ -223,8 +223,8 @@ execute if score mode timer_settings matches 2 if score reset_type timer_setting
 
 # no_move
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_move timer_addon matches 1.. run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_move timer_addon matches 2 run inputpermission set @a camera disabled
+execute if score mode timer_settings matches 1 if score no_move timer_addon matches 1.. run inputpermission set @a movement disabled
+execute if score mode timer_settings matches 1 if score no_move timer_addon matches 2 run inputpermission set @a camera disabled
 
 
 # definition
