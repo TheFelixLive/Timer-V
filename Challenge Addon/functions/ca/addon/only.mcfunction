@@ -27,9 +27,15 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 
 
 # if other incompatible things were active
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score gravity timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§2[§gInfo§2]§r The gravity is not compatible with the ice challenge and has been disabled!"}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score gravity timer_addon matches 1 run tellraw @s {"rawtext":[{"text":"§l§2[§gInfo§2]§r The gravity is not compatible with the only challenge and has been disabled!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score gravity timer_addon matches 1 run scoreboard players set gravity timer_addon 0
 
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§2[§aDimension§2]§r Dimension is not compatible with the only challenge and has been disabled!"}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 1 run scoreboard players set dimension timer_addon 0
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 1 in overworld run tp @a ~ 70 ~
+
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score only timer_addon matches 1 if score night_vision timer_settings matches 0 run tellraw @s {"rawtext":[{"text":"§l§1[§9Info§1]§r Fullbright is active, it is recommended to use it with Only Up"}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score only timer_addon matches 1 if score night_vision timer_settings matches 0 run scoreboard players set night_vision timer_settings 1
 
 
 
