@@ -50,7 +50,7 @@ execute if entity @s[tag=!trust_player_control] if score custom_music timer_sett
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r This action can only run in the main menu."}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 2 if score help timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§6[§eHelp§6]§r Run §g§l/function timer/control§r"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score custom_music timer_settings matches 0 run playsound note.didgeridoo
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score custom_music timer_settings matches 1 run playsound note.function_no_content
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score custom_music timer_settings matches 1 run playsound timeru.function_no_content
 
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 if score speed_run timer_settings matches 1 unless score dimension timer_settings matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§u[§dSpeed Run§u]§r Your Dimension cannot be used with \"Speed Run\", which is why it was disabled"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 if score speed_run timer_settings matches 1 unless score dimension timer_settings matches 1 run scoreboard players set speed_run timer_settings 0
