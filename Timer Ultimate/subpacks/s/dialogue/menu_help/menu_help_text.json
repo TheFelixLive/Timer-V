@@ -335,7 +335,7 @@
             {
                 "scene_tag":"menu_help_text_advanced_version",
                 "npc_name":"§lTimer Ultimate - Version",
-                "text":"§3§lAdvanced Version§r§8\n\nAddon: Timer Ultimate\nLanguage: English\nSettings: Surival\nCode-Name: CMO\nArchitecture: Scoreboard\nGeneration: 4\nTimer Version: 4.1.0\nType: Public Beta 1\nUpdate since Version: /\nMaximum Time: 1000 hours (41,67 Days)\nChallenge-Addon: /\nMinecraft Version: (min.) 1.21.0\n",
+                "text":"§3§lAdvanced Version§r§8\n\nAddon: Timer Ultimate\nLanguage: English\nCode-Name: CMO\nArchitecture: Scoreboard\nGeneration: 4\nTimer Version: 4.1.0\nMaximum Time: 1000 hours (41,67 Days)\nChallenge-Addon: 4.1.0\nMinecraft Version: (min.) 1.21.41\n",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
