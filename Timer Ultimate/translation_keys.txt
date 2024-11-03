@@ -1,0 +1,34 @@
+# header
+timeru.header.error=§l§6[§eError§6]§r
+timeru.header.help=§l§6[§eHelp§6]§r
+
+
+timeru.header.afk=§l§3[§bAFK§3]§r
+timeru.header.night_vision=§l§1[§9Info§1]§r
+
+
+
+
+# Messages
+
+# help
+timeru.message.help.run=Run §g§l%%s§r
+
+# permissions
+timeru.message.permission.no=You do not have the necessary permissions for this action. Current players who could grant you this permission: §l%%s
+
+# reset state (when the timer ends)
+timeru.message.reset_state.error=This action can only run in the main menu.
+
+# Speed Run
+timeru.message.speedrun.error.on_other=%%s could not be activated because the "Speed Run Mode" is active.
+
+
+# Fullbright
+timeru.message.night_vision.on=All players get permanent night vision
+timeru.message.night_vision.off=The Fullbright modification is deactivated.
+
+# AFK
+timeru.message.afk.on= The automatic AFK detector is activated, if someone goes AFK for more than 30 seconds, the timer will be paused.
+timeru.message.afk.off=The automatic AFK detector is deactivated and the timer continues to run all the time.
+timeru.message.afk.error.on_other=The modification AFK could not be activated because the %%s is active.

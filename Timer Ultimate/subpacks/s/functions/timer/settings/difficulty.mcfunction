@@ -2,7 +2,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run gamerule naturalregeneration true
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 if score difficulty timer_settings matches 5.. run scoreboard players set difficulty timer_settings 0
 
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run tag @r add difficulty_title
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run tag @s add difficulty_title
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if entity @s[tag=timer_menu_target] run tag @s add difficulty_title
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless entity @s[tag=timer_menu_target] run tag @s add difficulty_message
 
