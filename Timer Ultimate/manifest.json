@@ -2,7 +2,7 @@
     "format_version": 2,
     "header": {
         "description": "Adds a timer to your world customized for your game mode.",
-        "name": "§l§fTimer §7Ultimate§r [Public Beta]",
+        "name": "§l§fTimer §7Ultimate§r",
         "uuid": "f05fdf1b-8866-4ac7-b0f5-646295e8485e",
         "version": [ 4, 1, 0],
         "min_engine_version": [1, 21, 41]
@@ -25,12 +25,12 @@
     "subpacks": [
     {
       "folder_name": "s",
-      "name": "§l§gSurvival§r\n§9Description: Counts until the goal is defeated\n§cImportant: This is a public beta, there is a high probability for bugs or wrong translation!\n§b§lDate: 20.07.24§r -- §av.4.1.0 [Public Beta 1]",
+      "name": "§l§gSurvival§r\n§9Description: Counts until the goal is defeated\n§b§lDate: 20.07.24§r -- §av.4.1.0",
       "memory_tier": 0
     },
     {
       "folder_name": "c",
-      "name": "§l§gCreative§r\n§9Description: Counts the playing time of each player\n§cImportant: This is a public beta, there is a high probability for bugs or wrong translation!\n§b§lDate: 20.07.24§r -- §av.4.1.0 [Public Beta 1]",
+      "name": "§l§gCreative§r\n§9Description: Counts the playing time of each player\n§b§lDate: 20.07.24§r -- §av.4.1.0",
       "memory_tier": 1
     }
   ],
