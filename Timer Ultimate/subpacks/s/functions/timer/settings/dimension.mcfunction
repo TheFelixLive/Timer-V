@@ -7,9 +7,9 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 0 in overworld run tp @a ~ 70 ~
 # execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 0 if score custom_music timer_settings matches 0 run playsound mob.wanderingtrader.yes @s ~~~ 1 0.8 # If someone want to add sound? Remove the Comment!
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 0 if score custom_music timer_settings matches 1 run playsound timeru.dimension_0 @s
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 0 run tellraw @s {"rawtext":[{"text":"§l§2[§aDimension§2]§r Play in the overworld!"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 0 run tellraw @s {"rawtext":[{"text":"§l§2[§aDimension§2]§r Spiele in der Overworld!"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 0 run tellraw @s {"rawtext":[{"translate":"timeru.header.dimension.0"},{"text":" "},{"translate":"timeru.message.dimension.0"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 0 if score lang timer_settings matches 0 run tellraw @s {"rawtext":[{"text":"§l§2[§aDimension§2]§r Play in the overworld!"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 0 if score lang timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§2[§aDimension§2]§r Spiele in der Overworld!"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 0 if score lang timer_settings matches 2 run tellraw @s {"rawtext":[{"translate":"timeru.header.dimension.0"},{"text":" "},{"translate":"timeru.message.dimension.0"}]}
 
 
 
@@ -17,9 +17,9 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 1 in nether run tp @a ~ 70 ~
 # execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 1 if score custom_music timer_settings matches 0 run playsound mob.zombie.unfect @s
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.dimension_1 @s
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§4[§cDimension§4]§r Defeat your goal in the nether!"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§4[§cDimension§4]§r Besiege dein Ziel im Nether"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 1 run tellraw @s {"rawtext":[{"translate":"timeru.header.dimension.1"},{"text":" "},{"translate":"timeru.message.dimension.1"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 1 if score lang timer_settings matches 0 run tellraw @s {"rawtext":[{"text":"§l§4[§cDimension§4]§r Defeat your goal in the nether!"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 1 if score lang timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§4[§cDimension§4]§r Besiege dein Ziel im Nether"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 1 if score lang timer_settings matches 2 run tellraw @s {"rawtext":[{"translate":"timeru.header.dimension.1"},{"text":" "},{"translate":"timeru.message.dimension.1"}]}
 
 
 
@@ -27,9 +27,9 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 2 in the_end run tp @a 1000 70 1000
 # execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 2 if score custom_music timer_settings matches 0 run playsound mob.evocation_illager.prepare_summon @s ~~~ 1 0.8
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score dimension timer_settings matches 2 if score custom_music timer_settings matches 1 run playsound timeru.dimension_2 @s
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 2 run tellraw @s {"rawtext":[{"text":"§l§5[§dDimension§5]§r End Minecraft in the end!"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 2 run tellraw @s {"rawtext":[{"text":"§l§5[§dDimension§5]§r Bende Minecraft im End!"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 2 run tellraw @s {"rawtext":[{"translate":"timeru.header.dimension.2"},{"text":" "},{"translate":"timeru.message.dimension.2"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 2 if score lang timer_settings matches 0 run tellraw @s {"rawtext":[{"text":"§l§5[§dDimension§5]§r End Minecraft in the end!"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 2 if score lang timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§5[§dDimension§5]§r Bende Minecraft im End!"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches ..1 if score dimension timer_settings matches 2 if score lang timer_settings matches 2 run tellraw @s {"rawtext":[{"translate":"timeru.header.dimension.2"},{"text":" "},{"translate":"timeru.message.dimension.2"}]}
 
 
 
