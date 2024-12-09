@@ -26,7 +26,7 @@ tag @s remove error_message
 execute if score is_open timer_menu matches 0 run tag @s add timer_menu_target
 execute if score is_open timer_menu matches 0 run summon npc ~~-20~~~ attacked timer_menu
 execute if score is_open timer_menu matches 0 run gamemode spectator
-execute if score is_open timer_menu matches 0 if score host_mode timer_menu matches 0 if score @s timer_night_vision matches 1 run effect @s clear
+execute if score is_open timer_menu matches 0 if score host_mode timer_menu matches 0 if score @s timer_night_vision matches 1 run effect @s clear night_vision
 execute if score is_open timer_menu matches 0 if score host_mode timer_menu matches 0 if score @s timer_do_count matches 0 run tag @s add mode_0
 execute if score is_open timer_menu matches 0 if score host_mode timer_menu matches 0 if score @s timer_do_count matches 1 run tag @s add mode_1
 execute if score is_open timer_menu matches 0 if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 run tag @s add mode_2

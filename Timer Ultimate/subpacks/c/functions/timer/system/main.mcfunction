@@ -179,14 +179,14 @@ execute unless entity @e[type=npc, name=timer_menu] if score look timer_setup ma
 
 
 # When the timer is over 999 days
-tellraw @a[scores={timer_do_count=1.., timer_time_d=1000..}] {"rawtext":[{"text":"§l§4[§cSystem§4]§r Der Timer kann nicht weiter als 1000 Tagen [2,74 Jahren] zählen. Verwende das Menü um ihn zurückzusetzen!"}]}
-execute as @a[scores={timer_do_count=1.., timer_time_d=1000.., timer_night_vision=1}] run effect @s clear
+tellraw @a[scores={timer_do_count=1.., timer_time_d=1000..}] {"rawtext":[{"text":"§l§4[§cError§4]§r The timer cannot count past 1000 days [2.74 years]. Use the menu to reset it!"}]}
+execute as @a[scores={timer_do_count=1.., timer_time_d=1000.., timer_night_vision=1}] run effect @s clear night_vision
 execute as @a[scores={timer_do_count=1.., timer_time_d=1000..}] run playsound respawn_anchor.set_spawn @s[scores={timer_custom_music=0}]
 execute as @a[scores={timer_do_count=1.., timer_time_d=1000..}] run playsound timeru.type_other.target @s[scores={timer_custom_music=1}]
 execute as @a[scores={timer_do_count=1.., timer_time_d=1000..}] run scoreboard players set @s timer_do_count 0
 
-execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cSystem§4]§r Der Timer kann nicht weiter als 1000 Tagen [2,74 Jahren] zählen. Verwende das Menü um ihn zurückzusetzen!"}]}
-execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. if score host timer_night_vision matches 1 run effect @a clear
+execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cError§4]§r The timer cannot count past 1000 days [2.74 years]. Use the menu to reset it!"}]}
+execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. if score host timer_night_vision matches 1 run effect @a clear night_vision
 execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. as @a[tag=trust_player_control] run playsound respawn_anchor.set_spawn @s[scores={timer_custom_music=0}]
 execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. as @a[tag=trust_player_control] run playsound timeru.type_other.target @s[scores={timer_custom_music=1}]
 execute if score host timer_time_d matches 1000.. if score host timer_do_count matches 1.. as @a[tag=trust_player_control] run scoreboard players set host timer_do_count 0
@@ -195,7 +195,7 @@ execute if score host timer_time_d matches 1000.. if score host timer_do_count m
 execute if score host timer_do_count matches 1.. if score host timer_shoud_count_down matches 1 if score host timer_time_d matches 0 if score host timer_time_d matches 0 if score host timer_time_h matches 0 if score host timer_time_min matches 0 if score host timer_time_sec matches 0 if score host timer_time_ms matches 0 run tag @r add timer_up
 
 execute if entity @a[tag=timer_up] run tellraw @a {"rawtext":[{"text":"§l§4[§cSystem§4]§r Time Up!"}]}
-execute if entity @a[tag=timer_up] if score host timer_night_vision matches 1 run effect @a clear 
+execute if entity @a[tag=timer_up] if score host timer_night_vision matches 1 run effect @a clear night_vision
 execute if entity @a[tag=timer_up] as @a[tag=trust_player_control] run playsound respawn_anchor.set_spawn @a[scores={timer_custom_music=0}]
 execute if entity @a[tag=timer_up] as @a[tag=trust_player_control] run playsound timeru.type_other.target @a[scores={timer_custom_music=1}]
 execute if entity @a[tag=timer_up] run scoreboard players set host timer_do_count 0
@@ -212,7 +212,14 @@ execute if score host_mode timer_menu matches 2 run effect @a[scores={timer_nigh
 # Testfor loop
 execute if entity @a[tag=test_person] run function timer/tesfor
 
+# The no player is online on globalmode control
+execute unless entity @a if score host_mode timer_menu matches 1 if score host timer_do_count matches 1 run say The timer has stopped because no player is online.
+execute unless entity @a if score host_mode timer_menu matches 1 if score host timer_do_count matches 1 run scoreboard players set temp_host timer_do_count 1
+execute unless entity @a if score host_mode timer_menu matches 1 if score host timer_do_count matches 1 run scoreboard players set host timer_do_count 0
 
+execute if entity @a if score host_mode timer_menu matches 1 if score temp_host timer_do_count matches 1 run tellraw @a {"rawtext":[{"text":"§l§7[§fSystem§7]§r The timer was previously paused due to inactivity"}]}
+execute if entity @a if score host_mode timer_menu matches 1 if score temp_host timer_do_count matches 1 run scoreboard players set host timer_do_count 1
+execute if entity @a if score host_mode timer_menu matches 1 if score temp_host timer_do_count matches 1 run scoreboard players reset temp_host timer_do_count
 
 
 ### The will at the Host 5 ms, if the Timer is continue

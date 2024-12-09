@@ -10,7 +10,7 @@ execute if score host_mode timer_menu matches 0 if score @s timer_do_count match
 
 execute if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 if score @s timer_custom_music matches 0 run playsound beacon.deactivate
 execute if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 if score @s timer_custom_music matches 1 run playsound timeru.frozen
-execute if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 if score @s timer_night_vision matches 1 run effect @s clear
+execute if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 if score @s timer_night_vision matches 1 run effect @s clear night_vision
 execute if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 run title @s title §4Timer paused§r
 execute if score host_mode timer_menu matches 0 if score @s timer_do_count matches 2 run tellraw @s {"rawtext":[{"text":"§l§7[§fSystem§7]§r Timer §4paused§r"}]}
 
@@ -26,7 +26,7 @@ execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_co
 
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_do_count matches 3 run playsound beacon.deactivate @a[scores={timer_custom_music=0}]
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_do_count matches 3 run playsound timeru.frozen @a[scores={timer_custom_music=1}]
-execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_do_count matches 3 if score host timer_night_vision matches 1 run effect @a clear
+execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_do_count matches 3 if score host timer_night_vision matches 1 run effect @a clear night_vision
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_do_count matches 3 run title @a title §4Timer paused§r
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_do_count matches 3 run tellraw @a {"rawtext":[{"text":"§l§7[§fSystem§7]§r Timer §4paused§r"}]}
 

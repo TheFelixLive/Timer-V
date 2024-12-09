@@ -15,7 +15,7 @@ execute unless score host_mode timer_menu matches 1 if score @s timer_night_visi
 execute unless score host_mode timer_menu matches 1 if score @s timer_night_vision matches 2 run title @s title §9Fullbright
 execute unless score host_mode timer_menu matches 1 if score @s timer_night_vision matches 2 run title @s subtitle --this modification is §coff§f --
 execute unless score host_mode timer_menu matches 1 if score @s timer_night_vision matches 2 run tellraw @s {"rawtext":[{"text":"§l§1[§9Info§1]§r The Fullbright modification is deactivated."}]}
-execute unless score host_mode timer_menu matches 1 if score @s timer_night_vision matches 2 run effect @s clear
+execute unless score host_mode timer_menu matches 1 if score @s timer_night_vision matches 2 run effect @s clear night_vision
 
 
 
@@ -32,7 +32,7 @@ execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_co
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_night_vision matches 2 run title @s title §9Fullbright
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_night_vision matches 2 run title @s subtitle --this modification is §coff§f --
 execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_night_vision matches 2 run tellraw @a {"rawtext":[{"text":"§l§1[§9Info§1]§r The Fullbright modification is deactivated."}]}
-execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_night_vision matches 2 run effect @a clear
+execute if score host_mode timer_menu matches 1 if entity @s[tag=trust_player_control] if score host timer_night_vision matches 2 run effect @a clear night_vision
 
 # Error
 execute if score host_mode timer_menu matches 1 if entity @s[tag=!trust_player_control] run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r You do not have the necessary permissions for this action. Current players who could grant you this permission: §l"},{"selector": "@a[tag=trust_player_control]"}]}

@@ -7,10 +7,6 @@ execute if entity @s[tag=trust_player_control] if score is_open timer_menu match
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 1 unless score custom_music timer_settings matches 1 run playsound block.false_permissions
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 1 if score custom_music timer_settings matches 1 run playsound timeru.function_not_available @s
 
-# Sartup menu when mode matches 2 and reset_type 0 or 1
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score difficulty timer_settings matches 0..1 unless score reset_type timer_settings matches 2 run tellraw @s {"rawtext":[{"text":"§l§4[§cError§4]§r Automatic (mode) reset failed! Restoring..."}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score difficulty timer_settings matches 0..1 unless score reset_type timer_settings matches 2 run scoreboard objectives remove timer_settings
-
 # Startup menu when mode matches 2 and Hardcore 1
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score difficulty timer_settings matches 2.. unless score reset_type timer_settings matches 2 run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r This action can only run in the main menu."}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score difficulty timer_settings matches 2.. unless score reset_type timer_settings matches 2 unless score custom_music timer_settings matches 1 run playsound note.didgeridoo
