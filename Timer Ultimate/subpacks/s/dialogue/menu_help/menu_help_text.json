@@ -66,7 +66,7 @@
             {
               "scene_tag":"menu_help_text_htu_1.1",
               "npc_name":"§lTimer Ultimate - How to use",
-              "text":"§3§lCustom Languages\n\n§r§8§lRequirements:§r§8\n1. A resource pack\n\n§lSetup:§r§8\n1. Navigate to the file location of the timer (you can find it by clicking the green checkmark when you activated it).\n\n2. Open the folder \"subpacks\"\n\n3. Open the folder \"s\"\n\n4. Follow the instructions in \"translation_keys.txt\"",
+              "text":"§3§lCustom Languages\n\n§r§8§lRequirements:§r§8\n1. A resource pack\n\n§lSetup:§r§8\n1. Navigate to the file location of the timer (you can find it by clicking the green checkmark when you activated it).\n\n2. Open the folder \"sample resource pack\"\n\n3. Follow the instructions in \"readme.txt\"",
               "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                   "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
@@ -168,7 +168,7 @@
             {
               "scene_tag":"menu_help_text_htu_3.1",
               "npc_name":"§lTimer Ultimate - How to use",
-              "text":"§3§lCustom Music\n\n§r§8§lRequirements:§r§8\n1. All sound files must be in OGG format\n2. A resource pack\n\n§lSetup:§r§8\n1. Navigate to the file location of the timer (you can find it by clicking the green checkmark when you activated it).\n\n2. Open the folder \"subpacks\"\n\n3. Open the folder \"s\"\n\n4. Follow the instructions in \"sound_keys.txt\"",
+              "text":"§3§lCustom Music\n\n§r§8§lRequirements:§r§8\n1. All sound files must be in OGG format\n2. A resource pack\n\n§lSetup:§r§8\n1. Navigate to the file location of the timer (you can find it by clicking the green checkmark when you activated it).\n\n2. Open the folder \"sample resource pack\"\n\n4. Follow the instructions in \"readme.txt\"",
               "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                   "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

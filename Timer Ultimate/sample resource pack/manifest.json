@@ -1,0 +1,19 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "This is a sample pack to customize your Timer Ultimate",
+        "pack_scope": "world",
+        "name": "§oSample pack for §r§l§fTimer §7Ultimate§r",
+        "uuid": "396c11d2-83e8-4111-8d14-88478e02d30a",
+        "version": [ 4, 1, 0],
+        "min_engine_version": [1, 21, 41]
+    },
+    "modules": [
+        {
+            "description": "",
+            "type": "resources",
+            "uuid": "c3c532de-3b45-4c30-a505-d3834b0928fc",
+            "version": [4, 1, 0]
+        }
+    ]
+}

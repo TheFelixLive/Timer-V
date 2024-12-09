@@ -1,0 +1,84 @@
+## header
+timeru.header.error=§l§6[§eError§6]§r
+timeru.header.fatal_error=§l§4[§cError§4]§r
+
+timeru.header.help=§l§6[§eHelp§6]§r
+timeru.header.system=§l§7[§fSystem§7]§r
+
+timeru.header.afk=§l§3[§bAFK§3]§r
+timeru.header.night_vision=§l§1[§9Info§1]§r
+
+timeru.header.difficulty.0=§l§2[§aDifficulty§2]§r
+timeru.header.difficulty.1=§l§7[§fDifficulty§7]§r
+timeru.header.difficulty.2=§l§4[§cDifficulty§4]§r
+
+timeru.header.dimension.0=§l§2[§aDimension§2]§r
+timeru.header.dimension.1=§l§4[§cDimension§4]§r
+timeru.header.dimension.2=§l§5[§dDimension§5]§r
+
+timeru.header.goal=§l§5[§dGoal§5]§r
+
+
+
+
+## Messages
+
+## Incompatible
+timeru.message.incompatible.forese=%1 is not compatible with %2, therefore %2 changed to %3!
+timeru.message.incompatible.not_possible=%1 isn't compatible with %2! Disable %2 to make changes.
+
+## help
+timeru.message.help.run=Run §g§l%s§r
+
+## permissions
+timeru.message.permission.no=You do not have the necessary permissions for this action. Current players who could grant you this permission: §l%s
+timeru.message.permission.system=This function is not available
+
+## reset state (when the timer ends)
+
+
+
+
+
+timeru.message.reset_state.error=This action can only run in the main menu.
+
+## Speed Run
+
+
+## Visible
+timeru.message.visible.0=Timer is §8invisible
+timeru.message.visible.1=Timer is §7visible
+
+## dimension
+timeru.message.dimension.0=Play in the overworld!
+timeru.message.dimension.1=Defeat your goal in the nether!
+timeru.message.dimension.2=End Minecraft in the end!
+
+## Goal
+timeru.message.goal.selected.not_set=§2The §l§gGoal§r§2 is not defined
+timeru.message.goal.selected.creature=§l§g%s§r§2 is selected
+timeru.message.goal.selected.event=§2A §l§4%s§r §2is selected
+timeru.message.goal.selected.structure=§l§b%s§r §2is selected
+timeru.message.goal.selected.time=§2Survive§g§l %1h %2m %3s
+
+timeru.message.goal.remember.not_set=You have no goal!
+timeru.message.goal.remember.general=Your goal is: %s
+timeru.message.goal.remember.creature=Defeat the §5%s§r
+timeru.message.goal.remember.event=Complete a §4%s§r
+timeru.message.goal.remember.structure=Loot a §b%s§r
+timeru.message.goal.remember.time=§2Survive§g§l %1h %2m %3s
+
+## Fullbright
+timeru.message.night_vision.on=All players get permanent night vision
+timeru.message.night_vision.off=The Fullbright modification is deactivated.
+
+## AFK
+timeru.message.afk.on= The automatic AFK detector is activated, if someone goes AFK for more than 30 seconds, the timer will be paused.
+timeru.message.afk.off=The automatic AFK detector is deactivated and the timer continues to run all the time.
+
+## difficulty
+timeru.message.difficulty.0=From now on the challenge no longer ends when a player dies!
+timeru.message.difficulty.1=From now on there will be no more restrictions
+timeru.message.difficulty.2=§4Hardcore §cMode§l is active!§r §6If someone dies on the way to the goal,§b the world is lost!
+timeru.message.difficulty.3=§cUltra §4Hardcore§c§l is active!§r The §lnatural Regeneration§r is §l§7OFF§r
+timeru.message.difficulty.4=§7Infinity§c§l is active!§r Play §lwithout damage§r to achieve your goal!
