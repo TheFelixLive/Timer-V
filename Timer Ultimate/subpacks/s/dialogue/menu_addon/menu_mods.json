@@ -38,6 +38,8 @@
                     "/dialogue open @s @initiator menu_custom_music_test"
                   ]
               },
+              // You can find an explanation in "menu_main"
+              /*
               {
                 "name":"§l§fLang",
                 "commands":[
@@ -47,7 +49,7 @@
                   "dialogue open @s @a[tag=timer_menu_target] menu_lang_main",
                   "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.lang @p"
                 ]
-              },
+              },*/
                   {
                     "name":"",
                     "commands":[

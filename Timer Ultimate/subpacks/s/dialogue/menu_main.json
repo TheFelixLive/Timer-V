@@ -41,6 +41,8 @@
                     "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
                    ]
                  },
+                 // Theoretically the feature works, but many translations are missing, which is why I removed it due to time constraints
+                 /*
                  {
                   "name":"§l§fLang",
                   "commands":[
@@ -50,7 +52,7 @@
                     "dialogue open @s @a[tag=timer_menu_target] menu_lang_main",
                     "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.lang @p"
                   ]
-                },
+                },*/
                  {
                   "name":"",
                   "commands":[
