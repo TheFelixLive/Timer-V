@@ -3,7 +3,7 @@
 
 # About
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
-That's why there are different timers: one for [survival]([url](https://github.com/TheFelixLive/Timer-Ultimate/edit/main/README.md#survival-mode)) and one for [creative]([url](https://github.com/TheFelixLive/Timer-Ultimate/edit/main/README.md#creative-mode)).
+That's why there are different timers: one for [survival](#survival-mode) and one for [creative](#creative-mode).
 
 > [!TIP]
 >  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
