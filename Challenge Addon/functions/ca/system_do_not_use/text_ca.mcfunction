@@ -35,7 +35,10 @@ execute if entity @a[tag=on_start_challage] if score mode timer_settings matches
 
 
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§u[§dInfo§u]§r Your height is restricted, if someone goes down, it's over"}]}
-execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run tp @a 0 -62 0
+# Won't run if tickingarea is missing, players are loading it too late!
+execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run tickingarea add circle 0 -61 0 4 timer_for_fill true
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run fill -1 -63 -1 1 -63 1 oak_log ["pillar_axis"="x"]
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run fill -1 -60 -1 1 -62 1 air
+execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run tickingarea remove timer_for_fill
+execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run tp @a 0 -62 0
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 2 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§u[§dInfo§u]§r Your height is restricted, if someone goes up, it's over"}]}

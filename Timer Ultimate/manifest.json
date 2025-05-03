@@ -31,7 +31,7 @@
     {
       "folder_name": "c",
       "name": "§l§gCreative§r\n§9Description: Counts the playing time of each player\n§b§lDate: 20.07.24§r -- §av.4.1.0",
-      "memory_tier": 1
+      "memory_tier": 0
     }
   ],
   "dependencies": [
