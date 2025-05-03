@@ -8,7 +8,7 @@ That's why there are different timers: one for [survival](#survival-mode) and on
 > [!TIP]
 >  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
 >  or you use the **recommended menu**, which will open with `/function timer/menu`.
->  Make shure you have the right **[permission](#Permissions)**!
+>  Make shure you have the right **[permission](#permissions)**!
 
 
 
@@ -24,7 +24,7 @@ There we have the following Buttons:
 <details><summary>Mode</summary>
 
 This button allows you to **pause** or **resume** the timer, as well as **hide it** completely from the action bar.
->  If you are using global mode, pause and resume will also be applied to other players.
+>  If you are using [global mode](#time-global-mode), pause and resume will also be applied to other players.
 
 To switch between resume and pause you can also use:
 ```mcfunction
@@ -43,7 +43,7 @@ Here you can togelle some Modification on or off. It's a kind of mod menu, but a
 | Name| Fullbright | Custom Music  | AFK |
 |--------|--------|--------|--------|
 |Description| Gives you permanent night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
-|Limitations| Enforced in global mode | Requires a compatible resource pack | Only available in local mode |
+|Limitations| Enforced in [global mode](#time-global-mode) | Requires a compatible resource pack | Only available in [local mode](#time-local-mode) |
 |Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
 
 </details> 
@@ -51,15 +51,15 @@ Here you can togelle some Modification on or off. It's a kind of mod menu, but a
 <details><summary>Reset</summary>
 
 As the title suggests it sets the timer to 0, which also can be used in global mode.
-Additionally, [Admins](#Permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
+Additionally, [Admins](#permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
 
 </details> 
  
 <details><summary>Status / Time</summary>
 
-> These ones are special feature and are only available to [admins](#Permissions)!
+> These ones are special feature and are only available to [admins](#permissions)!
 
-### Status (local mode)
+### Status ([local mode](#time-local-mode))
 Gives you an overview of every player in the world:
 - Name (is the player name)
 - Time (there courned timer)
@@ -67,7 +67,12 @@ Gives you an overview of every player in the world:
 - Fullbright (0 means off and 1 on)
 - Music (reprends Custom Music and 0 means off and 1 on)
 
-### Time (global mode)
+Can also be triggered via:
+```mcfunction
+/function timer/system/testfor
+``` 
+
+### Time ([global mode](#time-global-mode))
 Isn't it ironic that the plugin is called **Timer** Ultimate and has nothing to do with a timer so far?
 Now, if global mode is enabled, you can set a start time here, and it will count down from there.
 
@@ -77,14 +82,23 @@ Now, if global mode is enabled, you can set a start time here, and it will count
 
 <details><summary>Control</summary>
 
-> This one is a special feature and is only available to [admins](#Permissions)!
+> This one is a special feature and is only available to [admins](#permissions)!
 
-It let you switch between local, global and world mode.
-I promise it makes sense, [here](#different-modes)
-Anyway if you want to run it via Commands:
+Well this button let you switch between thoes 3 submodes.
+OR you use that Command:
 ```mcfunction
 /function timer/system/control
 ``` 
+
+### Local mode
+This is the default mode and it allows every player in the world to have and control their own timer.
+
+### Global mode
+The [admin](#permissions) who activates it shares their timer with all other players in the world. Under this condition, **[only admins](#permissions)** can control it and also count down the timer. Only the [admin](#permissions) who activated it can deactivate or change to an other mode, as this timer is synchronized with his own [^1].
+
+### World mode
+This mode displays the internal play time in a world.
+For this reason, any option to pause the timer is disabled.
 
 </details> 
 
@@ -94,12 +108,12 @@ If you are really looking for a dictionary here, I have to disappoint you. It's 
 
 </details> 
 
-### Different modes
-
-
-
 
 
 ## Survival Mode
 
 ## Permissions
+
+
+
+[^1]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is not available in local mode
