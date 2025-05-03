@@ -3,7 +3,7 @@
 
 ## About
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
-That's why there are different timers: one for [survival](#survival-mode) and one for [creative](#creative-mode).
+That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
 
 > [!TIP]
 >  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
@@ -106,8 +106,8 @@ If you are really looking for a dictionary here, I have to disappoint you. It's 
 
 # Survival Mode - initial setup
 Where do I start with this, there is a lot to cover...
-So the basic idea is that at the beginning of your survival world, you set a goal that you want to achieve. The timer in this case makes it easier or more difficult for you to reach your goal.
-Let's cover everything we **can do before** we start our survival journey. That's the Main Menu:
+So the basic idea is that at the beginning of your survival world, you set a goal that you want to achieve. The timer in this case makes it easier or more difficult for you to reach your goal. Click [here](#survival-mode---survival) to go with the default setup.
+Otherwise let's cover everything we **can do before** we start our survival journey. That's the Main Menu:
 
 ![Image](https://github.com/user-attachments/assets/72b5df6b-6ded-4d3a-bca5-35d92c3ab737)
 
@@ -168,8 +168,15 @@ This is for toggling your Modification on or off and manage your installed Chall
 
 ## Dimension
 A quick way to start your adventure e.g. in the nether. _If you're tired of the overworld_
+You can also switch the dimensions by using:
+```mcfunction
+/function timer/settings/dimension
+``` 
 
 ![Image](https://github.com/user-attachments/assets/af78f566-f872-4308-928a-064c10be5720)
+
+> [!WARNING]
+> "The  End" as a dimension is intentionally unavailable due to instability
 
 ## Speedrun
 This tweak can only be activated immediately after creating the world. It activates milliseconds for your best time possible and <ins>deactivates</ins> the following features:
@@ -180,11 +187,41 @@ This tweak can only be activated immediately after creating the world. It activa
 - Dimentions
 - Difficulty
 - Goal nothing and period of time
+- Menu
 
 # Survival Mode - Survival
+Now we have everything setup how we want, we can start the timer by using the menu:
+
+![Image](https://github.com/user-attachments/assets/3e6c4238-fca3-455d-9bb2-65a07d96669c)
+
+OR running:
+```mcfunction
+/function timer/control
+``` 
+
+Great! Our multiple day long adventure has begun.
+- All player are in surival mode
+- All twecks, modifications & challenges are up and running
+- Day & Wetherciyle are now working
+
+Now to pause[^3] the timer we can run the command again:
+```mcfunction
+/function timer/control
+``` 
+OR:
+- change the gamemode
+- go afk[^4]
+- open the menu
+
+Speaking of the menu, we can now use it or run any function we used in the initial setup to ask there status.
+Moreover in the menu we also could "Give up" or reach that [indefinite goal](#goal).
+
+![Image](https://github.com/user-attachments/assets/62cfe2bd-89d0-43a8-81e1-e3055908b88b)
 
 # Permissions
 
 
 [^1]: Only while using [local mode](#local-mode)
 [^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
+[^3]: Only when Speedrun isn't activ
+[^4]: Only when the modification AFK is activ
