@@ -188,6 +188,10 @@ execute if score animation_time timer_menu matches 1 if score mode timer_setting
 
 execute if score animation_time timer_menu matches 1 if score is_open timer_menu matches 1 run scoreboard players set animation_time timer_menu 0
 
+# Runs /function timer/control from the menu
+execute as @a[tag=target_run_control] at @s run function timer/control
+tag @a remove target_run_control
+
 # Runs /function timer/settings/dimension from the menu
 execute as @a[tag=target_run_dimension] at @s run function timer/settings/dimension
 tag @a remove target_run_dimension

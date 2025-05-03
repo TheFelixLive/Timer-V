@@ -227,14 +227,15 @@
               "npc_name":"§lTimer Ultimate - Disclaimer",
               "text":"§4§lAttention!\n\n§r§8If you continue, the challenges will start and the current settings will be applied. Most settings can no longer be changed!",
               "on_close_commands": [
-                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1",
                 "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
               ],
               "buttons":[
                 {
                     "name":"§lStart",
                       "commands":[
-                          "/execute as @initiator at @s run function timer/control"
+                          "scoreboard players set id timer_menu 1",
+                          "/tag @initiator add target_run_control"
                       ]
                   },
                   {
