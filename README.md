@@ -12,17 +12,17 @@ That's why there are different timers: one for [survival](#survival-mode) and on
 
 
 
-## Creative Mode
+# Creative Mode
 The creative mode is kind of a lightweight mode if you compare them. It's designed to allow multiple timers to be tracked simultaneously.
 What do I mean by that? Player 1 can have a different time than Player 2. In fact, someone can pause their timer while another person's timer continues counting.
 So much for the theory, let's talk about the home screen:
 
 ![Image](https://github.com/user-attachments/assets/f4102726-7c00-4bb6-941b-b167d8107cdc)
 
-Here we have the following buttons, these can be different depending on your [rights](#permissions) you may or may not have and the current [submode](#local-mode):
+Here we have the following buttons, these can be different depending on your [rights](#permissions) you may or may not have and the current [submode](#local-mode)
 
-<details><summary>Mode</summary>
 
+## Mode
 This button allows you to **pause** or **resume** the timer, as well as **hide it** completely from the action bar.
 >  If you are using [global mode](#global-mode), pause and resume will also be applied to other players.
 
@@ -35,10 +35,7 @@ and for the visibly
 /function timer/visible
 ``` 
 
-</details>
-
-<details><summary>Addon</summary>
-
+## Addon
 Here you can togelle some Modification on or off. It's a kind of mod menu, but again nothing compared to the other one.
 | Name| Fullbright | Custom Music  | AFK |
 |--------|--------|--------|--------|
@@ -46,18 +43,13 @@ Here you can togelle some Modification on or off. It's a kind of mod menu, but a
 |Limitations| Enforced in [global mode](#global-mode) | Requires a compatible resource pack | Only available in [local mode](#local-mode) |
 |Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
 
-</details> 
-
-<details><summary>Reset</summary>
-
 As the title suggests it sets the timer to 0, which also can be used in [global mode](#global-mode).
 Additionally, [Admins](#permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
 
-</details> 
- 
-<details><summary>Status / Time</summary>
+## Status / Time
 
-> These ones are special feature and are only available to [admins](#permissions)!
+> [!IMPORTANT]
+>  These ones are special feature and are only available to [admins](#permissions)!
 
 ### Status ([local mode](#local-mode))
 Gives you an overview of every player in the world:
@@ -72,16 +64,15 @@ Can also be triggered via:
 /function timer/system/testfor
 ``` 
 
+---
 ### Time ([global mode](#global-mode))
 Isn't it ironic that the plugin is called **Timer** Ultimate and has nothing to do with a timer so far?
 Now, if global mode is enabled, you can set a start time here, and it will count down from there.
 
 ![Image](https://github.com/user-attachments/assets/51ad6b9c-0129-40a2-8841-ac62740a58e8)
 
-</details> 
-
-<details><summary>Control</summary>
-
+## Control
+> [!IMPORTANT]
 > This one is a special feature and is only available to [admins](#permissions)!
 
 Well this button let you switch between thoes 3 submodes.
@@ -89,32 +80,32 @@ OR you use that Command:
 ```mcfunction
 /function timer/system/control
 ``` 
+---
 
 ### Local mode
 This is the default mode and it allows every player in the world to have and control their own timer.
 
+---
+
 ### Global mode
 The [admin](#permissions) who activates it shares their timer with all other players in the world. Under this condition, **[only admins](#permissions)** can control it and also [count down](#time-global-mode) the timer. Only the [admin](#permissions) who activated it can deactivate or change to an other mode, as this timer is synchronized with his own [^1].
 
+---
+
 ### World mode
-This mode displays the internal play time in a world.
-For this reason, any option to pause the timer is disabled.
+This mode displays the internal play time in a world.For this reason, any option to pause the timer is disabled.
 
-</details> 
 
-<details><summary>Dictionary</summary>
-
+## Dictionary
 If you are really looking for a dictionary here, I have to disappoint you. It's like this page: a guide with changelog. Now you know!
 
 ![Image](https://github.com/user-attachments/assets/0f29adee-5d46-486c-b391-7a889befde2e)
 
-</details> 
 
 
+# Survival Mode
 
-## Survival Mode
-
-## Permissions
+# Permissions
 
 
 
