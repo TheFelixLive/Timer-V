@@ -14,7 +14,7 @@ That's why there are different timers: one for [survival](#survival-mode) and on
 
 # Creative Mode
 The creative mode is kind of a lightweight mode if you compare them. It's designed to allow multiple timers to be tracked simultaneously.
-What do I mean by that? Player 1 can have a different time than Player 2. In fact, someone can pause their timer while another person's timer continues counting.
+What do I mean by that? Player 1 can have a different time than Player 2. In fact, someone can pause their timer while another person's timer continues counting[^1].
 So much for the theory, let's talk about the home screen:
 
 ![Image](https://github.com/user-attachments/assets/f4102726-7c00-4bb6-941b-b167d8107cdc)
@@ -39,10 +39,11 @@ and for the visibly
 Here you can togelle some Modification on or off. It's a kind of mod menu, but again nothing compared to the other one.
 | Name| Fullbright | Custom Music  | AFK |
 |--------|--------|--------|--------|
-|Description| Gives you permanent night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
+|Description| As long as the timer is running, you will have night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
 |Limitations| Enforced in [global mode](#global-mode) | Requires a compatible resource pack | Only available in [local mode](#local-mode) |
 |Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
 
+## Reset
 As the title suggests it sets the timer to 0, which also can be used in [global mode](#global-mode).
 Additionally, [Admins](#permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
 
@@ -88,12 +89,12 @@ This is the default mode and it allows every player in the world to have and con
 ---
 
 ### Global mode
-The [admin](#permissions) who activates it shares their timer with all other players in the world. Under this condition, **[only admins](#permissions)** can control it and also [count down](#time-global-mode) the timer. Only the [admin](#permissions) who activated it can deactivate or change to an other mode, as this timer is synchronized with his own [^1].
+The [admin](#permissions) who activates it shares their timer with all other players in the world. Under this condition, **[only admins](#permissions)** can control it and also [count down](#time-global-mode) the timer. Only the [admin](#permissions) who activated it can deactivate or change to an other mode, as this timer is synchronized with his own [^2].
 
 ---
 
 ### World mode
-This mode displays the internal play time in a world.For this reason, any option to pause the timer is disabled.
+This mode displays the internal play time in a world. For this reason, any option to pause the timer is disabled.
 
 
 ## Dictionary
@@ -103,10 +104,87 @@ If you are really looking for a dictionary here, I have to disappoint you. It's 
 
 
 
-# Survival Mode
+# Survival Mode - initial setup
+Where do I start with this, there is a lot to cover...
+So the basic idea is that at the beginning of your survival world, you set a goal that you want to achieve. The timer in this case makes it easier or more difficult for you to reach your goal.
+Let's cover everything we **can do before** we start our survival journey. That's the Main Menu:
+
+![Image](https://github.com/user-attachments/assets/72b5df6b-6ded-4d3a-bca5-35d92c3ab737)
+
+## Goals
+It's pretty self-explanatory, you choose a goal from the following and when you defeat it or you finish the event, the timer stops automatically.
+- Ender Dragon
+- Wither
+- Elder Guardian
+- Warden
+- Raid
+
+In addition, it can be randomly generated (which is the default one), survive a period of time (the [period](#start-time) have to be set first) or be indefinite, where you have to finish the timer while playing.
+You can also switch the goals by using:
+```mcfunction
+/function timer/settings/goal
+``` 
+
+
+## Start-Time
+It is the same as in [Creative mode](#time-global-mode). You set your period of time here and it will count down from there. If the timer hit's 0 is over. 
+> [!TIP]
+> After you have selected a period of time, you can also choose the goal to survive that time
+
+## Difficulty
+> [!NOTE]
+>  This feature was developed for an older version of Minecraft Bedrock which **didn't have** a hardcore mode, which makes it a bit unnecessary
+
+Here you can change your difficulty and yes it does more than make mobs stronger:
+
+| Name | Easy | Normal (default) | Hardcore | Ultra Hardcore | Infinity |
+|--------|--------|--------|--------|--------|--------|
+| Minecraft difficulty | Easy | Normal | Hard | Hard | Hard |
+| At the end (e.g.o. death) | | Sends you back to the homescreen | Locks the world | Locks the world | Locks the world |
+| Complicates regeneration | | | | Yes | Yes* |
+| Died with any damage | | | | | Yes |
+
+You can also switch the difficultys by using:
+```mcfunction
+/function timer/settings/difficulty
+``` 
+
+> [!CAUTION]
+>  Sometimes Infinity doesn't recognize that someone has taken damage. In this case, it behaves like Ultra Hardcore
+
+## Addons
+This is for toggling your Modification on or off and manage your installed Challenges, kind of mod menu.
+> [!TIP]
+> Modifications can also be changed during the timer, whereas in contrast to challenges you can only check whether they are active
+### Mods
+| Name| Fullbright | Custom Music  | AFK |
+|--------|--------|--------|--------|
+|Description| As long as the timer is running, you will have night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
+|Limitations| | Requires a compatible resource pack | Pauses the timer for all |
+| Allowed in speedruns ||Yes |
+|Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
+
+> Challenges are not pre installed! Check out the Challenge Addon for that.
+
+## Dimension
+A quick way to start your adventure e.g. in the nether. _If you're tired of the overworld_
+
+![Image](https://github.com/user-attachments/assets/af78f566-f872-4308-928a-064c10be5720)
+
+## Speedrun
+This tweak can only be activated immediately after creating the world. It activates milliseconds for your best time possible and <ins>deactivates</ins> the following features:
+- Start-Time
+- Pausing the timer
+- <ins>Some</ins> Modifications (see [here](#addons))
+- Challenges
+- Dimentions
+- Difficulty
+- Goal nothing and period of time
+
+# Survival Mode - Survival
 
 # Permissions
 
 
-
-[^1]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is not available in local mode
+[^1]: Only while using [local mode](#local-mode)
+[^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
