@@ -19,12 +19,12 @@ So much for the theory, let's talk about the home screen:
 
 ![Image](https://github.com/user-attachments/assets/f4102726-7c00-4bb6-941b-b167d8107cdc)
 
-Here we have the following buttons, these can be different depending on your [rights](#permissions) you may or may not have and the current [submode](#time-local-mode):
+Here we have the following buttons, these can be different depending on your [rights](#permissions) you may or may not have and the current [submode](#local-mode):
 
 <details><summary>Mode</summary>
 
 This button allows you to **pause** or **resume** the timer, as well as **hide it** completely from the action bar.
->  If you are using [global mode](#time-global-mode), pause and resume will also be applied to other players.
+>  If you are using [global mode](#global-mode), pause and resume will also be applied to other players.
 
 To switch between resume and pause you can also use:
 ```mcfunction
@@ -43,14 +43,14 @@ Here you can togelle some Modification on or off. It's a kind of mod menu, but a
 | Name| Fullbright | Custom Music  | AFK |
 |--------|--------|--------|--------|
 |Description| Gives you permanent night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
-|Limitations| Enforced in [global mode](#time-global-mode) | Requires a compatible resource pack | Only available in [local mode](#time-local-mode) |
+|Limitations| Enforced in [global mode](#global-mode) | Requires a compatible resource pack | Only available in [local mode](#local-mode) |
 |Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
 
 </details> 
 
 <details><summary>Reset</summary>
 
-As the title suggests it sets the timer to 0, which also can be used in [global mode](#time-global-mode).
+As the title suggests it sets the timer to 0, which also can be used in [global mode](#global-mode).
 Additionally, [Admins](#permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
 
 </details> 
@@ -59,7 +59,7 @@ Additionally, [Admins](#permissions) can remove the timer here. Just follow the 
 
 > These ones are special feature and are only available to [admins](#permissions)!
 
-### Status ([local mode](#time-local-mode))
+### Status ([local mode](#local-mode))
 Gives you an overview of every player in the world:
 - Name (is the player name)
 - Time (there courned timer)
@@ -72,7 +72,7 @@ Can also be triggered via:
 /function timer/system/testfor
 ``` 
 
-### Time ([global mode](#time-global-mode))
+### Time ([global mode](#global-mode))
 Isn't it ironic that the plugin is called **Timer** Ultimate and has nothing to do with a timer so far?
 Now, if global mode is enabled, you can set a start time here, and it will count down from there.
 
@@ -94,7 +94,7 @@ OR you use that Command:
 This is the default mode and it allows every player in the world to have and control their own timer.
 
 ### Global mode
-The [admin](#permissions) who activates it shares their timer with all other players in the world. Under this condition, **[only admins](#permissions)** can control it and also count down the timer. Only the [admin](#permissions) who activated it can deactivate or change to an other mode, as this timer is synchronized with his own [^1].
+The [admin](#permissions) who activates it shares their timer with all other players in the world. Under this condition, **[only admins](#permissions)** can control it and also [count down](#time-global-mode) the timer. Only the [admin](#permissions) who activated it can deactivate or change to an other mode, as this timer is synchronized with his own [^1].
 
 ### World mode
 This mode displays the internal play time in a world.
