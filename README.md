@@ -19,7 +19,7 @@ So much for the theory, let's talk about the home screen:
 
 ![Image](https://github.com/user-attachments/assets/f4102726-7c00-4bb6-941b-b167d8107cdc)
 
-There we have the following Buttons:
+Here we have the following buttons, these can be different depending on your [rights](#permissions) you may or may not have and the current [submode](#time-local-mode):
 
 <details><summary>Mode</summary>
 
@@ -50,7 +50,7 @@ Here you can togelle some Modification on or off. It's a kind of mod menu, but a
 
 <details><summary>Reset</summary>
 
-As the title suggests it sets the timer to 0, which also can be used in global mode.
+As the title suggests it sets the timer to 0, which also can be used in [global mode](#time-global-mode).
 Additionally, [Admins](#permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
 
 </details> 
@@ -105,6 +105,8 @@ For this reason, any option to pause the timer is disabled.
 <details><summary>Dictionary</summary>
 
 If you are really looking for a dictionary here, I have to disappoint you. It's like this page: a guide with changelog. Now you know!
+
+![Image](https://github.com/user-attachments/assets/0f29adee-5d46-486c-b391-7a889befde2e)
 
 </details> 
 
