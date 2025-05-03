@@ -18,8 +18,8 @@
                        "name":"§l§4Break",
                        "commands":[
                         "/stopsound @initiator",
-                         "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 2",
-                         "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 2",
+                         "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 1",
+                         "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 1",
                          "/scoreboard players set sound timer_menu 1",
                          "/execute as @initiator at @s run function timer/mode"
                        ]
@@ -31,15 +31,13 @@
                           "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 0",
                           "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 0",
                           "/scoreboard players set sound timer_menu 1",
-                         "/execute as @initiator at @s run function timer/mode"
+                         "/execute as @initiator at @s run function timer/visible"
                        ]
                    },
                    {
-                     "name":"§lUnsichtbar",
+                     "name":"§l§8Visibility",
                      "commands":[
                       "/stopsound @initiator",
-                         "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 1",
-                         "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 1",
                          "/scoreboard players set sound timer_menu 1",
                          "/execute as @initiator at @s run function timer/mode"
                      ]
