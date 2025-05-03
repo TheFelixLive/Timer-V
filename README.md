@@ -1,7 +1,7 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
 <img src="https://github.com/user-attachments/assets/84619188-3d94-4e33-b781-7b3b109c476e" width=50% height=50%>
 
-# About
+## About
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode) and one for [creative](#creative-mode).
 
