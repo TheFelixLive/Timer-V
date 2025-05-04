@@ -25,7 +25,7 @@
                        ]
                    },
                    {
-                       "name":"§l§aVisible",
+                       "name":"§l§aContinue",
                        "commands":[
                         "/stopsound @initiator",
                           "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 0",
