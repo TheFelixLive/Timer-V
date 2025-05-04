@@ -262,19 +262,33 @@ Whether you can continue playing in this world depends now on your [difficulty](
 # Survival Mode - Addons
 To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the releases.
 Regardless of that, what are new challenges in this context?
-In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 20 challenges and what they do.
+In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 18 challenges and what they do.
 
+| Name | Description | Limitations | Command | Extra notes |
+|--------|--------|--------|--------|--------|
+| No armor | If someone has a piece of armor in their inventory the timer will end | | `/function ca/addon/no/armor` | |
+| No block break | Disables the placement of blocks || `/function ca/addon/no/block_break` | |
+| No crafting table | If someone has a crafting table in their inventory the timer will end | In some structures there are crafting tables that you could exploit | `/function ca/addon/no/crafting` | |
+| No jumping | If someone jumps the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
+| No swimming | If someone swimms the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
+| No sprinting | If someone sprints the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
+| No movement | Disables the movement of all players | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
+| No movement & viewing | Disables the movement and view option of all players | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
+| No sneaking | If someone sneaks the timer will end | Incompatible with ice & gravity  | `/function ca/addon/no/move` |  |
+| Only up | Teleports all players to the lowest block in the world at the start. Every block they go up, they are no longer allowed to go down. | Only one restriction from the only category can be selected! | `/function ca/addon/only` |  Is part of the category Only |
+| Only down | Every block a player goes down,is he no longer allowed to go up. | Only one restriction from the only category can be selected! | `/function ca/addon/only` |  Is part of the category Only |
+| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x` | |
+| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL` |  |
+| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant` |  |
+| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity` |  |
+| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice` |  |
+| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility`|  |
+| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder` |  |
 
+Wait, what was that about the border?
+Yes, you were paying attention. Here's a picture of the border that was specially created for this.
 
-
-
-
-
-
-
-
-
-
+![Image](https://github.com/user-attachments/assets/4adb21cc-6ba6-451f-a6da-856cb1f19a42)
 
 
 # Installation and configuration
@@ -302,7 +316,7 @@ Before you presite **make sure** you have the [right permission](#permissions)!
 > In some cases the timer **can't** be uninstalled and therefore **should not be** deactivated.
 > _Unless you realy want to cheat!_
 
-### Steps:
+### Steps
 
 1. Run the command: `/funtion timer/menu`
 2. Click on the "Delete" Button.
@@ -312,7 +326,7 @@ Before you presite **make sure** you have the [right permission](#permissions)!
 6. Relaunch the world.
 7. Run the command: `/scoreboard objectives remove timer_setup`
 
-### Troubleshooting:
+### Troubleshooting
 > I didn't found the "Delete" Button in step 2!
 
 Sometimes it is on the 2nd page or in the reset category.
@@ -320,7 +334,8 @@ Sometimes it is on the 2nd page or in the reset category.
 - If you have the option "Game & Menu", press it and continue with step 2.
 
 > Do I have to uninstall the Challenge Addon separately?
-No, it will uninstall automatically along with the timer
+
+No, it will uninstall automatically along with the timer.
 
 # Permissions
 When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
