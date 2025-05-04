@@ -4,13 +4,13 @@
 ## About
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
-It requires **at least** a version of Minecraft Bedrock `v.1.21.41` and is with the latest release `v.1.21.73` **compatible**.
+It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.73` of Minecraft Bedorck **compatible**.
+Click [here](#installation-and-configuration) for the installation!
 
 > [!TIP]
 >  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
 >  or you use the **recommended menu**, which will open with `/function timer/menu`.
 >  Make shure you have the right **[permission](#permissions)**!
-
 
 
 # Creative Mode
@@ -260,22 +260,41 @@ Whether you can continue playing in this world depends now on your [difficulty](
 > Was captured during a death with [difficulty](#difficulty) infinity. The player name was subsequently removed
 
 # Survival Mode - Addons
+To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the releases.
+Regardless of that, what are new challenges in this context?
+In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 20 challenges and what they do.
 
-# Permissions
-When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
-Those are marked in this guid with an admin popup ([see here as an example](#Control)).
 
-In **[survival mode](#survival-mode---initial-setup)** players without the tag can do nothing except pausing the timer with the [afk modification](#mods).
 
-To promote a player you can enter the following command, _remember to replace the player name_:
-```mcfunction
-/tag [player name] add trust_player_control
-``` 
 
-> [!WARNING]
-> Players with this tag also have the power to uninstall the timer as well!
 
-# Deactivation and uninstallation 
+
+
+
+
+
+
+
+
+
+# Installation and configuration
+1. **Download** the latest release from [here](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
+
+2. **Open** the `.mcpack` or `.mcaddon` file with Minecraft.
+3. **Create** a new world OR edit an existing world with: <img src="https://github.com/user-attachments/assets/2def9d21-84ba-4222-92b6-c42bc3ada5bf" width="35"/>
+4. **Navigate to**: <img src="https://github.com/user-attachments/assets/eeaba65d-f9a1-4e2f-9f6b-dc9e4a7f8b04" width="120"/>
+5. **Click on** "Available".
+6. Activate the timer (if you want the Challenge Addon as well) by using <img src="https://github.com/user-attachments/assets/67678b1f-7e2d-41e9-ac57-3a59bc1414b5" width="35"/> next to it. If you use the Challenge Addon make sure that it is above the timer
+7. Back on the "Active" page press on this icon next to the timer: <img src="https://github.com/user-attachments/assets/03ff7112-981b-4c01-a6e9-bd6df7a30c09" width="35"/>
+
+**Here you can choose between [survival](#survival-mode---initial-setup) and [creative](#creative-mode).**
+
+![Image](https://github.com/user-attachments/assets/f59543ef-3abb-4fd7-b6d2-a8907b9c7075)
+
+> [!IMPORTANT]
+> When you use the  "Challenge Addon" select [survival](#survival-mode---initial-setup) otherwise it will not work!
+
+# Uninstallation 
 Since the timer installs automatically, it cannot be easily removed.
 Before you presite **make sure** you have the [right permission](#permissions)!
 
@@ -292,7 +311,6 @@ Before you presite **make sure** you have the [right permission](#permissions)!
 5. Remove the behavior pack from your world.
 6. Relaunch the world.
 7. Run the command: `/scoreboard objectives remove timer_setup`
-8. Done!
 
 ### Troubleshooting:
 > I didn't found the "Delete" Button in step 2!
@@ -300,6 +318,23 @@ Before you presite **make sure** you have the [right permission](#permissions)!
 Sometimes it is on the 2nd page or in the reset category.
 - If you have the option "Status", press it and then "Give up". Now try to continue with step 1.
 - If you have the option "Game & Menu", press it and continue with step 2.
+
+> Do I have to uninstall the Challenge Addon separately?
+No, it will uninstall automatically along with the timer
+
+# Permissions
+When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
+Those are marked in this guid with an admin popup ([see here as an example](#Control)).
+
+In **[survival mode](#survival-mode---initial-setup)** players without the tag can do nothing except pausing the timer with the [afk modification](#mods).
+
+To promote a player you can enter the following command, _remember to replace the player name_:
+```mcfunction
+/tag [player name] add trust_player_control
+``` 
+
+> [!WARNING]
+> Players with this tag also have the power to uninstall the timer as well!
 
 # Third party implementations
 ![Image](https://github.com/user-attachments/assets/c589e87d-def1-4338-ae47-9aa7b30387ca)
