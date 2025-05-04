@@ -1,7 +1,8 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
-![Image](https://github.com/user-attachments/assets/84619188-3d94-4e33-b781-7b3b109c476e)
+![Minecraft2025-05-0421-27-24-ezgif com-video-to-gif-converter(1)](https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f)
 
 ## About
+
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
 It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.73` of Minecraft Bedorck **compatible**.
@@ -367,8 +368,8 @@ I know it's a little niche and unnecessary but as a (small) developer (if you ca
 - **The actual idea for the timer**: [Hasenzahn](https://www.youtube.com/watch?v=CZRczUj__P8)
 - **Inspiration for the challenges**: [BastiGHG](https://www.youtube.com/@bastighg)
 
-
 [^1]: Only while using [local mode](#local-mode)
 [^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
 [^3]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
 [^4]: Only when the [modification](#mods) AFK is activ
+> All images were taken in-game with version v.1.21.73
