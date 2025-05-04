@@ -56,9 +56,9 @@ Additionally, [Admins](#permissions) can remove the timer here. Just follow the 
 Gives you an overview of every player in the world:
 - Name (is the player name)
 - Time (there courned timer)
-- State (0 men paused and 1 resumed)
-- Fullbright (0 means off and 1 on)
-- Music (reprends Custom Music and 0 means off and 1 on)
+- State (0 means paused and 1 resumed)
+- Fullbright (0 means off and 1 means on)
+- Music (reprends Custom Music; 0 means off and 1 means on)
 
 Can also be triggered via:
 ```mcfunction
@@ -105,6 +105,9 @@ If you are really looking for a dictionary here, I have to disappoint you. It's 
 
 
 # Survival Mode - initial setup
+> [!NOTE]
+> During the entire setup period, the game time and the weather will not change.
+
 Where do I start with this, there is a lot to cover...
 So the basic idea is that at the beginning of your survival world, you set a goal that you want to achieve. The timer in this case makes it easier or more difficult for you to reach your goal. Click [here](#survival-mode---survival) to go with the default setup.
 Otherwise let's cover everything we **can do before** we start our survival journey. That's the Main Menu:
@@ -119,7 +122,7 @@ It's pretty self-explanatory, you choose a goal from the following and when you 
 - Warden
 - Raid
 
-In addition, it can be randomly generated (which is the default one), survive a period of time (the [period](#start-time) have to be set first) or be indefinite, where you have to finish the timer while playing.
+In addition, it can be randomly generated (which is the default one and will be revealed [here](#survival-mode---survival)), survive a period of time (the [period](#start-time) have to be set first) or be indefinite, where you have to finish the timer while playing.
 You can also switch the goals by using:
 ```mcfunction
 /function timer/settings/goal
@@ -140,7 +143,7 @@ Here you can change your difficulty and yes it does more than make mobs stronger
 | Name | Easy | Normal (default) | Hardcore | Ultra Hardcore | Infinity |
 |--------|--------|--------|--------|--------|--------|
 | Minecraft difficulty | Easy | Normal | Hard | Hard | Hard |
-| At the end (e.g.o. death) | | Sends you back to the homescreen | Locks the world | Locks the world | Locks the world |
+| In case of a [negative end](#negative-ending) | Resets the timer | Resets the timer | Locks the world | Locks the world | Locks the world |
 | Complicates regeneration | | | | Yes | Yes* |
 | Died with any damage | | | | | Yes |
 
@@ -150,7 +153,7 @@ You can also switch the difficultys by using:
 ``` 
 
 > [!CAUTION]
->  Sometimes Infinity doesn't recognize that someone has taken damage. In this case, it behaves like Ultra Hardcore
+>  [*] Sometimes Infinity doesn't recognize that someone has taken damage. In this case, it behaves like Ultra Hardcore
 
 ## Addons
 This is for toggling your Modification on or off and manage your installed Challenges, kind of mod menu.
@@ -203,7 +206,11 @@ Great! Our multiple day long adventure has begun.
 - All player are in surival mode
 - All twecks, modifications & challenges are up and running
 - Day & Wetherciyle are now working
+- In case of a [random goal](#goals) it is now shown for the first time
 
+---
+
+### Pause & more
 Now to pause[^3] the timer we can run the command again:
 ```mcfunction
 /function timer/control
@@ -211,17 +218,43 @@ Now to pause[^3] the timer we can run the command again:
 OR:
 - change the gamemode
 - go afk[^4]
-- open the menu
+- by opening the menu
+
+> During a break, **all players** are put into `spectator` mode and cannot move!
 
 Speaking of the menu, we can now use it or run any function we used in the initial setup to ask there status.
-Moreover in the menu we also could "Give up" or reach that [indefinite goal](#goal).
+Moveover in the menu we could give up, what results in a [negative ending](#negative-ending) or reach that [undefinite goal](#goals).
 
 ![Image](https://github.com/user-attachments/assets/62cfe2bd-89d0-43a8-81e1-e3055908b88b)
 
+# Survival Mode - Endings
+Different endings may occur depending on what you did [during the game](#survival-mode---survival) or what you set [beforehand](#survival-mode---initial-setup).
+In short, you can divide these ends into the following categories:
+
+### Positive ending
+This end occurs when you have met the goal requirements
+
+---
+
+
+### Negative ending
+
+
+
+
+
+
+
+# Survival Mode - Addons
+
 # Permissions
+
+# Third party implementations
+
+# Credits
 
 
 [^1]: Only while using [local mode](#local-mode)
 [^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
-[^3]: Only when Speedrun isn't activ
-[^4]: Only when the modification AFK is activ
+[^3]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
+[^4]: Only when the [modification](#mods) AFK is activ
