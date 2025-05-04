@@ -4,6 +4,7 @@
 ## About
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
+It requires **at least** a version of Minecraft Bedrock `v.1.21.41` and is with the latest release `v.1.21.73` **compatible**.
 
 > [!TIP]
 >  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
@@ -45,7 +46,6 @@ Here you can togelle some Modification on or off. It's a kind of mod menu, but a
 
 ## Reset
 As the title suggests it sets the timer to 0, which also can be used in [global mode](#global-mode).
-Additionally, [Admins](#permissions) can remove the timer here. Just follow the instructions there and you're ready to go.
 
 ## Status / Time
 
@@ -130,7 +130,7 @@ You can also switch the goals by using:
 
 
 ## Start-Time
-It is the same as in [Creative mode](#time-global-mode). You set your period of time here and it will count down from there. If the timer hit's 0 is over. 
+It is the same as in [Creative mode](#time-global-mode). You set your period of time here and it will count down from there. If the timer hit's 0 is [over](#negative-ending). 
 > [!TIP]
 > After you have selected a period of time, you can also choose the goal to survive that time
 
@@ -232,26 +232,87 @@ Different endings may occur depending on what you did [during the game](#surviva
 In short, you can divide these ends into the following categories:
 
 ### Positive ending
-This end occurs when you have met the goal requirements
+This end occurs when you have met the goal requirements.
+
+![Image](https://github.com/user-attachments/assets/63dcf22e-4f4b-4414-9ec4-ba3ca92389ad)
+> Was captured with the goal Ender Dragon after defeating it
+
+As you can see in the images, all players change their game mode to Creative immediately after reaching the goal.
+The idea behind this ending is that you now revisit this world.
+If you want to choose another goal, you can return to the main menu via the menu (what a saying) and the following command:
+```mcfunction
+/function timer/control
+``` 
 
 ---
 
 
 ### Negative ending
+There's a little more to this. Assuming a player has done something from this example list, you get a negative ending:
+- dying (excluding [difficulty easy](#difficulty))
+- give up via. the menu
+- timer hits 0 while using [start time](#start-time) (unless you have set your goal to it, which would leads to a [positive ending](#positive-ending))
+- ignore aktived challenges
 
+Whether you can continue playing in this world depends now on your [difficulty](#difficulty). Look in the [table](#difficulty) for "In case of a negative end".
 
-
-
-
-
+![Image](https://github.com/user-attachments/assets/1a094ed0-da30-4451-9d61-8c9fffb3ae36)
+> Was captured during a death with [difficulty](#difficulty) infinity. The player name was subsequently removed
 
 # Survival Mode - Addons
 
 # Permissions
+When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
+Those are marked in this guid with an admin popup ([see here as an example](#Control)).
+
+In **[survival mode](#survival-mode---initial-setup)** players without the tag can do nothing except pausing the timer with the [afk modification](#mods).
+
+To promote a player you can enter the following command, _remember to replace the player name_:
+```mcfunction
+/tag [player name] add trust_player_control
+``` 
+
+> [!WARNING]
+> Players with this tag also have the power to uninstall the timer as well!
+
+# Deactivation and uninstallation 
+Since the timer installs automatically, it cannot be easily removed.
+Before you presite **make sure** you have the [right permission](#permissions)!
+
+> [!CAUTION]
+> In some cases the timer **can't** be uninstalled and therefore **should not be** deactivated.
+> _Unless you realy want to cheat!_
+
+### Steps:
+
+1. Run the command: `/funtion timer/menu`
+2. Click on the "Delete" Button.
+3. Confirm your decision by pressing Delete again.
+4. Quit the world.
+5. Remove the behavior pack from your world.
+6. Relaunch the world.
+7. Run the command: `/scoreboard objectives remove timer_setup`
+8. Done!
+
+### Troubleshooting:
+> I didn't found the "Delete" Button in step 2!
+
+Sometimes it is on the 2nd page or in the reset category.
+- If you have the option "Status", press it and then "Give up". Now try to continue with step 1.
+- If you have the option "Game & Menu", press it and continue with step 2.
 
 # Third party implementations
+![Image](https://github.com/user-attachments/assets/c589e87d-def1-4338-ae47-9aa7b30387ca)
+
+I know it's a little niche and unnecessary but as a (small) developer (if you can call it that) you have 2 (technically 3) interfaces from the timer that you can integrate into your code.
+- the challenge addon
+- custom music
+- (custom language)
+> For the 3th one are references in the survival and challenge addon code but it's not finished.
 
 # Credits
+> [!NOTE]
+> These are mainly german YouTubers, since the original version and the associated idea were actually in german.
 
 
 [^1]: Only while using [local mode](#local-mode)
