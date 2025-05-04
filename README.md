@@ -167,7 +167,7 @@ This is for toggling your Modification on or off and manage your installed Chall
 | Allowed in speedruns ||Yes |
 |Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
 
-> Challenges are not pre installed! Check out the Challenge Addon for that.
+> Challenges are not pre installed! Check out the [Challenge Addon](#survival-mode---addons) for that.
 
 ## Dimension
 A quick way to start your adventure e.g. in the nether. _If you're tired of the overworld_
@@ -252,7 +252,7 @@ There's a little more to this. Assuming a player has done something from this ex
 - dying (excluding [difficulty easy](#difficulty))
 - give up via. the menu
 - timer hits 0 while using [start time](#start-time) (unless you have set your goal to it, which would leads to a [positive ending](#positive-ending))
-- ignore aktived challenges
+- ignore aktived [challenges](#survival-mode---addons)
 
 Whether you can continue playing in this world depends now on your [difficulty](#difficulty). Look in the [table](#difficulty) for "In case of a negative end".
 
@@ -313,6 +313,9 @@ I know it's a little niche and unnecessary but as a (small) developer (if you ca
 # Credits
 > [!NOTE]
 > These are mainly german YouTubers, since the original version and the associated idea were actually in german.
+
+- **The actual idea for the timer**: [Hasenzahn](https://www.youtube.com/watch?v=CZRczUj__P8)
+- **Inspiration for the challenges**: [BastiGHG](https://www.youtube.com/@bastighg)
 
 
 [^1]: Only while using [local mode](#local-mode)
