@@ -1,5 +1,5 @@
 # Prepering
-execute if entity @s[tag=trust_player_control] if score host_mode timer_menu matches 0 run tellraw @s {"rawtext":[{"text":"§l§2[§aInfo§2]§r Dies ist die Übersicht von jedem Spieler der grade §aOnline§r ist:"}]}
+execute if entity @s[tag=trust_player_control] if score host_mode timer_menu matches 0 run tellraw @s {"rawtext":[{"text":"§l§2[§aInfo§2]§r Quick preview of every player who is §aonline§r:"}]}
 execute if entity @s[tag=trust_player_control] unless entity @a[tag=test_person] if score host_mode timer_menu matches 0 run tag @a add test_person
 
 
