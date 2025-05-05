@@ -222,7 +222,7 @@
                       ]
                   },
                   {
-                      "name":"§l§gSteuerung",
+                      "name":"§l§gControl",
                       "commands":[
                         "/stopsound @a[tag=timer_menu_target]",
                         "/execute as @a[tag=timer_menu_target] at @s run function timer/system/control",
@@ -321,7 +321,7 @@
                     ]
                 },
                 {
-                    "name":"§l§gSteuerung",
+                    "name":"§l§gControl",
                     "commands":[
                       "/stopsound @a[tag=timer_menu_target]",
                       "/execute as @a[tag=timer_menu_target] at @s run function timer/system/control",
@@ -394,7 +394,7 @@
                 ]
               },
               {
-                  "name":"§l§gSteuerung",
+                  "name":"§l§gControl",
                   "commands":[
                     "/stopsound @a[tag=timer_menu_target]",
                     "/execute as @a[tag=timer_menu_target] at @s run function timer/system/control",

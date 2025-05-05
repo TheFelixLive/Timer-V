@@ -31,7 +31,7 @@
                           "/execute if score host_mode timer_menu matches 0 run scoreboard players set @a[tag=timer_menu_target] timer_do_count 0",
                           "/execute if score host_mode timer_menu matches 1 run scoreboard players set host timer_do_count 0",
                           "/scoreboard players set sound timer_menu 1",
-                         "/execute as @initiator at @s run function timer/visible"
+                         "/execute as @initiator at @s run function timer/mode"
                        ]
                    },
                    {
@@ -39,7 +39,7 @@
                      "commands":[
                       "/stopsound @initiator",
                          "/scoreboard players set sound timer_menu 1",
-                         "/execute as @initiator at @s run function timer/mode"
+                         "/execute as @initiator at @s run function timer/visible"
                      ]
                    },
                    {
