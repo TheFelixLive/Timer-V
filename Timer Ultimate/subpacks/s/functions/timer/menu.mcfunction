@@ -13,7 +13,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score difficulty timer_settings matches 2.. unless score reset_type timer_settings matches 2 if score custom_music timer_settings matches 1 run playsound timeru.function_no_content
 
 # Startup menu when speedrun is on and mode 1
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r Speed ​​Run is active, there is no menu!"}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r Speed Run is active, there is no menu!"}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 1 unless score custom_music timer_settings matches 1 run playsound block.false_permissions
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.function_no_content @s
 

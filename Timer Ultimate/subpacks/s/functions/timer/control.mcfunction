@@ -62,7 +62,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 
 
 # Speedrun Error
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_run timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r Speed ​​Run is active, there is no break!"}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_run timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§6[§eError§6]§r Speed Run is active, there is no break!"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_run timer_settings matches 1 unless score custom_music timer_settings matches 1 run playsound block.false_permissions
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_run timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.function_no_content
 
