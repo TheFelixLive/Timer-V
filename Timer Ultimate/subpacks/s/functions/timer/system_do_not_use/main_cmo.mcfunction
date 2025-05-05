@@ -27,6 +27,8 @@ execute unless score mode timer_settings matches 0.. unless score look timer_set
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run gamerule sendcommandfeedback false
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run gamerule dodaylightcycle false
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run gamerule doweathercycle false
+execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run time set 0
+execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run weather clear
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run gamemode creative @a
 
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives add timer_settings dummy
