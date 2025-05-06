@@ -100,7 +100,7 @@
             {
                 "scene_tag":"menu_help_text_htu_2",
                 "npc_name":"§lTimer Ultimate - How to use",
-                "text":"§3§lAddons\n\n§r§8This allows you to manage your modifications by default. This includes the §l§fAFK mode§r§8, which intelligently pauses and resumes the timer, [§l/function timer/settings/afk§r§8]\n§1§lNight vision§r, which means that every player always has night vision\nand §e§lMusic§r. After a little setup, you can use the timer to use your own sounds. If you have also installed the challenge addon with the timer, you can also manage your challenges from here §8[§l/function timer/challenge/... §r§8]",
+                "text":"§3§lAddons\n\n§r§8This allows you to manage your modifications by default. This includes the §l§fAFK mode§r§8, which intelligently pauses and resumes the timer, [§l/function timer/settings/afk§r§8]\n§1§lNight vision§r§8, which means that every player always has night vision\nand §e§lMusic§r§8. After a little setup, you can use the timer to use your own sounds. If you have also installed the challenge addon with the timer, you can also manage your challenges from here §8[§l/function timer/challenge/... §r§8]",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
@@ -354,7 +354,7 @@
             {
                 "scene_tag":"menu_help_text_contacts",
                 "npc_name":"§lTimer Ultimate - Contacts",
-                "text":"§3§lContactsr§8\n\nIf you need additional help, have general questions about the project, want to report a bug, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§7 github.com/TheFelixLive/Timer-Ultimate/issues\n§5Curseforge:§7 curseforge.com/projects/1259478\n\nIf possible, please use the first option :)",
+                "text":"§3§lContacts§r§8\n\nIf you need additional help, have general questions about the project, want to report a bug, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§7 github.com/TheFelixLive/Timer-Ultimate/issues\n§0Curseforge:§7 curseforge.com/projects/1259478",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

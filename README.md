@@ -355,7 +355,7 @@ To promote a player you can enter the following command, _remember to replace th
 # Third party implementations
 ![Image](https://github.com/user-attachments/assets/c589e87d-def1-4338-ae47-9aa7b30387ca)
 
-I know it's a little niche and unnecessary but as a (small) developer (if you can call it that) you have 2 (technically 3) interfaces from the timer that you can integrate into your code.
+I know it's a little niche and unnecessary but as a (small) developer (if you can call it that) you have 2 (technically 3) interfaces from the timer that you can integrate into your code Check it [here](./Timer%20Ultimate/sample%20resource%20pack/ReadMe.txt) out.
 - the challenge addon
 - custom music
 - (custom language)
