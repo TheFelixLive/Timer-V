@@ -70,8 +70,8 @@ function mainTick() {
   for (const player of players) {
 
     
-    // This If query protects the script from crashing when the scoreboard "timer_settings" is deleted.
-    if (world.scoreboard.getObjective("timer_settings") !== undefined && world.scoreboard.getObjective("timer_addon") !== undefined) {
+    // This protects the script from crashing when the scoreboard "timer_settings" and or "timer_addon"  is deleted.
+    if (timer_settings !== undefined && timer_addon !== undefined) {
       const x = player.location.x;
       const z = player.location.z;
 
@@ -203,6 +203,9 @@ function mainTick() {
             oldLevel = level;
         }
       }
+    } else {
+      timer_settings = world.scoreboard.getObjective("timer_settings");
+      timer_addon = world.scoreboard.getObjective("timer_addon");
     }
   }
   system.run(mainTick);

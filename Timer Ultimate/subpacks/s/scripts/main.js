@@ -29,7 +29,7 @@ function mainTick() {
     if (system.currentTick % 20 === 0) {
       
       // This If query protects the script from crashing when the scoreboard "timer_settings" is deleted.
-      if (world.scoreboard.getObjective("timer_settings") !== undefined) {
+      if (timer_settings !== undefined) {
 
         if (playerDimension !== undefined && timer_settings.getScore("mode") === 0) {
 
@@ -45,6 +45,8 @@ function mainTick() {
             timer_settings.setScore("dimension", 2);
           }
         }
+      } else {
+        timer_settings = world.scoreboard.getObjective("timer_settings");
       }
     }
 

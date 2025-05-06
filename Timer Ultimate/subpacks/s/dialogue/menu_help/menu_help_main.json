@@ -28,10 +28,10 @@
                         ]
                     },
                     {
-                        "name":"§l§aSocial Media",
+                        "name":"§l§aContacts",
                         "commands":[
                             "scoreboard players set action timer_menu 1",
-                            "/dialogue open @s @initiator menu_help_text_credits"
+                            "/dialogue open @s @initiator menu_help_text_contacts"
                         ]
                     },
                     {

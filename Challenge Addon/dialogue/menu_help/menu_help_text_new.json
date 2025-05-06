@@ -5,7 +5,7 @@
             {
                 "scene_tag":"menu_help_text_htu_ca",
                 "npc_name":"§lChallenge Addon - How to use",
-                "text":"§3§lHow to use\n\n§r§8The Challenge Addon (CA for short) adds 9 additional challenges to the timer, some with submodes. Each challenge shows a description when activated. Make sure that some challenges are not compatible with each other or with some features from the timer. In this case you will be notified upon activation. Theses can be accessed via \n\n-/function ca/addon/[name] \n-the menu\n\nWhile the timer is running, the status of a challenge can be queried in the same ways",
+                "text":"§3§lHow to use\n\n§r§8The Challenge Addon (CA for short) adds 18 additional challenges to the timer, some with submodes. Each challenge shows a description when activated. Make sure that some challenges are not compatible with each other or with some features from the timer. In this case you will be notified upon activation. Theses can be accessed via \n\n-/function ca/addon/[name] \n-the menu\n\nWhile the timer is running, the status of a challenge can be queried in the same ways",
                 "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                   "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
