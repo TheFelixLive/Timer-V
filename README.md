@@ -261,7 +261,7 @@ Whether you can continue playing in this world depends now on your [difficulty](
 > Was captured during a death with [difficulty](#difficulty) infinity. The player name was subsequently removed
 
 # Survival Mode - Addons
-To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the releases.
+To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the [releases](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
 Regardless of that, what are new challenges in this context?
 In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 18 challenges and what they do.
 
