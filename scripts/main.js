@@ -3,7 +3,7 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 
 const version_info = {
   name: "Timer V",
-  version: "v.5.0.0 A3",
+  version: "v.5.0.0 A4",
   unix: 1742821543946
 }
 
@@ -213,7 +213,6 @@ function create_player_save_data (playerId, playerName) {
   if (player_save_data == undefined) {
       let shout_be_op = true;
   
-      // Prüfe, ob bereits ein Spieler mit op=true existiert
       for (let entry of save_data) {
           if (entry.op === true) {
               shout_be_op = false;
@@ -221,7 +220,6 @@ function create_player_save_data (playerId, playerName) {
           }
       }
   
-      // Wenn noch kein Spieler mit op=true existiert, setze es für den neuen Spieler
       if (shout_be_op) {
           console.log(`Player ${playerName} (${playerId}) added with op=true!`);
       } else {
@@ -240,7 +238,8 @@ function create_player_save_data (playerId, playerName) {
           op: shout_be_op,
           visibility: true,
           lang: 0,
-          design: 0
+          design: 0,
+          setup: shout_be_op ? 2 : 1,
       });
   } else if (player_save_data.name !== playerName) {
       player_save_data.name = playerName;
@@ -253,17 +252,77 @@ world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
   create_player_save_data(playerId, playerName);
 });
 
+/*------------------------
+ Startup popups
+-------------------------*/
 
 world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
-
   let save_data = load_save_data();
-  let player_save_data = save_data.find(entry => entry.id === player.id);
+  let player_save_data = save_data[save_data.findIndex(entry => entry.id === player.id)];
 
+  // Setup popup
+  if (player_save_data.setup == 2) {
+    let form = new ActionFormData();
+    form.title("Setup guide");
+    form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+    form.button("Survival mode");
+    form.button("Creative mode");
+    form.button("");
+
+    const showForm = async () => {
+      form.show(player).then((response) => {
+        if (response.canceled && response.cancelationReason === "UserBusy") {
+          showForm()
+        } else {
+          // Response
+          player_save_data.setup = 0
+          // Survival
+          if (response.selection === 0) {
+            save_data[0].is_global = true
+            save_data[0].is_challenge = true
+          }
+
+          if (response.selection >= 0) {
+            update_save_data(save_data);
+            main_menu(player)
+          }
+
+        }
+      });
+    };
+    showForm();
+  }
+
+  // Welcome screen
+  if (player_save_data.setup == 1) {
+    let form = new ActionFormData();
+    form.title("Setup guide");
+    form.body("Wellcome!\n comming soon");
+    form.button("");
+
+    const showForm = async () => {
+      form.show(player).then((response) => {
+        if (response.canceled && response.cancelationReason === "UserBusy") {
+          showForm()
+        } else {
+          // Response
+
+          // Survival
+          if (response.selection === 0) {
+            main_menu(player)
+          }
+
+        }
+      });
+    };
+    showForm();
+  }
+
+  // Update popup
   if (player_save_data.op && Date.now() > save_data[0].update_message_unix) {
     let form = new ActionFormData();
     form.title("Update time!");
     form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
-    form.button("Dismiss");
     form.button("Mute");
 
     const showForm = async () => {
@@ -276,9 +335,7 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
         }
       });
     };
-
-    showForm(); // Starte die rekursive Funktion
-    
+    showForm();
   }
 });
 
@@ -336,7 +393,6 @@ function apply_design(design, time) {
     }
     return b;
   });  
-  // Falls irgendein Marker (egal welcher Modus) einen non-zero Wert hat, bleiben "ifAllZero"-Kandidaten verborgen.
   let allZero = true;
   for (let b of proc)
     if(b.type === "marker" && Number(b.value) !== 0) { allZero = false; break; }
@@ -378,7 +434,7 @@ function apply_design(design, time) {
 
 
 /*------------------------
- Menu Pages
+ Menu: main
 -------------------------*/
 
 function main_menu_actions(player, form) {
@@ -426,16 +482,23 @@ function main_menu_actions(player, form) {
           main_menu(player);
         });
       }
+
+      if (save_data[player_sd_index].op && timedata.is_global) {
+        if(form){form.button("Challenge mode", timedata.is_challenge ? "textures/ui/toggle_on" : "textures/ui/hardcore/heart")};
+        actions.push(() => {
+          splash_challengemode(player);
+        });
+      }
   
       if (save_data[player_sd_index].op) {
-        if(form){form.button(timedata.is_global ? "Activate timer for each player" : "Share time to other player", "textures/ui/icon_multiplayer")};
+        if(form){form.button("Synchronized timer", timedata.is_global ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
         actions.push(() => {
-          settings_globalmode(player);
+          splash_globalmode(player);
         });
       }
   
       // Disable "Change time" button as add!
-      if (!((save_data[player_sd_index].time_day_actionsbar == true || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
+      if (!((save_data[player_sd_index].time_day_actionsbar == true || timedata.is_challenge || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
         if(form){form.button("Change time\n" + (apply_design(design, timedata.time[timedata.counting_type ? "timer" : "stopwatch"])), "textures/ui/color_plus")};
         actions.push(() => {
           settings_start_time(player);
@@ -465,7 +528,6 @@ function main_menu_actions(player, form) {
       update_save_data(save_data);
     }
 
-    // Nur hinzufügen, wenn time_source auf Real Life steht
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
       // Button 1: Time zone
       if (save_data[player_sd_index].op == true) {
@@ -495,7 +557,7 @@ function main_menu_actions(player, form) {
 
 
 
-  // Button: Settings (immer sichtbar)
+  // Button: Settings
   if(form){form.button("Settings\nShow more!", "textures/ui/automation_glyph_color")}
   actions.push(() => {
     settings_main(player);
@@ -521,10 +583,88 @@ function main_menu(player) {
   });
 }
 
+/*------------------------
+ splash screens
+-------------------------*/
+
+
+function splash_challengemode(player) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+
+  form.title("Challenge mode");
+  form.body(!save_data[0].is_challenge ? "In this mode, the timer shifts from a supporting role to the main one. First, you set the guidelines and then plunge into the adventure of the survival mode!" : "If this function is deactivated, the timer will operate more in the background and will no longer have any influence on the game mode." + "\n\n§7This setting will change the timer significantly.\n\n");
+
+  form.button(!save_data[0].is_challenge ? "§aEnable": "§cDisable");
+  form.button("");
+
+
+  form.show(player).then((response) => {
+    if (response.selection == 0) {
+      save_data[0].is_challenge = save_data[0].is_challenge ? false : true,
+      update_save_data(save_data);
+    }
+
+
+    if (response.selection >= 0) {
+      return main_menu(player)
+    }
+
+
+    
+  });
+}
 
 
 
+function splash_globalmode(player) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
+  form.title("Synchronized timer");
+  form.body("The synchronized timer feature creates an additional timer that is enforced on all players. Only admins can control it.\n\n§7Required for challenge mode.\n\n");
+
+  if (save_data[0].is_global) {
+    form.button("§cDisable");
+  } else {
+    form.button("§gEnable without cloning");
+    form.button("§aEnable & clone your timer");
+  }
+
+  form.button("");
+
+
+  form.show(player).then((response) => {
+    if (save_data[0].is_global) {
+      save_data[0].is_global = false;
+      update_save_data(save_data);
+    } else {
+      if (response.selection == 1) {
+        save_data[0].is_global = true;
+        save_data[0].time.timer = save_data[player_sd_index].time.timer;
+        save_data[0].time.stopwatch = save_data[player_sd_index].time.stopwatch;
+        save_data[0].counting_type = save_data[player_sd_index].counting_type;
+        update_save_data(save_data);
+      }
+  
+      if (response.selection == 0) {
+        save_data[0].is_global = true;
+        update_save_data(save_data);
+      }
+    }
+  
+    if (response.selection >= 0) {
+      return main_menu(player);
+    }
+  });
+  
+}
+
+
+/*------------------------
+ Settings
+-------------------------*/
 
 function settings_start_time(player) {
   let form = new ModalFormData();
@@ -602,68 +742,6 @@ function settings_time_zone(player) {
 
     update_save_data(save_data);
     return main_menu(player)
-  });
-}
-
-function settings_globalmode(player) {
-  let form = new ActionFormData();
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-
-  form.title("title.settings_globalmode");
-  form.body("Select an option!\n\n");
-
-  if (save_data[0].is_global) {
-    form.button("§cDisable");
-  } else {
-    form.button("§aEnable, and share");
-    form.button("§gEnable, without shareing");
-  }
-
-  form.button("");
-
-
-  form.show(player).then((response) => {
-
-    if (save_data[0].is_global) {
-
-      if (response.selection == 0) {
-        save_data[0].is_global = false
-        update_save_data(save_data);
-
-        return main_menu(player)
-      }
-
-      if (response.selection == 1) {
-        return main_menu(player)
-      }
-
-    } else {
-
-      if (response.selection == 0) {
-        save_data[0].is_global = true
-        save_data[0].time.timer = save_data[player_sd_index].time.timer
-        save_data[0].time.stopwatch = save_data[player_sd_index].time.stopwatch
-        save_data[0].counting_type = save_data[player_sd_index].counting_type
-
-        update_save_data(save_data);
-        return main_menu(player)
-      }
-
-      if (response.selection == 1) {
-        save_data[0].is_global = true
-        update_save_data(save_data);
-        return main_menu(player)
-      }
-
-      if (response.selection == 2) {
-        return main_menu(player)
-      }
-
-    }
-
-
-    
   });
 }
 
