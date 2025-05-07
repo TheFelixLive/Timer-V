@@ -190,14 +190,12 @@
                         ]
                     },
                     {
-                        "name":"§l§cB. break",
+                        "name":"§l§cBlocks",
                         "commands":[
-                            "scoreboard players set action timer_menu 1",
-                            "/stopsound @initiator",
-                            "/execute as @initiator at @s run function ca/addon/no/block_break",
-                            "/scoreboard players set animation_time timer_menu 30"
+                            "/dialogue open @s @initiator menu_challenge_no_blocks",
+                            "scoreboard players set action timer_menu 1"
                         ]
-                    },
+                    },  
                     {
                         "name":"§l§nCrafting",
                         "commands":[
@@ -227,6 +225,42 @@
                         "name":"",
                         "commands":[
                           "/dialogue open @s @initiator menu_challenge_new  ",
+                          "scoreboard players set action timer_menu 1"
+                      ]
+                    }
+                ]
+            },
+            {
+                "scene_tag":"menu_challenge_no_blocks",
+                "npc_name":"§lTimer Ultimate - Blocks",
+                "text":"§l§6Choose type you aren't able to do!\n\n\n\n\n\n§r§7",
+                "on_close_commands": [
+                    "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                    "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                  ],
+                "buttons":[
+                    {
+                        "name":"§l§aB. place",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/block_place",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },
+                    {
+                        "name":"§l§cB. break",
+                        "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/execute as @initiator at @s run function ca/addon/no/block_break",
+                            "/scoreboard players set animation_time timer_menu 30"
+                        ]
+                    },  
+                    {
+                        "name":"",
+                        "commands":[
+                          "/dialogue open @s @initiator menu_challenge_no",
                           "scoreboard players set action timer_menu 1"
                       ]
                     }

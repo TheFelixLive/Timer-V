@@ -145,7 +145,7 @@
             {
                 "scene_tag":"menu_help_look_2_page_1", // look 2
                 "npc_name":"§lTimer Ultimate - Dictionary",
-                "text":"§l§6Topic overview\n\n§l§8Page 5§r = §3§lAt the End§8§o(recommended)§r§8\n§l§8Page 1§r = §3§lRechte\n§l§8Page 2§r = §3§lThe menu\n§l§8Page 3§r = §3§lAddons\n§l§8Page 4§r = §3§l/functions\n\n                 §r§71 of 2",
+                "text":"§l§6Topic overview\n\n§l§8Page 6§r = §3§lAt the End§8§o(recommended)§r§8\n§l§8Page 1§r = §3§lRechte\n§l§8Page 2§r = §3§lThe menu\n§l§8Page 3§r = §3§lAddons\n§l§8Page 4§r = §3§l/functions\n\n                 §r§71 of 2",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

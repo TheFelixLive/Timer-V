@@ -263,12 +263,13 @@ Whether you can continue playing in this world depends now on your [difficulty](
 # Survival Mode - Addons
 To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the [releases](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
 Regardless of that, what are new challenges in this context?
-In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 18 challenges and what they do.
+In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 19 challenges and what they do.
 
 | Name | Description | Limitations | Command | Extra notes |
 |--------|--------|--------|--------|--------|
 | No armor | If someone has a piece of armor in their inventory the timer will end | | `/function ca/addon/no/armor` | |
-| No block break | Disables the placement of blocks || `/function ca/addon/no/block_break` | |
+| No block break | Disables the bracking of blocks || `/function ca/addon/no/block_break` | |
+| No block place | Disables the placement of blocks || `/function ca/addon/no/block_place` | |
 | No crafting table | If someone has a crafting table in their inventory the timer will end | In some structures there are crafting tables that you could exploit | `/function ca/addon/no/crafting` | |
 | No jumping | If someone jumps the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
 | No swimming | If someone swimms the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |

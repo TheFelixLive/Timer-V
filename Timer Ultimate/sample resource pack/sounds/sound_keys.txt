@@ -97,8 +97,8 @@ ca.no_armor_1
 ca.no_block_break_0
 ca.no_block_break_1
 
-# ca.no_block_place_0
-# ca.no_block_place_1
+ca.no_block_place_0
+ca.no_block_place_1
 
 ca.no_crafting_0
 ca.no_crafting_1

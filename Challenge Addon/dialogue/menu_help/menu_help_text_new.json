@@ -24,8 +24,8 @@
             },
             {
                 "scene_tag":"menu_help_text_changelog_2",
-                "npc_name":"§lCA - Changelog v.4.1.0",
-                "text":"§b§lNew features§r§8\n\n-Added support for language mod\n-Added Only Challange\n-Added Speed X Challange\n-Added Invisibility Challange\n-Added Level equals border Challange\n-Added No Armor Challange\n-Added No Block break Challange\n-Added restricted movement challenge\n-Added custom music support\n-Added support for 1.21\n\n§a§lGeneral Changes§r§8\n\n-Added & changed some sounds\n-More challenges are now compatible with each other\n-Changelog got a new look\n\n\n§c§lBug fixes§r§8\n\n§7Not documented\n\n\n§7Last Update 01.10.24",
+                "npc_name":"§lCA - Changelog v.4.1.1",
+                "text":"§b§lNew features§r§8\n\n-Readded No block place\n\n\n§7Last Update 07.05.25",
                 "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                   "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

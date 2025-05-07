@@ -308,8 +308,8 @@
             },
             {
                 "scene_tag":"menu_help_text_changelog",
-                "npc_name":"§lTimer U. - Changelog v.4.1.0",
-                "text":"§b§lNew features§r§8\n\n-Added English support\n-Added Speed Run Mode\n-Added §dDimension§r§8\n-Added Welcome Splash Screen\n-Added custom music support\n-Added support for 1.21\n-Added a switch to disable help Messages\n\n§a§lGeneral Changes§r§8\n\n-Every animation now contains a title\n-Animation now can play while a Challage in the menu\n-Added & changed some sounds\n-Players can't move if the challage is paused\n\n-AFK is now a mod\n-The AFK time will removed\n-Improved time menu\n-Time will be shown again at the end of a challenge\n\n-Fixed some spelling mistakes\n-Drastically improved stability in the menu\n\n-Changelog got a new look\n-Day, night and weather cycles only change during a challenge\n\n-New text when the timer leves AFK mode\n-Goals are no longer reset after death\n-The timer will automatically reset if possible\n-Now, the Goal is listed at the beginning of a challenge\n\n-Goals are no longer listed at the end of a challenge\n\n\n§c§lBug fixes§r§8\n\n-Fixed a bug that prevented the menu from opening in the_end (most of the time)\n\n\n-Fixed a bug that made the timer unusable if the player 'new_npc' was unavailable\n\n\n-Fixed bug that shows error messages for unauthorized Players\n\n\n-Fixed a bug that spammed error messages due to incorrect gamemode of a player because he had no rights\n\n\n-Fixed a bug, that the 0 Second text didn't appear\n\n§7Last Update 01.10.24",
+                "npc_name":"§lTimer U. - Changelog v.4.1.1",
+                "text":"§a§lGeneral Changes§r§8\n\n-wrong texts corrected\n-Contact options updated\n\n\n§c§lBug fixes§r§8\n\n-Fixed a bug that caused scripts to crash \n\n§7Last Update 07.05.25",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
@@ -335,7 +335,7 @@
             {
                 "scene_tag":"menu_help_text_advanced_version",
                 "npc_name":"§lTimer Ultimate - Version",
-                "text":"§3§lAdvanced Version§r§8\n\nAddon: Timer Ultimate\nLanguage: English\nCode-Name: CMO\nArchitecture: Scoreboard\nGeneration: 4\nTimer Version: 4.1.0\nMaximum Time: 1000 hours (41,67 Days)\nChallenge-Addon: 4.1.0\nMinecraft Version: (min.) 1.21.41\n",
+                "text":"§3§lAdvanced Version§r§8\n\nAddon: Timer Ultimate\nLanguage: English\nCode-Name: CMO\nArchitecture: Scoreboard\nGeneration: 4\nTimer Version: 4.1.1\nMaximum Time: 1000 hours (41,67 Days)\nChallenge-Addon: 4.1.1\nMinecraft Version: (min.) 1.21.41\n",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

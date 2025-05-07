@@ -13,7 +13,7 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score no_block_place timer_addon matches 1 run title @s title §cNo §fBlock §5place
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0 if score no_block_place timer_addon matches 1 run title @s subtitle -- is §aactiv§f --
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0..1 if score no_block_place timer_addon matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§f[§5Info§f]§r No more blocks can be placed!"}]}
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0..1 if score no_block_place timer_addon matches 1 unless score custom_music timer_settings matches 1 run playsound dig.grass @a[tag=trust_player_control] ~ ~ ~ 0.3
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0..1 if score no_block_place timer_addon matches 1 unless score custom_music timer_settings matches 1 run playsound dig.grass @a[tag=trust_player_control] ~ ~ ~ 1
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score mode timer_settings matches 0..1 if score no_block_place timer_addon matches 1 if score custom_music timer_settings matches 1 run playsound ca.no_block_place_1 @a[tag=trust_player_control]
  
 
@@ -28,6 +28,6 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 unless score custom_music timer_settings matches 1 run playsound note.didgeridoo
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score custom_music timer_settings matches 1 run playsound timeru.function_no_content
 
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 0..1 run tellraw @s[tag=trust_player_control] {"rawtext":[{"text":"§l§6[§eError§6]§r Challenges could not be activated because the \"Speed ​Run Mode\" is active."}]}
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 0..1 run tellraw @s[tag=trust_player_control] {"rawtext":[{"text":"§l§6[§eError§6]§r Challenges could not be activated because the \"Speed Run Mode\" is active."}]}
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 0..1 unless score custom_music timer_settings matches 1 run playsound note.didgeridoo
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 1 if score mode timer_settings matches 0..1 if score custom_music timer_settings matches 1 run playsound timeru.function_no_content

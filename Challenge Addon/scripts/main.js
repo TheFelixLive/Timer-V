@@ -52,16 +52,14 @@ world.beforeEvents.playerBreakBlock.subscribe((data) => {
   }
 })
 
-// Here me out: No Block Place cannot be used because "data.cancel" requires a "world.beforeEvents" as used in no block break. See here: https://jaylydev.github.io/scriptapi-docs/latest/classes/_minecraft_server.PlayerPlaceBlockBeforeEventSignal.html
-/*
-world.afterEvents.playerPlaceBlock.subscribe((data) => {
+// Got it fixed :)
+world.beforeEvents.itemUseOn.subscribe((data) => {
   if (world.scoreboard.getObjective("timer_settings") !== undefined && world.scoreboard.getObjective("timer_addon") !== undefined) {
     if (timer_settings.getScore("mode") == 1 && timer_settings.getScore("do_count") == 1 && timer_addon.getScore("no_block_place") == 1) {
       data.cancel = true;
     }
   }
 })
-*/
 
 
 
