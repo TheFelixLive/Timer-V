@@ -62,10 +62,10 @@ const design_template = [
       { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
           { type: "marker", marker: "h", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
-          { type: "text", text: " Uhr" }
+          { type: "text", text: " o'clock" }
       ]},
       { type: "screen_saver", blocks: [
-          { type: "text", text: "§lTimer §7V" }
+          { type: "text", text: "§lTimer §tV" }
       ]}
     ]
   },
@@ -102,7 +102,7 @@ const design_template = [
       { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
         { type: "marker", marker: "h", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
         { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
-        { type: "text", text: " Uhr" }
+        { type: "text", text: " o'clock" }
       ]},
       { type: "screen_saver", blocks: [
           { type: "text", text: "§b§lTimer V" }
@@ -238,7 +238,7 @@ function create_player_save_data (playerId, playerName) {
           time_source: 0,
           name: playerName,
           op: shout_be_op,
-          visibility: 2,
+          visibility: true,
           lang: 0,
           design: 0
       });
@@ -262,7 +262,7 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
   if (player_save_data.op && Date.now() > save_data[0].update_message_unix) {
     let form = new ActionFormData();
     form.title("Update time!");
-    form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out dsc.gg/thefelixlive");
+    form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
     form.button("Dismiss");
     form.button("Mute");
 
@@ -1103,7 +1103,7 @@ function settings_actionbar(player) {
     form.body("Select an option!");
 
     form.button("Change the look!\n" + (render_live_actionbar(save_data[player_sd_index], false)), "textures/ui/mashup_PaintBrush");
-    form.button("Visibility\n§9"+ ["Off", "On", "Auto"][save_data[player_sd_index].visibility], "textures/ui/invisibility_effect");
+    form.button("Use actionsbar\n" + (save_data[player_sd_index].visibility === true ? "§aon" : "§coff"), (save_data[player_sd_index].visibility === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"));
 
     if (save_data[player_sd_index].counting_type !== 3) {
       form.button("Show day time\n" + (save_data[player_sd_index].time_day_actionsbar === true ? "§aon" : "§coff"), (save_data[player_sd_index].time_day_actionsbar === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"));
@@ -1113,7 +1113,16 @@ function settings_actionbar(player) {
 
     form.show(player).then((response) => {
       if (response.selection == 0) return design_template_ui(player);
-        if (response.selection == 1) return settings_actionbar_visibility(player);
+
+      if (response.selection == 1) {
+        if (save_data[player_sd_index].visibility === false) {
+          save_data[player_sd_index].visibility = true;
+        } else {
+          save_data[player_sd_index].visibility = false;
+        }
+        update_save_data(save_data);
+        settings_actionbar(player);
+      }
 
         if (save_data[player_sd_index].counting_type !== 3) {
           if (response.selection == 2) {
@@ -1236,40 +1245,6 @@ function design_preview(player, design, is_custom) {
 
 
 
-function settings_actionbar_visibility(player) {
-  let form = new ActionFormData();
-  form.title("Actionsbar");
-  form.body("Select an option!");
-
-  form.button("§aOn");
-
-  form.button("§cOff");
-
-  form.button("§dAutomatic");
-
-  form.button("");
-
-  form.show(player).then((response) => {
-    if (response.selection === undefined) return -1;
-    if (response.selection !== 3) {
-      let save_data = load_save_data();
-      let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-
-      const visibilityValues = [1, 0, 2];
-
-      if (response.selection >= 0 && response.selection < visibilityValues.length) {
-        save_data[player_sd_index].visibility = visibilityValues[response.selection];
-      }
-      
-      update_save_data(save_data);
-    }
-    return settings_actionbar(player);
-  });
-}
-
-
-
-
 
 
 
@@ -1348,7 +1323,7 @@ function render_live_actionbar(selected_save_data, do_update) {
             adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
             ticks = (adj / MILLIS_DAY) * TICKS;
             timevalue = { value: ticks, do_count: true };
-        if (data[0].sync_day_time === 1 && do_update) {
+        if (data[0].sync_day_time === 1 && update) {
           world.getDimension("overworld").runCommand("time set " + Math.floor(ticks));
         }
       } else {
@@ -1398,9 +1373,8 @@ async function update_loop() {
         let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
 
-        // Todo: Add automatic (2)
-        if (save_data[player_sd_index].visibility == 1 || save_data[player_sd_index].visibility == 2) {
-          player.runCommand("title @s actionbar "+render_live_actionbar(save_data[player_sd_index], save_data[0].is_global ? false : true));
+        if (save_data[player_sd_index].visibility == true) {
+          player.onScreenDisplay.setActionBar(render_live_actionbar(save_data[player_sd_index], save_data[0].is_global ? false : true));
         }
         
       }
