@@ -452,7 +452,7 @@ function main_menu_actions(player, form) {
   if (!save_data[0].is_global || save_data[0].is_global && save_data[player_sd_index].op) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
-      if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
+      if ((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && !timedata.is_challenge) {
         if(form){form.button("Condition\n" + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           if (timedata.time.do_count === false) {
@@ -464,15 +464,7 @@ function main_menu_actions(player, form) {
         });
       }
   
-      let design = save_data[player_sd_index].design
-  
-      if (typeof design == "number") {
-        design = design_template[save_data[player_sd_index].design].content
-      }
-  
-      design = design.find(d => d.type === "normal");
-  
-      if (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0) {
+      if (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && !timedata.is_challenge) {
         if(form){form.button("§cReset "+(timedata.counting_type ? "timer" : "stopwatch"), "textures/ui/wysiwyg_reset")}
         actions.push(() => {
           timedata.time[timedata.counting_type ? "timer" : "stopwatch"] = 0;
@@ -490,7 +482,7 @@ function main_menu_actions(player, form) {
         });
       }
   
-      if (save_data[player_sd_index].op) {
+      if (save_data[player_sd_index].op && !timedata.is_challenge) {
         if(form){form.button("Synchronized timer", timedata.is_global ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
         actions.push(() => {
           splash_globalmode(player);
@@ -498,8 +490,13 @@ function main_menu_actions(player, form) {
       }
   
       // Disable "Change time" button as add!
-      if (!((save_data[player_sd_index].time_day_actionsbar == true || timedata.is_challenge || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
-        if(form){form.button("Change time\n" + (apply_design(design, timedata.time[timedata.counting_type ? "timer" : "stopwatch"])), "textures/ui/color_plus")};
+      if (!((save_data[player_sd_index].time_day_actionsbar == true || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
+        let design = save_data[player_sd_index].design
+        if (typeof design == "number") {
+          design = design_template[save_data[player_sd_index].design].content
+        }
+        design = design.find(d => d.type === "normal");
+        if(form){form.button((save_data[0].is_challenge? "Start time\n" : "Change time\n") + (apply_design(design, timedata.time[timedata.counting_type ? "timer" : "stopwatch"])), "textures/ui/color_plus")};
         actions.push(() => {
           settings_start_time(player);
         });
@@ -543,11 +540,9 @@ function main_menu_actions(player, form) {
       if(form){form.button("Sync with game time\n" + (save_data[0].sync_day_time === 1 ? "§aon" : "§coff"), (save_data[0].sync_day_time === 1 ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (save_data[0].sync_day_time === 0) {
-          world.gameRules.doDayLightCycle = false;
           save_data[0].sync_day_time = 1;
         } else {
           save_data[0].sync_day_time = 0;
-          world.gameRules.doDayLightCycle = true;
         }
         update_save_data(save_data);
         main_menu(player);
@@ -593,14 +588,23 @@ function splash_challengemode(player) {
   let save_data = load_save_data();
 
   form.title("Challenge mode");
-  form.body(!save_data[0].is_challenge ? "In this mode, the timer shifts from a supporting role to the main one. First, you set the guidelines and then plunge into the adventure of the survival mode!" : "If this function is deactivated, the timer will operate more in the background and will no longer have any influence on the game mode." + "\n\n§7This setting will change the timer significantly.\n\n");
-
+  form.body(
+    (!save_data[0].is_challenge
+      ? "In this mode, the timer shifts from a supporting role to the main one. First, you set the guidelines and then plunge into the adventure of the survival mode!"
+      : "If this function is deactivated, the timer will operate more in the background and will no longer have any influence on the game mode.")
+    + "\n\n§7This setting will change the timer significantly.\n\n"
+  );
+  
   form.button(!save_data[0].is_challenge ? "§aEnable": "§cDisable");
   form.button("");
 
 
   form.show(player).then((response) => {
+    // Todo: have to be ported to setup!
     if (response.selection == 0) {
+      save_data[0].time[save_data[0].counting_type ? "timer" : "stopwatch"] = 0;
+      save_data[0].time.do_count = false;
+      enable_gamerules()
       save_data[0].is_challenge = save_data[0].is_challenge ? false : true,
       update_save_data(save_data);
     }
@@ -637,8 +641,15 @@ function splash_globalmode(player) {
 
   form.show(player).then((response) => {
     if (save_data[0].is_global) {
-      save_data[0].is_global = false;
-      update_save_data(save_data);
+      if (response.selection == 0) {
+        save_data[0].is_global = false;
+        update_save_data(save_data);
+      }
+      
+      if (response.selection >= 0) {
+        return main_menu(player);
+      }
+
     } else {
       if (response.selection == 1) {
         save_data[0].is_global = true;
@@ -1401,7 +1412,7 @@ function render_live_actionbar(selected_save_data, do_update) {
             adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
             ticks = (adj / MILLIS_DAY) * TICKS;
             timevalue = { value: ticks, do_count: true };
-        if (data[0].sync_day_time === 1 && update) {
+        if (data[0].sync_day_time === 1 && do_update) {
           world.getDimension("overworld").runCommand("time set " + Math.floor(ticks));
         }
       } else {
@@ -1445,6 +1456,19 @@ async function update_loop() {
         render_live_actionbar(save_data[1], true)
       }
 
+      if (save_data.some(entry => entry.time_day_actionsbar === true)) {
+        world.gameRules.doDayLightCycle = true;
+      } else {
+        world.gameRules.doDayLightCycle = false;
+      }
+
+      // Todo: pausing shout also pause the time, wheaser, etc
+      if (save_data[0].challenge_progress == 1 ) {
+        enable_gamerules()
+      } else if (save_data[0].is_challenge) {
+        disable_gamerules()
+      }
+
       // actionsbar
       for (const player of world.getAllPlayers()) {
         save_data = load_save_data();
@@ -1462,5 +1486,20 @@ async function update_loop() {
     }
 }
 
+function enable_gamerules() {
+  world.gameRules.doDayLightCycle = true;
+  world.gameRules.doEntityDrops = true;
+  world.gameRules.doFireTick = true;
+  world.gameRules.doWeatherCycle = true;
+  world.gameRules.doMobSpawning = true;
+}
+
+function disable_gamerules() {
+  world.gameRules.doDayLightCycle = false;
+  world.gameRules.doEntityDrops = false;
+  world.gameRules.doFireTick = false;
+  world.gameRules.doWeatherCycle = false;
+  world.gameRules.doMobSpawning = false;
+}
 
 update_loop();
