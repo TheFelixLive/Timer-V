@@ -5,7 +5,7 @@
 
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
-It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.73` of Minecraft Bedorck **compatible**.
+It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.80` of Minecraft Bedorck **compatible**.
 Click [here](#installation-and-configuration) for the installation!
 
 > [!TIP]
