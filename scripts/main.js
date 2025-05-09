@@ -20,12 +20,12 @@ const timer_modes = [
   },
   {
     label: "World-time", 
-    icon: "textures/ui/world_glyph_color_2x", 
+    icon: "textures/ui/world_glyph_color", 
     show_if: (save_data) => !save_data[0].is_global
   },
   {
     label: "Day-time", 
-    icon: "textures/ui/time_1sunrise", 
+    icon: "textures/environment/sun", 
     show_if: (save_data, player_sd_index) => {
       return !save_data[0].is_global && save_data[player_sd_index].show_td_as_mode;
     }
@@ -34,6 +34,7 @@ const timer_modes = [
 
 const design_template = [
   {
+    // The "ms" marker isn't used here, but it works perfectly. Simply because I don't like it.
     name: "Default design",
     content: [
       { type: "normal", blocks: [
@@ -53,15 +54,16 @@ const design_template = [
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "Your time ->\n§l§7" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: " year/s", separator: { enabled: true, value: " ", position: "after" } },
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: " day/s", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
       ]},
+      // Same goes for here: the "s" marker isn't used here, but it works perfectly.
       { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
           { type: "marker", marker: "h", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "text", text: " o'clock" }
       ]},
       { type: "screen_saver", blocks: [
@@ -71,20 +73,21 @@ const design_template = [
   },
   
   {
+    // ripped from version 3.6 and below
     name: "Legacy design",
     content: [
       { type: "normal", blocks: [
           { type: "text", text: "§b§l" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: " year/s, ", separator: { enabled: false } },
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: " day/s, ", separator: { enabled: false } },
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
       ]},
       { type: "paused", blocks: [
           { type: "text", text: "§bTimer V§r is paused\n§l" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: " year/s, ", separator: { enabled: false } },
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: " day/s, ", separator: { enabled: false } },
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
@@ -92,8 +95,8 @@ const design_template = [
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "§bTimer V§r is paused\n§l" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: " year/s, ", separator: { enabled: false } },
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: " day/s, ", separator: { enabled: false } },
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
@@ -125,7 +128,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     let save_data = load_save_data();
     let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
   
-    // Konvertiere event.message in Boolean
     let debugValue = event.message.toLowerCase() === "true";
   
     if (save_data[player_sd_index].op) {
@@ -153,7 +155,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     let save_data = load_save_data();
     let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
   
-    // Konvertiere event.message in Boolean
     let allowInputsValue = event.message.toLowerCase() === "true";
   
     save_data[player_sd_index].allow_unnecessary_inputs = allowInputsValue;
@@ -410,7 +411,21 @@ function apply_design(design, time) {
         }
         if (prev) result += b.separator.value;
       }
-      result += b.value + (b.suffix || "");
+      let suffix = "";
+      if (typeof b.suffix === "string") {
+        suffix = b.suffix;
+      }
+      else if (typeof b.suffix === "object") {
+        const sing = b.suffix.singular;
+        const plu  = b.suffix.plural;
+        suffix = (Number(b.value) === 1
+          ? (sing != null ? sing : plu)
+          : (plu  != null ? plu  : sing)
+        ) || "";
+      }
+      
+      result += b.value + suffix;
+
       if (b.separator && b.separator.enabled && (b.separator.position === "after" || b.separator.position === "both")) {
         let next = false;
         for (let j = i + 1; j < proc.length; j++) {
@@ -465,7 +480,7 @@ function main_menu_actions(player, form) {
       }
   
       if (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && !timedata.is_challenge) {
-        if(form){form.button("§cReset "+(timedata.counting_type ? "timer" : "stopwatch"), "textures/ui/wysiwyg_reset")}
+        if(form){form.button("§cReset "+(timedata.counting_type ? "timer" : "stopwatch"), "textures/ui/recap_glyph_color_2x")}
         actions.push(() => {
           timedata.time[timedata.counting_type ? "timer" : "stopwatch"] = 0;
           timedata.time.do_count = false;
@@ -476,7 +491,7 @@ function main_menu_actions(player, form) {
       }
 
       if (save_data[player_sd_index].op && timedata.is_global) {
-        if(form){form.button("Challenge mode", timedata.is_challenge ? "textures/ui/toggle_on" : "textures/ui/hardcore/heart")};
+        if(form){form.button("Challenge mode", timedata.is_challenge ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
         actions.push(() => {
           splash_challengemode(player);
         });
@@ -509,35 +524,14 @@ function main_menu_actions(player, form) {
 
   if (save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) {
     // Button 0: Time Source
-    if (save_data[0].sync_day_time === 0) {
-      if(form){form.button("Time Source\n§9" + (save_data[player_sd_index].time_source === 0 ? "Minecraft" : "Real Life"), "textures/ui/share_microsoft")};
-      actions.push(() => {
-        if (save_data[player_sd_index].time_source === 0) {
-          save_data[player_sd_index].time_source = 1;
-        } else {
-          save_data[player_sd_index].time_source = 0;
-        }
-        update_save_data(save_data);
-        main_menu(player);
-      });
-    } else {
-      save_data[player_sd_index].time_source = 1
-      update_save_data(save_data);
-    }
 
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
       // Button 1: Time zone
-      if (save_data[player_sd_index].op == true) {
-        if(form){form.button("Time zone\n§9UTC" + (save_data[0].utc > -1 ? "+" : "") + save_data[0].utc, "textures/ui/world_glyph_color_2x")};
-        actions.push(() => {
-          settings_time_zone(player);
-        });
-      }
 
 
-      // Button 2: Sync with game time
+      // Button 2: Clone real time
 
-      if(form){form.button("Sync with game time\n" + (save_data[0].sync_day_time === 1 ? "§aon" : "§coff"), (save_data[0].sync_day_time === 1 ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
+      if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time === 1 ? "§aon" : "§coff"), (save_data[0].sync_day_time === 1 ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (save_data[0].sync_day_time === 0) {
           save_data[0].sync_day_time = 1;
@@ -752,7 +746,7 @@ function settings_time_zone(player) {
     save_data[0].utc = response.formValues[0]
 
     update_save_data(save_data);
-    return main_menu(player)
+    return settings_main(player)
   });
 }
 
@@ -790,13 +784,21 @@ function settings_main(player) {
   form.button("Actionsbar\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
   actions.push(() => settings_actionbar(player));
 
-  // Button 3: Debug (nur wenn debug aktiviert ist)
+  // Button 3: Time zone
+  if (save_data[player_sd_index].op == true) {
+    if(form){form.button("Time zone\n§9UTC" + (save_data[0].utc > -1 ? "+" : "") + save_data[0].utc, "textures/ui/world_glyph_color_2x")};
+    actions.push(() => {
+      settings_time_zone(player);
+    });
+  }
+
+  // Button 3: Debug
   if (save_data[0].debug && save_data[player_sd_index].op) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => debug_main(player));
   }
 
-  // Letzter Button: zurück zum Hauptmenü
+  // Back to main menu
 
   if (main_menu_actions(player).length > 1) {
     form.button("");
@@ -1184,52 +1186,81 @@ function settings_type_info(player, response) {
 }
 
 function settings_actionbar(player) {
-    let form = new ActionFormData();
-    let save_data = load_save_data();
-    let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-    form.title("Actionsbar");
-    form.body("Select an option!");
+  let actions = [];
 
-    form.button("Change the look!\n" + (render_live_actionbar(save_data[player_sd_index], false)), "textures/ui/mashup_PaintBrush");
-    form.button("Use actionsbar\n" + (save_data[player_sd_index].visibility === true ? "§aon" : "§coff"), (save_data[player_sd_index].visibility === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"));
+  form.title("Actionsbar");
+  form.body("Select an option!");
 
-    if (save_data[player_sd_index].counting_type !== 3) {
-      form.button("Show day time\n" + (save_data[player_sd_index].time_day_actionsbar === true ? "§aon" : "§coff"), (save_data[player_sd_index].time_day_actionsbar === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"));
-    }
+  // 1. Button: Look
+  form.button(
+    "Change the look!\n" + render_live_actionbar(save_data[player_sd_index], false),
+    "textures/ui/mashup_PaintBrush"
+  );
+  actions.push(() => {
+    design_template_ui(player);
+  });
 
-    form.button("");
+  // 2. Button: Actionsbar
+  form.button(
+    "Use actionsbar\n" + (save_data[player_sd_index].visibility ? "§aon" : "§coff"),
+    save_data[player_sd_index].visibility ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
+  );
+  actions.push(() => {
+    save_data[player_sd_index].visibility = !save_data[player_sd_index].visibility;
+    update_save_data(save_data);
+    settings_actionbar(player);
+  });
 
-    form.show(player).then((response) => {
-      if (response.selection == 0) return design_template_ui(player);
+  // 3. Button: Day-Time Anzeige
+  if (save_data[player_sd_index].counting_type !== 3) {
+    form.button(
+      "Show day time\n" + (save_data[player_sd_index].time_day_actionsbar ? "§aon" : "§coff"),
+      save_data[player_sd_index].time_day_actionsbar ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
+    );
+    actions.push(() => {
+      save_data[player_sd_index].time_day_actionsbar = !save_data[player_sd_index].time_day_actionsbar;
+      update_save_data(save_data);
+      settings_actionbar(player);
+    });
+  }
 
-      if (response.selection == 1) {
-        if (save_data[player_sd_index].visibility === false) {
-          save_data[player_sd_index].visibility = true;
+  // 4. Button: Time Source
+  if (save_data[player_sd_index].time_day_actionsbar || save_data[player_sd_index].counting_type == 3) {
+    if (save_data[0].sync_day_time === 0) {
+      if(form){form.button("Time Source\n§9" + (save_data[player_sd_index].time_source === 0 ? "Minecraft" : "Real Life"), "textures/ui/share_microsoft")};
+      actions.push(() => {
+        if (save_data[player_sd_index].time_source === 0) {
+          save_data[player_sd_index].time_source = 1;
         } else {
-          save_data[player_sd_index].visibility = false;
+          save_data[player_sd_index].time_source = 0;
         }
         update_save_data(save_data);
         settings_actionbar(player);
-      }
+      });
+    } else {
+      save_data[player_sd_index].time_source = 1
+      update_save_data(save_data);
+    }
+  }
 
-        if (save_data[player_sd_index].counting_type !== 3) {
-          if (response.selection == 2) {
-            if (save_data[player_sd_index].time_day_actionsbar === false) {
-              save_data[player_sd_index].time_day_actionsbar = true;
-            } else {
-              save_data[player_sd_index].time_day_actionsbar = false;
-            }
-            update_save_data(save_data);
-            settings_actionbar(player);
-          }
-          if (response.selection == 3) return settings_main(player);
-        } else {
-          if (response.selection == 2) return settings_main(player);
-        }
+  // 5. back-Button
+  form.button("");
+  actions.push(() => {
+    settings_main(player);
+  });
 
-    });
+  form.show(player).then(response => {
+    const idx = response.selection;
+    if (typeof actions[idx] === "function") {
+      actions[idx]();
+    }
+  });
 }
+
 
 function design_template_ui(player) {
   let form = new ActionFormData();
@@ -1296,7 +1327,7 @@ function design_preview(player, design, is_custom) {
   let paused_preview = apply_design(design.find(d => d.type === "paused"), 634396901)
 
   let finished_preview = apply_design(design.find(d => d.type === "finished"), 634396901)
-  let day_preview = apply_design(design.find(d => d.type === "day"), 19384)
+  let day_preview = apply_design(design.find(d => d.type === "day"), 19395.9)
 
   let screen_saver_preview = apply_design(design.find(d => d.type === "screen_saver"), 0)
 
@@ -1412,9 +1443,11 @@ function render_live_actionbar(selected_save_data, do_update) {
             adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
             ticks = (adj / MILLIS_DAY) * TICKS;
             timevalue = { value: ticks, do_count: true };
-        if (data[0].sync_day_time === 1 && do_update) {
-          world.getDimension("overworld").runCommand("time set " + Math.floor(ticks));
-        }
+
+            if (data[0].sync_day_time === 1 && do_update && (!data[0].is_challenge || (data[0].challenge_progress === 1 && data[0].time.do_count))) {
+              world.getDimension("overworld").runCommand(`time set ${Math.floor(ticks)}`);
+            }
+            
       } else {
         timevalue = { value: world.getTimeOfDay(), do_count: true };
       }
@@ -1456,10 +1489,10 @@ async function update_loop() {
         render_live_actionbar(save_data[1], true)
       }
 
-      if (save_data.some(entry => entry.time_day_actionsbar === true)) {
-        world.gameRules.doDayLightCycle = true;
-      } else {
+      if (save_data[0].sync_day_time) {
         world.gameRules.doDayLightCycle = false;
+      } else {
+        world.gameRules.doDayLightCycle = true;
       }
 
       // Todo: pausing shout also pause the time, wheaser, etc
