@@ -32,6 +32,29 @@ const timer_modes = [
   }
 ];
 
+const goal_list = [
+  {
+    name: "Ender Dragon",
+    icon: "textures/items/spawn_eggs/spawn_egg_ender_dragon",
+    condition: () => true
+  },
+  {
+    name: "Wither",
+    icon: "textures/items/spawn_eggs/spawn_egg_wither",
+    condition: () => true
+  },
+  {
+    name: "Warden",
+    icon: "textures/items/spawn_eggs/spawn_egg_warden",
+    condition: () => true
+  },
+  {
+    name: "Time Goal",
+    icon: "textures/items/clock_item",
+    condition: (data) => data[0].time?.timer > 0 && data[0].counting_type === 1
+  }
+];
+
 const design_template = [
   {
     // The "ms" marker isn't used here, but it works perfectly. Simply because I don't like it.
@@ -490,12 +513,16 @@ function main_menu_actions(player, form) {
         });
       }
 
-      if (save_data[player_sd_index].op && timedata.is_global) {
-        if(form){form.button("Challenge mode", timedata.is_challenge ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+      /*------------------------
+        Only Challenge mode
+      -------------------------*/
+      if (save_data[player_sd_index].op && timedata.is_challenge) {
+        if (form) form.button(`§dGoal§9\n${goal_list[save_data[0].goal].name || "Unknown Goal"}`, "textures/ui/trophy");
         actions.push(() => {
-          splash_challengemode(player);
+          settings_goals(player);
         });
       }
+
   
       if (save_data[player_sd_index].op && !timedata.is_challenge) {
         if(form){form.button("Synchronized timer", timedata.is_global ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
@@ -504,7 +531,7 @@ function main_menu_actions(player, form) {
         });
       }
   
-      // Disable "Change time" button as add!
+      // "Change / add time" button
       if (!((save_data[player_sd_index].time_day_actionsbar == true || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
         let design = save_data[player_sd_index].design
         if (typeof design == "number") {
@@ -523,14 +550,7 @@ function main_menu_actions(player, form) {
 
 
   if (save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) {
-    // Button 0: Time Source
-
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
-      // Button 1: Time zone
-
-
-      // Button 2: Clone real time
-
       if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time === 1 ? "§aon" : "§coff"), (save_data[0].sync_day_time === 1 ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (save_data[0].sync_day_time === 0) {
@@ -544,7 +564,12 @@ function main_menu_actions(player, form) {
     }
   }
 
-
+  if (save_data[player_sd_index].op && timedata.is_global) {
+    if(form){form.button("Challenge mode", timedata.is_challenge ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+    actions.push(() => {
+      splash_challengemode(player);
+    });
+  }
 
   // Button: Settings
   if(form){form.button("Settings\nShow more!", "textures/ui/automation_glyph_color")}
@@ -731,6 +756,42 @@ function settings_start_time(player) {
     return main_menu(player)
   });
 }
+
+function settings_goals(player) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+  const currentGoal = save_data[0].goal;
+
+  form.title("Goal");
+  form.body("Select your goal!");
+
+  const visibleGoals = goal_list.filter(goal => goal.condition(save_data));
+
+  visibleGoals.forEach(goal => {
+    const realIndex = goal_list.findIndex(g => g.name === goal.name);
+    let label = goal.name + (currentGoal === realIndex ? "\n§2(selected)" : "");
+    form.button(label, goal.icon);
+  });
+
+  form.button("");
+
+  form.show(player).then((response) => {
+    if (response.selection < visibleGoals.length) {
+      const selectedName = visibleGoals[response.selection].name;
+      const realIndex = goal_list.findIndex(goal => goal.name === selectedName);
+      save_data[0].goal = realIndex;
+
+      update_save_data(save_data);
+    }
+
+    if (response.selection >= 0) {
+      return main_menu(player);
+    }
+
+
+  });
+}
+
 
 
 function settings_time_zone(player) {
