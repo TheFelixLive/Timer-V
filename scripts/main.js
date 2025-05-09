@@ -7,6 +7,8 @@ const version_info = {
   unix: 1742821543946
 }
 
+// These lists are NOT customizable
+
 const timer_modes = [
   {
     label: "Stopwatch", 
@@ -31,6 +33,36 @@ const timer_modes = [
     }
   }
 ];
+
+const difficulty = [
+  {
+    name: "§aEasy",
+    icon: "textures/ui/poison_heart",
+    is_hardcore: false
+  },
+  {
+    name: "§fNormal",
+    icon: "textures/ui/heart",
+    is_hardcore: false
+  },
+  {
+    name: "§4Hard§ccore",
+    icon: "textures/ui/hardcore/heart",
+    is_hardcore: true
+  },
+  {
+    name: "§cUltra §4Hardcore",
+    icon: "textures/ui/hardcore/freeze_heart",
+    is_hardcore: true
+  },
+    {
+    name: "§5Infinity",
+    icon: "textures/ui/hardcore/wither_heart",
+    is_hardcore: true
+  }
+]
+
+// These lists ARE customizable
 
 const goal_event = [
   {
@@ -489,7 +521,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, is_global: false, difficulty: 0, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
+        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, is_global: false, difficulty: world.isHardcore? 1 : 2, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
     ]
 
     update_save_data(save_data)
@@ -823,6 +855,15 @@ function main_menu_actions(player, form) {
         });
       }
 
+      if (save_data[player_sd_index].op && timedata.is_challenge) {
+        if (form) form.button(
+          "§cDifficulty\n" + difficulty[save_data[0].difficulty].name + "", difficulty[save_data[0].difficulty].icon
+        );
+        actions.push(() => {
+          settings_difficulty(player);
+        });
+      }
+
   
       if (save_data[player_sd_index].op && !timedata.is_challenge) {
         if(form){form.button("Synchronized timer", timedata.is_global ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
@@ -1060,6 +1101,47 @@ function settings_start_time(player) {
     return main_menu(player)
   });
 }
+
+
+
+function settings_difficulty(player) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+
+  form.title("Difficulty");
+  form.body("Select your difficulty!\n§7Note: " + 
+  (!world.isHardcore
+    ? "Hardcore difficulties are only available if the world was started in hardcore."
+    : "Easier difficulty levels are only available if you start the world normally."));
+
+
+  let visibleDifficulties = [];
+
+  difficulty.forEach((diff, index) => {
+    if (diff.is_hardcore == world.isHardcore) {
+      let name = diff.name;
+      if (save_data[0].difficulty === index) {
+        name += "\n§2(selected)";
+      }
+      form.button(name, diff.icon);
+      visibleDifficulties.push({ diff, index });
+    }
+  });
+
+  form.button(""); // Rück- oder Trenner-Button
+
+  form.show(player).then((response) => {
+    if (response.selection >= 0 && response.selection < visibleDifficulties.length) {
+      let selected = visibleDifficulties[response.selection];
+      save_data[0].difficulty = selected.index; // Originalindex speichern
+      update_save_data(save_data);
+    }
+
+    if (response.selection >= 0) return main_menu(player);
+  });
+}
+
+
 
 function settings_goals_main(player) {
   let form = new ActionFormData();
