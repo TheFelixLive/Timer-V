@@ -32,27 +32,318 @@ const timer_modes = [
   }
 ];
 
-const goal_list = [
+const goal_event = [
   {
-    name: "Ender Dragon",
-    icon: "textures/items/spawn_eggs/spawn_egg_ender_dragon",
-    condition: () => true
-  },
-  {
-    name: "Wither",
-    icon: "textures/items/spawn_eggs/spawn_egg_wither",
-    condition: () => true
-  },
-  {
-    name: "Warden",
-    icon: "textures/items/spawn_eggs/spawn_egg_warden",
-    condition: () => true
+    name: "Raid",
+    icon: "textures/items/clock_item",
+    condition: () => false
   },
   {
     name: "Time Goal",
     icon: "textures/items/clock_item",
     condition: (data) => data[0].time?.timer > 0 && data[0].counting_type === 1
   }
+]
+
+const goal_entity = [
+  // The attribute "icons" can also be used here and would replace the spawn egg
+  {
+    "name": "Ender Dragon",
+    "id": "ender_dragon"
+  },
+  {
+    "name": "Wither",
+    "id": "wither"
+  },
+  {
+    "name": "Warden",
+    "id": "warden"
+  },
+  {
+    "name": "Allay",
+    "id": "allay"
+  },
+  {
+    "name": "Armadillo",
+    "id": "armadillo"
+  },
+  {
+    "name": "Axolotl",
+    "id": "axolotl"
+  },
+  {
+    "name": "Bat",
+    "id": "bat"
+  },
+  {
+    "name": "Bee",
+    "id": "bee"
+  },
+  {
+    "name": "Blaze",
+    "id": "blaze"
+  },
+  {
+    "name": "Camel",
+    "id": "camel"
+  },
+  {
+    "name": "Cat",
+    "id": "cat"
+  },
+  {
+    "name": "Cave Spider",
+    "id": "cave_spider"
+  },
+  {
+    "name": "Chicken",
+    "id": "chicken"
+  },
+  {
+    "name": "Cod",
+    "id": "cod"
+  },
+  {
+    "name": "Cow",
+    "id": "cow"
+  },
+  {
+    "name": "Creeper",
+    "id": "creeper"
+  },
+  {
+    "name": "Dolphin",
+    "id": "dolphin"
+  },
+  {
+    "name": "Donkey",
+    "id": "donkey"
+  },
+  {
+    "name": "Drowned",
+    "id": "drowned"
+  },
+  {
+    "name": "Elder Guardian",
+    "id": "elder_guardian"
+  },
+  {
+    "name": "Enderman",
+    "id": "enderman"
+  },
+  {
+    "name": "Endermite",
+    "id": "endermite"
+  },
+  {
+    "name": "Evoker",
+    "id": "evoker"
+  },
+  {
+    "name": "Fox",
+    "id": "fox"
+  },
+  {
+    "name": "Frog",
+    "id": "frog"
+  },
+  {
+    "name": "Ghast",
+    "id": "ghast"
+  },
+  {
+    "name": "Glow Squid",
+    "id": "glow_squid"
+  },
+  {
+    "name": "Goat",
+    "id": "goat"
+  },
+  {
+    "name": "Guardian",
+    "id": "guardian"
+  },
+  {
+    "name": "Hoglin",
+    "id": "hoglin"
+  },
+  {
+    "name": "Horse",
+    "id": "horse"
+  },
+  {
+    "name": "Husk",
+    "id": "husk"
+  },
+  {
+    "name": "Iron Golem",
+    "id": "iron_golem"
+  },
+  {
+    "name": "Llama",
+    "id": "llama"
+  },
+  {
+    "name": "Magma Cube",
+    "id": "magma_cube"
+  },
+  {
+    "name": "Mooshroom",
+    "id": "mooshroom"
+  },
+  {
+    "name": "Mule",
+    "id": "mule"
+  },
+  {
+    "name": "Ocelot",
+    "id": "ocelot"
+  },
+  {
+    "name": "Panda",
+    "id": "panda"
+  },
+  {
+    "name": "Parrot",
+    "id": "parrot"
+  },
+  {
+    "name": "Phantom",
+    "id": "phantom"
+  },
+  {
+    "name": "Pig",
+    "id": "pig"
+  },
+  {
+    "name": "Piglin",
+    "id": "piglin"
+  },
+  {
+    "name": "Piglin Brute",
+    "id": "piglin_brute"
+  },
+  {
+    "name": "Pillager",
+    "id": "pillager"
+  },
+  {
+    "name": "Polar Bear",
+    "id": "polar_bear"
+  },
+  {
+    "name": "Pufferfish",
+    "id": "pufferfish"
+  },
+  {
+    "name": "Rabbit",
+    "id": "rabbit"
+  },
+  {
+    "name": "Ravager",
+    "id": "ravager"
+  },
+  {
+    "name": "Salmon",
+    "id": "salmon"
+  },
+  {
+    "name": "Sheep",
+    "id": "sheep"
+  },
+  {
+    "name": "Shulker",
+    "id": "shulker"
+  },
+  {
+    "name": "Skeleton",
+    "id": "skeleton"
+  },
+  {
+    "name": "Skeleton Horse",
+    "id": "skeleton_horse"
+  },
+  {
+    "name": "Slime",
+    "id": "slime"
+  },
+  {
+    "name": "Sniffer",
+    "id": "sniffer"
+  },
+  {
+    "name": "Tadpole",
+    "id": "tadpole"
+  },
+  {
+    "name": "Snow Golem",
+    "id": "snow_golem"
+  },
+  {
+    "name": "Squid",
+    "id": "squid"
+  },
+  {
+    "name": "Stray",
+    "id": "stray"
+  },
+  {
+    "name": "Strider",
+    "id": "strider"
+  },
+  {
+    "name": "Trader Llama",
+    "id": "trader_llama"
+  },
+  {
+    "name": "Tropical Fish",
+    "id": "tropicalfish"
+  },
+  {
+    "name": "Turtle",
+    "id": "turtle"
+  },
+  {
+    "name": "Vex",
+    "id": "vex"
+  },
+  {
+    "name": "Villager",
+    "id": "villager"
+  },
+  {
+    "name": "Wandering Trader",
+    "id": "wandering_trader"
+  },
+  {
+    "name": "Witch",
+    "id": "witch"
+  },
+  {
+    "name": "Wither Skeleton",
+    "id": "wither_skeleton"
+  },
+  {
+    "name": "Wolf",
+    "id": "wolf"
+  },
+  {
+    "name": "Zoglin",
+    "id": "zoglin"
+  },
+  {
+    "name": "Zombie",
+    "id": "zombie"
+  },
+  {
+    "name": "Zombie Pigman",
+    "id": "zombified_piglin"
+  },
+  {
+    "name": "Zombie Villager",
+    "id": "zombie_villager"
+  }
+  
 ];
 
 const design_template = [
@@ -197,7 +488,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, is_global: false, goal: 0, difficulty: 0, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
+        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, is_global: false, difficulty: 0, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
     ]
 
     update_save_data(save_data)
@@ -517,9 +808,17 @@ function main_menu_actions(player, form) {
         Only Challenge mode
       -------------------------*/
       if (save_data[player_sd_index].op && timedata.is_challenge) {
-        if (form) form.button(`§dGoal§9\n${goal_list[save_data[0].goal].name || "Unknown Goal"}`, "textures/ui/trophy");
+        if (form) form.button(
+          "§dGoal§9\n" +
+            (save_data[0].goal.pointer === 2
+              ? goal_event[save_data[0].goal.event_pos].name
+              : save_data[0].goal.pointer === 0
+              ? "§bR§ga§an§6d§4o§fm"
+              : "Defeat: " + goal_entity[save_data[0].goal.entity_pos].name),
+          "textures/ui/trophy"
+        );
         actions.push(() => {
-          settings_goals(player);
+          settings_goals_main(player);
         });
       }
 
@@ -757,20 +1056,84 @@ function settings_start_time(player) {
   });
 }
 
-function settings_goals(player) {
+function settings_goals_main(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
-  const currentGoal = save_data[0].goal;
+  const pointer = save_data[0].goal.pointer;
 
   form.title("Goal");
+  form.body("Select a type!");
+
+  form.button(
+    "Entity\nDefeat a specific creature",
+    pointer === 1 ? "textures/ui/realms_slot_check" : undefined
+  );
+
+  form.button(
+    "Event\nTrigger a specific event",
+    pointer === 2 ? "textures/ui/realms_slot_check" : undefined
+  );
+
+  form.button(
+    "Random\nCould be anything",
+    pointer === 0 ? "textures/ui/realms_slot_check" : undefined
+  );
+
+  form.button("");
+
+  form.show(player).then((response) => {
+    if (response.selection === 0) return settings_goals_select(player, "entity");
+    if (response.selection === 1) return settings_goals_select(player, "event");
+    if (response.selection === 2) {
+      save_data[0].goal.pointer = 0;
+      update_save_data(save_data);
+      return settings_goals_main(player);
+    }
+    if (response.selection === 3) return main_menu(player);
+  });
+}
+
+
+
+function settings_goals_select(player, type) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+  const isEvent = type === "event";
+  const pointerValue = isEvent ? 2 : 1;
+  const goalArray = isEvent ? goal_event : goal_entity;
+  const currentGoal = save_data[0].goal.pointer === pointerValue
+    ? (isEvent ? save_data[0].goal.event_pos : save_data[0].goal.entity_pos)
+    : undefined;
+
+  form.title(`Goal - ${isEvent ? "Event" : "Entity"}`);
   form.body("Select your goal!");
 
-  const visibleGoals = goal_list.filter(goal => goal.condition(save_data));
+  let visibleGoals = isEvent ? goalArray.filter(goal => goal.condition(save_data)) : [...goalArray];
+
+  let selectedGoal = undefined;
+  if (currentGoal !== undefined) {
+    const goal = goalArray[currentGoal];
+    if (visibleGoals.includes(goal)) {
+      selectedGoal = goal;
+      visibleGoals = visibleGoals.filter(g => g !== goal);
+    }
+  }
+
+  visibleGoals.sort((a, b) => a.name.localeCompare(b.name));
+
+  if (selectedGoal) {
+    visibleGoals.unshift(selectedGoal);
+  }
 
   visibleGoals.forEach(goal => {
-    const realIndex = goal_list.findIndex(g => g.name === goal.name);
-    let label = goal.name + (currentGoal === realIndex ? "\n§2(selected)" : "");
-    form.button(label, goal.icon);
+    const realIndex = goalArray.findIndex(g => g.name === goal.name);
+    const label = goal.name + (currentGoal === realIndex ? "\n§2(selected)" : "");
+    const icon = goal.icon
+    ? goal.icon
+    : (isEvent
+       ? undefined
+       : `textures/items/spawn_eggs/spawn_egg_${goal.id}`);
+    form.button(label, icon);
   });
 
   form.button("");
@@ -778,19 +1141,24 @@ function settings_goals(player) {
   form.show(player).then((response) => {
     if (response.selection < visibleGoals.length) {
       const selectedName = visibleGoals[response.selection].name;
-      const realIndex = goal_list.findIndex(goal => goal.name === selectedName);
-      save_data[0].goal = realIndex;
+      const realIndex = goalArray.findIndex(goal => goal.name === selectedName);
+      if (isEvent) {
+        save_data[0].goal.event_pos = realIndex;
+      } else {
+        save_data[0].goal.entity_pos = realIndex;
+      }
+      save_data[0].goal.pointer = pointerValue;
 
       update_save_data(save_data);
     }
 
     if (response.selection >= 0) {
-      return main_menu(player);
+      return settings_goals_main(player);
     }
-
-
   });
 }
+
+
 
 
 
