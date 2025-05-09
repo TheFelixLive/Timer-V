@@ -340,6 +340,9 @@ Sometimes it is on the 2nd page or in the reset category.
 No, it will uninstall automatically along with the timer.
 
 # Permissions
+> [!Note]
+> Please share your experience with multiplayer [here](https://github.com/TheFelixLive/Timer-Ultimate/issues/new/choose) as it has not been tested extensively yet!
+
 When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
 Those are marked in this guid with an admin popup ([see here as an example](#Control)).
 
