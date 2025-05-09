@@ -137,7 +137,8 @@ const goal_entity = [
   },
   {
     "name": "Evoker",
-    "id": "evoker"
+    "id": "evocation_illager",
+    "icon": "textures/items/spawn_eggs/spawn_egg_evoker"
   },
   {
     "name": "Fox",
@@ -1001,7 +1002,7 @@ function settings_start_time(player) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
-  let ms = save_data[save_data[0].is_global ? 0 : player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] * 5;
+  let ms = save_data[save_data[0].is_global ? 0 : player_sd_index].time[save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type ? "timer" : "stopwatch"] * 5;
   let y = Math.floor(ms / (100 * 60 * 60 * 24 * 365));
   let d = Math.floor(ms % (100 * 60 * 60 * 24 * 365) / (100 * 60 * 60 * 24));
   let h = Math.floor(ms % (100 * 60 * 60 * 24) / (100 * 60 * 60));
@@ -1050,7 +1051,11 @@ function settings_start_time(player) {
     ms;
 
     save_data[save_data[0].is_global ? 0 : player_sd_index].time.timer = Math.floor(totalMilliseconds / 5)
-    save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type = 1;
+    if (totalMilliseconds > 0) {
+      save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type = 1;
+    } else {
+      save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type = 0;
+    }
     update_save_data(save_data);
     return main_menu(player)
   });
