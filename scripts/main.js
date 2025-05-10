@@ -62,20 +62,20 @@ const difficulty = [
   }
 ]
 
-// These lists ARE customizable
-
 const goal_event = [
-  {
-    name: "Raid",
-    icon: "textures/items/clock_item",
-    condition: () => false
-  },
   {
     name: "Time Goal",
     icon: "textures/items/clock_item",
     condition: (data) => data[0].time?.timer > 0 && data[0].counting_type === 1
+  },
+  {
+    name: "Raid",
+    icon: "textures/items/clock_item",
+    condition: () => false
   }
 ]
+
+// These lists ARE customizable
 
 const goal_entity = [
   // The attribute "icons" can also be used here and would replace the spawn egg
@@ -841,14 +841,24 @@ function main_menu_actions(player, form) {
         Only Challenge mode
       -------------------------*/
       if (save_data[player_sd_index].op && timedata.is_challenge) {
+        if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0))
         if (form) form.button(
-          "§dGoal§9\n" +
+          "§2Start Challenge\n", "textures/gui/controls/right" 
+        );
+        actions.push(() => {
+          splash_start_challenge(player);
+        });
+      }
+
+      if (save_data[player_sd_index].op && timedata.is_challenge) {
+        if (form) form.button(
+          "§5Goal§9\n" +
             (save_data[0].goal.pointer === 2
               ? goal_event[save_data[0].goal.event_pos].name
               : save_data[0].goal.pointer === 0
               ? "§bR§ga§an§6d§4o§fm"
               : "Defeat: " + goal_entity[save_data[0].goal.entity_pos].name),
-          "textures/ui/trophy"
+          "textures/items/elytra"
         );
         actions.push(() => {
           settings_goals_main(player);
@@ -960,11 +970,9 @@ function splash_challengemode(player) {
 
 
   form.show(player).then((response) => {
-    // Todo: have to be ported to setup!
     if (response.selection == 0) {
       save_data[0].time[save_data[0].counting_type ? "timer" : "stopwatch"] = 0;
       save_data[0].time.do_count = false;
-      enable_gamerules()
       save_data[0].is_challenge = save_data[0].is_challenge ? false : true,
       update_save_data(save_data);
     }
@@ -979,21 +987,71 @@ function splash_challengemode(player) {
   });
 }
 
+function splash_start_challenge(player) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let design = save_data[player_sd_index].design
+  if (typeof design == "number") {
+    design = design_template[save_data[player_sd_index].design].content
+  }
+  design = design.find(d => d.type === "normal");
+
+  form.title("Warning!");
+  form.body("You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n" +
+    // difficulty
+    (save_data[0].difficulty > 1 ? "- §4Hard§ccore§f is activ\n" : "") +
+
+    // goals
+    (save_data[0].goal.pointer == 0 ? "- §5Goal§f is random\n" : "") +
+    (save_data[0].goal.pointer == 1 ? "- §5Goal:§f Defeat: " + goal_entity[save_data[0].goal.entity_pos].name + "\n" : "") +
+
+    (save_data[0].goal.pointer == 2 && save_data[0].goal.event_pos == 0
+    // Time + Goal
+    ? "- §aSurvive:§f " + apply_design(design, save_data[0].time.timer) + "\n"
+    // Time or Goal
+    : (
+        (save_data[0].counting_type == 1
+          ? "- §aTime available:§f " + apply_design(design, save_data[0].time.timer) + "\n"
+          : ""
+        ) +
+        (save_data[0].goal.pointer == 2
+          ? "- §5Goal:§f " + goal_event[save_data[0].goal.event_pos].name + "\n"
+          : ""
+        )
+      )
+  ) +
+    "\n\n"
+  );
+
+
+  form.button("§aStart");
+
+  form.button("");
+
+  form.show(player).then((response) => {
+    if (response.selection == 0) {
+      // Todo: Start challenge code
+    }
+
+
+    if (response.selection == 1) return main_menu(player);
+  });
+}
+
 
 
 function splash_globalmode(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
   form.title("Synchronized timer");
-  form.body("The synchronized timer feature creates an additional timer that is enforced on all players. Only admins can control it.\n\n§7Required for challenge mode.\n\n");
+  form.body("The synchronized timer feature creates an additional timer (like the stopwatch starts from 0 again) that is enforced on all players.\nOnly admins can control it.\n\n§7Required for challenge mode.\n\n");
 
   if (save_data[0].is_global) {
     form.button("§cDisable");
   } else {
-    form.button("§gEnable without cloning");
-    form.button("§aEnable & clone your timer");
+    form.button("§aEnable");
   }
 
   form.button("");
@@ -1011,14 +1069,6 @@ function splash_globalmode(player) {
       }
 
     } else {
-      if (response.selection == 1) {
-        save_data[0].is_global = true;
-        save_data[0].time.timer = save_data[player_sd_index].time.timer;
-        save_data[0].time.stopwatch = save_data[player_sd_index].time.stopwatch;
-        save_data[0].counting_type = save_data[player_sd_index].counting_type;
-        update_save_data(save_data);
-      }
-  
       if (response.selection == 0) {
         save_data[0].is_global = true;
         update_save_data(save_data);
@@ -1152,7 +1202,7 @@ function settings_goals_main(player) {
   form.body("Select a type!");
 
   form.button(
-    "Entity\nDefeat a specific creature",
+    "Entity\nDefeat" + (pointer === 1 ? ": " + goal_entity[save_data[0].goal.entity_pos].name : " a specific creature"),
     pointer === 1 ? "textures/ui/realms_slot_check" : undefined
   );
 
