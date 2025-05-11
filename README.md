@@ -33,8 +33,8 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 | Status (c) | Comes from v.4.1 | **improved** | |
 | Time | Comes from v.4.1 | **improved** | |
 | Goals (s) | Comes from v.4.1 | **improved** | |
+| Control modes (c) | Comes from v.4.1 | **improved** | |
 | Difficulty (s) | Comes from v.4.1 | implemented | |
-| Control modes (c) | Comes from v.4.1 | implemented | |
 | Dimension (s) | Comes from v.4.1 | _scraped_ | Is only addressed when someone really needs it |
 | Dictionary | Comes from v.4.1 | mostly _scraped_ | Only version information will remain available |
 | Modifications | Comes from v.4.1 | _scraped_ | If at all, the current modifications will be implemented natively |
