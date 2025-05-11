@@ -1,5 +1,7 @@
 # Timer V
-> Pictures are comming soon
+![Minecraft 10 05 2025 16_56_32](https://github.com/user-attachments/assets/49dd6ae8-c723-4eed-9c06-c4d313ed1ec9)
+
+> A preview of the new main menu during the initial setup (survival / challenge mode)
 
 ## About
 > [!WARNING]
@@ -13,6 +15,7 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - **Daytime** - Adds optional for all players a clock of the gametime or real time
 - **Designs** - Let every players choose their look for the actionbar between templates!
 - **Permissions** - Can now be changed via the menu and regardless of whether the player is online
+- **Performance** - Requires less power and survival as well as creative mode are no longer separated
 
 # Current progress
 
