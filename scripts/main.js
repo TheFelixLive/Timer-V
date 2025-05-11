@@ -23,13 +23,13 @@ const timer_modes = [
   {
     label: "World-time", 
     icon: "textures/ui/world_glyph_color", 
-    show_if: (save_data) => !save_data[0].is_global
+    show_if: (save_data) => !save_data[0].global.status
   },
   {
     label: "Day-time", 
     icon: "textures/environment/sun", 
     show_if: (save_data, player_sd_index) => {
-      return !save_data[0].is_global && save_data[player_sd_index].show_td_as_mode;
+      return !save_data[0].global.status && save_data[player_sd_index].show_td_as_mode;
     }
   }
 ];
@@ -508,6 +508,13 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     console.log("allow_unnecessary_inputs is now: " + save_data[player_sd_index].allow_unnecessary_inputs);
     update_save_data(save_data);
   }
+
+
+  if (event.id === "timerv:reset") {
+    let save_data;
+    update_save_data(save_data);
+    close_world()
+  }
   
   
 });
@@ -521,7 +528,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, is_global: false, difficulty: world.isHardcore? 1 : 2, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
+        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, global: {status: false, last_player_id: undefined}, difficulty: world.isHardcore? 2 : 1, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
     ]
 
     update_save_data(save_data)
@@ -601,6 +608,44 @@ world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
 });
 
 /*------------------------
+ general helper functions
+-------------------------*/
+
+// This function does not need a player (which also contains the position) but his ID
+function convert_local_to_global(player_id) {
+  let save_data = load_save_data();
+  let player_save_data = save_data.findIndex(entry => entry.id === player_id);
+
+  save_data[0].global.last_player_id = save_data[player_save_data].id
+
+  save_data[0].counting_type = save_data[player_save_data].counting_type
+  save_data[0].time.do_count = save_data[player_save_data].time.do_count
+  save_data[0].time.timer = save_data[player_save_data].time.timer
+  save_data[0].time.stopwatch = save_data[player_save_data].time.stopwatch
+
+  save_data[0].global.status = true
+  update_save_data(save_data)
+}
+
+function convert_global_to_local(disable_global) {
+  let save_data = load_save_data();
+  let player_save_data = save_data.findIndex(entry => entry.id === save_data[0].global.last_player_id);
+
+  save_data[player_save_data].counting_type = save_data[0].counting_type
+  save_data[player_save_data].time.do_count = save_data[0].time.do_count
+  save_data[player_save_data].time.timer = save_data[0].time.timer
+  save_data[player_save_data].time.stopwatch = save_data[0].time.stopwatch
+  
+
+  if (disable_global) {
+      save_data[0].global.status = false
+  } else {
+    save_data[0].global.last_player_id = save_data[player_save_data].id
+  }
+  update_save_data(save_data)
+}
+
+/*------------------------
  Startup popups
 -------------------------*/
 
@@ -626,8 +671,9 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
           player_save_data.setup = 0
           // Survival
           if (response.selection === 0) {
-            save_data[0].is_global = true
+            save_data[0].global.status = true
             save_data[0].is_challenge = true
+            save_data[0].global.last_player_id = player.id
           }
 
           if (response.selection >= 0) {
@@ -805,16 +851,16 @@ function main_menu_actions(player, form) {
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
   let timedata;
-  if (save_data[0].is_global) {
+  if (save_data[0].global.status) {
     timedata = save_data[0]
   } else {
     timedata = save_data[player_sd_index]
   }
 
-  if (!save_data[0].is_global || save_data[0].is_global && save_data[player_sd_index].op) {
+  if (!save_data[0].global.status || save_data[0].global.status && save_data[player_sd_index].op) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
-      if ((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && !timedata.is_challenge) {
+      if ((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && !save_data[0].is_challenge) {
         if(form){form.button("Condition\n" + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           if (timedata.time.do_count === false) {
@@ -826,7 +872,7 @@ function main_menu_actions(player, form) {
         });
       }
   
-      if (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && !timedata.is_challenge) {
+      if (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && !save_data[0].is_challenge) {
         if(form){form.button("§cReset "+(timedata.counting_type ? "timer" : "stopwatch"), "textures/ui/recap_glyph_color_2x")}
         actions.push(() => {
           timedata.time[timedata.counting_type ? "timer" : "stopwatch"] = 0;
@@ -840,17 +886,16 @@ function main_menu_actions(player, form) {
       /*------------------------
         Only Challenge mode
       -------------------------*/
-      if (save_data[player_sd_index].op && timedata.is_challenge) {
-        if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0))
-        if (form) form.button(
-          "§2Start Challenge\n", "textures/gui/controls/right" 
-        );
-        actions.push(() => {
-          splash_start_challenge(player);
-        });
+      if (save_data[player_sd_index].op && save_data[0].is_challenge) {
+        if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
+          if (form) form.button("§2Start Challenge\n", "textures/gui/controls/right");
+          actions.push(() => {
+            splash_start_challenge(player);
+          });
+        }
       }
 
-      if (save_data[player_sd_index].op && timedata.is_challenge) {
+      if (save_data[player_sd_index].op && save_data[0].is_challenge) {
         if (form) form.button(
           "§5Goal§9\n" +
             (save_data[0].goal.pointer === 2
@@ -865,7 +910,7 @@ function main_menu_actions(player, form) {
         });
       }
 
-      if (save_data[player_sd_index].op && timedata.is_challenge) {
+      if (save_data[player_sd_index].op && save_data[0].is_challenge) {
         if (form) form.button(
           "§cDifficulty\n" + difficulty[save_data[0].difficulty].name + "", difficulty[save_data[0].difficulty].icon
         );
@@ -875,8 +920,8 @@ function main_menu_actions(player, form) {
       }
 
   
-      if (save_data[player_sd_index].op && !timedata.is_challenge) {
-        if(form){form.button("Synchronized timer", timedata.is_global ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+      if (save_data[player_sd_index].op && !save_data[0].is_challenge) {
+        if(form){form.button("Shared timer\n§9" + (save_data[0].global.status ? "by "+ save_data.find(e => e.id === save_data[0].global.last_player_id)?.name : "off"), "textures/ui/FriendsIcon")};
         actions.push(() => {
           splash_globalmode(player);
         });
@@ -884,12 +929,19 @@ function main_menu_actions(player, form) {
   
       // "Change / add time" button
       if (!((save_data[player_sd_index].time_day_actionsbar == true || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
-        let design = save_data[player_sd_index].design
-        if (typeof design == "number") {
-          design = design_template[save_data[player_sd_index].design].content
-        }
-        design = design.find(d => d.type === "normal");
-        if(form){form.button((save_data[0].is_challenge? "Start time\n" : "Change time\n") + (apply_design(design, timedata.time[timedata.counting_type ? "timer" : "stopwatch"])), "textures/ui/color_plus")};
+
+        if(form){
+            form.button((save_data[0].is_challenge ? "Start time\n" : "Change time\n") +
+              apply_design(
+                (
+                  typeof save_data[player_sd_index].design === "number"
+                    ? design_template[save_data[player_sd_index].design].content
+                    : save_data[player_sd_index].design
+                ).find(item => item.type === "normal"),
+                timedata.time[timedata.counting_type ? "timer" : "stopwatch"]
+              ),
+            "textures/ui/color_plus")
+        };
         actions.push(() => {
           settings_start_time(player);
         });
@@ -915,8 +967,8 @@ function main_menu_actions(player, form) {
     }
   }
 
-  if (save_data[player_sd_index].op && timedata.is_global) {
-    if(form){form.button("Challenge mode", timedata.is_challenge ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+  if (save_data[player_sd_index].op && save_data[0].global.status) {
+    if(form){form.button("Challenge mode", save_data[0].is_challenge ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
     });
@@ -971,8 +1023,21 @@ function splash_challengemode(player) {
 
   form.show(player).then((response) => {
     if (response.selection == 0) {
-      save_data[0].time[save_data[0].counting_type ? "timer" : "stopwatch"] = 0;
-      save_data[0].time.do_count = false;
+      // Disable
+      if (save_data[0].is_challenge) {
+        convert_local_to_global(save_data[0].global.last_player_id);
+        save_data = load_save_data()
+
+      } /* Enable */ else {
+        convert_global_to_local(false);
+        save_data = load_save_data()
+        save_data[0].time.do_count = false
+        save_data[0].time.timer = 0
+        save_data[0].time.stopwatch = 0
+      }
+      
+
+      
       save_data[0].is_challenge = save_data[0].is_challenge ? false : true,
       update_save_data(save_data);
     }
@@ -991,11 +1056,7 @@ function splash_start_challenge(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let design = save_data[player_sd_index].design
-  if (typeof design == "number") {
-    design = design_template[save_data[player_sd_index].design].content
-  }
-  design = design.find(d => d.type === "normal");
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "normal");
 
   form.title("Warning!");
   form.body("You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n" +
@@ -1012,11 +1073,11 @@ function splash_start_challenge(player) {
     // Time or Goal
     : (
         (save_data[0].counting_type == 1
-          ? "- §aTime available:§f " + apply_design(design, save_data[0].time.timer) + "\n"
+          ? "- §aTime available:§f " + apply_design(design, save_data[0].time.timer) + "§r§f\n"
           : ""
         ) +
         (save_data[0].goal.pointer == 2
-          ? "- §5Goal:§f " + goal_event[save_data[0].goal.event_pos].name + "\n"
+          ? "- §5Goal:§f " + goal_event[save_data[0].goal.event_pos].name + "§r§f\n"
           : ""
         )
       )
@@ -1044,39 +1105,47 @@ function splash_start_challenge(player) {
 function splash_globalmode(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "normal");
+  let actions = [];
 
-  form.title("Synchronized timer");
-  form.body("The synchronized timer feature creates an additional timer (like the stopwatch starts from 0 again) that is enforced on all players.\nOnly admins can control it.\n\n§7Required for challenge mode.\n\n");
+  form.title("Shared timer");
+  form.body("The shared timer feature coppies your timer to an additional timer that is enforced on all players." +
+    (save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name + " is currently sharing his timer. You can §cstop§f this or §ereplace§f it with your own time ("+ apply_design(design, save_data[player_sd_index].time[timedata.counting_type ? "timer" : "stopwatch"]) + "§r§f)." : "" :
+    
+    "\nOnly admins can control it.") + "\n\n§7Required for challenge mode.\n\n");
 
-  if (save_data[0].is_global) {
+  if (save_data[0].global.status) {
+    if (save_data[0].global.last_player_id !== player.id) {
+      form.button("§eShare yours instead");
+      actions.push(() => {
+        convert_global_to_local(true);
+        convert_local_to_global(player.id);
+      });
+    }
+
     form.button("§cDisable");
+    actions.push(() => {
+      convert_global_to_local(true);
+    });
+
+
+
   } else {
     form.button("§aEnable");
+    actions.push(() => {
+      convert_local_to_global(player.id)
+    });
   }
 
   form.button("");
+  actions.push(() => {});
 
 
   form.show(player).then((response) => {
-    if (save_data[0].is_global) {
-      if (response.selection == 0) {
-        save_data[0].is_global = false;
-        update_save_data(save_data);
-      }
-      
-      if (response.selection >= 0) {
-        return main_menu(player);
-      }
-
-    } else {
-      if (response.selection == 0) {
-        save_data[0].is_global = true;
-        update_save_data(save_data);
-      }
-    }
-  
-    if (response.selection >= 0) {
-      return main_menu(player);
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
+      main_menu(player);
     }
   });
   
@@ -1093,7 +1162,7 @@ function settings_start_time(player) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
-  let ms = save_data[save_data[0].is_global ? 0 : player_sd_index].time[save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type ? "timer" : "stopwatch"] * 5;
+  let ms = save_data[save_data[0].global.status ? 0 : player_sd_index].time[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type ? "timer" : "stopwatch"] * 5;
   let y = Math.floor(ms / (100 * 60 * 60 * 24 * 365));
   let d = Math.floor(ms % (100 * 60 * 60 * 24 * 365) / (100 * 60 * 60 * 24));
   let h = Math.floor(ms % (100 * 60 * 60 * 24) / (100 * 60 * 60));
@@ -1141,11 +1210,11 @@ function settings_start_time(player) {
     (s * 100) +
     ms;
 
-    save_data[save_data[0].is_global ? 0 : player_sd_index].time.timer = Math.floor(totalMilliseconds / 5)
+    save_data[save_data[0].global.status ? 0 : player_sd_index].time.timer = Math.floor(totalMilliseconds / 5)
     if (totalMilliseconds > 0) {
-      save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type = 1;
+      save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 1;
     } else {
-      save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type = 0;
+      save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 0;
     }
     update_save_data(save_data);
     return main_menu(player)
@@ -1326,8 +1395,8 @@ function settings_main(player) {
   form.body("Select an option!");
 
   // Button 0: Type
-  if (!save_data[0].is_global || (save_data[0].is_global && save_data[player_sd_index].op)) {
-    form.button("Type\n§9" + timer_modes[save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].is_global ? 0 : player_sd_index].counting_type].icon);
+  if (!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) {
+    form.button("Type\n§9" + timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon);
     actions.push(() => settings_type(player));
   }
 
@@ -1371,7 +1440,6 @@ function settings_main(player) {
     actions.push(() => main_menu(player));
   }
 
-  // Formular anzeigen und anhand der Antwort den entsprechenden Action ausführen
   form.show(player).then((response) => {
     if (response.selection !== undefined && actions[response.selection]) {
       actions[response.selection]();
@@ -1667,7 +1735,7 @@ function settings_type(player) {
 
   let player_sd_index;
 
-  if (save_data[0].is_global) {
+  if (save_data[0].global.status) {
     player_sd_index = 0;
   } else {
     player_sd_index = save_data.findIndex(entry => entry.id === player.id);
@@ -1726,7 +1794,7 @@ function settings_type_info(player, response) {
 
   let player_sd_index;
 
-  if (save_data[0].is_global) {
+  if (save_data[0].global.status) {
     player_sd_index = 0;
   } else {
     player_sd_index = save_data.findIndex(entry => entry.id === player.id);
@@ -1972,7 +2040,7 @@ function render_live_actionbar(selected_save_data, do_update) {
     const idx = data.findIndex(e => e.id === id);
     let counting_type, timevalue, timedata;
 
-    if (data[0].is_global) {
+    if (data[0].global.status) {
       counting_type = data[0].counting_type
       timedata = data[0].time
     } else {
@@ -2051,7 +2119,7 @@ async function update_loop() {
 
       let save_data = load_save_data();
 
-      if (save_data[0].is_global) {
+      if (save_data[0].global.status) {
         render_live_actionbar(save_data[1], true)
       }
 
@@ -2075,7 +2143,7 @@ async function update_loop() {
 
 
         if (save_data[player_sd_index].visibility == true) {
-          player.onScreenDisplay.setActionBar(render_live_actionbar(save_data[player_sd_index], save_data[0].is_global ? false : true));
+          player.onScreenDisplay.setActionBar(render_live_actionbar(save_data[player_sd_index], save_data[0].global.status ? false : true));
         }
         
       }
