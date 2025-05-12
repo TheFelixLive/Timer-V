@@ -511,8 +511,7 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 
 
   if (event.id === "timerv:reset") {
-    let save_data;
-    update_save_data(save_data);
+    world.setDynamicProperty("timerv:save_data", undefined);
     close_world()
   }
   
@@ -631,17 +630,21 @@ function convert_global_to_local(disable_global) {
   let save_data = load_save_data();
   let player_save_data = save_data.findIndex(entry => entry.id === save_data[0].global.last_player_id);
 
-  save_data[player_save_data].counting_type = save_data[0].counting_type
-  save_data[player_save_data].time.do_count = save_data[0].time.do_count
-  save_data[player_save_data].time.timer = save_data[0].time.timer
-  save_data[player_save_data].time.stopwatch = save_data[0].time.stopwatch
-  
+  if (player_save_data) {
+    save_data[player_save_data].counting_type = save_data[0].counting_type
+    save_data[player_save_data].time.do_count = save_data[0].time.do_count
+    save_data[player_save_data].time.timer = save_data[0].time.timer
+    save_data[player_save_data].time.stopwatch = save_data[0].time.stopwatch
+  } else {
+    world.sendMessage("§l§4[§cError§4]§r The time could not be synchronized with the player profile ("+ save_data[0].global.last_player_id +") and got deleted!")
+  }
 
   if (disable_global) {
-      save_data[0].global.status = false
+    save_data[0].global.status = false
   } else {
     save_data[0].global.last_player_id = save_data[player_save_data].id
   }
+
   update_save_data(save_data)
 }
 
@@ -1116,7 +1119,7 @@ function splash_globalmode(player) {
 
   form.title("Shared timer");
   form.body("The shared timer feature coppies your timer to an additional timer that is enforced on all players." +
-    (save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name + " is currently sharing his timer. You can §cstop§f this or §ereplace§f it with your own time ("+ apply_design(design, save_data[player_sd_index].time[timedata.counting_type ? "timer" : "stopwatch"]) + "§r§f)." : "" :
+    (save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name + " is currently sharing his timer. You can §cstop§f this or §ereplace§f it with your own time ("+ apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"]) + "§r§f)." : "" :
     
     "\nOnly admins can control it.") + "\n\n§7Required for challenge mode.\n\n");
 
@@ -1456,18 +1459,16 @@ function settings_main(player) {
 function debug_main(player) {
   let form = new ActionFormData();
 
-  form.button("Edit save data");
   form.button("§aAdd player (save data)");
   form.button("§cRemove \"save_data\"");
   form.button("§cClose Server");
   form.button("");
 
   form.show(player).then((response) => {
-    if (response.selection == 0) return debug_sd_select(player);
-    if (response.selection == 1) return debug_add_fake_player(player);
-      if (response.selection == 2) {world.setDynamicProperty("timerv:save_data", undefined);}
-      if (response.selection == 3) {close_world()}
-      if (response.selection == 4) return settings_main(player);
+    if (response.selection == 0) return debug_add_fake_player(player);
+      if (response.selection == 1) {world.setDynamicProperty("timerv:save_data", undefined); close_world()}
+      if (response.selection == 2) {close_world()}
+      if (response.selection == 3) return settings_main(player);
   });
 }
 
@@ -1662,74 +1663,143 @@ function settings_rights_data(viewing_player, selected_save_data) {
 }
 
 function settings_rights_manage_sd(viewing_player, selected_save_data) {
-  let form = new ActionFormData();
-  form.title(selected_save_data.name +"'s save data");
-form.body("Select an option!");
-  form.button("§dReset save data");
-  form.button("§cDelete save data");
+  let save_data = load_save_data();
+  const form = new ActionFormData()
+    .title(`${selected_save_data.name}'s save data`)
+    .body("Select an option!")
+    .button("§dReset save data")
+    .button("§cDelete save data")
+    .button("");
 
-  form.button("");
+  form.show(viewing_player).then(response => {
+    if (response.canceled) return -1;
 
-  let selected_player = world.getAllPlayers().find(player => player.id == selected_save_data.id);
+    const is_reset = response.selection === 0;
+    const is_delete = response.selection === 1;
 
-  form.show(viewing_player).then((response) => {
-    // Reset data
-    if (response.selection == 0) {
-      delete_player_save_data(selected_save_data);
-      create_player_save_data(selected_save_data.id, selected_save_data.name);
-      return settings_rights_main(viewing_player)
-    }
+    const is_global = response.selection < 2 &&
+                      save_data[0].global.last_player_id === selected_save_data.id &&
+                      save_data[0].global.status;
 
-    // Delete data
-    if (response.selection == 1) {
-      // Online
-      if (selected_player) {
-        form = new MessageFormData();
-        form.title("Online player information");
-        form.body("Are you sure you want to remove the save data of "+selected_player.name+"?\nIn oder to do so, he has to disconnect from the world!");
-        form.button1("");
-        form.button2("§cKick & Delete");
-        form.show(viewing_player).then((response) => {
-          // Kicking player
-            if (response.selection == 1) {
-              if (world.getDimension("overworld").runCommand("kick "+selected_player.name).successCount == 0) {
-                form = new MessageFormData();
-                form.title("Host player information");
-                form.body("It looks like "+selected_player.name+" is the host of this world.\nIn oder to remove his save data, the server has to shutdown!");
-                form.button1("");
-                form.button2("§cShutdown & Delete");
-                form.show(viewing_player).then((response) => {
-                  if (response.selection == 1) {
-                    delete_player_save_data(selected_save_data);
-                    return close_world();
-                  }
+    if (is_global) {
+      const player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
 
-                  if (response.selection == 0) {
-                    return settings_rights_manage_sd(viewing_player, selected_save_data)
-                  }
-                });
-              } else {
-                delete_player_save_data(selected_save_data);
-                return settings_rights_main(viewing_player)
-              }
-            }
+        const design_data = typeof save_data[player_sd_index].design === "number"
+          ? design_template[save_data[player_sd_index].design].content
+          : save_data[player_sd_index].design;
+        const design = design_data.find(item => item.type === "normal");
 
-            if (response.selection == 0) {
-              return settings_rights_manage_sd(viewing_player, selected_save_data)
-            }
+        const own_time = apply_design(
+          design,
+          save_data[player_sd_index].time[
+            save_data[player_sd_index].counting_type ? "timer" : "stopwatch"
+          ]
+        );
+
+        // Baue das Formular
+        const shared_form = new ActionFormData()
+          .title("Shared timer")
+          .body(
+            `${selected_save_data.name} is currently sharing their timer. You must §cstop§f it${
+              save_data[0].global.last_player_id !== viewing_player.id
+                ? ` or §ereplace§f it with your own time (${own_time}§r§f)`
+                : ""
+            } to ${is_reset ? "reset" : "delete"} the save data.\n\n§7Required for challenge mode.\n\n`
+          );
+
+        const isSharing = (save_data[0].global.last_player_id === viewing_player.id);
+        if (!isSharing) {
+          shared_form.button("§eShare yours instead");
+        }
+        shared_form.button("§cDisable");
+        shared_form.button("")
+
+        shared_form.show(viewing_player).then(global_response => {
+          if (global_response.canceled) return;
+
+          const sel = global_response.selection;
+          const reload = () => {
+            save_data = load_save_data();
+            selected_save_data = save_data.find(e => e.id === selected_save_data.id);
+            handle_data_action(is_reset, is_delete, viewing_player, selected_save_data);
+          };
+
+          const shareIndex   = isSharing ? -1 : 0;
+          const disableIndex = isSharing ? 0  : 1;
+          const settingsIndex = disableIndex + 1;
+
+          if (sel === shareIndex) {
+            convert_local_to_global(viewing_player.id);
+            reload();
+
+          } else if (sel === disableIndex) {
+            convert_global_to_local(true);
+            reload();
+
+          } else if (sel === settingsIndex) {
+            settings_rights_manage_sd(viewing_player, selected_save_data);
+          }
         });
 
-      } else /* Offline */ {
-        delete_player_save_data(selected_save_data);
-        return settings_rights_main(viewing_player)
-      }
+
+
+    } else {
+      handle_data_action(is_reset, is_delete, viewing_player, selected_save_data);
     }
 
-    if (response.selection == 2) {
-      return settings_rights_data(viewing_player, selected_save_data)
+    if (response.selection === 2) {
+      settings_rights_data(viewing_player, selected_save_data);
     }
-    
   });
+}
+
+function handle_data_action(is_reset, is_delete, viewing_player, selected_save_data) {
+  const selected_player = world.getAllPlayers().find(p => p.id === selected_save_data.id);
+  if (is_reset) {
+    delete_player_save_data(selected_save_data);
+    create_player_save_data(selected_save_data.id, selected_save_data.name);
+    return settings_rights_main(viewing_player);
+  }
+
+  if (is_delete) {
+    if (selected_player) {
+      const confirm_form = new MessageFormData()
+        .title("Online player information")
+        .body(`Are you sure you want to remove ${selected_player.name}'s save data?\nThey must disconnect from the world!`)
+        .button1("")
+        .button2("§cKick & Delete");
+
+      confirm_form.show(viewing_player).then(confirm => {
+        if (confirm.selection === 1) {
+          if (!world.getDimension("overworld").runCommand(`kick ${selected_player.name}`).successCount) {
+            const host_form = new MessageFormData()
+              .title("Host player information")
+              .body(`${selected_player.name} is the host. To delete their data, the server must shut down.`)
+              .button1("")
+              .button2("§cShutdown & Delete");
+
+            host_form.show(viewing_player).then(host => {
+              if (host.selection === 1) {
+                delete_player_save_data(selected_save_data);
+                return close_world();
+              } else {
+                settings_rights_manage_sd(viewing_player, selected_save_data);
+              }
+            });
+          } else {
+            delete_player_save_data(selected_save_data);
+            settings_rights_main(viewing_player);
+          }
+        } else {
+          settings_rights_manage_sd(viewing_player, selected_save_data);
+        }
+      });
+
+    } else {
+      delete_player_save_data(selected_save_data);
+      settings_rights_main(viewing_player);
+    }
+  }
 }
 
 function settings_type(player) {

@@ -29,6 +29,7 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 |--------|--------|--------|--------|
 | Design | Players can create their own template | planed for `v.5.0.0` up to `v.5.1.0` | |
 | Challenges (s) | Comes from v.4.1 | planed for `v.5.x.0` | |
+| Universal Updater | Updates the save data of an older timer version | planed for `v.5.x.0` | |
 | Search | A global search for all features of the timer | planed for `v.5.x.0` | |
 | Status (c) | Comes from v.4.1 | **improved** | |
 | Time | Comes from v.4.1 | **improved** | |
