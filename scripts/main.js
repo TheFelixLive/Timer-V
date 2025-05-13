@@ -4,7 +4,7 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.0.0 A4",
-  unix: 1742821543946
+  unix: 1747135586
 }
 
 // These lists are NOT customizable
@@ -527,7 +527,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, global: {status: false, last_player_id: undefined}, difficulty: world.isHardcore? 2 : 1, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15762816)  }
+        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, global: {status: false, last_player_id: undefined}, difficulty: world.isHardcore? 2 : 1, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
     ]
 
     update_save_data(save_data)
@@ -716,7 +716,7 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
   }
 
   // Update popup
-  if (player_save_data.op && Date.now() > save_data[0].update_message_unix) {
+  if (player_save_data.op && (Date.now()/ 1000) > save_data[0].update_message_unix) {
     let form = new ActionFormData();
     form.title("Update time!");
     form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
@@ -727,7 +727,7 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
         if (response.canceled && response.cancelationReason === "UserBusy") {
           showForm()
         } else if (response.selection === 1) {
-            save_data[0].update_message_unix = Date.now() + 15762816;
+            save_data[0].update_message_unix = (Date.now()/ 1000) + 15897600;
             update_save_data(save_data);
         }
       });
@@ -1042,6 +1042,10 @@ function splash_challengemode(player) {
         save_data[0].time.do_count = false
         save_data[0].time.timer = 0
         save_data[0].time.stopwatch = 0
+
+        if (save_data[0].counting_type == 0 && save_data[0].goal.pointer == 2 && save_data[0].goal.event_pos == 0) {
+          save_data[0].goal.pointer = 0
+        }
       }
       
 
@@ -1100,7 +1104,7 @@ function splash_start_challenge(player) {
 
   form.show(player).then((response) => {
     if (response.selection == 0) {
-      // Todo: Start challenge code
+      return 
     }
 
 
@@ -1223,6 +1227,9 @@ function settings_start_time(player) {
       save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 1;
     } else {
       save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 0;
+      if (save_data[0].is_challenge && save_data[0].goal.pointer == 2 && save_data[0].goal.event_pos == 0) {
+        save_data[0].goal.pointer = 0
+      }
     }
     update_save_data(save_data);
     return main_menu(player)

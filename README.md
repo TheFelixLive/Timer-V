@@ -27,10 +27,11 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 # Planned features
 | Category | Description | Status | Notes |
 |--------|--------|--------|--------|
-| Design | Players can create their own template | planed for `v.5.0.0` up to `v.5.1.0` | |
-| Challenges (s) | Comes from v.4.1 | planed for `v.5.x.0` | |
+| Design | Players can create their own template | planed for `v.5.0.0` or `v.5.1.0` | |
+| Statistics | Stores, for example, which blocks were mined or placed or how far someone has travelled | planed for `v.5.x.0` | |
 | Universal Updater | Updates the save data of an older timer version | planed for `v.5.x.0` | |
 | Search | A global search for all features of the timer | planed for `v.5.x.0` | |
+| Challenges (s) | Comes from v.4.1 | planed for `v.5.x.0` | |
 | Status (c) | Comes from v.4.1 | **improved** | |
 | Time | Comes from v.4.1 | **improved** | |
 | Goals (s) | Comes from v.4.1 | **improved** | |
@@ -41,4 +42,4 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 | Modifications | Comes from v.4.1 | _scraped_ | If at all, the current modifications will be implemented natively |
 | Speedrun (s) | Comes from v.4.1 | _scraped_ | Use the new designs for that  |
 
-> Last Update: 10.5.25
+> Last Update: 13.5.25
