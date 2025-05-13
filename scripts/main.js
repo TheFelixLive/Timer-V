@@ -606,10 +606,6 @@ function start_cm_timer() {
       save_data[0].goal.event_pos  = realIndex;
     }
 
-    console.log("Pointer: "+save_data[0].goal.pointer)
-    console.log(save_data[0].goal.entity_pos)
-    console.log(save_data[0].goal.event_pos)
-
     // Realtalk: Raw Text to the hell! It took me around 4 hours to implement it for this shitty "translate"
     const parts =
       save_data[0].goal.pointer === 1
@@ -631,6 +627,11 @@ function start_cm_timer() {
         { text: "§l§5[§dGoal§5]§r§f " },
         ...parts
       ]
+    });
+
+
+    world.getAllPlayers().forEach(t => {
+      t.playSound("random.levelup");
     });
 
   }
@@ -748,85 +749,93 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
   let save_data = load_save_data();
   let player_save_data = save_data[save_data.findIndex(entry => entry.id === player.id)];
 
-  // Setup popup
-  if (player_save_data.setup == 2) {
-    let form = new ActionFormData();
-    form.title("Setup guide");
-    form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
-    form.button("Survival mode");
-    form.button("Creative mode");
-    form.button("");
+  if (!save_data[player_save_data].died) {
+    // Setup popup
+    if (player_save_data.setup == 2) {
+      let form = new ActionFormData();
+      form.title("Setup guide");
+      form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+      form.button("Survival mode");
+      form.button("Creative mode");
+      form.button("");
 
-    const showForm = async () => {
-      form.show(player).then((response) => {
-        if (response.canceled && response.cancelationReason === "UserBusy") {
-          showForm()
-        } else {
-          // Response
-          player_save_data.setup = 0
-          // Survival
-          if (response.selection === 0) {
-            save_data[0].global.status = true
-            save_data[0].is_challenge = true
-            save_data[0].global.last_player_id = player.id
-          }
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            // Response
+            player_save_data.setup = 0
+            // Survival
+            if (response.selection === 0) {
+              save_data[0].global.status = true
+              save_data[0].is_challenge = true
+              save_data[0].global.last_player_id = player.id
+            }
 
-          if (response.selection >= 0) {
+            if (response.selection >= 0) {
+              main_menu(player)
+            }
             update_save_data(save_data);
-            main_menu(player)
+
           }
+        });
+      };
+      showForm();
+    }
 
-        }
-      });
-    };
-    showForm();
-  }
+    // Welcome screen
+    if (player_save_data.setup == 1) {
+      let form = new ActionFormData();
+      form.title("Setup guide");
+      form.body("Wellcome!\n comming soon");
+      form.button("");
 
-  // Welcome screen
-  if (player_save_data.setup == 1) {
-    let form = new ActionFormData();
-    form.title("Setup guide");
-    form.body("Wellcome!\n comming soon");
-    form.button("");
-
-    const showForm = async () => {
-      form.show(player).then((response) => {
-        if (response.canceled && response.cancelationReason === "UserBusy") {
-          showForm()
-        } else {
-          // Response
-
-          // Survival
-          if (response.selection === 0) {
-            main_menu(player)
-          }
-
-        }
-      });
-    };
-    showForm();
-  }
-
-  // Update popup
-  if (player_save_data.op && (Date.now()/ 1000) > save_data[0].update_message_unix) {
-    let form = new ActionFormData();
-    form.title("Update time!");
-    form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
-    form.button("Mute");
-
-    const showForm = async () => {
-      form.show(player).then((response) => {
-        if (response.canceled && response.cancelationReason === "UserBusy") {
-          showForm()
-        } else if (response.selection === 1) {
-            save_data[0].update_message_unix = (Date.now()/ 1000) + 15897600;
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            // Response
+            player_save_data.setup = 0
+            if (response.selection === 0) {
+              main_menu(player)
+            }
             update_save_data(save_data);
-        }
-      });
-    };
-    showForm();
+          }
+        });
+      };
+      showForm();
+    }
+
+    // Update popup
+    if (player_save_data.op && (Date.now()/ 1000) > save_data[0].update_message_unix) {
+      let form = new ActionFormData();
+      form.title("Update time!");
+      form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
+      form.button("Mute");
+
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            if (response.selection === 1) {
+              save_data[0].update_message_unix = (Date.now()/ 1000) + 15897600;
+              update_save_data(save_data);
+            }
+          }
+        });
+      };
+      showForm();
+    }
+  } else {
+    save_data[player_save_data].died = false
+    update_save_data(save_data);
   }
 });
+
+
 
 
 
@@ -978,8 +987,18 @@ function main_menu_actions(player, form) {
         actions.push(() => {
           if (timedata.time.do_count === false) {
             timedata.time.do_count = true;
+
+            (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
+              t.sendMessage("§l§2[§aCondition§2]§r The timer will resume!");
+              t.playSound("step.amethyst_block");
+            });
           } else {
             timedata.time.do_count = false;
+
+            (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
+              t.sendMessage("§l§4[§cCondition§4]§r The timer is stopped!");
+              t.playSound("trial_spawner.close_shutter");
+            });
           }
           update_save_data(save_data);
         });
@@ -1097,6 +1116,8 @@ function main_menu_actions(player, form) {
 function main_menu(player) {
   let form = new ActionFormData();
   form.title("Main menu");
+
+  player.playSound("random.pop2")
 
   let actions = main_menu_actions(player, form);
 
