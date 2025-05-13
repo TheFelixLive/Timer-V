@@ -77,306 +77,230 @@ const goal_event = [
 
 // These lists ARE customizable
 
-const goal_entity = [
-  // The attribute "icons" can also be used here and would replace the spawn egg
+var goal_entity = [
   {
-    "name": "Ender Dragon",
     "id": "ender_dragon"
   },
   {
-    "name": "Wither",
     "id": "wither"
   },
   {
-    "name": "Warden",
     "id": "warden"
   },
   {
-    "name": "Allay",
     "id": "allay"
   },
   {
-    "name": "Armadillo",
     "id": "armadillo"
   },
   {
-    "name": "Axolotl",
     "id": "axolotl"
   },
   {
-    "name": "Bat",
     "id": "bat"
   },
   {
-    "name": "Bee",
     "id": "bee"
   },
   {
-    "name": "Blaze",
     "id": "blaze"
   },
   {
-    "name": "Camel",
     "id": "camel"
   },
   {
-    "name": "Cat",
     "id": "cat"
   },
   {
-    "name": "Cave Spider",
     "id": "cave_spider"
   },
   {
-    "name": "Chicken",
     "id": "chicken"
   },
   {
-    "name": "Cod",
     "id": "cod"
   },
   {
-    "name": "Cow",
     "id": "cow"
   },
   {
-    "name": "Creeper",
     "id": "creeper"
   },
   {
-    "name": "Dolphin",
     "id": "dolphin"
   },
   {
-    "name": "Donkey",
     "id": "donkey"
   },
   {
-    "name": "Drowned",
     "id": "drowned"
   },
   {
-    "name": "Elder Guardian",
     "id": "elder_guardian"
   },
   {
-    "name": "Enderman",
     "id": "enderman"
   },
   {
-    "name": "Endermite",
     "id": "endermite"
   },
   {
-    "name": "Evoker",
     "id": "evocation_illager",
     "icon": "textures/items/spawn_eggs/spawn_egg_evoker"
   },
   {
-    "name": "Fox",
     "id": "fox"
   },
   {
-    "name": "Frog",
     "id": "frog"
   },
   {
-    "name": "Ghast",
     "id": "ghast"
   },
   {
-    "name": "Glow Squid",
     "id": "glow_squid"
   },
   {
-    "name": "Goat",
     "id": "goat"
   },
   {
-    "name": "Guardian",
     "id": "guardian"
   },
   {
-    "name": "Hoglin",
     "id": "hoglin"
   },
   {
-    "name": "Horse",
     "id": "horse"
   },
   {
-    "name": "Husk",
     "id": "husk"
   },
   {
-    "name": "Iron Golem",
     "id": "iron_golem"
   },
   {
-    "name": "Llama",
     "id": "llama"
   },
   {
-    "name": "Magma Cube",
     "id": "magma_cube"
   },
   {
-    "name": "Mooshroom",
     "id": "mooshroom"
   },
   {
-    "name": "Mule",
     "id": "mule"
   },
   {
-    "name": "Ocelot",
     "id": "ocelot"
   },
   {
-    "name": "Panda",
     "id": "panda"
   },
   {
-    "name": "Parrot",
     "id": "parrot"
   },
   {
-    "name": "Phantom",
     "id": "phantom"
   },
   {
-    "name": "Pig",
     "id": "pig"
   },
   {
-    "name": "Piglin",
     "id": "piglin"
   },
   {
-    "name": "Piglin Brute",
     "id": "piglin_brute"
   },
   {
-    "name": "Pillager",
     "id": "pillager"
   },
   {
-    "name": "Polar Bear",
     "id": "polar_bear"
   },
   {
-    "name": "Pufferfish",
     "id": "pufferfish"
   },
   {
-    "name": "Rabbit",
     "id": "rabbit"
   },
   {
-    "name": "Ravager",
     "id": "ravager"
   },
   {
-    "name": "Salmon",
     "id": "salmon"
   },
   {
-    "name": "Sheep",
     "id": "sheep"
   },
   {
-    "name": "Shulker",
     "id": "shulker"
   },
   {
-    "name": "Skeleton",
     "id": "skeleton"
   },
   {
-    "name": "Skeleton Horse",
     "id": "skeleton_horse"
   },
   {
-    "name": "Slime",
     "id": "slime"
   },
   {
-    "name": "Sniffer",
     "id": "sniffer"
   },
   {
-    "name": "Tadpole",
     "id": "tadpole"
   },
   {
-    "name": "Snow Golem",
     "id": "snow_golem"
   },
   {
-    "name": "Squid",
     "id": "squid"
   },
   {
-    "name": "Stray",
     "id": "stray"
   },
   {
-    "name": "Strider",
     "id": "strider"
   },
   {
-    "name": "Trader Llama",
     "id": "trader_llama"
   },
   {
-    "name": "Tropical Fish",
     "id": "tropicalfish"
   },
   {
-    "name": "Turtle",
     "id": "turtle"
   },
   {
-    "name": "Vex",
     "id": "vex"
   },
   {
-    "name": "Villager",
     "id": "villager"
   },
   {
-    "name": "Wandering Trader",
     "id": "wandering_trader"
   },
   {
-    "name": "Witch",
     "id": "witch"
   },
   {
-    "name": "Wither Skeleton",
     "id": "wither_skeleton"
   },
   {
-    "name": "Wolf",
     "id": "wolf"
   },
   {
-    "name": "Zoglin",
     "id": "zoglin"
   },
   {
-    "name": "Zombie",
     "id": "zombie"
   },
   {
-    "name": "Zombie Pigman",
     "id": "zombified_piglin"
   },
   {
-    "name": "Zombie Villager",
     "id": "zombie_villager"
   }
-  
 ];
 
 const design_template = [
@@ -514,6 +438,10 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     world.setDynamicProperty("timerv:save_data", undefined);
     close_world()
   }
+
+    if (event.id === "timerv:menu") {
+    return main_menu(event.sourceEntity)
+  }
   
   
 });
@@ -527,7 +455,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, global: {status: false, last_player_id: undefined}, difficulty: world.isHardcore? 2 : 1, sync_day_time: 0, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, is_challenge: false, challenge_progress: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, global: {status: false, last_player_id: undefined}, difficulty: world.isHardcore? 2 : 1, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
     ]
 
     update_save_data(save_data)
@@ -646,6 +574,170 @@ function convert_global_to_local(disable_global) {
   }
 
   update_save_data(save_data)
+}
+
+function start_cm_timer() {
+  let save_data = load_save_data();
+  save_data[0].challenge_progress = 1
+  save_data[0].time.do_count = true
+
+  if(save_data[0].goal.pointer == 0) {
+    const availableEntities = goal_entity;
+    const availableEvents   = goal_event.filter(g => g.condition(save_data));
+
+    const totalEntities = availableEntities.length;
+    const totalEvents   = availableEvents.length;
+    const totalOptions  = totalEntities + totalEvents;
+
+    const r = Math.floor(Math.random() * totalOptions);
+
+    if (r < totalEntities) {
+      const chosenEntity = availableEntities[r];
+      const realIndex    = goal_entity.findIndex(g => g.id === chosenEntity.id);
+
+      save_data[0].goal.pointer     = 1;
+      save_data[0].goal.entity_pos  = realIndex;
+    } else {
+      const idxInEvents = r - totalEntities;
+      const chosenEvent = availableEvents[idxInEvents];
+      const realIndex   = goal_event.findIndex(g => g.name === chosenEvent.name);
+
+      save_data[0].goal.pointer    = 2;
+      save_data[0].goal.event_pos  = realIndex;
+    }
+
+    console.log("Pointer: "+save_data[0].goal.pointer)
+    console.log(save_data[0].goal.entity_pos)
+    console.log(save_data[0].goal.event_pos)
+
+    // Realtalk: Raw Text to the hell! It took me around 4 hours to implement it for this shitty "translate"
+    const parts =
+      save_data[0].goal.pointer === 1
+        ? [
+            { text: "Defeat the " },
+            { translate: "entity." + goal_entity[save_data[0].goal.entity_pos].id + ".name" },
+            { text: "\n" },
+          ]
+      : save_data[0].goal.pointer === 2 && save_data[0].goal.event_pos === 0
+        ? [
+            { text: "Survive: " + apply_design(design, save_data[0].time.timer) + "\n" }
+          ]
+        : [
+            { text: "Complete the following event: " + goal_event[save_data[0].goal.event_pos].name + "\n" }
+          ];
+
+    world.sendMessage({
+      rawtext: [
+        { text: "§l§5[§dGoal§5]§r§f " },
+        ...parts
+      ]
+    });
+
+  }
+
+  update_save_data(save_data);
+  world.sendMessage("§l§7[§fSystem§7]§r The Challenge starts now!")
+}
+
+
+function check_player_gamemode(player) {
+  let save_data = load_save_data();
+
+  // challenge_progress == 0
+  if (save_data[0].challenge_progress == 0 && player.getGameMode() !== "creative") {
+    player.setGameMode("creative")
+  }
+
+  // challenge_progress == 1
+  if (save_data[0].challenge_progress == 1 &&  save_data[0].time.do_count == true && player.getGameMode() !== "survival") {
+    player.setGameMode("survival")
+  }
+
+  if (save_data[0].challenge_progress == 1 &&  save_data[0].time.do_count == false && player.getGameMode() !== "spectator") {
+    player.setGameMode("spectator")
+  }
+
+  // challenge_progress == 2
+}
+
+
+function check_difficulty() {
+  let save_data = load_save_data();
+
+  if (world.getDifficulty() !== "Easy" && save_data[0].difficulty == 0) {
+    world.setDifficulty("Easy")
+  }
+
+  if (world.getDifficulty() !== "Normal" && save_data[0].difficulty == 1) {
+    world.setDifficulty("Normal")
+  }
+  // It's somehow unnecessary because hardcore is always "hard" but whatever :)
+  if (world.getDifficulty() !== "Hard" && save_data[0].difficulty > 1) {
+    world.setDifficulty("Hard")
+  }
+}
+
+function render_task_list(player) {
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "normal");
+  const lines = [];
+
+  // difficulty
+  if (save_data[0].difficulty === 2) {
+    lines.push({ text: "- §4Hard§ccore§f is active\n" });
+  }
+  if (save_data[0].difficulty === 3) {
+    lines.push({ text: "- §cUltra §4Hardcore§f: no regeneration\n" });
+  }
+  if (save_data[0].difficulty === 4) {
+    lines.push({ text: "- §5Infinity§f: no damage\n" });
+  }
+
+  // goals pointer 0 = random
+  if (save_data[0].goal.pointer === 0) {
+    lines.push({ text: "- §5Goal§f is random\n" });
+  }
+
+  // goals pointer 1 = defeat specific entity
+  if (save_data[0].goal.pointer === 1) {
+    lines.push({ text: "- §5Goal:§f Defeat: " });
+    lines.push({translate: "entity." + goal_entity[save_data[0].goal.entity_pos].id + ".name"});
+    lines.push({ text: "\n" });
+  }
+
+  // goals pointer 2 = event/time-based
+  if (save_data[0].goal.pointer === 2 && save_data[0].goal.event_pos === 0) {
+    // survive timer only
+    lines.push({ text: "- §aSurvive:§f " + apply_design(design, save_data[0].time.timer) + "\n" });
+  } else {
+    // time available
+    if (save_data[0].counting_type === 1) {
+      lines.push({ text: "- §aTime available:§f " + apply_design(design, save_data[0].time.timer) + "§r§f\n" });
+    }
+    // goal event
+    if (save_data[0].goal.pointer === 2) {
+      lines.push({ text: "- §5Goal:§f " + goal_event[save_data[0].goal.event_pos].name + "§r§f\n" });
+    }
+  }
+
+  return lines;
+}
+
+function enable_gamerules(doDayLightCycle) {
+  world.gameRules.doDayLightCycle = doDayLightCycle;
+  world.gameRules.doEntityDrops = true;
+  world.gameRules.doFireTick = true;
+  world.gameRules.doWeatherCycle = true;
+  world.gameRules.doMobSpawning = true;
+}
+
+function disable_gamerules() {
+  world.gameRules.doDayLightCycle = false;
+  world.gameRules.doEntityDrops = false;
+  world.gameRules.doFireTick = false;
+  world.gameRules.doWeatherCycle = false;
+  world.gameRules.doMobSpawning = false;
 }
 
 /*------------------------
@@ -858,6 +950,19 @@ function main_menu_actions(player, form) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
+  if (form) {
+    if (save_data[0].is_challenge && save_data[0].challenge_progress == 1) {
+      form.body({rawtext:[
+        { text: "Here's a brief overview, what you have setup:\n" },
+        ...render_task_list(player),
+        { text: "\n" }
+      ]});
+
+    } else {
+    form.body("Select an option!");
+    }
+  }
+
   let timedata;
   if (save_data[0].global.status) {
     timedata = save_data[0]
@@ -868,7 +973,7 @@ function main_menu_actions(player, form) {
   if (!save_data[0].global.status || save_data[0].global.status && save_data[player_sd_index].op) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
-      if ((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && !save_data[0].is_challenge) {
+      if ((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && !save_data[0].is_challenge || (save_data[0].is_challenge && save_data[0].challenge_progress == 1)) {
         if(form){form.button("Condition\n" + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           if (timedata.time.do_count === false) {
@@ -890,71 +995,69 @@ function main_menu_actions(player, form) {
           main_menu(player);
         });
       }
+    }
 
-      /*------------------------
-        Only Challenge mode
-      -------------------------*/
-      if (save_data[player_sd_index].op && save_data[0].is_challenge) {
-        if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
-          if (form) form.button("§2Start Challenge\n", "textures/gui/controls/right");
-          actions.push(() => {
-            splash_start_challenge(player);
-          });
-        }
+    /*------------------------
+      Only Challenge mode
+    -------------------------*/
+    if (save_data[0].is_challenge && save_data[0].challenge_progress == 0) {
+      if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
+        if (form) form.button("§2Start Challenge\n", "textures/gui/controls/right");
+        actions.push(() => {
+          splash_start_challenge(player);
+        });
       }
 
-      if (save_data[player_sd_index].op && save_data[0].is_challenge) {
-        if (form) form.button(
-          "§5Goal§9\n" +
-            (save_data[0].goal.pointer === 2
-              ? goal_event[save_data[0].goal.event_pos].name
-              : save_data[0].goal.pointer === 0
-              ? "§bR§ga§an§6d§4o§fm"
-              : "Defeat: " + goal_entity[save_data[0].goal.entity_pos].name),
-          "textures/items/elytra"
+      if (form) form.button({rawtext:
+        [
+          { text: "§5Goal§9\n" },
+          save_data[0].goal.pointer === 2
+            ? { text: goal_event[save_data[0].goal.event_pos].name }
+            : save_data[0].goal.pointer === 0
+            ? { text: "§bR§ga§an§6d§4o§fm" }
+            : ({ text: "Defeat: " },
+              { translate: "entity." + goal_entity[save_data[0].goal.entity_pos].id + ".name" })
+        ]},
+        "textures/items/elytra"
+      );
+
+      actions.push(() => {
+        settings_goals_main(player);
+      });
+
+      if (form) form.button("§cDifficulty\n" + difficulty[save_data[0].difficulty].name + "", difficulty[save_data[0].difficulty].icon);
+      actions.push(() => {
+        settings_difficulty(player);
+      });
+    }
+
+
+    if (save_data[player_sd_index].op && !save_data[0].is_challenge) {
+      if(form){form.button("Shared timer\n§9" + (save_data[0].global.status ? "by "+ save_data.find(e => e.id === save_data[0].global.last_player_id)?.name : "off"), "textures/ui/FriendsIcon")};
+      actions.push(() => {
+        splash_globalmode(player);
+      });
+    }
+
+    // "Change / add time" button
+    if (!(save_data[0].is_challenge && save_data[0].challenge_progress > 0)) {
+      if (form) {
+        form.button(
+          (save_data[0].is_challenge ? "Start time\n" : "Change time\n") +
+          apply_design(
+            (
+              typeof save_data[player_sd_index].design === "number"
+                ? design_template[save_data[player_sd_index].design].content
+                : save_data[player_sd_index].design
+            ).find(item => item.type === "normal"),
+            timedata.time[timedata.counting_type ? "timer" : "stopwatch"]
+          ),
+          "textures/ui/color_plus"
         );
-        actions.push(() => {
-          settings_goals_main(player);
-        });
       }
-
-      if (save_data[player_sd_index].op && save_data[0].is_challenge) {
-        if (form) form.button(
-          "§cDifficulty\n" + difficulty[save_data[0].difficulty].name + "", difficulty[save_data[0].difficulty].icon
-        );
-        actions.push(() => {
-          settings_difficulty(player);
-        });
-      }
-
-  
-      if (save_data[player_sd_index].op && !save_data[0].is_challenge) {
-        if(form){form.button("Shared timer\n§9" + (save_data[0].global.status ? "by "+ save_data.find(e => e.id === save_data[0].global.last_player_id)?.name : "off"), "textures/ui/FriendsIcon")};
-        actions.push(() => {
-          splash_globalmode(player);
-        });
-      }
-  
-      // "Change / add time" button
-      if (!((save_data[player_sd_index].time_day_actionsbar == true || (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && save_data[player_sd_index].op)) && timedata.counting_type == 0)) {
-
-        if(form){
-            form.button((save_data[0].is_challenge ? "Start time\n" : "Change time\n") +
-              apply_design(
-                (
-                  typeof save_data[player_sd_index].design === "number"
-                    ? design_template[save_data[player_sd_index].design].content
-                    : save_data[player_sd_index].design
-                ).find(item => item.type === "normal"),
-                timedata.time[timedata.counting_type ? "timer" : "stopwatch"]
-              ),
-            "textures/ui/color_plus")
-        };
-        actions.push(() => {
-          settings_start_time(player);
-        });
-      }
-  
+      actions.push(() => {
+        settings_start_time(player);
+      });
     }
   }
 
@@ -962,12 +1065,12 @@ function main_menu_actions(player, form) {
 
   if (save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) {
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
-      if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time === 1 ? "§aon" : "§coff"), (save_data[0].sync_day_time === 1 ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
+      if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time ? "§aon" : "§coff"), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
-        if (save_data[0].sync_day_time === 0) {
-          save_data[0].sync_day_time = 1;
+        if (!save_data[0].sync_day_time) {
+          save_data[0].sync_day_time = true;
         } else {
-          save_data[0].sync_day_time = 0;
+          save_data[0].sync_day_time = false;
         }
         update_save_data(save_data);
         main_menu(player);
@@ -975,7 +1078,7 @@ function main_menu_actions(player, form) {
     }
   }
 
-  if (save_data[player_sd_index].op && save_data[0].global.status) {
+  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge_progress == 0) {
     if(form){form.button("Challenge mode", save_data[0].is_challenge ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
@@ -994,7 +1097,6 @@ function main_menu_actions(player, form) {
 function main_menu(player) {
   let form = new ActionFormData();
   form.title("Main menu");
-  form.body("Select an option!");
 
   let actions = main_menu_actions(player, form);
 
@@ -1042,6 +1144,8 @@ function splash_challengemode(player) {
         save_data[0].time.do_count = false
         save_data[0].time.timer = 0
         save_data[0].time.stopwatch = 0
+        world.setAbsoluteTime(0);
+        world.getDimension("overworld").setWeather("Clear");
 
         if (save_data[0].counting_type == 0 && save_data[0].goal.pointer == 2 && save_data[0].goal.event_pos == 0) {
           save_data[0].goal.pointer = 0
@@ -1066,45 +1170,16 @@ function splash_challengemode(player) {
 
 function splash_start_challenge(player) {
   let form = new ActionFormData();
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "normal");
 
   form.title("Warning!");
-  form.body("You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n" +
-    // difficulty
-    (save_data[0].difficulty > 1 ? "- §4Hard§ccore§f is activ\n" : "") +
-
-    // goals
-    (save_data[0].goal.pointer == 0 ? "- §5Goal§f is random\n" : "") +
-    (save_data[0].goal.pointer == 1 ? "- §5Goal:§f Defeat: " + goal_entity[save_data[0].goal.entity_pos].name + "\n" : "") +
-
-    (save_data[0].goal.pointer == 2 && save_data[0].goal.event_pos == 0
-    // Time + Goal
-    ? "- §aSurvive:§f " + apply_design(design, save_data[0].time.timer) + "\n"
-    // Time or Goal
-    : (
-        (save_data[0].counting_type == 1
-          ? "- §aTime available:§f " + apply_design(design, save_data[0].time.timer) + "§r§f\n"
-          : ""
-        ) +
-        (save_data[0].goal.pointer == 2
-          ? "- §5Goal:§f " + goal_event[save_data[0].goal.event_pos].name + "§r§f\n"
-          : ""
-        )
-      )
-  ) +
-    "\n\n"
-  );
-
+  form.body({rawtext:[{text: "You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n"}, ...render_task_list(player), {text: "\n\n"}]});
 
   form.button("§aStart");
-
   form.button("");
 
   form.show(player).then((response) => {
     if (response.selection == 0) {
-      return 
+      return start_cm_timer()
     }
 
 
@@ -1285,10 +1360,16 @@ function settings_goals_main(player) {
   form.title("Goal");
   form.body("Select a type!");
 
-  form.button(
-    "Entity\nDefeat" + (pointer === 1 ? ": " + goal_entity[save_data[0].goal.entity_pos].name : " a specific creature"),
+  form.button({rawtext:
+    [
+      { text: "Entity\nDefeat" },
+      pointer === 1
+        ? ({ text: ": " }, { translate: "entity." + goal_entity[save_data[0].goal.entity_pos].id + ".name" })
+        : { text: " a specific creature" }
+    ]},
     pointer === 1 ? "textures/ui/realms_slot_check" : undefined
   );
+
 
   form.button(
     "Event\nTrigger a specific event",
@@ -1340,29 +1421,45 @@ function settings_goals_select(player, type) {
     }
   }
 
-  visibleGoals.sort((a, b) => a.name.localeCompare(b.name));
+  visibleGoals.sort((a, b) => {
+    const aKey = isEvent ? a.name : `entity.${a.id}.name`;
+    const bKey = isEvent ? b.name : `entity.${b.id}.name`;
+    return aKey.localeCompare(bKey);
+  });
 
   if (selectedGoal) {
     visibleGoals.unshift(selectedGoal);
   }
 
   visibleGoals.forEach(goal => {
-    const realIndex = goalArray.findIndex(g => g.name === goal.name);
-    const label = goal.name + (currentGoal === realIndex ? "\n§2(selected)" : "");
+    const realIndex = goalArray.findIndex(g =>
+      isEvent ? g.name === goal.name : g.id === goal.id
+    );
+    const labelText = { 
+        rawtext: [
+            {
+                translate: ("entity."+goal.id+".name"),
+            },
+            { text: currentGoal === realIndex ? "\n§2(selected)" : "" },
+        ],
+    };
     const icon = goal.icon
-    ? goal.icon
-    : (isEvent
-       ? undefined
-       : `textures/items/spawn_eggs/spawn_egg_${goal.id}`);
-    form.button(label, icon);
+      ? goal.icon
+      : (isEvent
+          ? undefined
+          : `textures/items/spawn_eggs/spawn_egg_${goal.id}`);
+    form.button(labelText, icon);
   });
 
   form.button("");
 
   form.show(player).then((response) => {
     if (response.selection < visibleGoals.length) {
-      const selectedName = visibleGoals[response.selection].name;
-      const realIndex = goalArray.findIndex(goal => goal.name === selectedName);
+      const selectedGoal = visibleGoals[response.selection];
+      const realIndex = goalArray.findIndex(goal =>
+        isEvent ? goal.name === selectedGoal.name : goal.id === selectedGoal.id
+      );
+
       if (isEvent) {
         save_data[0].goal.event_pos = realIndex;
       } else {
@@ -1372,12 +1469,10 @@ function settings_goals_select(player, type) {
 
       update_save_data(save_data);
     }
-
-    if (response.selection >= 0) {
-      return settings_goals_main(player);
-    }
+    if (response.selection >= 0) return settings_goals_main(player);
   });
 }
+
 
 
 
@@ -1410,7 +1505,7 @@ function settings_main(player) {
   form.body("Select an option!");
 
   // Button 0: Type
-  if (!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) {
+  if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && (save_data[0].is_challenge && save_data[0].challenge_progress == 0)) {
     form.button("Type\n§9" + timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon);
     actions.push(() => settings_type(player));
   }
@@ -1466,6 +1561,7 @@ function settings_main(player) {
 function debug_main(player) {
   let form = new ActionFormData();
 
+  form.body("DynamicPropertyTotalByteCount: "+world.getDynamicPropertyTotalByteCount() +" of 32767 bytes used")
   form.button("§aAdd player (save data)");
   form.button("§cRemove \"save_data\"");
   form.button("§cClose Server");
@@ -1508,23 +1604,17 @@ function settings_rights_main(player) {
   const players = world.getAllPlayers();
   const playerIds = players.map(player => player.id);
   
-  // Erstelle eine neue Liste aus "save_data", wobei der erste Eintrag ausgelassen wird
   let newList = save_data.slice(1);
   
-  // Sortiere "newList" so, dass alle Einträge, deren "id" in playerIds vorkommt, nach oben rutschen
   newList.sort((a, b) => {
     const aInPlayers = playerIds.includes(a.id);
     const bInPlayers = playerIds.includes(b.id);
   
-    // Falls a in den Spieler-IDs ist und b nicht, kommt a vor b
     if (aInPlayers && !bInPlayers) return -1;
-    // Falls b in den Spieler-IDs ist und a nicht, kommt b vor a
     if (bInPlayers && !aInPlayers) return 1;
-    // Wenn beide den gleichen Status haben, bleibt die Reihenfolge unverändert
     return 0;
   });
   
-  // Führe für jeden Eintrag in der sortierten Liste form.button mit dem Parameter "name" aus
   newList.forEach(entry => {
     if (entry.op) {
       form.button(entry.name, "textures/ui/op");
@@ -1608,16 +1698,17 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
   let form = new ActionFormData();
   let actions = [];
+  let save_data = load_save_data()
   form.title("Edit "+ selected_save_data.name +"'s permission");
 
-  form.body("Name: "+ selected_save_data.name +" (id: "+ selected_save_data.id +")\nLanguage: "+ ["English" /* Placeholder! */][selected_save_data.lang]+ "\n" + online_text + "\nLive actionbar: "+ render_live_actionbar(selected_save_data, false));
+  form.body("Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n" + "Language: " + ["English" /* Placeholder! */][selected_save_data.lang] + "\n" + online_text + "\n" + "Live actionbar: " + render_live_actionbar(selected_save_data, false) + ((selected_save_data.id == save_data[0].global.last_player_id && save_data[0].is_challenge) ? "§r§f\n\n§7Note: This save data cannot be managed because it is needed by the system due to the Challenge Mode.\n\n" : "\n\n")
+  );
 
   if (selected_save_data.name !== viewing_player.name) {
     if (selected_save_data.op) {
       
       form.button("§cMake deop");
       actions.push(() => {
-        let save_data = load_save_data();
         let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
         save_data[player_sd_index].op = false
         update_save_data(save_data);
@@ -1635,7 +1726,6 @@ function settings_rights_data(viewing_player, selected_save_data) {
         form.button2("§aMake op");
         form.show(viewing_player).then((response) => {
           if (response.selection == 1) {
-            let save_data = load_save_data();
             let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
             save_data[player_sd_index].op = true
             selected_save_data = save_data[player_sd_index]
@@ -1650,12 +1740,13 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
     }
   }
-
   
-  form.button("Manage save data");
-  actions.push(() => {
-    settings_rights_manage_sd(viewing_player, selected_save_data);
-  });
+  if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].is_challenge)) {
+    form.button("Manage save data");
+    actions.push(() => {
+      settings_rights_manage_sd(viewing_player, selected_save_data);
+    });
+  }
   
   form.button("");
   actions.push(() => {
@@ -1911,7 +2002,6 @@ function settings_actionbar(player) {
   form.title("Actionsbar");
   form.body("Select an option!");
 
-  // 1. Button: Look
   form.button(
     "Change the look!\n" + render_live_actionbar(save_data[player_sd_index], false),
     "textures/ui/mashup_PaintBrush"
@@ -1920,7 +2010,6 @@ function settings_actionbar(player) {
     design_template_ui(player);
   });
 
-  // 2. Button: Actionsbar
   form.button(
     "Use actionsbar\n" + (save_data[player_sd_index].visibility ? "§aon" : "§coff"),
     save_data[player_sd_index].visibility ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
@@ -1931,7 +2020,6 @@ function settings_actionbar(player) {
     settings_actionbar(player);
   });
 
-  // 3. Button: Day-Time Anzeige
   if (save_data[player_sd_index].counting_type !== 3) {
     form.button(
       "Show day time\n" + (save_data[player_sd_index].time_day_actionsbar ? "§aon" : "§coff"),
@@ -1944,9 +2032,8 @@ function settings_actionbar(player) {
     });
   }
 
-  // 4. Button: Time Source
   if (save_data[player_sd_index].time_day_actionsbar || save_data[player_sd_index].counting_type == 3) {
-    if (save_data[0].sync_day_time === 0) {
+    if (!save_data[0].sync_day_time) {
       if(form){form.button("Time Source\n§9" + (save_data[player_sd_index].time_source === 0 ? "Minecraft" : "Real Life"), "textures/ui/share_microsoft")};
       actions.push(() => {
         if (save_data[player_sd_index].time_source === 0) {
@@ -2100,9 +2187,9 @@ function design_preview(player, design, is_custom) {
 // Open the menu
 world.beforeEvents.itemUse.subscribe(event => {
 	if (event.itemStack.typeId === "minecraft:stick") {
-        system.run(() => {
-	    main_menu(event.source)
-        });
+      system.run(() => {
+	      main_menu(event.source)
+      });
 	}
 });
 
@@ -2153,14 +2240,14 @@ function render_live_actionbar(selected_save_data, do_update) {
 
     if (counting_type === 3 || dayFormat) {
       const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
-      if (data[idx].time_source === 1 || data[0].sync_day_time === 1) {
+      if (data[idx].time_source === 1 || data[0].sync_day_time) {
         let now = new Date(),
             total = (now.getHours() + data[0].utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
             adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
             ticks = (adj / MILLIS_DAY) * TICKS;
             timevalue = { value: ticks, do_count: true };
 
-            if (data[0].sync_day_time === 1 && do_update && (!data[0].is_challenge || (data[0].challenge_progress === 1 && data[0].time.do_count))) {
+            if (data[0].sync_day_time && do_update && (!data[0].is_challenge || (data[0].challenge_progress === 1 && data[0].time.do_count))) {
               world.getDimension("overworld").runCommand(`time set ${Math.floor(ticks)}`);
             }
             
@@ -2196,9 +2283,6 @@ function render_live_actionbar(selected_save_data, do_update) {
 
 async function update_loop() {
     while (true) {
-
-      //console.log(JSON.stringify(load_save_data()));
-
       let save_data = load_save_data();
 
       if (save_data[0].global.status) {
@@ -2211,17 +2295,27 @@ async function update_loop() {
         world.gameRules.doDayLightCycle = true;
       }
 
-      // Todo: pausing shout also pause the time, wheaser, etc
-      if (save_data[0].challenge_progress == 1 ) {
-        enable_gamerules()
+
+      if (save_data[0].challenge_progress == 1 && save_data[0].time.do_count) {
+        enable_gamerules(!save_data[0].sync_day_time); 
       } else if (save_data[0].is_challenge) {
         disable_gamerules()
       }
 
-      // actionsbar
+      if (save_data[0].is_challenge) {
+        check_difficulty()
+      }
+
+
+
+
       for (const player of world.getAllPlayers()) {
         save_data = load_save_data();
         let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+
+        if (save_data[0].is_challenge) {
+          check_player_gamemode(player)
+        }
 
 
         if (save_data[player_sd_index].visibility == true) {
@@ -2233,22 +2327,6 @@ async function update_loop() {
 
       await system.waitTicks(1);
     }
-}
-
-function enable_gamerules() {
-  world.gameRules.doDayLightCycle = true;
-  world.gameRules.doEntityDrops = true;
-  world.gameRules.doFireTick = true;
-  world.gameRules.doWeatherCycle = true;
-  world.gameRules.doMobSpawning = true;
-}
-
-function disable_gamerules() {
-  world.gameRules.doDayLightCycle = false;
-  world.gameRules.doEntityDrops = false;
-  world.gameRules.doFireTick = false;
-  world.gameRules.doWeatherCycle = false;
-  world.gameRules.doMobSpawning = false;
 }
 
 update_loop();

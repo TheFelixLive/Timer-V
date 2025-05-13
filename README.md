@@ -21,13 +21,14 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 
 - [X] Creative Mode _(since 7.5.25)_
 - [X] Survival Mode - initial setup _(since 10.5.25)_
-- [ ] Survival Mode - Survival
+- [X] Survival Mode - Survival _(since 13.5.25)_
 - [ ] Survival Mode - Endings
 
 # Planned features
 | Category | Description | Status | Notes |
 |--------|--------|--------|--------|
 | Design | Players can create their own template | planed for `v.5.0.0` or `v.5.1.0` | |
+| Third Party goals | Creatures from a behavior pack can also be selected as a goal | planed for `v.5.0.0` or `v.5.1.0` | |
 | Statistics | Stores, for example, which blocks were mined or placed or how far someone has travelled | planed for `v.5.x.0` | |
 | Universal Updater | Updates the save data of an older timer version | planed for `v.5.x.0` | |
 | Search | A global search for all features of the timer | planed for `v.5.x.0` | |
