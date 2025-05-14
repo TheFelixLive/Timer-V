@@ -522,6 +522,7 @@ function create_player_save_data (playerId, playerName) {
           lang: 0,
           design: 0,
           setup: shout_be_op ? 2 : 1,
+          died: false
       });
   } else if (player_save_data.name !== playerName) {
       player_save_data.name = playerName;
@@ -749,7 +750,10 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
   let save_data = load_save_data();
   let player_save_data = save_data[save_data.findIndex(entry => entry.id === player.id)];
 
-  if (!save_data[player_save_data].died) {
+  if (player_save_data.died == true) {
+    delete player_save_data.died;
+    update_save_data(save_data);
+  } else {
     // Setup popup
     if (player_save_data.setup == 2) {
       let form = new ActionFormData();
@@ -771,6 +775,8 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
               save_data[0].global.status = true
               save_data[0].is_challenge = true
               save_data[0].global.last_player_id = player.id
+              world.setTimeOfDay(0);
+              world.getDimension("overworld").setWeather("Clear");
             }
 
             if (response.selection >= 0) {
@@ -829,9 +835,21 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
       };
       showForm();
     }
-  } else {
-    save_data[player_save_data].died = false
-    update_save_data(save_data);
+  
+  }
+});
+
+world.afterEvents.entityDie.subscribe(event => {
+
+  if (event.deadEntity?.typeId === "minecraft:player") {
+    const player = event.deadEntity;
+    const save_data = load_save_data();
+    const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+
+    if (player_sd_index !== -1) {
+      save_data[player_sd_index].died = true;
+      update_save_data(save_data);
+    }
   }
 });
 
@@ -1165,7 +1183,7 @@ function splash_challengemode(player) {
         save_data[0].time.do_count = false
         save_data[0].time.timer = 0
         save_data[0].time.stopwatch = 0
-        world.setAbsoluteTime(0);
+        world.setTimeOfDay(0);
         world.getDimension("overworld").setWeather("Clear");
 
         if (save_data[0].counting_type == 0 && save_data[0].goal.pointer == 2 && save_data[0].goal.event_pos == 0) {
