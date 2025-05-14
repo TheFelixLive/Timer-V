@@ -308,8 +308,8 @@
             },
             {
                 "scene_tag":"menu_help_text_changelog",
-                "npc_name":"§lTimer U. - Changelog v.4.1.1",
-                "text":"§a§lGeneral Changes§r§8\n\n-wrong texts corrected\n-Contact options updated\n\n\n§c§lBug fixes§r§8\n\n-Fixed a bug that caused scripts to crash \n\n§7Last Update 07.05.25",
+                "npc_name":"§lTimer U. - Changelog v.4.2.0",
+                "text":"§b§lNew features§r§8\n\n-Added a new UI for the start time\n\n§7Note: A major update is currently being developed that will end the life support of this generation. You can find the progress on GitHub (in the contacts section)!\n\nLast Update 14.05.25",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
@@ -335,7 +335,7 @@
             {
                 "scene_tag":"menu_help_text_advanced_version",
                 "npc_name":"§lTimer Ultimate - Version",
-                "text":"§3§lAdvanced Version§r§8\n\nAddon: Timer Ultimate\nLanguage: English\nCode-Name: CMO\nArchitecture: Scoreboard\nGeneration: 4\nTimer Version: 4.1.1\nMaximum Time: 1000 hours (41,67 Days)\nChallenge-Addon: 4.1.1\nMinecraft Version: (min.) 1.21.41\n",
+                "text":"§3§lAdvanced Version§r§8\n\nAddon: Timer Ultimate\nLanguage: English\nCode-Name: CMO\nArchitecture: Scoreboard\nGeneration: 4\nTimer Version: 4.2.0\nMaximum Time: 1000 hours (41,67 Days)\nChallenge-Addon: 4.2.0\nMinecraft Version: (min.) 1.21.41\n",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

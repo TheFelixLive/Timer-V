@@ -277,8 +277,8 @@
             },
             {
                 "scene_tag":"menu_help_text_credits",
-                "npc_name":"§lTimer Ultimate - Social Media",
-                "text":"§3§lSocial Media: YT & DC§r§8\n\nIf you still have questions, please watch the timer video on YouTube. Alternatively, I can also be reached via the Discord server if your question is not answered or you would like to report a bug.\n\n§l§4YouTube:§7 youtube.com/@thefelixlive\n§5Discord:§7 dsc.gg/thefelixlive",
+                "npc_name":"§lTimer Ultimate - Contacts",
+                "text":"§3§lContacts§r§8\n\nIf you need additional help, have general questions about the project, want to report a bug, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§7 github.com/TheFelixLive/Timer-Ultimate/issues\n§0Curseforge:§7 curseforge.com/projects/1259478",
                 "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                   "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

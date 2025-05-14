@@ -198,6 +198,11 @@ tag @a remove target_run_control
 execute as @a[tag=target_run_dimension] at @s run function timer/settings/dimension
 tag @a remove target_run_dimension
 
+execute as @a[tag=target_run_scriptevent] at @s run scriptevent timeru:menu_time_new
+tag @a remove target_run_scriptevent
+
+
+
 
 # removing save data
 execute unless entity @e[type=npc, name=timer_menu] if score look timer_setup matches 0 run scoreboard objectives remove timer_menu
