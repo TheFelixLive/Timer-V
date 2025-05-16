@@ -5,16 +5,16 @@
             {
                 "scene_tag":"menu_challenge_new",
                 "npc_name":"§lTimer Ultimate - Challenges",
-                "text":"§l§6Choose your challenge§r\n\n§l§cNo§r = Select movements that aren't allowed\n§l§9Enchnat§r = enchants your tools optimally\n§l§bIce§r = Each player draws a line of ice behind them\n§l§2Gravity§r = Walk through the air\n§l§aLevel§r = With each level up you can walk further\n\n§r§7Page 1 of 2",
+                "text":"§l§6Choose your challenge§r\n\n§l§8Movement§r = Restricts the movement\n§l§9Enchnat§r = enchants your tools optimally\n§l§bIce§r = Each player draws a line of ice behind them\n§l§2Gravity§r = Walk through the air\n§l§aLevel§r = With each level up you can walk further\n\n§r§7Page 1 of 2",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
                   ],
                 "buttons":[
                     {
-                    "name":"§l§cNo",
+                    "name":"§lMovement",
                     "commands":[
-                          "/dialogue open @s @initiator menu_challenge_no",
+                          "/execute as @initiator at @s run scriptevent timeru:new_menu_challenge_movement",
                           "scoreboard players set action timer_menu 1"
                         ]
                     },
@@ -105,13 +105,6 @@
                             "/stopsound @initiator",
                             "/execute as @initiator at @s run function ca/addon/BiL",
                             "/scoreboard players set animation_time timer_menu 30"
-                            ]
-                    },
-                    {
-                        "name":"§l§dOnly",
-                        "commands":[
-                          "/dialogue open @s @initiator menu_challenge_only",
-                          "scoreboard players set action timer_menu 1"
                             ]
                     },
                     {

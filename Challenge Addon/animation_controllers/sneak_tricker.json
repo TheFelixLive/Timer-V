@@ -15,8 +15,6 @@
 			  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score ice_challenge timer_addon matches 1 run tag @s[tag=sneak_for_ice] add look_temp_sneak",
 			  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score ice_challenge timer_addon matches 1 run tag @s[tag=!sneak_for_ice] add sneak_for_ice",
 			  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score gravity timer_addon matches 1 run tag @s[tag=!sneak_for_ice] add sneak_for_ice",
-			  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score sneak_same_death timer_addon matches 1 run scoreboard players set reset_type timer_settings 1",
-			  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score sneak_same_death timer_addon matches 1 run function timer/system_do_not_use/end_cmo",
   
 			  "/tag @s[tag=look_temp_sneak] remove sneak_for_ice",
 			  "/tag @s remove look_temp_sneak"
@@ -40,57 +38,6 @@
 			  }
 			}
 		  },
-		  "controller.animation.swimming": {
-		  "states": {
-			  "runtimes":{
-			  "transitions": [{"on_check":"!query.is_swimming"}]
-			  },
-			  "on_check":{
-			  "transitions": [{"on_sneaking":"query.is_swimming"}]
-			  },
-			  "on_sneaking": {
-			  "transitions":[{"on_check":"1"}],
-			  "on_entry": [
-				  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score movement timer_addon matches 2 run scoreboard players set reset_type timer_settings 1",
-				  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score movement timer_addon matches 2 run function timer/system_do_not_use/end_cmo"
-				  ]
-			  }
-			  }
-		  },
-		  "controller.animation.sprinting": {
-			"states": {
-				"runtimes":{
-				"transitions": [{"on_check":"!query.is_sprinting"}]
-				},
-				"on_check":{
-				"transitions": [{"on_sneaking":"query.is_sprinting"}]
-				},
-				"on_sneaking": {
-				"transitions":[{"on_check":"1"}],
-				"on_entry": [
-					"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score movement timer_addon matches 3 run scoreboard players set reset_type timer_settings 1",
-					"/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score movement timer_addon matches 3 run function timer/system_do_not_use/end_cmo"
-					]
-				}
-				}
-			},
-		  "controller.animation.jump": {
-			  "states": {
-				  "runtimes":{
-				  "transitions": [{"on_check":"!query.is_jumping"}]
-				  },
-				  "on_check":{
-				  "transitions": [{"on_sneaking":"query.is_jumping"}]
-				  },
-				  "on_sneaking": {
-				  "transitions":[{"on_check":"1"}],
-				  "on_entry": [
-					  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score movement timer_addon matches 1 run scoreboard players set reset_type timer_settings 1",
-					  "/execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score movement timer_addon matches 1 run function timer/system_do_not_use/end_cmo"
-					  ]
-				  }
-				  }
-			  },
 		"controller.animation.ground": {
 			  "initial_state": "ground",
 			  "states": {

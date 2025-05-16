@@ -91,31 +91,6 @@ timeru.menu.time.normal
 timeru.menu.time.up
 timeru.time_random
 
-ca.no_armor_0
-ca.no_armor_1
-
-ca.no_block_break_0
-ca.no_block_break_1
-
-ca.no_block_place_0
-ca.no_block_place_1
-
-ca.no_crafting_0
-ca.no_crafting_1
-
-ca.no_jump_0
-ca.no_jump_1
-
-ca.no_move_0
-ca.no_move_1
-ca.no_move_2
-
-ca.sneak_same_death_0
-ca.sneak_same_death_1
-
-ca.no_swimming_0
-ca.no_swimming_1
-
 ca.floor_is_lava_0
 ca.floor_is_lava_1
 
@@ -124,6 +99,10 @@ ca.enchant_1
 
 ca.gravity_0
 ca.gravity_1
+
+ca.only_0
+ca.only_1
+ca.only_2
 
 ca.ice_challenge_0
 ca.ice_challenge_1

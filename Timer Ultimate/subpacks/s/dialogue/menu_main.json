@@ -102,7 +102,7 @@
                           "/execute if score custom_music timer_settings matches 1 run playsound timeru.music.menu.time @a[tag=timer_menu_target]",
 
                           "scoreboard players set action timer_menu 1",
-                          "execute if score shoud_count_down timer_settings matches 1 as @a[tag=timer_menu_target] at @s run tag @s add target_run_scriptevent",
+                          "execute if score shoud_count_down timer_settings matches 1 as @a[tag=timer_menu_target] at @s run scriptevent timeru:menu_time_new",
 
                           "execute if score h timer_time matches 1.. run tag @a[tag=timer_menu_target] add time_recognize",
                           "execute if score min timer_time matches 1.. run tag @a[tag=timer_menu_target] add time_recognize",
@@ -110,7 +110,7 @@
 
 
 
-                          "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=!time_recognize, tag=timer_menu_target] as @a[tag=timer_menu_target] at @s run tag @s add target_run_scriptevent",
+                          "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=!time_recognize, tag=timer_menu_target] as @a[tag=timer_menu_target] at @s run scriptevent timeru:menu_time_new",
                           
                           "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=time_recognize, tag=timer_menu_target] run dialogue open @s @a[tag=timer_menu_target] menu_time_disclaimer",
                           "execute if score shoud_count_down timer_settings matches 0 if entity @a[tag=time_recognize, tag=timer_menu_target] unless score custom_music timer_settings matches 1 run playsound random.pop @a[tag=timer_menu_target]",
@@ -606,7 +606,7 @@
                         "execute unless score custom_music timer_settings matches 1 run playsound beacon.power @a[tag=timer_menu_target]",
                         "execute if score custom_music timer_settings matches 1 run playsound timeru.reset_false @a[tag=timer_menu_target]",
 
-                        "/execute as @a[tag=timer_menu_target] at @s run tag @s add target_run_scriptevent"
+                        "/execute as @a[tag=timer_menu_target] at @s run scriptevent timeru:menu_time_new"
                       ]
                   },
                   {

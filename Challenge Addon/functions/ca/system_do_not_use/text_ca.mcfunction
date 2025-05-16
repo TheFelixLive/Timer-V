@@ -42,3 +42,6 @@ execute if entity @a[tag=on_start_challage] if score mode timer_settings matches
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run tickingarea remove timer_for_fill
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 1 in overworld run tp @a 0 -62 0
 execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 if score only timer_addon matches 2 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§u[§dInfo§u]§r Your height is restricted, if someone goes up, it's over"}]}
+
+
+execute if entity @a[tag=on_start_challage] if score mode timer_settings matches 0 run scriptevent timeru:timer_starts

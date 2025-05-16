@@ -63,39 +63,6 @@ execute if score mode timer_settings matches 1 if score do_count timer_settings 
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score floor_is_lava timer_addon matches 1 if score ms timer_time matches 0 at @a unless block ~ ~-1 ~ air unless block ~ ~ ~ water unless block ~ ~ ~ tallgrass run setblock ~ ~-1 ~ lava
 execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score floor_is_lava timer_addon matches 1 if score ms timer_time matches 50 at @a unless block ~ ~-1 ~ air unless block ~ ~ ~ water unless block ~ ~ ~ tallgrass run setblock ~ ~-1 ~ lava
 
-# no_crafting
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_crafting timer_addon matches 1 as @a[hasitem={item=crafting_table}] run tag @s add kill
-
-# no_armor
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_helmet}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_chestplate}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_leggings}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=netherite_boots}] run tag @s add kill
-
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_helmet}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_chestplate}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_leggings}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=diamond_boots}] run tag @s add kill
-
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_helmet}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_chestplate}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_leggings}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=iron_boots}] run tag @s add kill
-
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_helmet}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_chestplate}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_leggings}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=chainmail_boots}] run tag @s add kill
-
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_helmet}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_chestplate}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_leggings}] run tag @s add kill
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score no_armor timer_addon matches 1 as @a[hasitem={item=leather_boots}] run tag @s add kill
-
-execute if entity @a[tag=kill] run scoreboard players set reset_type timer_settings 1
-execute if entity @a[tag=kill] run function timer/system_do_not_use/end_cmo
-tag @a[tag=kill] remove kill
-
 
 ### Feedback at actionbar for Enchant
 # Title when someone in the main-menu is
@@ -133,22 +100,18 @@ execute unless score enchant timer_addon matches 0.. unless score look timer_set
 
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard objectives add timer_addon dummy
 
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set sneak_same_death timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set speed_x timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set invisibility timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set ice_challenge timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_crafting timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_block_break timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_block_place timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set no_armor timer_addon 0
-execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set movement timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set only timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set floor_is_lava timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set gravity timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set level_equals_border timer_addon 0
-
+execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set movement_severely_restricted timer_addon 0
+execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set movement_sneaking timer_addon 0
 execute unless score enchant timer_addon matches 0.. unless score look timer_setup matches 0.. run scoreboard players set enchant timer_addon 0
 
 # stop_lauching
-execute if score enchant timer_addon matches 0.. if score look timer_setup matches 1 run tellraw @a {"rawtext":[{"text":"§l§3[§bAddon§3]§r The challenge addon has been successfully removed!"}]}
+execute if score enchant timer_addon matches 0.. if score look timer_setup matches 1 run tellraw @a {"rawtext":[{"text":"§l§3[§bAddon§3]§r The challenge addon has been successfully the world will shout down!"}]}
+execute if score enchant timer_addon matches 0.. if score look timer_setup matches 1 run scriptevent timeru:remove
 execute if score enchant timer_addon matches 0.. if score look timer_setup matches 1 run scoreboard objectives remove timer_addon

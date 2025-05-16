@@ -104,6 +104,9 @@ async function new_menu_time(player) {
       return_to_old_menu(player)
     } else {
       timer_settings.setScore("shoud_count_down", 0);
+      if (timer_settings.getScore("goal") == 7) {
+        timer_settings.setScore("goal", 8)
+      }
       return new_menu_time_invalid(player)
     }
 
