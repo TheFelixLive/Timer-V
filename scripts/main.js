@@ -119,9 +119,6 @@ const timezone_list = [
   { name: "Line Islands Time", utc: 14, short: "LINT", location: ["Kiritimati", "Line Islands"] }
 ];
 
-
-
-
 var goal_entity = [
   {
     "id": "ender_dragon"
@@ -1445,7 +1442,7 @@ function settings_goals_main(player) {
 
   form.button({rawtext:
     [
-      { text: "Entity\nDefeat" },
+      { text: "Entity\nDefeat " },
       pointer === 1
         ? ({ text: ": " }, { translate: "entity." + goal_entity[save_data[0].goal.entity_pos].id + ".name" })
         : { text: " a specific creature" }
@@ -1804,22 +1801,366 @@ function settings_main(player) {
 
 function debug_main(player) {
   let form = new ActionFormData();
+  let save_data = load_save_data()
 
   form.body("DynamicPropertyTotalByteCount: "+world.getDynamicPropertyTotalByteCount() +" of 32767 bytes used")
+  form.button("§e\"save_data\" Editor");
   form.button("§aAdd player (save data)");
   form.button("§cRemove \"save_data\"");
   form.button("§cClose Server");
   form.button("");
 
   form.show(player).then((response) => {
-    if (response.selection == 0) return debug_add_fake_player(player);
-      if (response.selection == 1) {world.setDynamicProperty("timerv:save_data", undefined); close_world()}
-      if (response.selection == 2) {close_world()}
-      if (response.selection == 3) return settings_main(player);
+    if (response.selection == 0) return debug_sd_editor(player, () => debug_main(player), []);
+    if (response.selection == 1) return debug_add_fake_player(player);
+    if (response.selection == 2) {world.setDynamicProperty("timerv:save_data", undefined); close_world()}
+    if (response.selection == 3) {close_world()}
+    if (response.selection == 4) return settings_main(player);
   });
 }
 
 
+
+function debug_sd_editor(player, onBack, path = []) {
+  const save_data = load_save_data();
+
+  let current = save_data;
+  for (const key of path) {
+    current = current[key];
+  }
+
+  const returnToCurrentMenu = () => debug_sd_editor(player, onBack, path);
+
+  if (Array.isArray(current)) {
+    const form = new ActionFormData()
+      .title("Debug Editor v.1.0")
+      .body(`Path: §7save_data/`);
+
+    current.forEach((entry, idx) => {
+      const label = idx === 0
+        ? `Server [${idx}]`
+        : `${entry.name ?? `Player ${idx}`} [${entry.id ?? idx}]`;
+      form.button(label, "textures/ui/storageIconColor");
+    });
+
+    form.button(""); // Back
+
+    form.show(player).then(res => {
+      if (res.canceled) return;
+      if (res.selection === current.length) {
+        return onBack();
+      }
+      debug_sd_editor(
+        player,
+        returnToCurrentMenu,
+        [...path, res.selection]
+      );
+    });
+
+  // === B) Object-Branch ===
+  } else if (current && typeof current === "object") {
+    const keys = Object.keys(current);
+    const displaySegments = path.map((seg, idx) => {
+      if (idx === 0) {
+        return seg === 0 ? "server" : save_data[Number(seg)]?.id ?? seg;
+      }
+      return seg;
+    });
+  const displayPath = `save_data/${displaySegments.join("/")}`;
+    const form = new ActionFormData()
+      .title("Debug Editor v.1.0")
+      .body(`Path: §7${displayPath}`);
+
+    keys.forEach(key => {
+      const val = current[key];
+      if (key === "design") {
+        form.button(`${key}§r\n§9type: design`, "textures/ui/mashup_PaintBrush");
+      } else if (typeof val === "boolean") {
+        form.button(
+          `${key}\n${val ? "§aON" : "§cOFF"}`,
+          val ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
+        );
+      } else if (typeof val === "number") {
+        form.button(`${key}: ${val}§r\n§9type: number`, "textures/ui/editIcon");
+      } else if (typeof val === "string") {
+        form.button(`${key}: ${val}§r\n§9type: string`, "textures/ui/editIcon");
+      } else {
+        form.button(`${key}`, "textures/ui/storageIconColor"); // verschachteltes Objekt/Array
+      }
+    });
+
+    form.button(""); // Back
+
+    form.show(player).then(res => {
+      if (res.canceled) return;
+      // 1. Back-Button?
+      if (res.selection === keys.length) {
+        return onBack();
+      }
+
+      // 2. Auswahl verarbeiten
+      const key = keys[res.selection];
+      const nextPath = [...path, key];
+      const fresh = load_save_data();
+      let target = fresh;
+      for (const k of nextPath.slice(0, -1)) {
+        target = target[k];
+      }
+      const val = target[key];
+      if (key === "design") {
+        const nextPath = [...path, "design"];
+        let designObj;
+        if (typeof val === "number") {
+          designObj = design_template[val].content;
+        } else {
+          designObj = val;
+        }
+
+        // Callback: Speichern → zurück in den Haupt-Editor
+        const onSaveRoot = editedDesign => {
+          const matchIndex = design_template.findIndex(
+            t => JSON.stringify(t.content) === JSON.stringify(editedDesign)
+          );
+          // speichere Index oder neues Objekt
+          target["design"] = matchIndex >= 0 ? matchIndex : editedDesign;
+          update_save_data(fresh);
+          returnToCurrentMenu();
+        };
+
+        // Callback: Zurück im Haupt-Editor
+        const onBackRoot = () => returnToCurrentMenu();
+
+        // Jetzt aufrufen – initial ist onCancel = onBackRoot
+        debug_sd_editor_for_design(
+          player,
+          designObj,
+          onSaveRoot,
+          onBackRoot,
+          nextPath,
+          onBackRoot
+        );
+        return;
+      } else if (typeof val === "boolean") {
+        // Boolean-Toggle
+        target[key] = !val;
+        update_save_data(fresh);
+        returnToCurrentMenu();
+
+      } else if (typeof val === "number") {
+        // Number-Editor
+        openNumberEditor(
+          player,
+          val,
+          nextPath,
+          newVal => {
+            target[key] = newVal;
+            update_save_data(fresh);
+            returnToCurrentMenu();
+          },
+          () => {
+            console.log(`Number edit for ${key} canceled`);
+          }
+        );
+
+      } else if (typeof val === "string") {
+        // Text-Editor
+        openTextEditor(
+          player,
+          val,
+          nextPath,
+          newText => {
+            target[key] = newText;
+            update_save_data(fresh);
+            returnToCurrentMenu();
+          },
+          () => {
+            console.log(`Text edit for ${key} canceled`);
+          }
+        );
+
+      } else {
+        // Tiefer verschachtelt → rekursiver Aufruf mit neuem onBack
+        debug_sd_editor(player, returnToCurrentMenu, nextPath);
+      }
+    });
+  }
+}
+
+function debug_sd_editor_for_design(
+  player,
+  designObj,
+  onSaveRoot,
+  onBackRoot,
+  path,
+  onCancel
+) {
+  // Helper, um in diese Ebene zurückzukehren
+  const returnToThisMenu = () =>
+    debug_sd_editor_for_design(
+      player,
+      designObj,
+      onSaveRoot,
+      onBackRoot,
+      path,
+      onCancel
+    );
+
+  if (!designObj || typeof designObj !== "object") {
+    // Kein Objekt mehr → speichern
+    onSaveRoot(designObj);
+    return;
+  }
+
+  const keys = Object.keys(designObj);
+
+  // Pfad korrekt aufteilen: alles bis 'design' → dann '> content' → dann den Rest
+  const designIndex = path.indexOf("design");
+  const rawBefore = path.slice(0, designIndex + 1);
+  const rawAfter = path.slice(designIndex + 1);
+
+  const mapSeg = (seg, idx) =>
+    idx === 0
+      ? seg === 0
+        ? "server"
+        : save_data[Number(seg)]?.id ?? seg
+      : seg;
+
+  const beforeSegments = rawBefore.map(mapSeg).join("/");
+  const afterSegments = rawAfter.length ? "/" + rawAfter.join("/") : "";
+
+  const displayPath = `save_data/${beforeSegments} > content${afterSegments}`;
+
+  const form = new ActionFormData()
+    .title("Design Editor")
+    .body(`Path: §7${displayPath}`);
+
+  // Buttons für jedes Feld im Design
+  keys.forEach(key => {
+    const val = designObj[key];
+    if (typeof val === "boolean") {
+      form.button(
+        `${key}\n${val ? "§aON" : "§cOFF"}`,
+        val ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
+      );
+    } else if (typeof val === "number") {
+      form.button(
+        `${key}: ${val}§r\n§9type: number`,
+        "textures/ui/editIcon"
+      );
+    } else if (typeof val === "string") {
+      form.button(
+        `${key}: ${val}§r\n§9type: string`,
+        "textures/ui/editIcon"
+      );
+    } else {
+      form.button(key, "textures/ui/storageIconColor");
+    }
+  });
+
+  // Back-Button
+  form.button("");
+
+  form.show(player).then(res => {
+    if (res.canceled) {
+      return onCancel();      // Abbruch → eine Ebene hoch
+    }
+    if (res.selection === keys.length) {
+      return onCancel();      // Back-Button gedrückt
+    }
+
+    const key = keys[res.selection];
+    const val = designObj[key];
+
+    if (typeof val === "boolean") {
+      designObj[key] = !val;
+      returnToThisMenu();
+
+    } else if (typeof val === "number") {
+      openNumberEditor(
+        player,
+        val,
+        [...path, key],
+        newVal => {
+          designObj[key] = newVal;
+          returnToThisMenu();
+        },
+        () => {
+          console.log(`Number edit for ${key} canceled`);
+          returnToThisMenu();
+        }
+      );
+
+    } else if (typeof val === "string") {
+      openTextEditor(
+        player,
+        val,
+        [...path, key],
+        newText => {
+          designObj[key] = newText;
+          returnToThisMenu();
+        },
+        () => {
+          console.log(`Text edit for ${key} canceled`);
+          returnToThisMenu();
+        }
+      );
+
+    } else {
+      // Rekursiver Aufruf für tieferes Objekt
+      debug_sd_editor_for_design(
+        player,
+        val,
+        onSaveRoot,
+        onBackRoot,
+        [...path, key],
+        returnToThisMenu  // returnToThisMenu ist back für die tiefere Ebene
+      );
+    }
+  });
+}
+
+
+
+
+function openNumberEditor(player, current, path, onSave, onCancel) {
+  const displaySegments = path.map((seg, idx) => {
+    if (idx === 0) {
+      return seg === 0 ? "server" : save_data[Number(seg)]?.id ?? seg;
+    }
+    return seg;
+  });
+  const fullPath = `save_data/${displaySegments.join("/")}`;
+  const form = new ModalFormData();
+  form.title("Edit Number");
+  form.slider(`Path: §7${fullPath} > Value`, 0, 100, 1, current);
+  form.submitButton("Save");
+  form.show(player).then(res => {
+    if (res.canceled) {
+      return onCancel();
+    }
+    onSave(res.formValues[0]);
+  });
+}
+
+function openTextEditor(player, current, path, onSave, onCancel) {
+  const displaySegments = path.map((seg, idx) => {
+    if (idx === 0) {
+      return seg === 0 ? "server" : save_data[Number(seg)]?.id ?? seg;
+    }
+    return seg;
+  });
+  const fullPath = `save_data/${displaySegments.join("/")}`;
+  const form = new ModalFormData();
+  form.title("Edit Text");
+  form.textField(`Path: ${fullPath} > Value:`, "Enter text...", current);
+  form.submitButton("Save");
+  form.show(player).then(res => {
+    if (res.canceled) {
+      return onCancel();
+    }
+    onSave(res.formValues[0]);
+  });
+}
 
 
 
