@@ -1,4 +1,7 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
+> [!IMPORTANT]
+> I am currently developing the new major version called Timer V (v.5.0.0). Check the coured Progress [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/rewrite) out!
+
 ![Minecraft2025-05-0421-27-24-ezgif com-video-to-gif-converter(1)](https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f)
 
 ## About
@@ -263,34 +266,39 @@ Whether you can continue playing in this world depends now on your [difficulty](
 # Survival Mode - Addons
 To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the [releases](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
 Regardless of that, what are new challenges in this context?
-In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 19 challenges and what they do.
+In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 8 challenges and what they do.
 
-| Name | Description | Limitations | Command | Extra notes |
-|--------|--------|--------|--------|--------|
-| No armor | If someone has a piece of armor in their inventory the timer will end | | `/function ca/addon/no/armor` | |
-| No block break | Disables the bracking of blocks || `/function ca/addon/no/block_break` | |
-| No block place | Disables the placement of blocks || `/function ca/addon/no/block_place` | |
-| No crafting table | If someone has a crafting table in their inventory the timer will end | In some structures there are crafting tables that you could exploit | `/function ca/addon/no/crafting` | |
-| No jumping | If someone jumps the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
-| No swimming | If someone swimms the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
-| No sprinting | If someone sprints the timer will end | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
-| No movement | Disables the movement of all players | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
-| No movement & viewing | Disables the movement and view option of all players | Only one restriction from the movement category can be selected! | `/function ca/addon/no/move` | Is part of the category Movement |
-| No sneaking | If someone sneaks the timer will end | Incompatible with ice & gravity  | `/function ca/addon/no/move` |  |
-| Only up | Teleports all players to the lowest block in the world at the start. Every block they go up, they are no longer allowed to go down. | Only one restriction from the only category can be selected! | `/function ca/addon/only` |  Is part of the category Only |
-| Only down | Every block a player goes down,is he no longer allowed to go up. | Only one restriction from the only category can be selected! | `/function ca/addon/only` |  Is part of the category Only |
-| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x` | |
-| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL` |  |
-| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant` |  |
-| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity` |  |
-| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice` |  |
-| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility`|  |
-| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder` |  |
+> [!NOTE]
+> This table was changed with the introduction of movement restrictions in v.4.2.0.
+> If you are using an older version, please refer to [this table](https://github.com/TheFelixLive/Timer-Ultimate/tree/v.4.1.1?tab=readme-ov-file#survival-mode---addons) instead.
 
-Wait, what was that about the border?
-Yes, you were paying attention. Here's a picture of the border that was specially created for this.
+### Challenges:
+| Name | Description | Limitations | Command |
+|--------|--------|--------|--------|
+| Movement | Lets you restrict your movement individually by choosing from [18 different aspects](#movement-restrictions) | Some restrictions are incompatible with some challenges | |
+| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x` |
+| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL` |
+| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant` |
+| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity` |
+| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice` |
+| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility`|
+| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder` |
 
-![Image](https://github.com/user-attachments/assets/4adb21cc-6ba6-451f-a6da-856cb1f19a42)
+### Movement restrictions:
+There are in toal 18 different restrictions available and by default no one is active, so you have to `Add` them. When you find something interesting you get short description what it's restricts and you can choose between **punishing** and **disable**. The difference lies in the behavior if the restriction is violated. If **disabled**, you simply cannot perform this action at all, and if **punishing** is seleced, the entire challenge get canceled.
+
+| Name | Description | Supported modes | Incompatibility |
+|--------|--------|--------|--------|
+| Armor | Removes the ability to use armor | punishing & disable | |
+| Block break | Triggered when a block is destroyed | punishing & disable | |
+| Block place | Triggered when a block is placed | punishing & disable | |
+| Interactions | Triggered when interacting with a block (e.g. with a chest) | punishing & disable | |
+| Jumping | Triggered when when a player jumps | punishing & disable | |
+| Water | Triggered when when a player touches water | punishing | |
+| Sprinting | Triggered when when a player sprints | punishing | |
+| Sneaking | Triggered when when a player sneaks | punishing & disable | Gravity &  Ice |
+| General movement | Let you manage the left, right, forward, backward movement as well as the camera and mounting and unmounting on entities| disable | Speed X |
+| Only | Every block a player goes down (or up), is he no longer allowed to go up (or down). | If you called that way: punishing  | Gravity & Timer [Dimension feature](#dimension) |
 
 
 # Installation and configuration
