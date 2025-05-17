@@ -77,6 +77,51 @@ const goal_event = [
 
 // These lists ARE customizable
 
+const timezone_list = [
+  { name: "Baker Island Time", utc: -12, short: "BIT", location: ["Baker Island"] },
+  { name: "Niue Time", utc: -11, short: "NUT", location: ["Niue", "American Samoa"] },
+  { name: "Hawaii-Aleutian Standard Time", utc: -10, short: "HAST", location: ["Hawaii", "Honolulu"] },
+  { name: "Marquesas Time", utc: -9.5, short: "MART", location: ["Marquesas Islands"] },
+  { name: "Alaska Standard Time", utc: -9, short: "AKST", location: ["Anchorage"] },
+  { name: "Pacific Standard Time", utc: -8, short: "PST", location: ["Los Angeles (Winter)", "Vancouver (Winter)"] },
+  { name: "Pacific Daylight / Mountain Standard Time", utc: -7, short: "PDT / MST", location: ["Los Angeles (Summer)", "Vancouver (Summer)", "Denver (Winter)", "Phoenix"] },
+  { name: "Mountain Daylight / Central Standard Time", utc: -6, short: "MDT / CST", location: ["Denver (Summer)", "Chicago (Winter)", "Mexico City (Winter)"] },
+  { name: "Central Daylight / Eastern Standard Time", utc: -5, short: "CDT / EST", location: ["Chicago (Summer)", "New York (Winter)", "Toronto (Winter)"] },
+  { name: "Atlantic Standard / Eastern Daylight Time", utc: -4, short: "AST / EDT", location: ["Santiago (Winter)", "Caracas (Winter)", "New York (Summer)", "Toronto (Summer)"] },
+  { name: "Atlantic Daylight / Argentina Time", utc: -3, short: "ADT / ART", location: ["Santiago (Summer)", "Buenos Aires", "São Paulo"] },
+  { name: "Newfoundland Standard Time", utc: -3.5, short: "NST", location: ["St. John's (Winter)"] },
+  { name: "Newfoundland Daylight Time", utc: -2.5, short: "NDT", location: ["St. John's (Summer)"] },
+  { name: "South Georgia Time", utc: -2, short: "GST", location: ["South Georgia"] },
+  { name: "Azores Standard Time", utc: -1, short: "AZOT", location: ["Azores (Winter)"] },
+  { name: "Greenwich Mean Time / Azores Summer Time", utc: 0, short: "GMT / AZOST", location: ["London (Winter)", "Reykjavík", "Azores (Summer)"] },
+  { name: "Central European Time / British Summer Time", utc: 1, short: "CET / BST", location: ["Berlin (Winter)", "Paris (Winter)", "Rome (Winter)", "London (Summer)"] },
+  { name: "Central European Summer / Eastern European Time", utc: 2, short: "CEST / EET", location: ["Berlin (Summer)", "Paris (Summer)", "Rome (Summer)", "Athens (Winter)", "Cairo (Winter)", "Helsinki (Winter)"] },
+  { name: "Eastern European Summer / Moscow Time", utc: 3, short: "EEST / MSK", location: ["Athens (Summer)", "Cairo (Summer)", "Moscow", "Istanbul"] },
+  { name: "Iran Standard Time", utc: 3.5, short: "IRST", location: ["Tehran (Winter)"] },
+  { name: "Iran Daylight Time / Gulf Standard Time", utc: 4, short: "IRDT / GST", location: ["Tehran (Summer)", "Dubai", "Abu Dhabi"] },
+  { name: "Afghanistan Time", utc: 4.5, short: "AFT", location: ["Kabul"] },
+  { name: "Pakistan Standard Time", utc: 5, short: "PKT", location: ["Karachi", "Islamabad"] },
+  { name: "India Standard Time", utc: 5.5, short: "IST", location: ["New Delhi", "Mumbai", "Colombo"] },
+  { name: "Nepal Time", utc: 5.75, short: "NPT", location: ["Kathmandu"] },
+  { name: "Bangladesh Time", utc: 6, short: "BST", location: ["Dhaka"] },
+  { name: "Cocos Islands Time", utc: 6.5, short: "CCT", location: ["Cocos Islands"] },
+  { name: "Indochina Time", utc: 7, short: "ICT", location: ["Bangkok", "Hanoi", "Jakarta"] },
+  { name: "China Standard Time", utc: 8, short: "CST", location: ["Beijing", "Shanghai", "Singapore"] },
+  { name: "Australian Central Western Time", utc: 8.75, short: "ACWST", location: ["Eucla"] },
+  { name: "Japan Standard Time", utc: 9, short: "JST", location: ["Tokyo", "Seoul"] },
+  { name: "Australian Central Standard Time", utc: 9.5, short: "ACST", location: ["Adelaide", "Darwin"] },
+  { name: "Australian Eastern Standard Time", utc: 10, short: "AEST", location: ["Brisbane", "Melbourne", "Sydney"] },
+  { name: "Lord Howe Standard Time", utc: 10.5, short: "LHST", location: ["Lord Howe Island"] },
+  { name: "Solomon Islands Time", utc: 11, short: "SBT", location: ["Honiara", "New Caledonia"] },
+  { name: "New Zealand Standard Time", utc: 12, short: "NZST", location: ["Wellington", "Auckland"] },
+  { name: "Chatham Islands Standard Time", utc: 12.75, short: "CHAST", location: ["Chatham Islands"] },
+  { name: "Tonga Time", utc: 13, short: "TOT", location: ["Tonga", "Tokelau"] },
+  { name: "Line Islands Time", utc: 14, short: "LINT", location: ["Kiritimati", "Line Islands"] }
+];
+
+
+
+
 var goal_entity = [
   {
     "id": "ender_dragon"
@@ -1069,7 +1114,7 @@ function main_menu_actions(player, form) {
     }
 
 
-    if (save_data[player_sd_index].op && !save_data[0].is_challenge) {
+    if (save_data[player_sd_index].op && !save_data[0].is_challenge && timedata.counting_type !== 2) {
       if(form){form.button("Shared timer\n§9" + (save_data[0].global.status ? "by "+ save_data.find(e => e.id === save_data[0].global.last_player_id)?.name : "off"), "textures/ui/FriendsIcon")};
       actions.push(() => {
         splash_globalmode(player);
@@ -1077,7 +1122,7 @@ function main_menu_actions(player, form) {
     }
 
     // "Change / add time" button
-    if (!(save_data[0].is_challenge && save_data[0].challenge_progress > 0)) {
+    if (!(save_data[0].is_challenge && save_data[0].challenge_progress > 0) && timedata.counting_type !== 2) {
       if (form) {
         form.button(
           (save_data[0].is_challenge ? "Start time\n" : "Change time\n") +
@@ -1097,7 +1142,6 @@ function main_menu_actions(player, form) {
       });
     }
   }
-
 
 
   if (save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) {
@@ -1517,20 +1561,166 @@ function settings_goals_select(player, type) {
 
 
 
-function settings_time_zone(player) {
-  let form = new ModalFormData();
-  form.title("Time zone settings");
+function settings_time_zone(player, viewing_mode) {
+  let form = new ActionFormData();
+  let actions = [];
   let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  form.slider("Time zone (UTC)", -13, 13, 1, save_data[0].utc);
+  form.title("Time zone settings");
+  form.body("Select your current time zone!");
 
+  const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
+  let now = new Date()
+
+  let current_zone_index = timezone_list.findIndex(zone => zone.utc === save_data[0].utc);
+
+  if (current_zone_index === -1) {
+    let closestDiff = Infinity;
+    current_zone_index = 0;
+
+    timezone_list.forEach((zone, index) => {
+      const diff = Math.abs(zone.utc - save_data[0].utc);
+      if (diff < closestDiff) {
+        closestDiff = diff;
+        current_zone_index = index;
+      }
+    });
+  }
+
+  // 5 clostes time zones
+  if (viewing_mode == 0) {
+    let start = current_zone_index - 2;
+    let end = current_zone_index + 2;
+
+    if (start < 0) {
+      end += -start;
+      start = 0;
+    }
+    if (end >= timezone_list.length) {
+      start -= (end - timezone_list.length + 1);
+      end = timezone_list.length - 1;
+    }
+    if (start < 0) start = 0;
+
+    // Show previous time zones button
+    if (start > 0) {
+      form.button("Show previous time zones", "textures/ui/up_arrow");
+      actions.push(() => {
+        settings_time_zone(player, 1);
+      });
+    }
+
+    for (let index = start; index <= end; index++) {
+      const zone = timezone_list[index];
+      let total = (now.getHours() + zone.utc) * 3600000 +
+                  now.getMinutes() * 60000 +
+                  now.getSeconds() * 1000 +
+                  Math.floor(now.getMilliseconds() / 10) * 10;
+      let adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET;
+      let ticks = (adj / MILLIS_DAY) * TICKS;
+
+      form.button(
+        (zone.name.length > 30 ? zone.short : zone.name) + "\n" +
+        apply_design(
+          (typeof save_data[player_sd_index].design === "number"
+            ? design_template[save_data[player_sd_index].design].content
+            : save_data[player_sd_index].design
+          ).find(item => item.type === "day"),
+          ticks
+        ),
+        index === current_zone_index ? "textures/ui/realms_slot_check" : ""
+      );
+
+      actions.push(() => {
+        save_data[0].utc = zone.utc;
+        update_save_data(save_data);
+        settings_main(player);
+      });
+    }
+
+    // Show later time zones button
+    if (end < timezone_list.length - 1) {
+      form.button("Show later time zones", "textures/ui/down_arrow");
+      actions.push(() => {
+        settings_time_zone(player, 2);
+      });
+    }
+  }
+
+
+  // all previous time zones
+  if (viewing_mode == 1) {
+    timezone_list.forEach((zone, index) => {
+      if (current_zone_index >= index) {
+        let total = (now.getHours() + zone.utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
+        adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
+        ticks = (adj / MILLIS_DAY) * TICKS;
+
+        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
+        actions.push(() => {
+          save_data[0].utc = zone.utc
+          update_save_data(save_data);
+          settings_main(player);
+        });
+      }
+    });
+    form.button("Show later time zones", "textures/ui/down_arrow");
+    actions.push(() => {
+      settings_time_zone(player, 3)
+    });
+  }
+
+  // all later time zones
+  if (viewing_mode == 2) {
+    form.button("Show previous time zones", "textures/ui/up_arrow");
+    actions.push(() => {
+      settings_time_zone(player, 3)
+    });
+
+    timezone_list.forEach((zone, index) => {
+      if (current_zone_index <= index) {
+        let total = (now.getHours() + zone.utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
+        adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
+        ticks = (adj / MILLIS_DAY) * TICKS;
+
+        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
+        actions.push(() => {
+          save_data[0].utc = zone.utc
+          update_save_data(save_data);
+          settings_main(player);
+        });
+      }
+    });
+  }
+
+  // all time zones
+  if (viewing_mode == 3) {
+    timezone_list.forEach((zone, index) => {
+      let total = (now.getHours() + zone.utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
+      adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
+      ticks = (adj / MILLIS_DAY) * TICKS;
+
+      form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
+      actions.push(() => {
+        save_data[0].utc = zone.utc
+        update_save_data(save_data);
+        settings_main(player);
+      });
+    });
+  }
+
+
+
+
+  // go back to settings
+  form.button("");
+  actions.push(() => settings_main(player));
 
   form.show(player).then((response) => {
-
-    save_data[0].utc = response.formValues[0]
-
-    update_save_data(save_data);
-    return settings_main(player)
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
+    }
   });
 }
 
@@ -1544,7 +1734,7 @@ function settings_main(player) {
   form.body("Select an option!");
 
   // Button 0: Type
-  if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && (save_data[0].is_challenge && save_data[0].challenge_progress == 0)) {
+  if (!save_data[0].global.status || ((save_data[0].global.status && save_data[player_sd_index].op) && (save_data[0].is_challenge && save_data[0].challenge_progress == 0))) {
     form.button("Type\n§9" + timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon);
     actions.push(() => settings_type(player));
   }
@@ -1570,9 +1760,24 @@ function settings_main(player) {
 
   // Button 3: Time zone
   if (save_data[player_sd_index].op == true) {
-    if(form){form.button("Time zone\n§9UTC" + (save_data[0].utc > -1 ? "+" : "") + save_data[0].utc, "textures/ui/world_glyph_color_2x")};
+    if(form) {
+      let zone = timezone_list.find(zone => zone.utc === save_data[0].utc), zone_text;
+
+      if (!zone) {
+        zone = timezone_list.reduce((closest, current) => {
+          const currentDiff = Math.abs(current.utc - save_data[0].utc);
+          const closestDiff = Math.abs(closest.utc - save_data[0].utc);
+          return currentDiff < closestDiff ? current : closest;
+        });
+         zone_text = "Prob. " + ("Prob. "+ zone.name.length > 30 ? zone.short : zone.name)
+      } else {
+         zone_text = zone.name.length > 30 ? zone.short : zone.name
+      }
+
+      form.button("Time zone\n§9"+zone_text, "textures/ui/world_glyph_color_2x")
+    };
     actions.push(() => {
-      settings_time_zone(player);
+      settings_time_zone(player, 0);
     });
   }
 
@@ -2278,17 +2483,17 @@ function render_live_actionbar(selected_save_data, do_update) {
     }
 
     if (counting_type === 3 || dayFormat) {
-      const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
       if (data[idx].time_source === 1 || data[0].sync_day_time) {
+        const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
         let now = new Date(),
-            total = (now.getHours() + data[0].utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
-            adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
-            ticks = (adj / MILLIS_DAY) * TICKS;
-            timevalue = { value: ticks, do_count: true };
+        total = (now.getHours() + data[0].utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
+        adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
+        ticks = (adj / MILLIS_DAY) * TICKS;
+        timevalue = { value: ticks, do_count: true };
 
-            if (data[0].sync_day_time && do_update && (!data[0].is_challenge || (data[0].challenge_progress === 1 && data[0].time.do_count))) {
-              world.getDimension("overworld").runCommand(`time set ${Math.floor(ticks)}`);
-            }
+        if (data[0].sync_day_time && do_update && (!data[0].is_challenge || (data[0].challenge_progress === 1 && data[0].time.do_count))) {
+          world.getDimension("overworld").runCommand(`time set ${Math.floor(ticks)}`);
+        }
             
       } else {
         timevalue = { value: world.getTimeOfDay(), do_count: true };
