@@ -1,6 +1,6 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
 > [!IMPORTANT]
-> I am currently developing the new major version called Timer V (v.5.0.0). Check the coured Progress [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/rewrite) out!
+> The current version is NOT compatible with Hardcore Mode in Minecraft. If you combine them, I cannot guarantee a flawless gaming experience. I'm currently developing the new major version called Timer V (v.5.0.0), which will include Hardcore Mode support! Check the progress [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/rewrite) out!
 
 ![Minecraft2025-05-0421-27-24-ezgif com-video-to-gif-converter(1)](https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f)
 
