@@ -351,6 +351,13 @@ const design_template = [
     // The "ms" marker isn't used here, but it works perfectly. Simply because I don't like it.
     name: "Default design",
     content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
       { type: "normal", blocks: [
           { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
@@ -390,6 +397,13 @@ const design_template = [
     // ripped from version 3.6 and below
     name: "Legacy design",
     content: [
+      { type: "ui", blocks: [
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
       { type: "normal", blocks: [
           { type: "text", text: "§b§l" },
           { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
@@ -498,7 +512,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, challenge: {active: false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
     ]
 
     update_save_data(save_data)
@@ -682,6 +696,23 @@ function start_cm_timer() {
   world.sendMessage("§l§7[§fSystem§7]§r The Challenge starts now!")
 }
 
+function finished_cm_timer(rating, message) {
+  let save_data = load_save_data()
+  save_data[0].challenge.progress = 2
+
+  save_data[0].challenge.rating = rating
+  save_data[0].time.do_count = false
+
+  // Todo: Have to be rawtext!
+  world.sendMessage((rating == 1? "§l§2[§aGoal§2]§r " : "§l§4[§cEnd§4]§r ") + message);
+
+  world.getAllPlayers().forEach(t => {
+    t.playSound(rating == 1? "random.toast" : "horn.call.7");
+    t.onScreenDisplay.setTitle(rating == 1? "§aYou Won!" : "§4Challenge has ended!");
+  });
+
+  update_save_data(save_data);
+}
 
 function check_player_gamemode(player) {
   let save_data = load_save_data();
@@ -701,6 +732,13 @@ function check_player_gamemode(player) {
   }
 
   // challenge.progress == 2
+  if (save_data[0].challenge.progress == 2 && save_data[0].challenge.rating == 1 && player.getGameMode() !== "creative") {
+    player.setGameMode("creative")
+  }
+
+  if (save_data[0].challenge.progress == 2 && save_data[0].challenge.rating == 0 && player.getGameMode() !== "spectator") {
+    player.setGameMode("spectator")
+  }
 }
 
 
@@ -723,7 +761,7 @@ function check_difficulty() {
 function render_task_list(player) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "normal");
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "ui");
   const lines = [];
 
   // difficulty
@@ -882,17 +920,32 @@ world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
 });
 
 world.afterEvents.entityDie.subscribe(event => {
+  const save_data = load_save_data();
 
   if (event.deadEntity?.typeId === "minecraft:player") {
     const player = event.deadEntity;
-    const save_data = load_save_data();
     const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-    if (player_sd_index !== -1) {
-      save_data[player_sd_index].died = true;
-      update_save_data(save_data);
+    save_data[player_sd_index].died = true;
+    update_save_data(save_data);
+
+    if (save_data[0].challenge.difficulty > 0 && save_data[0].challenge.progress == 1 && save_data[0].time.do_count) {
+      finished_cm_timer(0, "The challenge is over. Time invested: "+ apply_design(
+            (
+              typeof save_data[player_sd_index].design === "number"
+                ? design_template[save_data[player_sd_index].design].content
+                : save_data[player_sd_index].design
+            ).find(item => item.type === "ui"),
+            save_data[0].time[save_data[0].time.counting_type ? "timer" : "stopwatch"]
+          ) +" Thanks for playing.")
     }
   }
+
+  if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count && save_data[0].challenge.goal.pointer == 1 && event.deadEntity?.typeId === ("minecraft:" + goal_entity[save_data[0].challenge.goal.entity_pos].id)) {
+    finished_cm_timer(1, {rawtext:[{text: "You did it! You defeated the "}, {translate: ("entity."+goal_entity[save_data[0].challenge.goal.entity_pos].id+".name")}, { text: " in an epic battle! Good Game!"}]})
+  }
+
+
 });
 
 
@@ -1079,7 +1132,7 @@ function main_menu_actions(player, form) {
     /*------------------------
       Only Challenge mode
     -------------------------*/
-    if (save_data[0].challenge.active && save_data[0].challenge.progress == 0) {
+    if (save_data[0].challenge.active && save_data[0].challenge.progress == 0 && !world.isHardcore) {
       if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
         if (form) form.button("§2Start Challenge\n", "textures/gui/controls/right");
         actions.push(() => {
@@ -1128,7 +1181,7 @@ function main_menu_actions(player, form) {
               typeof save_data[player_sd_index].design === "number"
                 ? design_template[save_data[player_sd_index].design].content
                 : save_data[player_sd_index].design
-            ).find(item => item.type === "normal"),
+            ).find(item => item.type === "ui"),
             timedata.time[timedata.counting_type ? "timer" : "stopwatch"]
           ),
           "textures/ui/color_plus"
@@ -1271,7 +1324,7 @@ function splash_globalmode(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "normal");
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "ui");
   let actions = [];
 
   form.title("Shared timer");
@@ -2206,7 +2259,7 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
         const design_data = typeof save_data[player_sd_index].design === "number"
           ? design_template[save_data[player_sd_index].design].content
           : save_data[player_sd_index].design;
-        const design = design_data.find(item => item.type === "normal");
+        const design = design_data.find(item => item.type === "ui");
 
         const own_time = apply_design(
           design,
@@ -2215,7 +2268,6 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
           ]
         );
 
-        // Baue das Formular
         const shared_form = new ActionFormData()
           .title("Shared timer")
           .body(
@@ -2546,7 +2598,7 @@ function design_preview(player, design, is_custom) {
   form.title("Design actionsbar");
 
   
-
+  let ui_preview = apply_design(design.find(d => d.type === "ui"), 634396901)
   let normal_preview = apply_design(design.find(d => d.type === "normal"), 634396901)
   let paused_preview = apply_design(design.find(d => d.type === "paused"), 634396901)
 
@@ -2555,7 +2607,7 @@ function design_preview(player, design, is_custom) {
 
   let screen_saver_preview = apply_design(design.find(d => d.type === "screen_saver"), 0)
 
-  form.body("Here is a preview of your selected design. It shows all possible variable at ones.\n\nScreen saver:\n"+screen_saver_preview+"§r§f\n\nNormal:\n"+ normal_preview + "§r§f\n\nPaused:\n"+paused_preview+ "§r§f\n\nFinshied (CM only):\n" +finished_preview+ "§r§f\n\nDay-Time:\n" +day_preview+ "§r§f\n\nDo you like it?");
+  form.body("Here is a preview of your selected design. It shows all possible variable at ones.\n\nScreen saver:\n"+screen_saver_preview+"§r§f\n\nIn the menu:\n" + ui_preview + "§r§f\n\nNormal:\n" + normal_preview + "§r§f\n\nPaused:\n"+paused_preview+ "§r§f\n\nFinshied (CM only):\n" +finished_preview+ "§r§f\n\nDay-Time:\n" +day_preview+ "§r§f\n\nDo you like it?");
 
   form.button("§aApply!");
   
@@ -2626,8 +2678,8 @@ function close_world() {
 }
 
 function render_live_actionbar(selected_save_data, do_update) {
+  const data = load_save_data();
   function calcAB(update, id, dayFormat) {
-    const data = load_save_data();
     const idx = data.findIndex(e => e.id === id);
     let counting_type, timevalue, timedata;
 
@@ -2651,7 +2703,18 @@ function render_live_actionbar(selected_save_data, do_update) {
         if (update && timedata.do_count) {
           if (counting_type === 1) {
             timedata.timer = Math.max(timedata.timer - 1, 0);
-            timedata.do_count = timedata.timer !== 0;
+            if (timedata.timer == 0) {
+              if (data[0].challenge.progress == 1) {
+                if (data[0].challenge.goal.pointer == 2 && data[0].challenge.goal.event_pos == 0) {
+                  finished_cm_timer(1, "You did it! You persevered through the whole time and reached your goal!")
+                } else {
+                  finished_cm_timer(0, "The challenge is over because you went out of time. Thanks for playing.")
+                }
+                return -1;
+              } else {
+                timedata.do_count = false;
+              }
+            }
           } else {
             timedata.stopwatch++;
           }
@@ -2686,11 +2749,15 @@ function render_live_actionbar(selected_save_data, do_update) {
   
   let d0, d1;
   if (selected_save_data.counting_type !== 3) {
-    d0 = tv.do_count 
-      ? selected_save_data.design.find(d => d.type === "normal")
-      : (tv.value === 0 
-          ? selected_save_data.design.find(d => d.type === "screen_saver")
-          : selected_save_data.design.find(d => d.type === "paused"));
+    if (data[0].challenge.progress == 2) {
+      d0 = selected_save_data.design.find(d => d.type === "finished")
+    } else {
+      d0 = tv.do_count 
+        ? selected_save_data.design.find(d => d.type === "normal")
+        : (tv.value === 0 
+            ? selected_save_data.design.find(d => d.type === "screen_saver")
+            : selected_save_data.design.find(d => d.type === "paused"));
+  }
     if (selected_save_data.time_day_actionsbar)
       d1 = selected_save_data.design.find(d => d.type === "day");
   } else {
