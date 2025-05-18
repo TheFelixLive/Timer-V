@@ -140,7 +140,7 @@ It is the same as in [Creative mode](#time-global-mode). You set your period of 
 
 ## Difficulty
 > [!NOTE]
->  This feature was developed for an older version of Minecraft Bedrock which **didn't have** a hardcore mode, which makes it a bit unnecessary
+>  This feature was developed for an older version of Minecraft Bedrock that **didn't** have a hardcore mode, which makes it somewhat unnecessary, but there are fatal errors with the Minecraft Hardcore Mode, until these are fixed it's a good replacement!
 
 Here you can change your difficulty and yes it does more than make mobs stronger:
 
