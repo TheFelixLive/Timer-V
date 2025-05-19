@@ -22,7 +22,9 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - [X] Creative Mode _(since 7.5.25)_
 - [X] Survival Mode - initial setup _(since 10.5.25)_
 - [X] Survival Mode - Survival _(since 13.5.25)_
-- [ ] Survival Mode - Endings
+- [X] Survival Mode - Endings  _(since 19.5.25)_
+- [ ] Hardcore-Support
+- [ ] 1. Beta
 
 # Planned features
 | Category | Description | Status | Notes |

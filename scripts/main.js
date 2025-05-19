@@ -512,7 +512,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
     ]
 
     update_save_data(save_data)
@@ -568,7 +568,7 @@ function create_player_save_data (playerId, playerName) {
       save_data.push({
           id: playerId,
           show_td_as_mode: false,
-          time: {stopwatch: 0, timer: 0, do_count: false},
+          time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false},
           counting_type: 0,
           time_day_actionsbar: false,
           allow_unnecessary_inputs: false,
@@ -703,8 +703,16 @@ function finished_cm_timer(rating, message) {
   save_data[0].challenge.rating = rating
   save_data[0].time.do_count = false
 
-  // Todo: Have to be rawtext!
-  world.sendMessage((rating == 1? "§l§2[§aGoal§2]§r " : "§l§4[§cEnd§4]§r ") + message);
+  // Have to be rawtext!
+  const prefix = {
+    text: rating === 1
+      ? "§l§2[§aGoal§2]§r "
+      : "§l§4[§cEnd§4]§r "
+  };
+
+  const rawArray = [ prefix, ...message ];
+
+  world.sendMessage({ rawtext: rawArray });
 
   world.getAllPlayers().forEach(t => {
     t.playSound(rating == 1? "random.toast" : "horn.call.7");
@@ -715,29 +723,27 @@ function finished_cm_timer(rating, message) {
 }
 
 function check_player_gamemode(player) {
-  let save_data = load_save_data();
+  const { challenge, time } = load_save_data()[0];
+  const gm = player.getGameMode();
 
-  // challenge.progress == 0
-  if (save_data[0].challenge.progress == 0 && player.getGameMode() !== "creative") {
-    player.setGameMode("creative")
+  if (challenge.progress === 0) {
+    const target = world.isHardcore ? "spectator" : "creative";
+    if (gm !== target) player.setGameMode(target);
   }
 
-  // challenge.progress == 1
-  if (save_data[0].challenge.progress == 1 &&  save_data[0].time.do_count == true && player.getGameMode() !== "survival") {
-    player.setGameMode("survival")
+  if (challenge.progress === 1) {
+    const target = time.do_count ? "survival" : "spectator";
+    if (gm !== target) player.setGameMode(target);
   }
 
-  if (save_data[0].challenge.progress == 1 &&  save_data[0].time.do_count == false && player.getGameMode() !== "spectator") {
-    player.setGameMode("spectator")
-  }
-
-  // challenge.progress == 2
-  if (save_data[0].challenge.progress == 2 && save_data[0].challenge.rating == 1 && player.getGameMode() !== "creative") {
-    player.setGameMode("creative")
-  }
-
-  if (save_data[0].challenge.progress == 2 && save_data[0].challenge.rating == 0 && player.getGameMode() !== "spectator") {
-    player.setGameMode("spectator")
+  if (challenge.progress === 2) {
+    let target;
+    if (challenge.rating === 1) {
+      target = world.isHardcore ? "spectator" : "creative";
+    } else {
+      target = "spectator";
+    }
+    if (gm !== target) player.setGameMode(target);
   }
 }
 
@@ -755,6 +761,17 @@ function check_difficulty() {
   // It's somehow unnecessary because hardcore is always "hard" but whatever :)
   if (world.getDifficulty() !== "Hard" && save_data[0].challenge.difficulty > 1) {
     world.setDifficulty("Hard")
+  }
+}
+
+function check_health() {
+  let save_data = load_save_data();
+
+  if (save_data[0].challenge.difficulty == 4) {
+    for (const player of world.getPlayers()) {
+      const health = player.getComponent("health");
+      player.applyDamage(health.currentValue - 1)
+    }
   }
 }
 
@@ -806,11 +823,19 @@ function render_task_list(player) {
 }
 
 function enable_gamerules(doDayLightCycle) {
+  let save_data = load_save_data()
   world.gameRules.doDayLightCycle = doDayLightCycle;
   world.gameRules.doEntityDrops = true;
   world.gameRules.doFireTick = true;
   world.gameRules.doWeatherCycle = true;
   world.gameRules.doMobSpawning = true;
+  if (save_data[0].challenge.active) {
+    if (save_data[0].challenge.difficulty > 2) {
+      world.gameRules.naturalRegeneration = false;
+    } else {
+      world.gameRules.naturalRegeneration = true;
+    }
+  }
 }
 
 function disable_gamerules() {
@@ -930,19 +955,19 @@ world.afterEvents.entityDie.subscribe(event => {
     update_save_data(save_data);
 
     if (save_data[0].challenge.difficulty > 0 && save_data[0].challenge.progress == 1 && save_data[0].time.do_count) {
-      finished_cm_timer(0, "The challenge is over. Time invested: "+ apply_design(
+      finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
             (
               typeof save_data[player_sd_index].design === "number"
                 ? design_template[save_data[player_sd_index].design].content
                 : save_data[player_sd_index].design
             ).find(item => item.type === "ui"),
-            save_data[0].time[save_data[0].time.counting_type ? "timer" : "stopwatch"]
-          ) +" Thanks for playing.")
+            (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
+          ) +" Thanks for playing."}])
     }
   }
 
   if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count && save_data[0].challenge.goal.pointer == 1 && event.deadEntity?.typeId === ("minecraft:" + goal_entity[save_data[0].challenge.goal.entity_pos].id)) {
-    finished_cm_timer(1, {rawtext:[{text: "You did it! You defeated the "}, {translate: ("entity."+goal_entity[save_data[0].challenge.goal.entity_pos].id+".name")}, { text: " in an epic battle! Good Game!"}]})
+    finished_cm_timer(1, [{text: "You did it! You defeated the "}, {translate: ("entity."+goal_entity[save_data[0].challenge.goal.entity_pos].id+".name")}, {text: " in an epic battle! Good Game!"}])
   }
 
 
@@ -1132,7 +1157,29 @@ function main_menu_actions(player, form) {
     /*------------------------
       Only Challenge mode
     -------------------------*/
-    if (save_data[0].challenge.active && save_data[0].challenge.progress == 0 && !world.isHardcore) {
+    const challenge = save_data[0].challenge;
+    const isHardcore = difficulty[challenge.difficulty].is_hardcore;
+
+    if (challenge.progress === 2 && (isHardcore && challenge.rating === 1 || !isHardcore)) {
+      if (form) form.button("§aStart over!", "textures/ui/recap_glyph_color_2x");
+
+      actions.push(() => {
+        if (challenge.rating === 1) {
+          challenge.goal.pointer = 0;
+        } else {
+          save_data[0].time[timedata.counting_type ? "timer" : "stopwatch"] = 0;
+          world.setTimeOfDay(0);
+          world.getDimension("overworld").setWeather("Clear");
+        }
+
+        challenge.progress = 0;
+        update_save_data(save_data);
+        main_menu(player);
+      });
+    }
+
+
+    if (save_data[0].challenge.active && save_data[0].challenge.progress == 0) {
       if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
         if (form) form.button("§2Start Challenge\n", "textures/gui/controls/right");
         actions.push(() => {
@@ -1194,7 +1241,7 @@ function main_menu_actions(player, form) {
   }
 
 
-  if (save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) {
+  if ((save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) && save_data[0].challenge.progress !== 2) {
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
       if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time ? "§aon" : "§coff"), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
@@ -1209,7 +1256,7 @@ function main_menu_actions(player, form) {
     }
   }
 
-  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0) {
+  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore) {
     if(form){form.button("Challenge mode", save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
@@ -1429,7 +1476,8 @@ function settings_start_time(player) {
     ms;
 
     save_data[save_data[0].global.status ? 0 : player_sd_index].time.timer = Math.floor(totalMilliseconds / 5)
-    if (totalMilliseconds > 0) {
+    save_data[save_data[0].global.status ? 0 : player_sd_index].time.last_value_timer = Math.floor(totalMilliseconds / 5);
+    if (totalMilliseconds/5 > 0) {
       save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 1;
     } else {
       save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 0;
@@ -1447,6 +1495,7 @@ function settings_start_time(player) {
 function settings_difficulty(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
   form.title("Difficulty");
   form.body("Select your difficulty!\n§7Note: " + 
@@ -1458,7 +1507,7 @@ function settings_difficulty(player) {
   let visibleDifficulties = [];
 
   difficulty.forEach((diff, index) => {
-    if (diff.is_hardcore == world.isHardcore) {
+    if (diff.is_hardcore == world.isHardcore || save_data[player_sd_index].allow_unnecessary_inputs) {
       let name = diff.name;
       if (save_data[0].challenge.difficulty === index) {
         name += "\n§2(selected)";
@@ -2706,9 +2755,9 @@ function render_live_actionbar(selected_save_data, do_update) {
             if (timedata.timer == 0) {
               if (data[0].challenge.progress == 1) {
                 if (data[0].challenge.goal.pointer == 2 && data[0].challenge.goal.event_pos == 0) {
-                  finished_cm_timer(1, "You did it! You persevered through the whole time and reached your goal!")
+                  finished_cm_timer(1, [{text:"You did it! You persevered through the whole time and reached your goal!"}])
                 } else {
-                  finished_cm_timer(0, "The challenge is over because you went out of time. Thanks for playing.")
+                  finished_cm_timer(0, [{text:"The challenge is over because you went out of time. Thanks for playing."}])
                 }
                 return -1;
               } else {
@@ -2733,7 +2782,7 @@ function render_live_actionbar(selected_save_data, do_update) {
         timevalue = { value: ticks, do_count: true };
 
         if (data[0].sync_day_time && do_update && (!data[0].challenge.active || (data[0].challenge.progress === 1 && data[0].time.do_count))) {
-          world.getDimension("overworld").runCommand(`time set ${Math.floor(ticks)}`);
+          world.setTimeOfDay(Math.floor(ticks));
         }
             
       } else {
@@ -2787,6 +2836,7 @@ async function update_loop() {
 
       if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count) {
         enable_gamerules(!save_data[0].sync_day_time); 
+        check_health()
       } else if (save_data[0].challenge.active) {
         disable_gamerules()
       }
