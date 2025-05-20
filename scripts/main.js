@@ -564,7 +564,7 @@ let save_data = load_save_data()
 if (!save_data) {
     console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
     ]
 
     update_save_data(save_data)
@@ -652,7 +652,6 @@ async function create_player_save_data (playerId, playerName) {
   if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] > 0)) {
     save_data[player_sd_index].time.do_count = true;
     update_save_data(save_data)
-    isCurrentlyAFK.set(player.name, false);
   }
 
   if (playerId == player.id) {
@@ -661,31 +660,41 @@ async function create_player_save_data (playerId, playerName) {
       let form = new ActionFormData();
       form.title("Setup guide");
       form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
-      form.button("Survival mode");
-      form.button("Creative mode");
-      form.button("");
+      if (world.isHardcore) {
+        form.button("Try Hardcore!");
+      } else {
+        form.button("Survival mode");
+        form.button("Creative mode");
+        form.button("");
+      }
+
 
       const showForm = async () => {
         form.show(player).then((response) => {
           if (response.canceled && response.cancelationReason === "UserBusy") {
             showForm()
           } else {
-            // Response
-            save_data[player_sd_index].setup = 0
-            // Survival
-            if (response.selection === 0) {
-              save_data[0].global.status = true
-              save_data[0].challenge.active = true
-              save_data[0].global.last_player_id = player.id
-              world.setTimeOfDay(0);
-              world.getDimension("overworld").setWeather("Clear");
-            }
+            if (!world.isHardcore) {
+              // Response
+              save_data[player_sd_index].setup = 0
+              // Survival
+              if (response.selection === 0) {
+                save_data[0].global.status = true
+                save_data[0].challenge.active = true
+                save_data[0].global.last_player_id = player.id
+                world.setTimeOfDay(0);
+                world.getDimension("overworld").setWeather("Clear");
+              }
 
-            update_save_data(save_data);
-            if (response.selection >= 0) {
+              update_save_data(save_data);
+              if (response.selection >= 0) {
+                main_menu(player)
+              }
+            } else {
+              save_data[player_sd_index].setup = 0
+              update_save_data(save_data);
               main_menu(player)
             }
-
           }
         });
       };
@@ -880,7 +889,7 @@ function check_player_gamemode(player) {
   const gm = player.getGameMode();
 
   if (challenge.progress === 0) {
-    const target = world.isHardcore ? "spectator" : "creative";
+    const target = "creative";
     if (gm !== target) player.setGameMode(target);
   }
 
@@ -892,7 +901,7 @@ function check_player_gamemode(player) {
   if (challenge.progress === 2) {
     let target;
     if (challenge.rating === 1) {
-      target = world.isHardcore ? "spectator" : "creative";
+      target = "creative";
     } else {
       target = "spectator";
     }
@@ -3073,7 +3082,7 @@ async function update_loop() {
         }
 
         // Forceing gamemode (cm)
-        if (save_data[0].challenge.active) {
+        if (save_data[0].challenge.active && !world.isHardcore) {
           check_player_gamemode(player)
         }
 

@@ -23,8 +23,8 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - [X] Survival Mode - initial setup _(since 10.5.25)_
 - [X] Survival Mode - Survival _(since 13.5.25)_
 - [X] Survival Mode - Endings  _(since 19.5.25)_
-- [X] Hardcore-Support  _(since 20.5.25)_
-- [ ] 1. Alpha _(comming soon)_
+- [ ] Hardcore-Support  _(work in progress)_
+- [ ] 1. Alpha _(comming later)_
 
 # Planned features
 | Category | Description | Status | Notes |
