@@ -466,42 +466,94 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
       console.log("Debug mode could not be changed because you do not have permission!");
     }
   }
-  
-  if (event.id === "timerv:show_td_as_mode") {
-    let save_data = load_save_data();
-    let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
-  
-    // Konvertiere event.message in Boolean
-    let showTdAsModeValue = event.message.toLowerCase() === "true";
-  
-    save_data[player_sd_index].show_td_as_mode = showTdAsModeValue;
-    console.log("show_td_as_mode is now: " + save_data[player_sd_index].show_td_as_mode);
-    update_save_data(save_data);
-  }
-  
-  if (event.id === "timerv:allow_unnecessary_inputs") {
-    let save_data = load_save_data();
-    let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
-  
-    let allowInputsValue = event.message.toLowerCase() === "true";
-  
-    save_data[player_sd_index].allow_unnecessary_inputs = allowInputsValue;
-    console.log("allow_unnecessary_inputs is now: " + save_data[player_sd_index].allow_unnecessary_inputs);
-    update_save_data(save_data);
-  }
-
 
   if (event.id === "timerv:reset") {
     world.setDynamicProperty("timerv:save_data", undefined);
     close_world()
   }
 
-    if (event.id === "timerv:menu") {
+/*------------------------
+ Open the menu
+-------------------------*/
+
+  if (event.id === "timerv:menu") {
     return main_menu(event.sourceEntity)
   }
   
   
 });
+
+
+// via. item
+world.beforeEvents.itemUse.subscribe(event => {
+	if (event.itemStack.typeId === "minecraft:stick") {
+      system.run(() => {
+        event.source.playSound("random.pop2")
+	      main_menu(event.source)
+      });
+	}
+});
+
+// via. jump gesture
+const gestureCooldowns = new Map();
+
+function gesture_jump() {
+  const now = Date.now();
+
+  for (const player of world.getAllPlayers()) {
+    const lastUsed = gestureCooldowns.get(player.name) || 0;
+
+    if (player.isSneaking && player.isJumping) {
+      if (now - lastUsed >= 100) { // 2 Sekunden Cooldown
+        player.playSound("random.pop2");
+        main_menu(player);
+        gestureCooldowns.set(player.name, now);
+      }
+    }
+  }
+}
+
+
+
+// via. gesture
+const playerHeadMovement = new Map();
+
+function gesture_nod() {
+  const now = Date.now();
+
+  for (const player of world.getAllPlayers()) {
+    if (player.getGameMode() !== "spectator") continue;
+
+    const { x: pitch } = player.getRotation();
+
+    const prev = playerHeadMovement.get(player.id) || {
+      state: "idle",
+      timestamp: now,
+    };
+    let { state, timestamp: lastTime } = prev;
+
+    if (state === "idle" && pitch < -13) {
+      state = "lookingUp";
+      lastTime = now;
+    }
+    else if (state === "lookingUp" && pitch > 13) {
+      player.playSound("random.pop2");
+      main_menu(player);
+
+      state = "idle";
+      lastTime = now;
+    }
+    else if (state === "lookingUp" && now - lastTime > 1000) {
+      state = "idle";
+      lastTime = now;
+    }
+
+    playerHeadMovement.set(player.id, { state, timestamp: lastTime });
+  }
+}
+
+
+
 
 /*------------------------
  Save Data
@@ -545,11 +597,11 @@ function delete_player_save_data(player) {
 
 
 // Add player if not present
-function create_player_save_data (playerId, playerName) {
+async function create_player_save_data (playerId, playerName) {
   let save_data = load_save_data();
-  let player_save_data = save_data.find(entry => entry.id === playerId);
+  let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
 
-  if (player_save_data == undefined) {
+  if (save_data[player_sd_index] == undefined) {
       let shout_be_op = true;
   
       for (let entry of save_data) {
@@ -569,6 +621,7 @@ function create_player_save_data (playerId, playerName) {
           id: playerId,
           show_td_as_mode: false,
           time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false},
+          afk: false,
           counting_type: 0,
           time_day_actionsbar: false,
           allow_unnecessary_inputs: false,
@@ -576,16 +629,116 @@ function create_player_save_data (playerId, playerName) {
           name: playerName,
           op: shout_be_op,
           visibility: true,
+          fullbright: false,
           lang: 0,
           design: 0,
-          setup: shout_be_op ? 2 : 1,
-          died: false
+          setup: shout_be_op ? 2 : 1
       });
-  } else if (player_save_data.name !== playerName) {
-      player_save_data.name = playerName;
+  } else if (save_data[player_sd_index].name !== playerName) {
+      save_data[player_sd_index].name = playerName;
   }
 
   update_save_data(save_data);
+  
+
+  let player;
+  while (!player) {
+    player = world.getAllPlayers().find(player => player.id == playerId)
+    await system.waitTicks(20);
+  }
+  // I don't know why but in single player, the server is active about 60 ticks before the player of the server is reachable via getAllPlayers
+
+  // Resets AFK
+  if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] > 0)) {
+    save_data[player_sd_index].time.do_count = true;
+    update_save_data(save_data)
+    isCurrentlyAFK.set(player.name, false);
+  }
+
+  if (playerId == player.id) {
+    // Setup popup
+    if (save_data[player_sd_index].setup == 2) {
+      let form = new ActionFormData();
+      form.title("Setup guide");
+      form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+      form.button("Survival mode");
+      form.button("Creative mode");
+      form.button("");
+
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            // Response
+            save_data[player_sd_index].setup = 0
+            // Survival
+            if (response.selection === 0) {
+              save_data[0].global.status = true
+              save_data[0].challenge.active = true
+              save_data[0].global.last_player_id = player.id
+              world.setTimeOfDay(0);
+              world.getDimension("overworld").setWeather("Clear");
+            }
+
+            update_save_data(save_data);
+            if (response.selection >= 0) {
+              main_menu(player)
+            }
+
+          }
+        });
+      };
+      showForm();
+    }
+
+    // Welcome screen
+    if (save_data[player_sd_index].setup == 1) {
+      let form = new ActionFormData();
+      form.title("Setup guide");
+      form.body("Wellcome!\n comming soon");
+      form.button("");
+
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            // Response
+            save_data[player_sd_index].setup = 0
+            update_save_data(save_data);
+            if (response.selection === 0) {
+              main_menu(player)
+            }
+            
+          }
+        });
+      };
+      showForm();
+    }
+
+    // Update popup
+    if (save_data[player_sd_index].op && (Date.now()/ 1000) > save_data[0].update_message_unix) {
+      let form = new ActionFormData();
+      form.title("Update time!");
+      form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
+      form.button("Mute");
+
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            if (response.selection === 1) {
+              save_data[0].update_message_unix = (Date.now()/ 1000) + 15897600;
+              update_save_data(save_data);
+            }
+          }
+        });
+      };
+      showForm();
+    }
+  }
 }
 
 world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
@@ -850,109 +1003,12 @@ function disable_gamerules() {
  Startup popups
 -------------------------*/
 
-world.afterEvents.playerSpawn.subscribe(async ({ player }) => {
-  let save_data = load_save_data();
-  let player_save_data = save_data[save_data.findIndex(entry => entry.id === player.id)];
-
-  if (player_save_data.died == true) {
-    delete player_save_data.died;
-    update_save_data(save_data);
-  } else {
-    // Setup popup
-    if (player_save_data.setup == 2) {
-      let form = new ActionFormData();
-      form.title("Setup guide");
-      form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
-      form.button("Survival mode");
-      form.button("Creative mode");
-      form.button("");
-
-      const showForm = async () => {
-        form.show(player).then((response) => {
-          if (response.canceled && response.cancelationReason === "UserBusy") {
-            showForm()
-          } else {
-            // Response
-            player_save_data.setup = 0
-            // Survival
-            if (response.selection === 0) {
-              save_data[0].global.status = true
-              save_data[0].challenge.active = true
-              save_data[0].global.last_player_id = player.id
-              world.setTimeOfDay(0);
-              world.getDimension("overworld").setWeather("Clear");
-            }
-
-            update_save_data(save_data);
-            if (response.selection >= 0) {
-              main_menu(player)
-            }
-
-          }
-        });
-      };
-      showForm();
-    }
-
-    // Welcome screen
-    if (player_save_data.setup == 1) {
-      let form = new ActionFormData();
-      form.title("Setup guide");
-      form.body("Wellcome!\n comming soon");
-      form.button("");
-
-      const showForm = async () => {
-        form.show(player).then((response) => {
-          if (response.canceled && response.cancelationReason === "UserBusy") {
-            showForm()
-          } else {
-            // Response
-            player_save_data.setup = 0
-            update_save_data(save_data);
-            if (response.selection === 0) {
-              main_menu(player)
-            }
-            
-          }
-        });
-      };
-      showForm();
-    }
-
-    // Update popup
-    if (player_save_data.op && (Date.now()/ 1000) > save_data[0].update_message_unix) {
-      let form = new ActionFormData();
-      form.title("Update time!");
-      form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
-      form.button("Mute");
-
-      const showForm = async () => {
-        form.show(player).then((response) => {
-          if (response.canceled && response.cancelationReason === "UserBusy") {
-            showForm()
-          } else {
-            if (response.selection === 1) {
-              save_data[0].update_message_unix = (Date.now()/ 1000) + 15897600;
-              update_save_data(save_data);
-            }
-          }
-        });
-      };
-      showForm();
-    }
-  
-  }
-});
-
 world.afterEvents.entityDie.subscribe(event => {
   const save_data = load_save_data();
 
   if (event.deadEntity?.typeId === "minecraft:player") {
     const player = event.deadEntity;
     const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-
-    save_data[player_sd_index].died = true;
-    update_save_data(save_data);
 
     if (save_data[0].challenge.difficulty > 0 && save_data[0].challenge.progress == 1 && save_data[0].time.do_count) {
       finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
@@ -1157,8 +1213,24 @@ function main_menu_actions(player, form) {
     /*------------------------
       Only Challenge mode
     -------------------------*/
+
     const challenge = save_data[0].challenge;
     const isHardcore = difficulty[challenge.difficulty].is_hardcore;
+
+    if (challenge.progress === 1) {
+      if (form) form.button("§cGive up!", "textures/blocks/barrier");
+
+      actions.push(() => {
+        finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
+          (
+            typeof save_data[player_sd_index].design === "number"
+              ? design_template[save_data[player_sd_index].design].content
+              : save_data[player_sd_index].design
+          ).find(item => item.type === "ui"),
+          (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
+        ) +" Thanks for playing."}])
+      });
+    }
 
     if (challenge.progress === 2 && (isHardcore && challenge.rating === 1 || !isHardcore)) {
       if (form) form.button("§aStart over!", "textures/ui/recap_glyph_color_2x");
@@ -1179,7 +1251,7 @@ function main_menu_actions(player, form) {
     }
 
 
-    if (save_data[0].challenge.active && save_data[0].challenge.progress == 0) {
+    if (challenge.active && challenge.progress == 0) {
       if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
         if (form) form.button("§2Start Challenge\n", "textures/gui/controls/right");
         actions.push(() => {
@@ -1190,12 +1262,12 @@ function main_menu_actions(player, form) {
       if (form) form.button({rawtext:
         [
           { text: "§5Goal§9\n" },
-          save_data[0].challenge.goal.pointer === 2
-            ? { text: goal_event[save_data[0].challenge.goal.event_pos].name }
-            : save_data[0].challenge.goal.pointer === 0
+          challenge.goal.pointer === 2
+            ? { text: goal_event[challenge.goal.event_pos].name }
+            : challenge.goal.pointer === 0
             ? { text: "§bR§ga§an§6d§4o§fm" }
             : ({ text: "Defeat: " },
-              { translate: "entity." + goal_entity[save_data[0].challenge.goal.entity_pos].id + ".name" })
+              { translate: "entity." + goal_entity[challenge.goal.entity_pos].id + ".name" })
         ]},
         "textures/items/elytra"
       );
@@ -1204,14 +1276,14 @@ function main_menu_actions(player, form) {
         settings_goals_main(player);
       });
 
-      if (form) form.button("§cDifficulty\n" + difficulty[save_data[0].challenge.difficulty].name + "", difficulty[save_data[0].challenge.difficulty].icon);
+      if (form) form.button("§cDifficulty\n" + difficulty[challenge.difficulty].name + "", difficulty[challenge.difficulty].icon);
       actions.push(() => {
         settings_difficulty(player);
       });
     }
 
 
-    if (save_data[player_sd_index].op && !save_data[0].challenge.active && timedata.counting_type !== 2) {
+    if (save_data[player_sd_index].op && !challenge.active && timedata.counting_type !== 2) {
       if(form){form.button("Shared timer\n§9" + (save_data[0].global.status ? "by "+ save_data.find(e => e.id === save_data[0].global.last_player_id)?.name : "off"), "textures/ui/FriendsIcon")};
       actions.push(() => {
         splash_globalmode(player);
@@ -1219,10 +1291,10 @@ function main_menu_actions(player, form) {
     }
 
     // "Change / add time" button
-    if (!(save_data[0].challenge.active && save_data[0].challenge.progress > 0) && timedata.counting_type !== 2) {
+    if (!(challenge.active && challenge.progress > 0) && timedata.counting_type !== 2) {
       if (form) {
         form.button(
-          (save_data[0].challenge.active ? "Start time\n" : "Change time\n") +
+          (challenge.active ? "Start time\n" : "Change time\n") +
           apply_design(
             (
               typeof save_data[player_sd_index].design === "number"
@@ -1883,11 +1955,28 @@ function settings_main(player) {
     });
   }
 
-  // Button 3: Debug
+  // Button 4: Fullbright
+  form.button("Fullbright\n" + (save_data[player_sd_index].fullbright ? "§aon" : "§coff"), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
+  actions.push(() => {
+    if (!save_data[player_sd_index].fullbright) {
+      save_data[player_sd_index].fullbright = true;
+    } else {
+      player.removeEffect("night_vision");
+      save_data[player_sd_index].fullbright = false;
+    }
+    update_save_data(save_data);
+    settings_main(player);
+  });
+
+  // Button 5: Debug
   if (save_data[0].debug && save_data[player_sd_index].op) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => debug_main(player));
   }
+
+  // Button 6: Dictionary
+  form.button("About\n", "textures/ui/infobulb");
+  actions.push(() => dictionary_about_version(player));
 
   // Back to main menu
 
@@ -1903,10 +1992,53 @@ function settings_main(player) {
   });
 }
 
+/*------------------------
+ Dictionary
+-------------------------*/
+
+function convertUnixToDate(unixSeconds, utcOffset) {
+  const date = new Date(unixSeconds * 1000);
+  const localDate = new Date(date.getTime() + utcOffset * 60 * 60 * 1000);
+
+  // Format the date (YYYY-MM-DD HH:MM:SS)
+  const year = localDate.getUTCFullYear();
+  const month = String(localDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getUTCDate()).padStart(2, '0');
+  const hours = String(localDate.getUTCHours()).padStart(2, '0');
+  const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
+
+  return `${day}.${month}.${year} ${hours}:${minutes}:${seconds} (UTC${utcOffset >= 0 ? '+' : ''}${utcOffset})`;
+}
+
+function dictionary_about_version(player) {
+  let save_data = load_save_data()
+  let form = new ActionFormData()
+  var year = new Date().getFullYear()
+  form.title("About")
+  form.body(
+    "Name: " + version_info.name + "\n" +
+    "Version: " + version_info.version + "\n" +
+    "Build date: " + convertUnixToDate(version_info.unix, save_data[0].utc) +
+
+    "\n\n§7© 2022-"+ (year > 2024? year : "2025") + " TheFelixLive. All rights reserved."
+  )
+  form.button("");
+
+  form.show(player).then((response) => {
+    if (response.selection == 0) return settings_main(player);
+  });
+}
+
+
+
+
+/*------------------------
+ Debug
+-------------------------*/
 
 function debug_main(player) {
-  let form = new ActionFormData();
-  let save_data = load_save_data()
+  let form = new ActionFormData()
 
   form.body("DynamicPropertyTotalByteCount: "+world.getDynamicPropertyTotalByteCount() +" of 32767 bytes used")
   form.button("§e\"save_data\" Editor");
@@ -2687,35 +2819,89 @@ function design_preview(player, design, is_custom) {
   });
 }
 
+/*------------------------
+ AFK
+-------------------------*/
+
+const AFK_THRESHOLD_MS = 15 * 1000;
+
+// Speicher-Maps
+const lastActivity   = new Map(); // timestamp der letzten Aktivität
+const lastPosition   = new Map(); // letzte Position
+const lastRotation   = new Map(); // letzte Rotation (yaw/pitch)
+const isCurrentlyAFK = new Map(); // aktueller AFK-Status
+
+/** Aktualisiert den Aktivitätszeitpunkt eines Spielers. */
+function updateActivity(player) {
+  lastActivity.set(player.name, Date.now());
+}
+
+/** Initialisiert Position, Rotation und Status eines Spielers. */
+function initPlayer(player) {
+  updateActivity(player);
+  lastPosition.set(player.name, {
+    x: player.location.x,
+    y: player.location.y,
+    z: player.location.z
+  });
+  // getRotation liefert { x: pitch, y: yaw }
+  const rot = player.getRotation();
+  lastRotation.set(player.name, {
+    yaw: rot.y,
+    pitch: rot.x
+  });
+  isCurrentlyAFK.set(player.name, false);
+}
+
+/** Prüft, ob ein Spieler AFK ist. */
+function checkAFKStatus(player) {
+  const last = lastActivity.get(player.name) ?? Date.now();
+  return (Date.now() - last) > AFK_THRESHOLD_MS;
+}
+
+// 1) **Einmalige Initialisierung nach 60 Ticks**, um SP-Delay zu umgehen
+system.runTimeout(() => {
+  for (const player of world.getAllPlayers()) {
+    initPlayer(player);
+  }
+}, 60);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Open the menu
-world.beforeEvents.itemUse.subscribe(event => {
-	if (event.itemStack.typeId === "minecraft:stick") {
-      system.run(() => {
-        event.source.playSound("random.pop2")
-	      main_menu(event.source)
-      });
-	}
+// 3) **Respawn**: nur Initialisierung, keine Begrüßung
+world.afterEvents.playerSpawn.subscribe(evt => {
+  initPlayer(evt.player);
 });
 
+// 4) **Interaktionen** als Aktivität zählen
+world.afterEvents.itemUse  .subscribe(evt => updateActivity(evt.source));
+world.afterEvents.itemUseOn.subscribe(evt => updateActivity(evt.source));
+
+// 5) **Bewegung & Drehung** pro Tick erfassen
+system.runInterval(() => {
+  for (const player of world.getAllPlayers()) {
+    const name    = player.name;
+    const currPos = player.location;
+    const currRotRaw = player.getRotation();
+    const currRot = { yaw: currRotRaw.y, pitch: currRotRaw.x };
+
+    const prevPos = lastPosition.get(name);
+    const moved = !prevPos
+      || prevPos.x !== currPos.x
+      || prevPos.y !== currPos.y
+      || prevPos.z !== currPos.z;
+
+    const prevRot = lastRotation.get(name);
+    const rotated = !prevRot
+      || prevRot.yaw   !== currRot.yaw
+      || prevRot.pitch !== currRot.pitch;
+
+    if (moved || rotated) {
+      updateActivity(player);
+      lastPosition.set(name, { x: currPos.x, y: currPos.y, z: currPos.z });
+      lastRotation.set(name, currRot);
+    }
+  }
+}, 1); // 1 Tick = 1/20 Sekunde
 
 /*------------------------
  Update loop
@@ -2819,9 +3005,12 @@ function render_live_actionbar(selected_save_data, do_update) {
 }
 
 
+
+
 async function update_loop() {
     while (true) {
       let save_data = load_save_data();
+      gesture_nod()
 
       if (save_data[0].global.status) {
         render_live_actionbar(save_data[1], true)
@@ -2837,6 +3026,7 @@ async function update_loop() {
       if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count) {
         enable_gamerules(!save_data[0].sync_day_time); 
         check_health()
+        gesture_jump()
       } else if (save_data[0].challenge.active) {
         disable_gamerules()
       }
@@ -2852,9 +3042,48 @@ async function update_loop() {
         save_data = load_save_data();
         let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
+        // AFK
+        const wasAFK = isCurrentlyAFK.get(player.name) || false;
+        const nowAFK = checkAFKStatus(player);
+
+        if (!wasAFK && nowAFK) {
+          // Went afk
+          if (!save_data[0].global.status && save_data[player_sd_index].afk && save_data[player_sd_index].time.do_count) {
+            save_data[player_sd_index].time.do_count = false;
+
+            let key = save_data[player_sd_index].counting_type ? "timer" : "stopwatch";
+            let delta = save_data[player_sd_index].counting_type ? 15 * 20 : -15 * 20;
+
+            save_data[player_sd_index].time[key] += delta;
+
+            if (save_data[player_sd_index].time[key] < 0) {
+                save_data[player_sd_index].time[key] = 0;
+            }
+
+            update_save_data(save_data)
+          }
+          isCurrentlyAFK.set(player.name, true);
+        } else if (wasAFK && !nowAFK) {
+          // Came back
+          if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] > 0)) {
+            save_data[player_sd_index].time.do_count = true;
+            update_save_data(save_data)
+          }
+          isCurrentlyAFK.set(player.name, false);
+        }
+
+        // Forceing gamemode (cm)
         if (save_data[0].challenge.active) {
           check_player_gamemode(player)
         }
+
+        // Fullbrighe
+        const nightVision = player.getEffect("night_vision");
+
+        if (save_data[player_sd_index].fullbright &&(!nightVision || nightVision.duration < 205)) {
+          player.addEffect("night_vision", 250, { showParticles: false });
+        }
+
 
 
         if (save_data[player_sd_index].visibility == true) {

@@ -5,7 +5,7 @@
 
 ## About
 > [!WARNING]
->  This version is far from being released, [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/main) is the safe way back
+>  This version is not jet finished. Click [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/main) is the to the stable version.
 
 Timer V is the fourth attempt at rewriting the timer. This time, it's based on JavaScript, which already allows for a significant degree of customization in the menus and the timer itself.
 When you know what are you doing you can test the current build but I am planning to release a test version soon to the public.
@@ -23,8 +23,8 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - [X] Survival Mode - initial setup _(since 10.5.25)_
 - [X] Survival Mode - Survival _(since 13.5.25)_
 - [X] Survival Mode - Endings  _(since 19.5.25)_
-- [ ] Hardcore-Support
-- [ ] 1. Beta
+- [X] Hardcore-Support  _(since 20.5.25)_
+- [ ] 1. Alpha _(comming soon)_
 
 # Planned features
 | Category | Description | Status | Notes |
@@ -39,10 +39,10 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 | Time | Comes from v.4.1 | **improved** | |
 | Goals (s) | Comes from v.4.1 | **improved** | |
 | Control modes (c) | Comes from v.4.1 | **improved** | |
+| Modifications | Comes from v.4.1 | planed partly for `v.5.0.0` | The modifications "api" is no longer supported |
 | Difficulty (s) | Comes from v.4.1 | implemented | |
 | Dimension (s) | Comes from v.4.1 | _scraped_ | Is only addressed when someone really needs it |
 | Dictionary | Comes from v.4.1 | mostly _scraped_ | Only version information will remain available |
-| Modifications | Comes from v.4.1 | _scraped_ | If at all, the current modifications will be implemented natively |
 | Speedrun (s) | Comes from v.4.1 | _scraped_ | Use the new designs for that  |
 
-> Last Update: 13.5.25
+> Last Update: 20.5.25
