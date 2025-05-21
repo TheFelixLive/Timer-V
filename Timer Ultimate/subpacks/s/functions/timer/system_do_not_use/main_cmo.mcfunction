@@ -55,11 +55,13 @@ execute unless score mode timer_settings matches 0.. unless score look timer_set
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set speed_run_available timer_settings 1
 
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set goal timer_settings 8
-execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set difficulty timer_settings 1
+execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 unless score is_hardcore timer_settings matches 1 run scoreboard players set difficulty timer_settings 1
+execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 if score is_hardcore timer_settings matches 1 run scoreboard players set difficulty timer_settings 2
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set dimension timer_settings 0
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set custom_music timer_settings 0
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set help timer_settings 1
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set lang timer_settings 0
+execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 unless score is_hardcore timer_settings matches 1 run scoreboard players set is_hardcore timer_settings 0
 
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set reset_message_show timer_settings 0
 execute unless score mode timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard players set reset_type timer_settings 10
@@ -99,6 +101,7 @@ execute unless score dimension timer_settings matches 0.. unless score look time
 execute unless score custom_music timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (custom_music) is corrupt! Restoring..."}]}
 execute unless score help timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (help) is corrupt! Restoring..."}]}
 execute unless score lang timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (lang) is corrupt! Restoring..."}]}
+execute unless score is_hardcore timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (is_hardcore) is corrupt! Restoring..."}]}
 execute unless score reset_message_show timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (reset_message_show) is corrupt! Restoring..."}]}
 execute unless score reset_type timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (reset_type) is corrupt! Restoring..."}]}
 execute unless score shoud_count_down timer_settings matches 0.. unless score look timer_setup matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§4[§cCrash§4]§r Timer settings file (shoud_count_down) is corrupt! Restoring..."}]}
@@ -124,6 +127,7 @@ execute unless score dimension timer_settings matches 0.. unless score look time
 execute unless score custom_music timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives remove timer_settings
 execute unless score help timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives remove timer_settings
 execute unless score lang timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives remove timer_settings
+execute unless score is_hardcore timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives remove timer_settings
 execute unless score reset_message_show timer_settings matches 0.. run scoreboard objectives remove timer_settings
 execute unless score reset_type timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives remove timer_settings
 execute unless score shoud_count_down timer_settings matches 0.. unless score look timer_setup matches 1 run scoreboard objectives remove timer_settings
@@ -168,8 +172,9 @@ execute if entity @a[tag=timer_menu_target] unless entity @e[type=npc, name=time
 execute if entity @a[tag=timer_menu_target] unless entity @e[type=npc, name=timer_menu] run scoreboard players set id timer_menu 1
 
 # close the menu from the npc
-execute if score id timer_menu matches 1 run gamemode 1 @a[tag=timer_menu_target]
+execute if score id timer_menu matches 1 if score is_hardcore timer_settings matches 0 run gamemode 1 @a[tag=timer_menu_target]
 execute if score id timer_menu matches 1 unless score sound timer_menu matches 1 run stopsound @a[tag=timer_menu_target]
+execute if score id timer_menu matches 1 if score is_hardcore timer_settings matches 1 if score mode timer_settings matches 1 as @a[tag=timer_menu_target] run function timer/control
 execute if score id timer_menu matches 1 if score sound timer_menu matches 1 run scoreboard players reset sound timer_menu
 
 execute if score id timer_menu matches 1 run inputpermission set @a[tag=timer_menu_target] movement enabled
@@ -217,23 +222,31 @@ execute unless entity @e[type=npc, name=timer_menu] if score look timer_setup ma
 
 
 # automatic gamemode switch
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 unless score speed_run timer_settings matches 1 as @a[m=!s, tag=trust_player_control] at @s run function timer/control
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_run timer_settings matches 1 as @a[m=!s, tag=trust_player_control] at @s run gamemode s @s
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 1 as @a[m=!s, tag=!trust_player_control] at @s run gamemode s @s
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 1 if score do_count timer_settings matches 1 unless score speed_run timer_settings matches 1 as @a[m=!s, tag=trust_player_control] at @s run function timer/control
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 1 if score do_count timer_settings matches 1 if score speed_run timer_settings matches 1 as @a[m=!s, tag=trust_player_control] at @s run gamemode s @s
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 1 if score do_count timer_settings matches 1 as @a[m=!s, tag=!trust_player_control] at @s run gamemode s @s
 
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 as @a[m=!spectator, tag=trust_player_control] at @s run function timer/control
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 as @a[m=!spectator, tag=!trust_player_control] at @s run gamemode spectator @s
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 1 if score do_count timer_settings matches 0 as @a[m=!spectator, tag=trust_player_control] at @s run function timer/control
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 1 if score do_count timer_settings matches 0 as @a[m=!spectator, tag=!trust_player_control] at @s run gamemode spectator @s
 
-execute if score mode timer_settings matches 0 as @a[m=s, tag=trust_player_control] at @s run function timer/control
-execute if score mode timer_settings matches 0 as @a[m=s, tag=!trust_player_control] at @s run gamemode c @s
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 0 as @a[m=s, tag=trust_player_control] at @s run function timer/control
+execute if score is_hardcore timer_settings matches 0 if score mode timer_settings matches 0 as @a[m=s, tag=!trust_player_control] at @s run gamemode c @s
 
 execute if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 as @a[m=!spectator, tag=trust_player_control] at @s run function timer/control
 execute if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 as @a[m=!spectator, tag=!trust_player_control] at @s run gamemode spectator @s
 
+# startup help
+execute if score is_hardcore timer_settings matches 1 if entity @a[tag=on_start_challage] if score mode timer_settings matches 1 as @a[tag=trust_player_control] at @s run function timer/control
+tag @a[tag=on_start_challage] remove on_start_challage
+
+# Compensates damage in Hardcore when another game mode would normally be used 
+execute if score is_hardcore timer_settings matches 1 unless score mode timer_settings matches 1 run effect @a resistance 83 255 true
+execute if score is_hardcore timer_settings matches 1 if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run effect @a resistance 83 255 true
+execute if score is_hardcore timer_settings matches 1 if score mode timer_settings matches 1 if score do_count timer_settings matches 1 run effect @a clear resistance
+
+
 # movement
-execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score movement timer_addon matches 4.. run inputpermission set @a movement disabled
-execute if score mode timer_settings matches 1 if score movement timer_addon matches 5 run inputpermission set @a camera disabled
+execute if score mode timer_settings matches 1 if score do_count timer_settings matches 0 if score afk timer_settings matches 0 run inputpermission set @a movement disabled
 
 
 # definition

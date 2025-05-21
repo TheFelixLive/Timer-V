@@ -24,7 +24,7 @@
             },
             {
                 "scene_tag":"menu_help_text_changelog_2",
-                "npc_name":"§lCA - Changelog v.4.1.1",
+                "npc_name":"§lCA - Changelog v.4.2.0",
                 "text":"§b§lNew features§r§8\n\n-The reinvention of no-challenges and the introduction of movement restrictions\n\n\n§7Last Update 17.05.25",
                 "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo

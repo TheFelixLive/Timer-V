@@ -1,6 +1,6 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
-> [!IMPORTANT]
-> The current version is NOT compatible with Hardcore Mode in Minecraft. If you combine them, I cannot guarantee a flawless gaming experience. I'm currently developing the new major version called Timer V (v.5.0.0), which will include Hardcore Mode support! Check the progress [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/rewrite) out!
+> [!NOTE]
+> I'm currently developing the new major version called Timer V (v.5.0.0). Check it out [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/rewrite)!
 
 ![Minecraft2025-05-0421-27-24-ezgif com-video-to-gif-converter(1)](https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f)
 
@@ -8,12 +8,12 @@
 
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
-It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.80` of Minecraft Bedorck **compatible**.
+It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.81` of Minecraft Bedorck **compatible**.
 Click [here](#installation-and-configuration) for the installation!
 
 > [!TIP]
 >  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
->  or you use the **recommended menu**, which will open with `/function timer/menu`.
+>  or you use the **recommended menu**, which will open with `/function timer/menu` and in [survival mode](#survival-mode---initial-setup) by jumping and sneaking at the same time.
 >  Make shure you have the right **[permission](#permissions)**!
 
 
@@ -130,7 +130,7 @@ In addition, it can be randomly generated (which is the default one and will be 
 You can also switch the goals by using:
 ```mcfunction
 /function timer/settings/goal
-``` 
+```[^5]
 
 
 ## Start-Time
@@ -139,25 +139,23 @@ It is the same as in [Creative mode](#time-global-mode). You set your period of 
 > After you have selected a period of time, you can also choose the goal to survive that time
 
 ## Difficulty
-> [!NOTE]
->  This feature was developed for an older version of Minecraft Bedrock that **didn't** have a hardcore mode, which makes it somewhat unnecessary, but there are fatal errors with the Minecraft Hardcore Mode, until these are fixed it's a good replacement!
-
 Here you can change your difficulty and yes it does more than make mobs stronger:
 
-| Name | Easy | Normal (default) | Hardcore | Ultra Hardcore | Infinity |
+| Name | Easy | Normal | Hardcore | Ultra Hardcore | Infinity |
 |--------|--------|--------|--------|--------|--------|
 | Minecraft difficulty | Easy | Normal | Hard | Hard | Hard |
 | In case of a [negative end](#negative-ending) | Resets the timer | Resets the timer | Locks the world | Locks the world | Locks the world |
-| Complicates regeneration | | | | Yes | Yes* |
+| Complicates regeneration | | | | Yes |  |
 | Died with any damage | | | | | Yes |
+| Notes | Not available in combination with Minecraft's native Hardcore mode | Not available in combination with Minecraft's native Hardcore mode | | | |
 
 You can also switch the difficultys by using:
 ```mcfunction
 /function timer/settings/difficulty
-``` 
+```[^5]
 
 > [!CAUTION]
->  [*] Sometimes Infinity doesn't recognize that someone has taken damage. In this case, it behaves like Ultra Hardcore
+>  [*] Infinity ignores the Totem of Immortality, so don't feel so safe 
 
 ## Addons
 This is for toggling your Modification on or off and manage your installed Challenges, kind of mod menu.
@@ -169,7 +167,7 @@ This is for toggling your Modification on or off and manage your installed Chall
 |Description| As long as the timer is running, you will have night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
 |Limitations| | Requires a compatible resource pack | Pauses the timer for all |
 | Allowed in speedruns ||Yes |
-|Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
+|Commands| `/function timer/mods/night_vision`[^5] || `/function timer/mods/afk`[^5]|
 
 > Challenges are not pre installed! Check out the [Challenge Addon](#survival-mode---addons) for that.
 
@@ -178,7 +176,7 @@ A quick way to start your adventure e.g. in the nether. _If you're tired of the 
 You can also switch the dimensions by using:
 ```mcfunction
 /function timer/settings/dimension
-``` 
+```[^5]
 
 ![Image](https://github.com/user-attachments/assets/af78f566-f872-4308-928a-064c10be5720)
 
@@ -204,7 +202,7 @@ Now we have everything setup how we want, we can start the timer by using the me
 OR running:
 ```mcfunction
 /function timer/control
-``` 
+```[^5]
 
 Great! Our multiple day long adventure has begun.
 - All player are in surival mode
@@ -218,7 +216,7 @@ Great! Our multiple day long adventure has begun.
 Now to pause[^3] the timer we can run the command again:
 ```mcfunction
 /function timer/control
-``` 
+```[^5]
 OR:
 - change the gamemode
 - go afk[^4]
@@ -246,7 +244,7 @@ The idea behind this ending is that you now revisit this world.
 If you want to choose another goal, you can return to the main menu via the menu (what a saying) and the following command:
 ```mcfunction
 /function timer/control
-``` 
+```[^5]
 
 ---
 
@@ -276,13 +274,13 @@ In a nutshell, challenges add variety to the game. How big of an impact they hav
 | Name | Description | Limitations | Command |
 |--------|--------|--------|--------|
 | Movement | Lets you restrict your movement individually by choosing from [18 different aspects](#movement-restrictions) | Some restrictions are incompatible with some challenges | |
-| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x` |
-| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL` |
-| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant` |
-| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity` |
-| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice` |
-| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility`|
-| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder` |
+| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x`[^5] |
+| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL`[^5] |
+| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant`[^5] |
+| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity`[^5] |
+| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice`[^5] |
+| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility`[^5]|
+| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder`[^5] |
 
 ### Movement restrictions:
 There are in toal 18 different restrictions available and by default no one is active, so you have to `Add` them. When you find something interesting you get short description what it's restricts and you can choose between **punishing** and **disable**. The difference lies in the behavior if the restriction is violated. If **disabled**, you simply cannot perform this action at all, and if **punishing** is seleced, the entire challenge get canceled.
@@ -359,7 +357,7 @@ In **[survival mode](#survival-mode---initial-setup)** players without the tag c
 To promote a player you can enter the following command, _remember to replace the player name_:
 ```mcfunction
 /tag [player name] add trust_player_control
-``` 
+```[^5]
 
 > [!WARNING]
 > Players with this tag also have the power to uninstall the timer as well!
@@ -382,6 +380,7 @@ I know it's a little niche and unnecessary but as a (small) developer (if you ca
 
 [^1]: Only while using [local mode](#local-mode)
 [^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
-[^3]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
+[^5]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
 [^4]: Only when the [modification](#mods) AFK is activ
+[^5]: To perform functions you need cheats, which are not available in Minecraft's native Hardcore mode. 
 > All images were taken in-game with version v.1.21.73

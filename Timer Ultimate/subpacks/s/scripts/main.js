@@ -1,5 +1,5 @@
 import {world,system} from "@minecraft/server";
-import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
+import { ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
 function getPlayer() {
   const allPlayers = world.getAllPlayers();
@@ -18,12 +18,40 @@ function getPlayerDimension() {
   return player.dimension;
 }
 
-
+// Scoreborads
 let timer_settings = world.scoreboard.getObjective("timer_settings");
 let timer_time = world.scoreboard.getObjective("timer_time");
 
+if (!timer_settings) {
+  timer_settings = world.scoreboard.addObjective("timer_settings");
+}
+
+// Disable auto gamemode switch
+if (world.isHardcore) {
+  timer_settings.setScore("is_hardcore", 1);
+}
 
 
+
+// Open menu via. jump gesture
+const gestureCooldowns = new Map();
+
+function gesture_jump() {
+  const now = Date.now();
+
+  for (const player of world.getAllPlayers()) {
+    const lastUsed = gestureCooldowns.get(player.name) || 0;
+
+    if (player.isSneaking && player.isJumping) {
+      if (now - lastUsed >= 100) { // 2 Sekunden Cooldown
+        player.runCommand("function timer/menu")
+      }
+    }
+  }
+}
+
+
+// Redirect to the new menu
 system.afterEvents.scriptEventReceive.subscribe(event=> {
   if (event.id === "timeru:menu_time_new") {
     new_menu_time(event.sourceEntity)
@@ -54,7 +82,7 @@ function return_to_old_menu(player) {
   }
 }
 
-function speed_run_message(player) {
+function speed_run_message() {
   const shouldCount = timer_settings.getScore("shoud_count_down") ?? 0;
   const speedRun = timer_settings.getScore("speed_run") ?? 0;
 
@@ -68,6 +96,8 @@ function speed_run_message(player) {
 
 
 async function new_menu_time(player) {
+  let timer_settings = world.scoreboard.getObjective("timer_settings");
+  let timer_time = world.scoreboard.getObjective("timer_time");
   let form = new ModalFormData();
   form.title("Start time");
 
@@ -114,6 +144,8 @@ async function new_menu_time(player) {
 }
 
 function new_menu_time_invalid(player) {
+  let timer_settings = world.scoreboard.getObjective("timer_settings");
+  let timer_time = world.scoreboard.getObjective("timer_time");
   let form = new MessageFormData()
     .title("Start time")
     .body("Your selected time is invalid!")
@@ -182,34 +214,31 @@ function new_menu_time_invalid(player) {
 
 
 function mainTick() {
-    const playerDimension = getPlayerDimension();
-    if (system.currentTick % 20 === 0) {
-      
-      // This If query protects the script from crashing when the scoreboard "timer_settings" is deleted.
-      if (timer_settings !== undefined) {
+  gesture_jump()
+  const playerDimension = getPlayerDimension();
+  if (system.currentTick % 20 === 0) {
+    
+    // This If query protects the script from crashing when the scoreboard "timer_settings" is deleted.
+    if (timer_settings !== undefined) {
 
-        if (playerDimension !== undefined && timer_settings.getScore("mode") === 0) {
+      if (playerDimension !== undefined && timer_settings.getScore("mode") === 0) {
 
-          if (playerDimension.id === "minecraft:overworld" && timer_settings.getScore("dimension") !== 0) { 
-            timer_settings.setScore("dimension", 0);
-          }
-          
-          if (playerDimension.id === "minecraft:nether" && timer_settings.getScore("dimension") !== 1) { 
-            timer_settings.setScore("dimension", 1);
-          }
-          // This doesn't work realy well but if you enter the end you get the hidden dimension
-          if (playerDimension.id === "minecraft:the_end" && timer_settings.getScore("dimension") !== 2) { 
-            timer_settings.setScore("dimension", 2);
-          }
+        if (playerDimension.id === "minecraft:overworld" && timer_settings.getScore("dimension") !== 0) { 
+          timer_settings.setScore("dimension", 0);
         }
-      } else {
-        timer_settings = world.scoreboard.getObjective("timer_settings");
+        
+        if (playerDimension.id === "minecraft:nether" && timer_settings.getScore("dimension") !== 1) { 
+          timer_settings.setScore("dimension", 1);
+        }
+        // This doesn't work realy well but if you enter the end you get the hidden dimension
+        if (playerDimension.id === "minecraft:the_end" && timer_settings.getScore("dimension") !== 2) { 
+          timer_settings.setScore("dimension", 2);
+        }
       }
+    } else {
+      timer_settings = world.scoreboard.getObjective("timer_settings");
     }
-
-
-
-
+  }
   system.run(mainTick);
 }
 

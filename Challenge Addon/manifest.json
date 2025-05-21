@@ -4,7 +4,7 @@
         "description": "The addon allows you to use more challenges with Timer Ultimate.",
         "name": "Challenge-Addon",
         "uuid": "64ddd3b9-69b3-4935-9565-04ace5f0d783",
-        "version": [ 4, 1, 1],
+        "version": [ 4, 2, 0],
         "min_engine_version": [ 1, 21, 41]
     },
     "modules": [

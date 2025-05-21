@@ -49,7 +49,7 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     let save_data = load_movement_sd()
     save_data.forEach((entry, index) => {
       if (index == 8) {
-        world.sendMessage("§l§f[§5"+ restriction_list[index].name  +"§f]§r Your general movement is restricted, be careful!")
+        if (!Object.values(save_data[8]).every(value => value === true)) world.sendMessage("§l§f[§5"+ restriction_list[index].name  +"§f]§r Your general movement is restricted, be careful!")
       } else if (index < 8) {
         if (entry > 0) world.sendMessage("§l§f[§5"+ restriction_list[index].name  +"§f]§r " + restriction_list[index].description + (save_data[index] == 1 ? ". You will be §cpunish§f for doing that!" : ". You §ccan't§f do that!"))
       }

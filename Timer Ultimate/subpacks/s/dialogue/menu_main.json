@@ -129,7 +129,8 @@
                         "name":"§l§cDifficulty",
                         "commands":[
                           "scoreboard players set action timer_menu 1",
-                          "/dialogue open @s @initiator menu_difficulty"
+                          "/execute if score is_hardcore timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_difficulty",
+                          "/execute if score is_hardcore timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_difficulty_light"
                         ]
                     },
                     {
@@ -358,6 +359,54 @@
                             "/scoreboard players set animation_time timer_menu 30"
                         ]
                     },
+                    {
+                        "name":"§l§cHard§4core",
+                          "commands":[
+                            "scoreboard players set action timer_menu 1",
+                            "/stopsound @initiator",
+                            "/scoreboard players set difficulty timer_settings 1",
+                            "/execute as @initiator at @s run function timer/settings/difficulty",
+                            "/scoreboard players set animation_time timer_menu 50"
+                          ]
+                      },
+                      {
+                        "name":"§l§cUltra §4Hard",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set difficulty timer_settings 2",
+                          "/execute as @initiator at @s run function timer/settings/difficulty",
+                          "/scoreboard players set animation_time timer_menu 60"
+                        ]
+                      },
+                      {
+                        "name":"§l§8Infinity",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/stopsound @initiator",
+                          "/scoreboard players set difficulty timer_settings 3",
+                          "/execute as @initiator at @s run function timer/settings/difficulty",
+                          "/scoreboard players set animation_time timer_menu 70"
+                        ]
+                      },
+                      {
+                        "name":"",
+                        "commands":[
+                          "scoreboard players set action timer_menu 1",
+                          "/dialogue open @s @initiator menu_main"
+                        ]
+                    }
+                ]
+            },
+                        {
+                "scene_tag":"menu_difficulty_light",  // Difficulty Menu
+                "npc_name":"§lTimer Ultimate - Difficulty",
+                "text":"§l§6Choose your difficulty \n\n§l§cHard§4core§r (default) = The world is get lost after one death\n§l§cUltra §4Hard§r = Games without natural regeneration\n§l§7Infinity§r = One damage: It's all over!",
+                "on_close_commands": [
+                  "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
+                  "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
+                ],
+                "buttons":[
                     {
                         "name":"§l§cHard§4core",
                           "commands":[

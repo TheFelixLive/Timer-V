@@ -4,7 +4,7 @@
         "description": "Adds a timer to your world customized for your game mode.",
         "name": "§l§fTimer §7Ultimate§r",
         "uuid": "f05fdf1b-8866-4ac7-b0f5-646295e8485e",
-        "version": [ 4, 2, 0],
+        "version": [ 4, 2, 1],
         "min_engine_version": [1, 21, 41]
     },
     "modules": [
@@ -24,13 +24,13 @@
     ],
     "subpacks": [
     {
-      "folder_name": "s",
-      "name": "§l§gSurvival§r\n§9Description: Counts until the goal is defeated\n§b§lDate: 14.05.25§r -- §av.4.2.0",
+      "folder_name": "c",
+      "name": "§l§gCreative§r\n§9Description: Counts the playing time of each player\n§b§lDate: 05.05.25§r -- §av.4.1.0 §r-- §c§lNot§r Compatible with Hardcore Mode!",
       "memory_tier": 0
     },
     {
-      "folder_name": "c",
-      "name": "§l§gCreative§r\n§9Description: Counts the playing time of each player\n§b§lDate: 05.05.25§r -- §av.4.1.0",
+      "folder_name": "s",
+      "name": "§l§gSurvival§r\n§9Description: Counts until the goal is defeated\n§b§lDate: 21.05.25§r -- §av.4.2.1 §r-- Compatible with §cHardcore §4Mode!",
       "memory_tier": 0
     }
   ],

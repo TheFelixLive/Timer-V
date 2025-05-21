@@ -10,7 +10,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 if score help timer_settings matches 1 run tellraw @a[tag=trust_player_control] {"rawtext":[{"text":"§l§6[§eHelp§6]§r Run §g§l/function timer/settings/goal§r to select your new goal"}]}
 #execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 unless score custom_music timer_settings matches 1 run playsound beacon.power @a[tag=trust_player_control]
 #execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.reset_false @a[tag=trust_player_control]
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 run gamemode creative @a
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 if score is_hardcore timer_settings matches 0 run gamemode creative @a
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 run time set 0
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 unless score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 run weather clear 
 
@@ -25,7 +25,7 @@ execute if entity @s[tag=trust_player_control] if score shoud_count_down timer_s
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 if score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 unless score custom_music timer_settings matches 1 run playsound mob.vex.ambient @s ~ ~ ~ 3 0.8
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 if score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.reset_false_hardcore @s
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 if score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 run tellraw @s {"rawtext":[{"text":"§l§4[§cError§4]§r With §4Hardcore Mode§r the world is lost"}]}
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 if score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 run gamemode spectator @s
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 2 if score reset_type timer_settings matches 0..1 if score difficulty timer_settings matches 2.. if score reset_message_show timer_settings matches 1 if score is_hardcore timer_settings matches 0 run gamemode spectator @s
 
 
 
@@ -38,7 +38,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run gamerule dodaylightcycle true
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run gamerule doweathercycle true
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run inputpermission set @a movement enabled
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run gamemode 0 @a
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 if score is_hardcore timer_settings matches 0 run gamemode 0 @a
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run tellraw @a[tag=!type_afk] {"rawtext":[{"text":"§l§7[§fSystem§7]§r §l"},{"selector": "@s"},{"text":"§r §7continued§r the Timer"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run tellraw @a[tag=type_afk] {"rawtext":[{"text":"§l§7[§fSystem§7]§r Welcome back, §l"},{"selector": "@s"},{"text":"§r the timer has §7continued"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 if score do_count timer_settings matches 0 run title @s title §fTimer §7continued
@@ -47,7 +47,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.frozen @a
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 run gamerule dodaylightcycle false
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 run gamerule doweathercycle false
-execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 run gamemode spectator @a
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 if score is_hardcore timer_settings matches 0 run gamemode spectator @a
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 unless entity @s[tag=type_afk] run tellraw @a {"rawtext":[{"text":"§l§7[§fSystem§7]§r §l"},{"selector": "@s"},{"text":"§r §4paused§r the Timer"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 unless entity @s[tag=type_afk] run inputpermission set @a movement disabled
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 1 unless score speed_run timer_settings matches 1 if score do_count timer_settings matches 1 if entity @s[tag=type_afk] run inputpermission set @a[tag=!type_afk] movement disabled
@@ -76,6 +76,7 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 
 ### Start
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run tellraw @a {"rawtext":[{"text":"§l§7[§fSystem§7]§r The §2Challenge§r is starting..."}]}
+execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run tag @a[tag=on_start_challage] add on_start_challage_2
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run tag @r add on_start_challage
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 if score h timer_time matches 1000.. run tellraw @a {"rawtext":[{"text":"§l§6[§eError§6]§r 999 hours must not be exceeded when starting!"}]}
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 if score shoud_count_down timer_settings matches 1 if score h timer_time matches 1000.. run scoreboard players set h timer_time 999
@@ -101,8 +102,9 @@ execute if entity @s[tag=trust_player_control] if score mode timer_settings matc
 execute if entity @s[tag=trust_player_control] if score mode timer_settings matches 0 run scoreboard players set mode timer_settings 1
 
 ### Start bei random 2
-execute if entity @a[tag=on_start_challage] run function timer/settings/goal
-tag @a remove on_start_challage
+execute if entity @a[tag=on_start_challage, tag=!on_start_challage_2] run function timer/settings/goal
+execute if score is_hardcore timer_settings matches 0 run tag @a remove on_start_challage
+tag @a remove on_start_challage_2
 
 
 ### Reset

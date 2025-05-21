@@ -29,7 +29,7 @@ execute if entity @s[tag=trust_player_control] if entity @s[tag=timer_menu_targe
 ### Startup menu when mode is 0 (Main-Menu)
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 0 run tag @s add timer_menu_target
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 0 run summon npc ~~-20~~~ attacked timer_menu
-execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 0 run gamemode spectator
+execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 0 if score is_hardcore timer_settings matches 0 run gamemode spectator
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 0 run inputpermission set @s movement disabled
 
 # Forward menu to main_cmo
@@ -38,7 +38,8 @@ execute if entity @s[tag=trust_player_control] if score is_open timer_menu match
 ### Startup menu when mode is 1 (Game-Menu)
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score is_open timer_menu matches 0 if score mode timer_settings matches 1 run tag @s add timer_menu_target
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score is_open timer_menu matches 0 if score mode timer_settings matches 1 run summon npc ~~-20~~~ attacked timer_menu
-execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score is_open timer_menu matches 0 if score mode timer_settings matches 1 run gamemode spectator
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score is_open timer_menu matches 0 if score mode timer_settings matches 1 if score is_hardcore timer_settings matches 0 run gamemode spectator
+execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score is_open timer_menu matches 0 if score mode timer_settings matches 1 if score is_hardcore timer_settings matches 1 run function timer/control
 execute if entity @s[tag=trust_player_control] if score speed_run timer_settings matches 0 if score is_open timer_menu matches 0 if score mode timer_settings matches 1 run inputpermission set @s movement disabled
 
 # Forward menu to main_cmo
@@ -49,7 +50,7 @@ execute if entity @s[tag=trust_player_control] if score speed_run timer_settings
 ### Startup menu when mode is 2 (Reset-Menu; good ending)
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 2 if score reset_type timer_settings matches 2 run tag @s add timer_menu_target
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 2 if score reset_type timer_settings matches 2 run summon npc ~~-20~~~ attacked timer_menu
-execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 2 if score reset_type timer_settings matches 2 run gamemode spectator
+execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 2 if score reset_type timer_settings matches 2 if score is_hardcore timer_settings matches 0 run gamemode spectator
 execute if entity @s[tag=trust_player_control] if score is_open timer_menu matches 0 if score mode timer_settings matches 2 if score reset_type timer_settings matches 2 run inputpermission set @s movement disabled
 
 

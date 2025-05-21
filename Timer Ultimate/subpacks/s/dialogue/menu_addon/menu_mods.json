@@ -56,14 +56,14 @@
                       "scoreboard players set action timer_menu 1",
                       "execute if score enchant timer_addon matches 0.. run dialogue open @s @a[tag=timer_menu_target] menu_addon",
 
-                      "execute unless score enchant timer_addon matches 0.. run stopsound @initiator",
-                      "/execute unless score enchant timer_addon matches 0.. run playsound random.click @initiator",
+                      "execute unless score enchant timer_addon matches 0.. run stopsound @a[tag=timer_menu_target]",
+                      "/execute unless score enchant timer_addon matches 0.. run playsound random.click @a[tag=timer_menu_target]",
                       "execute unless score enchant timer_addon matches 0.. if score mode timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_main",
                       "execute unless score enchant timer_addon matches 0.. if score mode timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_game",
-                      "/execute unless score enchant timer_addon matches 0.. at @initiator if score mode timer_settings matches 0 unless score custom_music timer_settings matches 1 run playsound record.far @p ~ ~ ~ 0.3 1",
-                      "/execute unless score enchant timer_addon matches 0.. at @initiator if score mode timer_settings matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
-                      "/execute unless score enchant timer_addon matches 0.. at @initiator if score mode timer_settings matches 1 unless score custom_music timer_settings matches 1 run playsound record.wait @p ~ ~ ~ 0.5 1",
-                      "/execute unless score enchant timer_addon matches 0.. at @initiator if score mode timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_1 @p"
+                      "/execute unless score enchant timer_addon matches 0.. at @a[tag=timer_menu_target] if score mode timer_settings matches 0 unless score custom_music timer_settings matches 1 run playsound record.far @p ~ ~ ~ 0.3 1",
+                      "/execute unless score enchant timer_addon matches 0.. at @a[tag=timer_menu_target] if score mode timer_settings matches 0 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
+                      "/execute unless score enchant timer_addon matches 0.. at @a[tag=timer_menu_target] if score mode timer_settings matches 1 unless score custom_music timer_settings matches 1 run playsound record.wait @p ~ ~ ~ 0.5 1",
+                      "/execute unless score enchant timer_addon matches 0.. at @a[tag=timer_menu_target] if score mode timer_settings matches 1 if score custom_music timer_settings matches 1 run playsound timeru.music.menu_1 @p"
                     ]
                   }
               ]
