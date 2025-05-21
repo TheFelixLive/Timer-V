@@ -127,10 +127,10 @@ It's pretty self-explanatory, you choose a goal from the following and when you 
 - Raid
 
 In addition, it can be randomly generated (which is the default one and will be revealed [here](#survival-mode---survival)), survive a period of time (the [period](#start-time) have to be set first) or be indefinite, where you have to finish the timer while playing.
-You can also switch the goals by using:
+You can also switch the goals by using[^5]:
 ```mcfunction
 /function timer/settings/goal
-``` [^5]
+```
 
 
 ## Start-Time
@@ -149,10 +149,10 @@ Here you can change your difficulty and yes it does more than make mobs stronger
 | Died with any damage | | | | | Yes |
 | Notes | Not available in combination with Minecraft's native Hardcore mode | Not available in combination with Minecraft's native Hardcore mode | | | |
 
-You can also switch the difficultys by using:
+You can also switch the difficultys by using[^5]:
 ```mcfunction
 /function timer/settings/difficulty
-``` [^5]
+```
 
 > [!CAUTION]
 >  [*] Infinity ignores the Totem of Immortality, so don't feel so safe 
@@ -173,10 +173,10 @@ This is for toggling your Modification on or off and manage your installed Chall
 
 ## Dimension
 A quick way to start your adventure e.g. in the nether. _If you're tired of the overworld_
-You can also switch the dimensions by using:
+You can also switch the dimensions by using[^5]:
 ```mcfunction
 /function timer/settings/dimension
-``` [^5]
+```
 
 ![Image](https://github.com/user-attachments/assets/af78f566-f872-4308-928a-064c10be5720)
 
@@ -199,10 +199,10 @@ Now we have everything setup how we want, we can start the timer by using the me
 
 ![Image](https://github.com/user-attachments/assets/3e6c4238-fca3-455d-9bb2-65a07d96669c)
 
-OR running:
+OR running[^5]:
 ```mcfunction
 /function timer/control
-``` [^5]
+```
 
 Great! Our multiple day long adventure has begun.
 - All player are in surival mode
@@ -213,10 +213,10 @@ Great! Our multiple day long adventure has begun.
 ---
 
 ### Pause & more
-Now to pause[^3] the timer we can run the command again:
+Now to pause[^3] the timer we can run the command again[^5]:
 ```mcfunction
 /function timer/control
-``` [^5]
+```
 OR:
 - change the gamemode
 - go afk[^4]
@@ -241,10 +241,10 @@ This end occurs when you have met the goal requirements.
 
 As you can see in the images, all players change their game mode to Creative immediately after reaching the goal.
 The idea behind this ending is that you now revisit this world.
-If you want to choose another goal, you can return to the main menu via the menu (what a saying) and the following command:
+If you want to choose another goal, you can return to the main menu via the menu (what a saying) and the following command[^5]:
 ```mcfunction
 /function timer/control
-``` [^5]
+```
 
 ---
 
@@ -354,10 +354,10 @@ Those are marked in this guid with an admin popup ([see here as an example](#Con
 
 In **[survival mode](#survival-mode---initial-setup)** players without the tag can do nothing except pausing the timer with the [afk modification](#mods).
 
-To promote a player you can enter the following command, _remember to replace the player name_:
+To promote a player you can enter the following command[^5], _remember to replace the player name_:
 ```mcfunction
 /tag [player name] add trust_player_control
-``` [^5]
+```
 
 > [!WARNING]
 > Players with this tag also have the power to uninstall the timer as well!
