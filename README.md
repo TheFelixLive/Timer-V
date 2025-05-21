@@ -380,7 +380,7 @@ I know it's a little niche and unnecessary but as a (small) developer (if you ca
 
 [^1]: Only while using [local mode](#local-mode)
 [^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
-[^5]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
+[^3]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
 [^4]: Only when the [modification](#mods) AFK is activ
 [^5]: To perform functions you need cheats, which are not available in Minecraft's native Hardcore mode. 
 > All images were taken in-game with version v.1.21.73
