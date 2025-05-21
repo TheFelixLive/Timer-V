@@ -130,7 +130,7 @@ In addition, it can be randomly generated (which is the default one and will be 
 You can also switch the goals by using:
 ```mcfunction
 /function timer/settings/goal
-```[^5]
+``` [^5]
 
 
 ## Start-Time
@@ -152,7 +152,7 @@ Here you can change your difficulty and yes it does more than make mobs stronger
 You can also switch the difficultys by using:
 ```mcfunction
 /function timer/settings/difficulty
-```[^5]
+``` [^5]
 
 > [!CAUTION]
 >  [*] Infinity ignores the Totem of Immortality, so don't feel so safe 
@@ -167,7 +167,7 @@ This is for toggling your Modification on or off and manage your installed Chall
 |Description| As long as the timer is running, you will have night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
 |Limitations| | Requires a compatible resource pack | Pauses the timer for all |
 | Allowed in speedruns ||Yes |
-|Commands| `/function timer/mods/night_vision`[^5] || `/function timer/mods/afk`[^5]|
+|Commands| `/function timer/mods/night_vision` [^5] || `/function timer/mods/afk` [^5]|
 
 > Challenges are not pre installed! Check out the [Challenge Addon](#survival-mode---addons) for that.
 
@@ -176,7 +176,7 @@ A quick way to start your adventure e.g. in the nether. _If you're tired of the 
 You can also switch the dimensions by using:
 ```mcfunction
 /function timer/settings/dimension
-```[^5]
+``` [^5]
 
 ![Image](https://github.com/user-attachments/assets/af78f566-f872-4308-928a-064c10be5720)
 
@@ -202,7 +202,7 @@ Now we have everything setup how we want, we can start the timer by using the me
 OR running:
 ```mcfunction
 /function timer/control
-```[^5]
+``` [^5]
 
 Great! Our multiple day long adventure has begun.
 - All player are in surival mode
@@ -216,7 +216,7 @@ Great! Our multiple day long adventure has begun.
 Now to pause[^3] the timer we can run the command again:
 ```mcfunction
 /function timer/control
-```[^5]
+``` [^5]
 OR:
 - change the gamemode
 - go afk[^4]
@@ -244,7 +244,7 @@ The idea behind this ending is that you now revisit this world.
 If you want to choose another goal, you can return to the main menu via the menu (what a saying) and the following command:
 ```mcfunction
 /function timer/control
-```[^5]
+``` [^5]
 
 ---
 
@@ -274,13 +274,13 @@ In a nutshell, challenges add variety to the game. How big of an impact they hav
 | Name | Description | Limitations | Command |
 |--------|--------|--------|--------|
 | Movement | Lets you restrict your movement individually by choosing from [18 different aspects](#movement-restrictions) | Some restrictions are incompatible with some challenges | |
-| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x`[^5] |
-| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL`[^5] |
-| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant`[^5] |
-| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity`[^5] |
-| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice`[^5] |
-| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility`[^5]|
-| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder`[^5] |
+| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x` [^5] |
+| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL` [^5] |
+| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant` [^5] |
+| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity` [^5] |
+| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice` [^5] |
+| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility` [^5]|
+| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder` [^5] |
 
 ### Movement restrictions:
 There are in toal 18 different restrictions available and by default no one is active, so you have to `Add` them. When you find something interesting you get short description what it's restricts and you can choose between **punishing** and **disable**. The difference lies in the behavior if the restriction is violated. If **disabled**, you simply cannot perform this action at all, and if **punishing** is seleced, the entire challenge get canceled.
@@ -357,7 +357,7 @@ In **[survival mode](#survival-mode---initial-setup)** players without the tag c
 To promote a player you can enter the following command, _remember to replace the player name_:
 ```mcfunction
 /tag [player name] add trust_player_control
-```[^5]
+``` [^5]
 
 > [!WARNING]
 > Players with this tag also have the power to uninstall the timer as well!
