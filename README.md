@@ -205,7 +205,7 @@ OR running[^5]:
 ```
 
 Great! Our multiple day long adventure has begun.
-- All player are in surival mode
+- All player are in survival mode
 - All twecks, modifications & challenges are up and running
 - Day & Wetherciyle are now working
 - In case of a [random goal](#goals) it is now shown for the first time
@@ -349,13 +349,16 @@ No, it will uninstall automatically along with the timer.
 > [!Note]
 > Please share your experience with multiplayer [here](https://github.com/TheFelixLive/Timer-Ultimate/issues/new/choose) as it has not been tested extensively yet!
 
+![Minecraft 22 05 2025 18_41_02](https://github.com/user-attachments/assets/e2715c1d-7853-47cf-9225-969dcd3880e3)
+
 When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
 Those are marked in this guid with an admin popup ([see here as an example](#Control)).
 
 In **[survival mode](#survival-mode---initial-setup)** players without the tag can do nothing except pausing the timer with the [afk modification](#mods).
 
-To promote a player you can enter the following command[^5], _remember to replace the player name_:
+To promote a player you can use the menu (as shown in the pictures, only works in [survival](#survival-mode---initial-setup)) or enter the following command[^5], _remember to replace the player name_:
 ```mcfunction
+
 /tag [player name] add trust_player_control
 ```
 
@@ -382,5 +385,4 @@ I know it's a little niche and unnecessary but as a (small) developer (if you ca
 [^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
 [^3]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
 [^4]: Only when the [modification](#mods) AFK is activ
-[^5]: To perform functions you need cheats, which are not available in Minecraft's native Hardcore mode. 
-> All images were taken in-game with version v.1.21.73
+[^5]: To perform functions you need cheats, which are not available in Minecraft's native Hardcore mode.
