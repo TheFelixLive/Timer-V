@@ -5,7 +5,7 @@
           {
                 "scene_tag":"menu_help_text_htu_0",
                 "npc_name":"§lTimer Ultimate - How to use",
-                "text":"§3§lRights\n\n§r§8If at least one other player is playing, you will notice that he has fewer rights. This is to prevent the user from making incorrect settings, but to get around this, run [§l/tag [player name] add trust_player_control§r§8].",
+                "text":"§3§lRights\n\n§r§8If at least one other player is playing, you will notice that he has fewer rights. This is to prevent the user from making incorrect settings, but to get around this, run [§l/tag [player name] add trust_player_control§r§8] or use the permission menu.",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
@@ -14,7 +14,7 @@
                   {
                       "name":"§l§8Page 2 ->",
                       "commands":[
-                        "scoreboard players set action timer_menu 1","scoreboard players set action timer_menu 1",
+                        "scoreboard players set action timer_menu 1",
                         "/dialogue open @s @initiator menu_help_text_htu_1"
                       ]
                   },
@@ -26,6 +26,17 @@
                       "execute if score mode timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_help_look_1_page_1",
                       "execute if score mode timer_settings matches 2 run dialogue open @s @a[tag=timer_menu_target] menu_help_look_2_page_1"
                     ]
+                  },
+                  {
+                      "name":"§l§fTry it!",
+                      "commands":[
+                        "scoreboard players set action timer_menu 1",
+                       "/stopsound @initiator",
+                       "/playsound random.click @initiator",
+                       "/execute as @a[tag=timer_menu_target] at @s run scriptevent timeru:menu_permission",
+                       "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                       "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.permission @p"
+                      ]
                   }
                 ]
             },
@@ -308,8 +319,8 @@
             },
             {
                 "scene_tag":"menu_help_text_changelog",
-                "npc_name":"§lTimer U. - Changelog v.4.2.1",
-                "text":"§c§lBug fixes§r§8\n\n-Fixed a bug that caused the hardcore world to become unusable\n\n§7Note: A major update is currently being developed that will end the life support of this generation. You can find the progress on GitHub (in the contacts section)!\n\nLast Update 14.05.25",
+                "npc_name":"§lTimer U. - Changelog v.4.3.0",
+                "text":"§b§lNew features§r§8\n\n-Added Permission menu\n\n§a§lGeneral Changes§r§8\n\n-The music of goal, difficulty and the permission menu can now be changed via Custom Music\n\n§7Note: A major update is currently being developed that will end the life support of this generation. You can find the progress on GitHub (in the contacts section)!\n\nLast Update 22.05.25",
                 "on_close_commands": [
                     "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                     "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"

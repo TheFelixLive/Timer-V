@@ -13,7 +13,7 @@ let previousDimension = null;
 
 // Load and Save movements
 function load_movement_sd() {
-    let rawData = world.getDynamicProperty("timerv:save_data");
+    let rawData = world.getDynamicProperty("ca:movement_sd");
     if (!rawData) {
         return;
     }
@@ -21,7 +21,7 @@ function load_movement_sd() {
 }
 
 function write_movement_sd(sd) {
-  world.setDynamicProperty("timerv:save_data", JSON.stringify(sd));
+  world.setDynamicProperty("ca:movement_sd", JSON.stringify(sd));
 }
 
 

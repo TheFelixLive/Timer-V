@@ -85,6 +85,9 @@ timeru.music.menu.help
 timeru.music.menu.delete
 timeru.music.menu.addon
 timeru.music.menu.lang
+timeru.music.menu.permission
+timeru.music.menu.goal
+timeru.music.menu.difficulty
 
 timeru.menu.time.error
 timeru.menu.time.normal

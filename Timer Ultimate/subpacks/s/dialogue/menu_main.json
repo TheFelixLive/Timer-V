@@ -90,11 +90,16 @@
                         "name":"§5§lGoal",
                         "commands":[
                           "scoreboard players set action timer_menu 1",
+                          "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                          "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+
+                          "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.goal @p",
+
                           "/dialogue open @s @initiator menu_goal_1"
                         ]
                     },
                     {
-                        "name":"§l§aStart-Zeit",
+                        "name":"§l§aStart-Time",
                         "commands":[
                           "/stopsound @initiator",
                           "/playsound random.click @initiator",
@@ -129,6 +134,11 @@
                         "name":"§l§cDifficulty",
                         "commands":[
                           "scoreboard players set action timer_menu 1",
+                          "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                          "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+
+                          "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.difficulty @p",
+                        
                           "/execute if score is_hardcore timer_settings matches 0 run dialogue open @s @a[tag=timer_menu_target] menu_difficulty",
                           "/execute if score is_hardcore timer_settings matches 1 run dialogue open @s @a[tag=timer_menu_target] menu_difficulty_light"
                         ]
@@ -165,7 +175,7 @@
             {
                 "scene_tag":"menu_main_2", // Main Menü - Page 2
                 "npc_name":"§lTimer Ultimate - Mainmenu",
-                "text":"§l§6Choose an option§r\n\n§l§8Speed Run§r = Play Minecraft as quickly as you can!\n§5§lDimension§r = Choose a start dimension\n§l§9Dictionary§r = Detailed explanations for the Timer\n§l§cDelete§r = Erase all Data from the timer\n\n§r§7Page 2 of 2",
+                "text":"§l§6Choose an option§r\n\n§l§8Speed Run§r = Play Minecraft as quickly as you can!\n§5§lDimension§r = Choose a start dimension\n§l§9Dictionary§r = Detailed explanations for the Timer\n§l§6Permission§r = Manage the permission of a player\n§l§cDelete§r = Erase all Data from the timer\n\n§r§7Page 2 of 2",
                 "on_close_commands": [
                   "execute if score action timer_menu matches 0 run scoreboard players set id timer_menu 1", // Sent "close menu" to main_cmo
                   "execute if score action timer_menu matches 1 run scoreboard players set action timer_menu 0"
@@ -203,6 +213,17 @@
                        "/dialogue open @s @initiator menu_help_main",
                        "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
                        "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.help @p"
+                      ]
+                    },
+                    {
+                      "name":"§l§6Permission",
+                      "commands":[
+                       "scoreboard players set action timer_menu 1",
+                       "/stopsound @initiator",
+                       "/playsound random.click @initiator",
+                       "/execute as @a[tag=timer_menu_target] at @s run scriptevent timeru:menu_permission",
+                       "/execute at @initiator unless score custom_music timer_settings matches 1 run playsound music.menu @p ~ ~ ~ 0.5 1",
+                       "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu.permission @p"
                       ]
                     },
                     {
@@ -393,6 +414,9 @@
                         "name":"",
                         "commands":[
                           "scoreboard players set action timer_menu 1",
+                            "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                          "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                          "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
                           "/dialogue open @s @initiator menu_main"
                         ]
                     }
@@ -441,6 +465,9 @@
                         "name":"",
                         "commands":[
                           "scoreboard players set action timer_menu 1",
+                          "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                          "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                          "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
                           "/dialogue open @s @initiator menu_main"
                         ]
                     }
@@ -575,6 +602,9 @@
                       "name":"",
                       "commands":[
                         "scoreboard players set action timer_menu 1",
+                        "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                        "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                        "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
                         "/dialogue open @s @initiator menu_main"
                       ]
                     }
@@ -630,7 +660,10 @@
                       "name":"",
                       "commands":[
                         "scoreboard players set action timer_menu 1",
-                          "/dialogue open @s @initiator menu_main"
+                        "/execute if score custom_music timer_settings matches 1 run stopsound @a[tag=timer_menu_target]",
+                        "/execute if score custom_music timer_settings matches 1 run playsound random.click @a[tag=timer_menu_target]",
+                        "/execute at @initiator if score custom_music timer_settings matches 1 run playsound timeru.music.menu_0 @p",
+                        "/dialogue open @s @initiator menu_main"
                       ]
                     }
                 ]
