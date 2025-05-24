@@ -23,7 +23,8 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - [X] Survival Mode - initial setup _(since 10.5.25)_
 - [X] Survival Mode - Survival _(since 13.5.25)_
 - [X] Survival Mode - Endings  _(since 19.5.25)_
-- [ ] Hardcore-Support  _(work in progress)_
+- [X] Hardcore-Support  _(since 24.5.25)_
+- [ ] Custom Sounds _(work in progress)_
 - [ ] 1. Alpha _(comming later)_
 
 # Planned features
@@ -39,10 +40,10 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 | Time | Comes from v.4.1 | **improved** | |
 | Goals (s) | Comes from v.4.1 | **improved** | |
 | Control modes (c) | Comes from v.4.1 | **improved** | |
-| Modifications | Comes from v.4.1 | planed partly for `v.5.0.0` | The modifications "api" is no longer supported |
+| Modifications | Comes from v.4.1 | implemented - natively | The modifications "api" is no longer supported |
 | Difficulty (s) | Comes from v.4.1 | implemented | |
 | Dimension (s) | Comes from v.4.1 | _scraped_ | Is only addressed when someone really needs it |
 | Dictionary | Comes from v.4.1 | mostly _scraped_ | Only version information will remain available |
 | Speedrun (s) | Comes from v.4.1 | _scraped_ | Use the new designs for that  |
 
-> Last Update: 20.5.25
+> Last Update: 24.5.25

@@ -76,6 +76,28 @@ const goal_event = [
 ]
 
 // These lists ARE customizable
+const soundkeys = {
+  "music.menu.main": {
+      extern: "timer.main_menu",
+      native: "music.menu"
+  },
+  "menu.open": {
+      extern: "timer.menu.open",
+      native: "random.pop2"
+  },
+    "menu.close": {
+      extern: "timer.menu.close",
+      native: "" // When a Condition change occurs, the external audio is played in full and only after that the condition one plays. This is not available when the native version is used.
+  },
+  "condition.resumed": {
+    extern: "condition.resumed",
+    native: "step.amethyst_block"
+  },
+  "condition.paused": {
+    extern: "condition.paused",
+    native: "trial_spawner.close_shutter"
+  }
+};
 
 const timezone_list = [
   { name: "Baker Island Time", utc: -12, short: "BIT", location: ["Baker Island"] },
@@ -477,6 +499,8 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 -------------------------*/
 
   if (event.id === "timerv:menu") {
+    event.sourceEntity.playSound(translate_soundkeys("menu.open", event.sourceEntity));
+    event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
     return main_menu(event.sourceEntity)
   }
   
@@ -488,8 +512,9 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 world.beforeEvents.itemUse.subscribe(event => {
 	if (event.itemStack.typeId === "minecraft:stick") {
       system.run(() => {
-        event.source.playSound("random.pop2")
-	      main_menu(event.source)
+        event.source.playSound(translate_soundkeys("menu.open", event.source));
+        event.source.playMusic(translate_soundkeys("music.menu.main", event.source));
+	      return main_menu(event.source)
       });
 	}
 });
@@ -505,7 +530,8 @@ function gesture_jump() {
 
     if (player.isSneaking && player.isJumping) {
       if (now - lastUsed >= 100) { // 2 Sekunden Cooldown
-        player.playSound("random.pop2");
+        player.playSound(translate_soundkeys("menu.open", player));
+        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
         main_menu(player);
         gestureCooldowns.set(player.name, now);
       }
@@ -537,7 +563,8 @@ function gesture_nod() {
       lastTime = now;
     }
     else if (state === "lookingUp" && pitch > 13) {
-      player.playSound("random.pop2");
+      player.playSound(translate_soundkeys("menu.open", player));
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       main_menu(player);
 
       state = "idle";
@@ -590,8 +617,8 @@ function update_save_data(input) {
 function delete_player_save_data(player) {
   let save_data = load_save_data();
 
-  let updated_save_data = save_data.filter(entry => entry.id !== player.id);
-  update_save_data(updated_save_data);
+  save_data = save_data.filter(entry => entry.id !== player.id);
+  update_save_data(save_data);
 }
 
 
@@ -621,6 +648,7 @@ async function create_player_save_data (playerId, playerName) {
           id: playerId,
           show_td_as_mode: false,
           time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false},
+          custom_sounds: false,
           afk: false,
           counting_type: 0,
           time_day_actionsbar: false,
@@ -705,7 +733,7 @@ async function create_player_save_data (playerId, playerName) {
   if (save_data[player_sd_index].setup == 1) {
     let form = new ActionFormData();
     form.title("Setup guide");
-    form.body("Wellcome!\n comming soon");
+    form.body("Wellcome!\ncomming soon");
     form.button("");
 
     const showForm = async () => {
@@ -756,6 +784,11 @@ world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
 /*------------------------
  general helper functions
 -------------------------*/
+
+
+function translate_soundkeys(key, player) {
+  return soundkeys[key]?.[load_save_data()[save_data.findIndex(entry => entry.id === player.id)].custom_sounds ? "extern" : "native"];
+}
 
 // This function does not need a player (which also contains the position) but his ID
 function convert_local_to_global(player_id) {
@@ -1193,19 +1226,28 @@ function main_menu_actions(player, form) {
       if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1)) {
         if(form){form.button("Condition\n" + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
+          player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
           if (timedata.time.do_count === false) {
             timedata.time.do_count = true;
 
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
               t.sendMessage("§l§2[§aCondition§2]§r The timer will resume!");
-              t.playSound("step.amethyst_block");
+              if (t.id == player.id && save_data[player_sd_index].custom_sounds) {
+                player.queueMusic(translate_soundkeys("condition.resumed", t))
+              } else {
+                t.playSound(translate_soundkeys("condition.resumed", t));
+              }
             });
           } else {
             timedata.time.do_count = false;
 
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
               t.sendMessage("§l§4[§cCondition§4]§r The timer is stopped!");
-              t.playSound("trial_spawner.close_shutter");
+              if (t.id == player.id && save_data[player_sd_index].custom_sounds) {
+                player.queueMusic(translate_soundkeys("condition.resumed", t))
+              } else {
+                t.playSound(translate_soundkeys("condition.resumed", t));
+              }
             });
           }
           update_save_data(save_data);
@@ -1358,7 +1400,7 @@ function main_menu_actions(player, form) {
   }
 
   if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore) {
-    if(form){form.button("Challenge mode", save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+    if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? "§aon" : "§coff"), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
     });
@@ -1383,7 +1425,11 @@ function main_menu(player) {
 
   // Das Formular anzeigen und anhand des Indexes der sichtbaren Buttons die jeweilige Aktion ausführen
   form.show(player).then((response) => {
-    if (response.selection !== undefined && actions[response.selection]) {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+    if (actions[response.selection]) {
       actions[response.selection]();
     }
   });
@@ -1618,18 +1664,69 @@ function settings_difficulty(player) {
     }
   });
 
-  form.button(""); // Rück- oder Trenner-Button
+  form.button("");
 
   form.show(player).then((response) => {
     if (response.selection >= 0 && response.selection < visibleDifficulties.length) {
       let selected = visibleDifficulties[response.selection];
-      save_data[0].challenge.difficulty = selected.index; // Originalindex speichern
+      save_data[0].challenge.difficulty = selected.index;
       update_save_data(save_data);
     }
 
     if (response.selection >= 0) return main_menu(player);
   });
 }
+
+
+
+async function settings_cs_setup(player) {
+  const form = new MessageFormData();
+  const saveData = load_save_data();
+  const idx = saveData.findIndex(entry => entry.id === player.id);
+  player.playMusic("timeru.test", { fade: 0.5, loop: true})
+
+  form.title("Custom Sounds - Setup");
+  form.body("Do you hear a test sound?");
+  form.button2("§2Yes, there is a sound");
+  form.button1("§4No, silence");
+
+  const response = await form.show(player);
+  player.stopMusic()
+  if (response.selection == undefined) {
+    return;
+  }
+  const heardSound = (response.selection === 1);
+
+  if (heardSound) {
+    saveData[idx].custom_sounds = true;
+    update_save_data(saveData);
+  }
+
+  const resultForm = new ActionFormData();
+  resultForm.title("Custom Sounds - Setup");
+
+  if (heardSound) {
+    resultForm.body(
+      "The setup process is now complete.\n" +
+      "The timer will now use custom sounds from the resources pack."
+    );
+  } else {
+    resultForm.body(
+      "The setup process is now complete.\n" +
+      "Under current conditions, custom sounds cannot be played.\n\n" +
+      "§7Make sure you're using a compatible resource pack and you haven't muted the in-game music."
+    );
+  }
+
+  resultForm.button("");
+
+  const finalResp = await resultForm.show(player);
+  if (finalResp.selection === 0) {
+    settings_main(player);
+  }
+}
+
+
 
 
 
@@ -1996,6 +2093,19 @@ function settings_main(player) {
     update_save_data(save_data);
   });
 
+
+  // Button 5: Custom Sounds
+  form.button("Custom Sounds\n" + (save_data[player_sd_index].custom_sounds ? "§aon" : "§coff"), save_data[player_sd_index].custom_sounds ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
+  actions.push(() => {
+    if (save_data[player_sd_index].custom_sounds) {
+      save_data[player_sd_index].custom_sounds = false
+      update_save_data(save_data)
+      settings_main(player)
+    } else {
+      settings_cs_setup(player)
+    }
+  });
+
   // Button 5: Debug
   if (save_data[0].debug && save_data[player_sd_index].op) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
@@ -2070,6 +2180,8 @@ function debug_main(player) {
 
   form.body("DynamicPropertyTotalByteCount: "+world.getDynamicPropertyTotalByteCount() +" of 32767 bytes used")
   form.button("§e\"save_data\" Editor");
+  form.button("Play music");
+  form.button("Stop music");
   form.button("§aAdd player (save data)");
   form.button("§cRemove \"save_data\"");
   form.button("§cClose Server");
@@ -2077,10 +2189,16 @@ function debug_main(player) {
 
   form.show(player).then((response) => {
     if (response.selection == 0) return debug_sd_editor(player, () => debug_main(player), []);
-    if (response.selection == 1) return debug_add_fake_player(player);
-    if (response.selection == 2) {world.setDynamicProperty("timerv:save_data", undefined); close_world()}
-    if (response.selection == 3) {close_world()}
-    if (response.selection == 4) return settings_main(player);
+    if (response.selection == 1) {
+      player.playMusic("record.cat", { fade: 1, loop: true, volume: 1})
+    }
+    if (response.selection == 2) {
+      player.stopMusic()
+    }
+    if (response.selection == 3) return debug_add_fake_player(player);
+    if (response.selection == 4) {world.setDynamicProperty("timerv:save_data", undefined); close_world()}
+    if (response.selection == 5) {close_world()}
+    if (response.selection == 6) return settings_main(player);
   });
 }
 
