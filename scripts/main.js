@@ -82,61 +82,82 @@ const soundkeys = {
   "music.menu.main": {
     extern: "timer.music.menu.main",
     native: "music.menu",
-    
-    hardcore: {
-      extern: "timer.music.menu.main.hardcore",
-      native: "music.menu.hardcore"
+
+    global: {
+      extern: "timer.music.menu.main.global",
+      native: "music.overworld.cherry_grove"
+    },
+
+    challenge_progress_0: {
+      extern: "timer.music.menu.main.challenge_progress_0",
+      native: "record.far"
+    },
+
+    challenge_progress_1: {
+      extern: "timer.music.menu.main.challenge_progress_1",
+      native: "record.wait"
+    },
+
+    challenge_progress_2: {
+      extern: "timer.music.menu.main.challenge_progress_2",
+      native: "record.otherside"
     }
+    
   },
   "music.menu.difficulty": {
-      extern: "timer.music.menu.difficulty",
-      native: "music.menu"
+    extern: "timer.music.menu.difficulty",
+    native: "record.cat",
+
+    hardcore: {
+      extern: "timer.music.menu.difficulty.hardcore",
+      native: "music.game.nether"
+    }
   },
   "music.menu.goal": {
-      extern: "timer.music.menu.goal",
-      native: "music.menu"
+    extern: "timer.music.menu.goal",
+    native: "record.ward"
   },
   "music.menu.time": {
-      extern: "timer.music.menu.time",
-      native: "music.menu"
+    extern: "timer.music.menu.time",
+    native: "record.creator"
   },
   "music.menu.dictionary": {
-      extern: "timer.music.menu.dictionary",
-      native: "music.menu"
+    extern: "timer.music.menu.dictionary",
+    native: "music.menu"
   },
   "music.menu.settings": {
-      extern: "timer.music.menu.settings",
-      native: "music.menu"
+    extern: "timer.music.menu.settings",
+    native: "record.strad"
   },
   "music.menu.settings.debug": {
-      extern: "timer.music.menu.settings.debug",
-      native: "music.menu"
+    extern: "timer.music.menu.settings.debug",
+    native: "record.relic"
   },
   "music.menu.settings.time_zone": {
-      extern: "timer.music.menu.settings.time_zone",
-      native: "music.menu"
+    extern: "timer.music.menu.settings.time_zone",
+    native: "music.game.snowy_slopes"
   },
   "music.menu.settings.rights": {
-      extern: "timer.music.menu.settings.rights",
-      native: "music.menu"
-  },
+    extern: "timer.music.menu.settings.rights",
+    native: "music.overworld.snowy_slopes"
+},
   "music.menu.settings.actionbar": {
-      extern: "timer.music.menu.settings.actionbar",
-      native: "music.menu"
+    extern: "timer.music.menu.settings.actionbar",
+    native: "music.menu"
   },
   "music.menu.settings.actionbar.design": {
     extern: "timer.music.menu.settings.actionbar.design",
-    native: "music.menu"
+    native: "music.overworld.grove"
   },
 
   // Soundeffects
   "menu.open": {
-      extern: "timer.menu.open",
-      native: "random.pop2"
+    extern: "timer.menu.open",
+    native: "random.pop2"
   },
   "menu.close": {
-      extern: "timer.menu.close",
-      native: "" // When e.g. a Condition change occurs, the external audio is played in full and only after that the condition one plays. This is not available when the native version is used.
+    extern: "timer.menu.close",
+    native: "" // When e.g. a Condition change occurs, the external audio is played in full and only after that the condition one plays. This is not available when the native version is used.
   },
   "condition.resumed": {
     extern: "condition.resumed",
@@ -144,7 +165,7 @@ const soundkeys = {
   },
   "condition.paused": {
     extern: "condition.paused",
-    native: "trial_spawner.close_shutter"
+    native: "resonate.amethyst_block"
   }
 };
 
@@ -868,15 +889,33 @@ function getRelativeTime(diff) {
   return `a few seconds ago`;
 }
 
-function translate_soundkeys(key, player, world) {
+function translate_soundkeys(key, player) {
   const entry = soundkeys[key];
   if (!entry) return undefined;
 
-  const idx = load_save_data()[save_data.findIndex(e => e.id === player.id)];
+
+  const save_data = load_save_data()
+  const idx = save_data[save_data.findIndex(e => e.id === player.id)];
   const mode = idx.custom_sounds ? "extern" : "native";
 
-  if (world.is_hardcore && entry.hardcore && entry.hardcore[mode]) {
+  if (world.isHardcore && entry.hardcore) {
     return entry.hardcore[mode];
+  }
+
+  if (save_data[0].global.status && entry.global && !save_data[0].challenge.active) {
+    return entry.global[mode];
+  }
+
+  if (save_data[0].challenge.active && save_data[0].challenge.progress == 0 && entry.challenge_progress_0) {
+    return entry.challenge_progress_0[mode];
+  }
+
+  if (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && entry.challenge_progress_1) {
+    return entry.challenge_progress_1[mode];
+  }
+
+  if (save_data[0].challenge.active && save_data[0].challenge.progress == 2 && entry.challenge_progress_2) {
+    return entry.challenge_progress_2[mode];
   }
 
   return entry[mode];
@@ -1335,9 +1374,9 @@ function main_menu_actions(player, form) {
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
               t.sendMessage("§l§4[§cCondition§4]§r The timer is stopped!");
               if (t.id == player.id && save_data[player_sd_index].custom_sounds) {
-                player.queueMusic(translate_soundkeys("condition.resumed", t))
+                player.queueMusic(translate_soundkeys("condition.paused", t))
               } else {
-                t.playSound(translate_soundkeys("condition.resumed", t));
+                t.playSound(translate_soundkeys("condition.paused", t));
               }
             });
           }
@@ -2291,8 +2330,8 @@ function settings_main(player) {
  Dictionary
 -------------------------*/
 
-function convertUnixToDate(unixSeconds, utcOffset) {
-  const date = new Date(unixSeconds * 1000);
+function convertUnixToDate(unixSeconds, utcOffset, only_year) {
+  const date = new Date(unixSeconds*1000);
   const localDate = new Date(date.getTime() + utcOffset * 60 * 60 * 1000);
 
   // Format the date (YYYY-MM-DD HH:MM:SS)
@@ -2302,19 +2341,23 @@ function convertUnixToDate(unixSeconds, utcOffset) {
   const hours = String(localDate.getUTCHours()).padStart(2, '0');
   const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
   const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
-
-  return `${day}.${month}.${year} ${hours}:${minutes}:${seconds} (UTC${utcOffset >= 0 ? '+' : ''}${utcOffset})`;
+  
+  if (only_year) {
+    return year
+  } else {
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds} (UTC${utcOffset >= 0 ? '+' : ''}${utcOffset})`;
+  }
 }
 
 function dictionary_about_version(player) {
   let save_data = load_save_data()
   let form = new ActionFormData()
-  var year = new Date().getFullYear()
+  var year = convertUnixToDate(version_info.unix, save_data[0].utc, true)
   form.title("About")
   form.body(
     "Name: " + version_info.name + "\n" +
     "Version: " + version_info.version + "\n" +
-    "Build date: " + convertUnixToDate(version_info.unix, save_data[0].utc) +
+    "Build date: " + convertUnixToDate(version_info.unix, save_data[0].utc, false) +
 
     "\n\n§7© 2022-"+ (year > 2024? year : "2025") + " TheFelixLive. All rights reserved."
   )

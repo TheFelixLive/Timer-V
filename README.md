@@ -24,16 +24,16 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - [X] Survival Mode - Survival _(since 13.5.25)_
 - [X] Survival Mode - Endings  _(since 19.5.25)_
 - [X] Hardcore-Support  _(since 24.5.25)_
-- [ ] Custom Sounds _(work in progress)_
-- [ ] 1. Alpha _(comming later)_
+- [X] Custom Sounds _(since 26.05.25)_
+- [ ] 1. Alpha _(work in progress)_
 
 # Planned features
 | Category | Description | Status | Notes |
 |--------|--------|--------|--------|
-| Design | Players can create their own template | planed for `v.5.0.0` or `v.5.1.0` | |
-| Third Party goals | Creatures from a behavior pack can also be selected as a goal | planed for `v.5.0.0` or `v.5.1.0` | |
+| Universal Updater | Updates the save data of an older timer version | planed for `v.5.1.0` | |
+| Third Party goals | Creatures from a behavior pack can also be selected as a goal | planed for `v.5.1.0` or `v.5.2.0` | |
 | Statistics | Stores, for example, which blocks were mined or placed or how far someone has travelled | planed for `v.5.x.0` | |
-| Universal Updater | Updates the save data of an older timer version | planed for `v.5.x.0` | |
+| Design | Players can create their own template | planed for `v.5.x.0` | |
 | Search | A global search for all features of the timer | planed for `v.5.x.0` | |
 | Challenges (s) | Comes from v.4.1 | planed for `v.5.x.0` | |
 | Status (c) | Comes from v.4.1 | **improved** | |
@@ -46,4 +46,4 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 | Dictionary | Comes from v.4.1 | mostly _scraped_ | Only version information will remain available |
 | Speedrun (s) | Comes from v.4.1 | _scraped_ | Use the new designs for that  |
 
-> Last Update: 24.5.25
+> Last Update: 26.5.25
