@@ -3,8 +3,27 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 
 const version_info = {
   name: "Timer V",
-  version: "v.5.0.0 A4",
-  unix: 1747135586
+  version: "v.5.0.0",
+  build: "A004",
+  release_type: 0, // 0 = Development version (with debug); 1 = Beta version; 2 = Stable version
+  unix: 1747135586,
+  changelog: {
+    // new_features
+    new_features: [
+      "new_features 1",
+      "new_features 2",
+    ],
+    // general_changes
+    general_changes: [
+      "general_change 1",
+      "general_change 2",
+    ],
+    // bug_fixes
+    bug_fixes: [
+      "bug_fixes 1",
+      "bug_fixes 2",
+    ]
+  }
 }
 
 // These lists are NOT customizable
@@ -570,24 +589,22 @@ const design_template = [
 
 
 system.afterEvents.scriptEventReceive.subscribe(event=> {
-  if (event.id === "timerv:debug") {
-    let save_data = load_save_data();
-    let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
-  
-    let debugValue = event.message.toLowerCase() === "true";
-  
-    if (save_data[player_sd_index].op) {
+  if (save_data[player_sd_index].op) {
+    if (event.id === "timerv:debug") {
+      let save_data = load_save_data();
+    
+      let debugValue = event.message.toLowerCase() === "true";
       save_data[0].debug = debugValue;
       console.log("debug mode is now: " + save_data[0].debug);
       update_save_data(save_data);
-    } else {
-      console.log("Debug mode could not be changed because you do not have permission!");
     }
-  }
 
-  if (event.id === "timerv:reset") {
-    world.setDynamicProperty("timerv:save_data", undefined);
-    close_world()
+    if (event.id === "timerv:reset") {
+      world.setDynamicProperty("timerv:save_data", undefined);
+      close_world()
+    }
+  } else if (event.id === "timerv:debug" || event.id === "timerv:reset") {
+    player.sendMessage("§l§7[§fSystem§7]§r "+event.id+" could not be changed because you do not have permission!");
   }
 
 /*------------------------
@@ -685,10 +702,13 @@ function gesture_nod() {
 // Creates Save Data if not present
 let save_data = load_save_data()  
 if (!save_data) {
-    console.log("Creating save_data...");
     save_data = [
-        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: true, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: version_info.release_type == 0? true : false, update_message_unix: (version_info.unix + 15897600)  }
     ]
+    
+    if (save_data.debug) {
+      console.log("Creating save_data...");
+    }
 
     update_save_data(save_data)
 }
@@ -733,11 +753,9 @@ async function create_player_save_data (playerId, playerName) {
               break;
           }
       }
-  
-      if (shout_be_op) {
-          console.log(`Player ${playerName} (${playerId}) added with op=true!`);
-      } else {
-          console.log(`Player ${playerName} (${playerId}) added with op=false!`);
+
+      if (save_data[0].debug) {
+        console.log(`Player ${playerName} (${playerId}) added with op=${shout_be_op}!`);
       }
 
       save_data.push({
@@ -888,7 +906,6 @@ world.afterEvents.playerLeave.subscribe(({ playerId, playerName }) => {
   let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
   save_data[player_sd_index].last_unix = Math.floor(Date.now() / 1000)
   update_save_data(save_data);
-  console.log(playerName + " left!")
 });
 /*------------------------
  general helper functions
@@ -1215,8 +1232,6 @@ function disable_gamerules() {
 world.afterEvents.dataDrivenEntityTrigger.subscribe((eventData) => {
     const entity = eventData.entity;
     const triggerId = eventData.eventId;
-
-    console.log(`Entity ${entity.typeId} triggered: ${triggerId}`);
 
     let save_data = load_save_data()
     
@@ -2393,7 +2408,7 @@ function settings_main(player) {
  Dictionary
 -------------------------*/
 
-function convertUnixToDate(unixSeconds, utcOffset, only_year) {
+function convertUnixToDate(unixSeconds, utcOffset) {
   const date = new Date(unixSeconds*1000);
   const localDate = new Date(date.getTime() + utcOffset * 60 * 60 * 1000);
 
@@ -2405,25 +2420,83 @@ function convertUnixToDate(unixSeconds, utcOffset, only_year) {
   const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
   const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
   
-  if (only_year) {
-    return year
-  } else {
-    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds} (UTC${utcOffset >= 0 ? '+' : ''}${utcOffset})`;
-  }
+  return {
+    day: day,
+    month: month,
+    year: year,
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds,
+    utcOffset: utcOffset
+  };
 }
 
 function dictionary_about_version(player) {
   let save_data = load_save_data()
   let form = new ActionFormData()
-  var year = convertUnixToDate(version_info.unix, save_data[0].utc, true)
+  let actions = []
+  let build_date = convertUnixToDate(version_info.unix, save_data[0].utc);
   form.title("About")
   form.body(
     "Name: " + version_info.name + "\n" +
-    "Version: " + version_info.version + "\n" +
-    "Build date: " + convertUnixToDate(version_info.unix, save_data[0].utc, false) +
+    "Version: " + version_info.version + " (" + version_info.build + ")\n" +
+    "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
+    "Build date: " + `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})` +
 
-    "\n\n§7© 2022-"+ (year > 2024? year : "2025") + " TheFelixLive. All rights reserved."
+    "\n\n§7© 2022-"+ build_date.year + " TheFelixLive. All rights reserved."
   )
+
+  if (version_info.changelog.new_features.length > 0 || version_info.changelog.general_changes.length > 0 || version_info.changelog.bug_fixes.length > 0) {
+    form.button("§9Changelog");
+    actions.push(() => {
+      dictionary_about_version_changelog(player, build_date)
+    });
+  }
+
+  form.button("");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+    return settings_main(player);
+  });
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
+    }
+  });
+}
+
+function dictionary_about_version_changelog(player, build_date) {
+  let form = new ActionFormData()
+  form.title("Changelog - "+version_info.version)
+  let bodyText = "";
+  if (version_info.changelog.new_features.length > 0) {
+    bodyText += "§l§bNew Features§r\n\n";
+    version_info.changelog.new_features.forEach(feature => {
+      bodyText += `- ${feature}\n\n`;
+    });
+  }
+
+  if (version_info.changelog.general_changes.length > 0) {
+    bodyText += "§l§aGeneral Changes§r\n\n";
+    version_info.changelog.general_changes.forEach(change => {
+      bodyText += `- ${change}\n\n`;
+    });
+  }
+
+  if (version_info.changelog.bug_fixes.length > 0) {
+    bodyText += "§l§cBug fixes§r\n\n";
+    version_info.changelog.bug_fixes.forEach(fix => {
+      bodyText += `- ${fix}\n\n`;
+    });
+  }
+
+  bodyText += `§7As of ${build_date.day}.${build_date.month}.${build_date.year} (`+ getRelativeTime(Date.now()/1000 - version_info.unix) + " ago)";
+
+  form.body(bodyText);
   form.button("");
 
   form.show(player).then((response) => {
@@ -2431,8 +2504,7 @@ function dictionary_about_version(player) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
     if (response.selection == 0) {
-      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-      return settings_main(player);
+      dictionary_about_version(player)
     }
   });
 }
@@ -2712,71 +2784,79 @@ function settings_rights_main(player) {
 }
 
 function settings_rights_data(viewing_player, selected_save_data) {
+  let save_data = load_save_data()
   let selected_player = world.getAllPlayers().find(player => player.id == selected_save_data.id);
-  let online_text = "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix) + " ago)§r"
+  let form = new ActionFormData();
 
-  if (selected_player) {
-    let memory_text;
-    switch (selected_player.clientSystemInfo.memoryTier) {
-        case 0:
-            memory_text = "Client Total Memory: Under 1.5 GB (Super Low)"
-            break;
+  let body_text = "";
 
-        case 1:
-          memory_text = "Client Total Memory: 1.5 - 2.0 GB (Low)";
-            break;
-
-        case 2:
-            memory_text = "Client Total Memory: 2.0 - 4.0 GB (Mid)"
-            break;
-
-        case 3:
-            memory_text = "Client Total Memory: 4.0 - 8.0 GB (High)"
-            break;
-
-        case 4:
-            memory_text = "Client Total Memory: Over 8.0 GB (Super High)"
-            break;
-
-        default:
-            break;
-    }
-    let input_text;
-    switch (selected_player.inputInfo.lastInputModeUsed) {
-        case "Gamepad":
-          input_text = "Input: Gamepad";
-            break;
-
-        case "KeyboardAndMouse":
-          input_text = "Input: Mouse & Keyboard";
-            break;
-
-        case "MotionController":
-          input_text = "Input: Motion controller"
-            break;
-
-        case "Touch":
-          input_text = "Input: Touch"
-            break;
-
-        default:
-            break;
-    }
-    if (load_save_data()[0].debug) {
-      online_text = "Online: yes\nPlatform: "+ selected_player.clientSystemInfo.platformType +"\n"+memory_text+"\n"+input_text
-    } else {
-      online_text = "Online: yes"
-    }
-    
+  body_text += "Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n";
+  if (save_data[0].debug) {
+    body_text += "Language: " + ["English" /* Placeholder! */][selected_save_data.lang] + "\n";
   }
 
-  let form = new ActionFormData();
+  if (selected_player) {
+      if (save_data[0].debug) {
+          let memory_text = "";
+          switch (selected_player.clientSystemInfo.memoryTier) {
+              case 0:
+                  memory_text = "Client Total Memory: Under 1.5 GB (Super Low)";
+                  break;
+              case 1:
+                  memory_text = "Client Total Memory: 1.5 - 2.0 GB (Low)";
+                  break;
+              case 2:
+                  memory_text = "Client Total Memory: 2.0 - 4.0 GB (Mid)";
+                  break;
+              case 3:
+                  memory_text = "Client Total Memory: 4.0 - 8.0 GB (High)";
+                  break;
+              case 4:
+                  memory_text = "Client Total Memory: Over 8.0 GB (Super High)";
+                  break;
+          }
+
+          let input_text = "";
+          switch (selected_player.inputInfo.lastInputModeUsed) {
+              case "Gamepad":
+                  input_text = "Input: Gamepad";
+                  break;
+              case "KeyboardAndMouse":
+                  input_text = "Input: Mouse & Keyboard";
+                  break;
+              case "MotionController":
+                  input_text = "Input: Motion controller";
+                  break;
+              case "Touch":
+                  input_text = "Input: Touch";
+                  break;
+          }
+
+          body_text += "Online: yes\n";
+          body_text += "Platform: " + selected_player.clientSystemInfo.platformType + "\n";
+          body_text += memory_text + "\n";
+          body_text += input_text + "\n";
+
+      } else {
+          body_text += "Online: yes\n";
+      }
+
+  } else {
+      body_text += "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix) + " ago)§r\n";
+  }
+
+  body_text += "Live actionbar: " + render_live_actionbar(selected_save_data, false);
+
+  if (selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active) {
+      body_text += "§r§f\n\n§7Note: This save data cannot be managed because it is needed by the system due to the Challenge Mode.\n\n";
+  } else {
+      body_text += "\n\n";
+  }
+
+  form.body(body_text);
   let actions = [];
-  let save_data = load_save_data()
   form.title("Edit "+ selected_save_data.name +"'s permission");
 
-  form.body("Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n" + "Language: " + ["English" /* Placeholder! */][selected_save_data.lang] + "\n" + online_text + "\n" + "Live actionbar: " + render_live_actionbar(selected_save_data, false) + ((selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active) ? "§r§f\n\n§7Note: This save data cannot be managed because it is needed by the system due to the Challenge Mode.\n\n" : "\n\n")
-  );
 
   if (selected_save_data.name !== viewing_player.name) {
     if (selected_save_data.op) {
