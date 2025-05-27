@@ -70,8 +70,8 @@ const goal_event = [
   },
   {
     name: "Raid",
-    icon: "textures/items/clock_item",
-    condition: () => false
+    icon: "textures/ui/raid_omen_effect",
+    condition: () => true
   }
 ]
 
@@ -81,48 +81,58 @@ const soundkeys = {
   // Music
   "music.menu.main": {
     extern: "timer.music.menu.main",
+    extern_l: "timeru.music.menu_0",
     native: "music.menu",
 
     global: {
       extern: "timer.music.menu.main.global",
+      extern_l: "timeru.music.menu_0",
       native: "music.overworld.cherry_grove"
     },
 
     challenge_progress_0: {
       extern: "timer.music.menu.main.challenge_progress_0",
+      extern_l: "timeru.music.menu_0",
       native: "record.far"
     },
 
     challenge_progress_1: {
       extern: "timer.music.menu.main.challenge_progress_1",
+      extern_l: "timeru.music.menu_1",
       native: "record.wait"
     },
 
     challenge_progress_2: {
       extern: "timer.music.menu.main.challenge_progress_2",
+      extern_l: "timeru.music.menu_3",
       native: "record.otherside"
     }
     
   },
   "music.menu.difficulty": {
     extern: "timer.music.menu.difficulty",
+    extern_l: "timeru.music.menu.difficulty",
     native: "record.cat",
 
     hardcore: {
       extern: "timer.music.menu.difficulty.hardcore",
+      extern_l: "timeru.music.menu.difficulty",
       native: "music.game.nether"
     }
   },
   "music.menu.goal": {
     extern: "timer.music.menu.goal",
+    extern_l: "timeru.music.menu.goal",
     native: "record.ward"
   },
   "music.menu.time": {
     extern: "timer.music.menu.time",
+    extern_l: "timeru.music.menu.time",
     native: "record.creator"
   },
   "music.menu.dictionary": {
     extern: "timer.music.menu.dictionary",
+    extern_l: "timeru.music.menu.help",
     native: "music.menu"
   },
   "music.menu.settings": {
@@ -139,6 +149,7 @@ const soundkeys = {
   },
   "music.menu.settings.rights": {
     extern: "timer.music.menu.settings.rights",
+    extern_l: "timeru.music.menu.permission",
     native: "music.overworld.snowy_slopes"
 },
   "music.menu.settings.actionbar": {
@@ -153,6 +164,7 @@ const soundkeys = {
   // Soundeffects
   "menu.open": {
     extern: "timer.menu.open",
+    extern_l: "timeru.menu.pop",
     native: "random.pop2"
   },
   "menu.close": {
@@ -160,12 +172,29 @@ const soundkeys = {
     native: "" // When e.g. a Condition change occurs, the external audio is played in full and only after that the condition one plays. This is not available when the native version is used.
   },
   "condition.resumed": {
-    extern: "condition.resumed",
+    extern: "timer.condition.resumed",
+    extern_l: "timeru.continue",
     native: "step.amethyst_block"
   },
   "condition.paused": {
-    extern: "condition.paused",
+    extern: "timer.condition.paused",
+    extern_l: "timeru.frozen",
     native: "resonate.amethyst_block"
+  },
+  "challenge.starts": {
+    extern: "timer.condition.starts",
+    extern_l: "timeru.reset_true",
+    native: "random.levelup"
+  },
+  "challenge.end.good": {
+    extern: "timer.challenge.end.good",
+    extern_l: "timeru.win",
+    native: "random.toast"
+  },
+  "challenge.end.bad": {
+    extern: "timer.challenge.end.bad",
+    extern_l: "timeru.type_death.target",
+    native: "horn.call.7"
   }
 };
 
@@ -467,11 +496,12 @@ const design_template = [
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "Your time ->\n§l§7" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: true, value: " ", position: "after" } },
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+          { type: "text", text: " <-" }
       ]},
       // Same goes for here: the "s" marker isn't used here, but it works perfectly.
       { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
@@ -490,7 +520,6 @@ const design_template = [
     name: "Legacy design",
     content: [
       { type: "ui", blocks: [
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
@@ -498,7 +527,6 @@ const design_template = [
       ]},
       { type: "normal", blocks: [
           { type: "text", text: "§b§l" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
@@ -506,7 +534,6 @@ const design_template = [
       ]},
       { type: "paused", blocks: [
           { type: "text", text: "§bTimer V§r is paused\n§l" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
@@ -515,7 +542,6 @@ const design_template = [
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "§bTimer V§r is paused\n§l" },
-          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
@@ -718,7 +744,7 @@ async function create_player_save_data (playerId, playerName) {
           id: playerId,
           show_td_as_mode: false,
           time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false},
-          custom_sounds: false,
+          custom_sounds: 0,
           afk: false,
           counting_type: 0,
           time_day_actionsbar: false,
@@ -754,7 +780,12 @@ async function create_player_save_data (playerId, playerName) {
     update_save_data(save_data)
   }
 
-  // Setup popup
+  
+  /*------------------------
+  Startup popups
+  -------------------------*/
+
+
   if (save_data[player_sd_index].setup == 2) {
     let form = new ActionFormData();
     form.title("Setup guide");
@@ -872,21 +903,21 @@ function getRelativeTime(diff) {
   let years = Math.floor(days / 365);
 
   if (years > 0) {
-    return `${years} year${years > 1 ? 's' : ''} ago`;
+    return `${years} year${years > 1 ? 's' : ''}`;
   }
   if (months > 0) {
-    return `${months} month${months > 1 ? 's' : ''} ago`;
+    return `${months} month${months > 1 ? 's' : ''}`;
   }
   if (days > 0) {
-    return `${days} day${days > 1 ? 's' : ''} ago`;
+    return `${days} day${days > 1 ? 's' : ''}`;
   }
   if (hours > 0) {
-    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    return `${hours} hour${hours > 1 ? 's' : ''}`;
   }
   if (minutes > 0) {
-    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return `${minutes} minute${minutes > 1 ? 's' : ''}`;
   }
-  return `a few seconds ago`;
+  return `a few seconds`;
 }
 
 function translate_soundkeys(key, player) {
@@ -896,7 +927,15 @@ function translate_soundkeys(key, player) {
 
   const save_data = load_save_data()
   const idx = save_data[save_data.findIndex(e => e.id === player.id)];
-  const mode = idx.custom_sounds ? "extern" : "native";
+  let mode;
+
+  if (idx.custom_sounds == 1) {
+    mode = "extern"
+  } else if (idx.custom_sounds == 2 && entry["extern_l"]) {
+    mode = "extern_l"
+  } else {
+    mode = "native";
+  }
 
   if (world.isHardcore && entry.hardcore) {
     return entry.hardcore[mode];
@@ -1013,7 +1052,7 @@ function start_cm_timer() {
   }
 
   world.getAllPlayers().forEach(t => {
-    t.playSound("random.levelup");
+    t.playSound(translate_soundkeys("challenge.starts", t));
   });
 
   update_save_data(save_data);
@@ -1039,7 +1078,7 @@ function finished_cm_timer(rating, message) {
   world.sendMessage({ rawtext: rawArray });
 
   world.getAllPlayers().forEach(t => {
-    t.playSound(rating == 1? "random.toast" : "horn.call.7");
+    t.playSound(translate_soundkeys(rating == 1? "challenge.end.good" : "challenge.end.bad", t));
     t.onScreenDisplay.setTitle(rating == 1? "§aYou Won!" : "§4Challenge has ended!");
   });
 
@@ -1098,7 +1137,7 @@ function check_health(configuration) {
       if (save_data[0].challenge.difficulty == 4) {
           player.applyDamage(health.currentValue - 1)
       }
-    } else if (configuration == "resistance") {
+    } else if (configuration == "resistance" && health.currentValue > 0) {
       health.resetToMaxValue();
     }
   }
@@ -1107,8 +1146,6 @@ function check_health(configuration) {
 
 function render_task_list(player) {
   let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "ui");
   const lines = [];
 
   // difficulty
@@ -1137,11 +1174,11 @@ function render_task_list(player) {
   // goals pointer 2 = event/time-based
   if (save_data[0].challenge.goal.pointer === 2 && save_data[0].challenge.goal.event_pos === 0) {
     // survive timer only
-    lines.push({ text: "- §aSurvive:§f " + apply_design(design, save_data[0].time.timer) + "\n" });
+    lines.push({ text: "- §aSurvive:§f " + getRelativeTime(save_data[0].time.timer / 20) + "\n" });
   } else {
     // time available
     if (save_data[0].counting_type === 1) {
-      lines.push({ text: "- §aTime available:§f " + apply_design(design, save_data[0].time.timer) + "§r§f\n" });
+      lines.push({ text: "- §aTime available:§f " + getRelativeTime(save_data[0].time.timer / 20) + "§r§f\n" });
     }
     // goal event
     if (save_data[0].challenge.goal.pointer === 2) {
@@ -1175,10 +1212,18 @@ function disable_gamerules() {
   world.gameRules.doWeatherCycle = false;
   world.gameRules.doMobSpawning = false;
 }
+world.afterEvents.dataDrivenEntityTrigger.subscribe((eventData) => {
+    const entity = eventData.entity;
+    const triggerId = eventData.eventId;
 
-/*------------------------
- Startup popups
--------------------------*/
+    console.log(`Entity ${entity.typeId} triggered: ${triggerId}`);
+
+    let save_data = load_save_data()
+    
+    if (entity.typeId === "minecraft:villager_v2" && triggerId === "minecraft:start_celebrating" && save_data[0].challenge.progress == 1 && save_data[0].time.do_count && save_data[0].challenge.goal.pointer == 2 && save_data[0].challenge.goal.event_pos == 1) {
+      finished_cm_timer(1, [{text: "You did it! You prevented the Raid and protected the village like a hero. Good Game!"}])
+    }
+});
 
 world.afterEvents.entityDie.subscribe(event => {
   const save_data = load_save_data();
@@ -1202,8 +1247,6 @@ world.afterEvents.entityDie.subscribe(event => {
   if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count && save_data[0].challenge.goal.pointer == 1 && event.deadEntity?.typeId === ("minecraft:" + goal_entity[save_data[0].challenge.goal.entity_pos].id)) {
     finished_cm_timer(1, [{text: "You did it! You defeated the "}, {translate: ("entity."+goal_entity[save_data[0].challenge.goal.entity_pos].id+".name")}, {text: " in an epic battle! Good Game!"}])
   }
-
-
 });
 
 
@@ -1362,7 +1405,7 @@ function main_menu_actions(player, form) {
 
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
               t.sendMessage("§l§2[§aCondition§2]§r The timer will resume!");
-              if (t.id == player.id && save_data[player_sd_index].custom_sounds) {
+              if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
                 player.queueMusic(translate_soundkeys("condition.resumed", t))
               } else {
                 t.playSound(translate_soundkeys("condition.resumed", t));
@@ -1373,7 +1416,7 @@ function main_menu_actions(player, form) {
 
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
               t.sendMessage("§l§4[§cCondition§4]§r The timer is stopped!");
-              if (t.id == player.id && save_data[player_sd_index].custom_sounds) {
+              if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
                 player.queueMusic(translate_soundkeys("condition.paused", t))
               } else {
                 t.playSound(translate_soundkeys("condition.paused", t));
@@ -1448,7 +1491,7 @@ function main_menu_actions(player, form) {
 
         challenge.progress = 0;
         update_save_data(save_data);
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 });
+        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 , loop: true});
         main_menu(player);
       });
     }
@@ -1476,13 +1519,13 @@ function main_menu_actions(player, form) {
       );
 
       actions.push(() => {
-        player.playMusic(translate_soundkeys("music.menu.goal", player), { fade: 0.3 });
+        player.playMusic(translate_soundkeys("music.menu.goal", player), { fade: 0.3 , loop: true});
         settings_goals_main(player);
       });
 
       if (form) form.button("§cDifficulty\n" + difficulty[challenge.difficulty].name + "", difficulty[challenge.difficulty].icon);
       actions.push(() => {
-        player.playMusic(translate_soundkeys("music.menu.difficulty", player), { fade: 0.3 });
+        player.playMusic(translate_soundkeys("music.menu.difficulty", player), { fade: 0.3 , loop: true});
         settings_difficulty(player);
       });
     }
@@ -1553,11 +1596,12 @@ function main_menu_actions(player, form) {
 
 function main_menu(player) {
   let form = new ActionFormData();
+  let save_data = load_save_data()
   form.title("Main menu");
 
   let actions = main_menu_actions(player, form);
 
-  if (actions.length == 1) return actions[0]();
+  if (actions.length == 1 && !save_data[0].challenge.active || (actions.length == 1 && save_data[0].challenge.active && save_data[0].challenge.progress !== 1)) return actions[0]();
 
   // Das Formular anzeigen und anhand des Indexes der sichtbaren Buttons die jeweilige Aktion ausführen
   form.show(player).then((response) => {
@@ -1619,9 +1663,8 @@ function splash_challengemode(player) {
       
       save_data[0].challenge.active = save_data[0].challenge.active ? false : true,
       update_save_data(save_data);
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
     }
-
-    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
     return main_menu(player)
   });
 }
@@ -1669,16 +1712,16 @@ function splash_globalmode(player) {
     if (save_data[0].global.last_player_id !== player.id) {
       form.button("§eShare yours instead");
       actions.push(() => {
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
         convert_global_to_local(true);
         convert_local_to_global(player.id);
+        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       });
     }
 
     form.button("§cDisable");
     actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       convert_global_to_local(true);
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
     });
 
 
@@ -1686,8 +1729,8 @@ function splash_globalmode(player) {
   } else {
     form.button("§aEnable");
     actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       convert_local_to_global(player.id)
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
     });
   }
 
@@ -1781,7 +1824,7 @@ function settings_start_time(player) {
       }
     }
     update_save_data(save_data);
-    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 });
+    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 , loop: true});
     return main_menu(player)
   });
 }
@@ -1834,52 +1877,71 @@ function settings_difficulty(player) {
 
 
 async function settings_cs_setup(player) {
-  const form = new MessageFormData();
   const saveData = load_save_data();
-  const idx = saveData.findIndex(entry => entry.id === player.id);
-  player.playMusic("timeru.test", { fade: 0.5, loop: true})
+  const idx = saveData.findIndex(e => e.id === player.id);
 
-  form.title("Custom Sounds - Setup");
-  form.body("Do you hear a test sound?");
-  form.button2("§2Yes, there is a sound");
-  form.button1("§4No, silence");
+  const HEADER = "The setup process is now complete.";
+  const tests = [
+    {
+      soundKey: "timer.test",
+      saveValue: 1,
+      resultMsg: `${HEADER}\nThe timer will now use custom sounds from the resource pack.`
+    },
+    {
+      soundKey: "timeru.test",
+      saveValue: 2,
+      resultMsg: `${HEADER}\nYour resources pack only supports legacy custom music, so not all timer sounds can be replaced.`
+    }
+  ];
 
-  const response = await form.show(player);
-  player.stopMusic()
-  if (response.selection == undefined) {
-    return;
+  let heard = false;
+  let finalMsg = `${HEADER}\nUnder current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.`;
+
+  for (const { soundKey, saveValue, resultMsg } of tests) {
+    player.playMusic(soundKey, { fade: 0.5 });
+    const resp = await new MessageFormData()
+      .title("Custom Sounds - Setup")
+      .body("Do you hear a test sound" + (saveValue == 2? " now" : "") + "?")
+      .button2("§2Yes, there is a sound")
+      .button1("§4No, silence")
+      .show(player);
+
+    if (resp.canceled) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+    if (resp.selection === 1) {
+      saveData[idx].custom_sounds = saveValue;
+      update_save_data(saveData);
+      finalMsg = resultMsg;
+      heard = true;
+      break;
+    }
   }
-  const heardSound = (response.selection === 1);
 
-  if (heardSound) {
-    saveData[idx].custom_sounds = true;
+  if (!heard) {
+    saveData[idx].custom_sounds = 0;
     update_save_data(saveData);
   }
 
-  const resultForm = new ActionFormData();
-  resultForm.title("Custom Sounds - Setup");
-  player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-
-  if (heardSound) {
-    resultForm.body(
-      "The setup process is now complete.\n" +
-      "The timer will now use custom sounds from the resources pack."
-    );
-  } else {
-    resultForm.body(
-      "The setup process is now complete.\n" +
-      "Under current conditions, custom sounds cannot be played.\n\n" +
-      "§7Make sure you're using a compatible resource pack and you haven't muted the in-game music."
-    );
-  }
-
-  resultForm.button("");
-
-  const finalResp = await resultForm.show(player);
-  if (finalResp.selection === 0) {
-    settings_main(player);
-  }
+  player.playMusic(translate_soundkeys("music.menu.settings", player), {
+    fade: 0.3,
+    loop: true
+  });
+  await new ActionFormData()
+    .title("Custom Sounds - Setup")
+    .body(finalMsg)
+    .button("")
+    .show(player)
+    .then((response) => {
+      if (response.canceled) {
+        return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      }
+      settings_main(player);
+    });
 }
+
+
 
 
 
@@ -1981,7 +2043,7 @@ function settings_goals_select(player, type) {
     );
     const labelText = { 
         rawtext: [
-            {
+            isEvent? { text: goal.name } : {
                 translate: ("entity."+goal.id+".name"),
             },
             { text: currentGoal === realIndex ? "\n§2(selected)" : "" },
@@ -2208,7 +2270,7 @@ function settings_main(player) {
   form.body("Select an option!");
 
   // Button 0: Type
-  if (!save_data[0].global.status || ((save_data[0].global.status && save_data[player_sd_index].op) || (save_data[0].challenge.active && save_data[0].challenge.progress == 0))) {
+  if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
     form.button("Type\n§9" + timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon);
     actions.push(() => settings_type(player));
   }
@@ -2227,14 +2289,14 @@ function settings_main(player) {
     })(), "textures/ui/op");
     actions.push(() => {
       settings_rights_main(player)
-      player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3 })
+      player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3 , loop: true})
     });  
   }
 
   // Button 2: Actionsbar
   form.button("Actionsbar\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
   actions.push(() => {
-    player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 })
+    player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 , loop: true})
     settings_actionbar(player)
   });
 
@@ -2257,7 +2319,7 @@ function settings_main(player) {
       form.button("Time zone\n§9"+zone_text, "textures/ui/world_glyph_color_2x")
     };
     actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.settings.time_zone", player), { fade: 0.3 })
+      player.playMusic(translate_soundkeys("music.menu.settings.time_zone", player), { fade: 0.3 , loop: true})
       settings_time_zone(player, 0);
     });
   }
@@ -2273,16 +2335,17 @@ function settings_main(player) {
     }
     player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     update_save_data(save_data);
+    settings_main(player);
   });
 
 
   // Button 5: Custom Sounds
-  form.button("Custom Sounds\n" + (save_data[player_sd_index].custom_sounds ? "§aon" : "§coff"), save_data[player_sd_index].custom_sounds ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
+  form.button("Custom Sounds\n" + (save_data[player_sd_index].custom_sounds > 0 ? save_data[player_sd_index].custom_sounds == 1 ? "§aon" : "§aon (legacy)" : "§coff"), save_data[player_sd_index].custom_sounds > 0 ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
   actions.push(() => {
-    if (save_data[player_sd_index].custom_sounds) {
-      save_data[player_sd_index].custom_sounds = false
+    if (save_data[player_sd_index].custom_sounds > 0) {
+      save_data[player_sd_index].custom_sounds = 0
       update_save_data(save_data)
-      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3 });
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3 , loop: true});
       settings_main(player)
     } else {
       settings_cs_setup(player)
@@ -2294,7 +2357,7 @@ function settings_main(player) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => {
       debug_main(player);
-      player.playMusic(translate_soundkeys("music.menu.settings.debug", player), { fade: 0.3 })
+      player.playMusic(translate_soundkeys("music.menu.settings.debug", player), { fade: 0.3 , loop: true})
     });
   }
 
@@ -2650,7 +2713,7 @@ function settings_rights_main(player) {
 
 function settings_rights_data(viewing_player, selected_save_data) {
   let selected_player = world.getAllPlayers().find(player => player.id == selected_save_data.id);
-  let online_text = "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix) + ")§r"
+  let online_text = "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix) + " ago)§r"
 
   if (selected_player) {
     let memory_text;
@@ -3200,17 +3263,15 @@ function design_preview(player, design, is_custom) {
 const AFK_THRESHOLD_MS = 15 * 1000;
 
 // Speicher-Maps
-const lastActivity   = new Map(); // timestamp der letzten Aktivität
-const lastPosition   = new Map(); // letzte Position
-const lastRotation   = new Map(); // letzte Rotation (yaw/pitch)
-const isCurrentlyAFK = new Map(); // aktueller AFK-Status
+const lastActivity   = new Map();
+const lastPosition   = new Map();
+const lastRotation   = new Map();
+const isCurrentlyAFK = new Map();
 
-/** Aktualisiert den Aktivitätszeitpunkt eines Spielers. */
 function updateActivity(player) {
   lastActivity.set(player.name, Date.now());
 }
 
-/** Initialisiert Position, Rotation und Status eines Spielers. */
 function initPlayer(player) {
   updateActivity(player);
   lastPosition.set(player.name, {
@@ -3218,7 +3279,6 @@ function initPlayer(player) {
     y: player.location.y,
     z: player.location.z
   });
-  // getRotation liefert { x: pitch, y: yaw }
   const rot = player.getRotation();
   lastRotation.set(player.name, {
     yaw: rot.y,
@@ -3227,13 +3287,11 @@ function initPlayer(player) {
   isCurrentlyAFK.set(player.name, false);
 }
 
-/** Prüft, ob ein Spieler AFK ist. */
 function checkAFKStatus(player) {
   const last = lastActivity.get(player.name) ?? Date.now();
   return (Date.now() - last) > AFK_THRESHOLD_MS;
 }
 
-// 1) **Einmalige Initialisierung nach 60 Ticks**, um SP-Delay zu umgehen
 system.runTimeout(() => {
   for (const player of world.getAllPlayers()) {
     initPlayer(player);
@@ -3241,16 +3299,13 @@ system.runTimeout(() => {
 }, 60);
 
 
-// 3) **Respawn**: nur Initialisierung, keine Begrüßung
 world.afterEvents.playerSpawn.subscribe(evt => {
   initPlayer(evt.player);
 });
 
-// 4) **Interaktionen** als Aktivität zählen
 world.afterEvents.itemUse  .subscribe(evt => updateActivity(evt.source));
 world.afterEvents.itemUseOn.subscribe(evt => updateActivity(evt.source));
 
-// 5) **Bewegung & Drehung** pro Tick erfassen
 system.runInterval(() => {
   for (const player of world.getAllPlayers()) {
     const name    = player.name;
@@ -3403,7 +3458,9 @@ async function update_loop() {
         check_health("infinity")
       } else if (save_data[0].challenge.active) {
         disable_gamerules()
-        check_health("resistance")
+        if (world.isHardcore) {
+          check_health("resistance")
+        }
       }
 
       if (save_data[0].challenge.active) {
