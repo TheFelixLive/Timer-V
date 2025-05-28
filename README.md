@@ -25,7 +25,7 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 - [X] Survival Mode - Endings  _(since 19.5.25)_
 - [X] Hardcore-Support  _(since 24.5.25)_
 - [X] Custom Sounds _(since 26.05.25)_
-- [ ] 1. Alpha _(work in progress)_
+- [ ] 1. Release _(work in progress)_
 
 # Planned features
 | Category | Description | Status | Notes |
@@ -46,4 +46,4 @@ But for now here is a **list** of fetures for the new maior update for the Timer
 | Dictionary | Comes from v.4.1 | mostly _scraped_ | Only version information will remain available |
 | Speedrun (s) | Comes from v.4.1 | _scraped_ | Use the new designs for that  |
 
-> Last Update: 26.5.25
+> Last Update: 28.5.25

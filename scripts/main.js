@@ -4,24 +4,46 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.0.0",
-  build: "A004",
-  release_type: 0, // 0 = Development version (with debug); 1 = Beta version; 2 = Stable version
-  unix: 1747135586,
+  build: "A005",
+  release_type: 1, // 0 = Development version (with debug); 1 = Beta version; 2 = Stable version
+  unix: 1748467278,
   changelog: {
     // new_features
     new_features: [
-      "new_features 1",
-      "new_features 2",
+      "Survival and Creative are now one main Mode",
+      "Over 80 new Goals have been added in addition to the existing Goals",
+      "Taking advantage of the hardcore mode",
+      "You now get a summary what you setuped in Challenge Mode",
+      "The actionsbar can now completely changed with different designs",
+      "The day time (realtime / gametime) can be displayed in the actionbar",
+      "Player storage data (such as rights) can now be partially viewed, changed and deleted by admins even when that Player is offline"
     ],
     // general_changes
     general_changes: [
-      "general_change 1",
-      "general_change 2",
+      "Added years & milisecounds as Time units (not all units have to be used)",
+      "Removed all §l/function§r commands",
+      "An entire overhaul of the menu",
+      "The menu can opened with the sneak-jump (or in spectator with the nod) gesture, with a stick or §l/scriptevent timerv:menu§r",
+      "The menu is now more stable and no longer prone to errors while opening",
+      "The menu can now be used by multiple players at the same time",
+      "The menu woun't change your gamemode as well as the condition",
+      "The menu music loops and fade into each other",
+      "The Fulbright modification is now native, but can be adjusted individually for each player",
+      "Custom Sound (formerly known as Custom Music) can be customized for each player and uses a new syntax (the old syntax is still available but not fully supported)",
+      "Intelligent condition (formerly known as AFK Modification) now better detects whether you are AFK and is only available when you use your own timer",
+      "Each player can now create their own \"timer\" to count down",
+      "Native sound effects and menu music have been changed",
+      "Shared timers can now be replaced or deactivated by other admins even if the original player is offline",
+      "All Hardcore difficulties are now only available in Hardcore worlds"
     ],
     // bug_fixes
     bug_fixes: [
-      "bug_fixes 1",
-      "bug_fixes 2",
+      "Fixed a bug that allowed players to cheat by changing certain scoreboard entries",
+      "Fixed a bug that allowed players to gain unwanted admin rights",
+      "Fixed a bug where the sound would not play when completing or losing a challenge",
+      "Fixed a bug that caused a softlock if the menu doesn't close correctly",
+      "Fixed a bug that caused the in game music to overlap with the music from the menu",
+      "Fixed a bug that make totem of undying useless against infinity"
     ]
   }
 }
@@ -519,8 +541,7 @@ const design_template = [
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
-          { type: "text", text: " <-" }
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
       ]},
       // Same goes for here: the "s" marker isn't used here, but it works perfectly.
       { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
@@ -589,9 +610,10 @@ const design_template = [
 
 
 system.afterEvents.scriptEventReceive.subscribe(event=> {
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
   if (save_data[player_sd_index].op) {
     if (event.id === "timerv:debug") {
-      let save_data = load_save_data();
     
       let debugValue = event.message.toLowerCase() === "true";
       save_data[0].debug = debugValue;
@@ -616,6 +638,19 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
     return main_menu(event.sourceEntity)
   }
+
+  if (event.id === "timerv:menu_soundkey") {
+    let version;
+    if (event.message == "v1") {
+      version = 1
+    }
+    if (event.message == "v2") {
+      version = 2
+    }
+    event.sourceEntity.playSound(translate_soundkeys("menu.open", event.sourceEntity));
+    event.sourceEntity.queueMusic(translate_soundkeys("music.menu.settings.debug", event.sourceEntity), { fade: 0.3, loop: true });
+    return soundkey_test(event.sourceEntity, version)
+  }
   
   
 });
@@ -635,18 +670,19 @@ world.beforeEvents.itemUse.subscribe(event => {
 // via. jump gesture
 const gestureCooldowns = new Map();
 
-function gesture_jump() {
+async function gesture_jump() {
   const now = Date.now();
 
   for (const player of world.getAllPlayers()) {
-    const lastUsed = gestureCooldowns.get(player.name) || 0;
+    const lastUsed = gestureCooldowns.get(player.id) || 0;
 
     if (player.isSneaking && player.isJumping) {
       if (now - lastUsed >= 100) { // 2 Sekunden Cooldown
         player.playSound(translate_soundkeys("menu.open", player));
         player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
         main_menu(player);
-        gestureCooldowns.set(player.name, now);
+        gestureCooldowns.set(player.id, now);
+        await system.waitTicks(10)
       }
     }
   }
@@ -657,7 +693,7 @@ function gesture_jump() {
 // via. gesture
 const playerHeadMovement = new Map();
 
-function gesture_nod() {
+async function gesture_nod() {
   const now = Date.now();
 
   for (const player of world.getAllPlayers()) {
@@ -798,6 +834,14 @@ async function create_player_save_data (playerId, playerName) {
     update_save_data(save_data)
   }
 
+  if (version_info.release_type !== 2) {
+    player.sendMessage("§l§7[§fSystem§7]§r "+ save_data[player_sd_index].name +" what are your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
+  }
+
+  // Help reminder: how to open the menu
+  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800)) {
+    player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
+  }
   
   /*------------------------
   Startup popups
@@ -806,11 +850,13 @@ async function create_player_save_data (playerId, playerName) {
 
   if (save_data[player_sd_index].setup == 2) {
     let form = new ActionFormData();
-    form.title("Setup guide");
-    form.body("Wellcome!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable. However, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+    form.title("Initial setup");
     if (world.isHardcore) {
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
       form.button("Try Hardcore!");
+      form.button("");
     } else {
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
       form.button("Survival mode");
       form.button("Creative mode");
       form.button("");
@@ -821,7 +867,7 @@ async function create_player_save_data (playerId, playerName) {
       form.show(player).then((response) => {
         if (response.canceled && response.cancelationReason === "UserBusy") {
           showForm()
-        } else {
+        } else if (!response.canceled) {
           if (!world.isHardcore) {
             // Response
             save_data[player_sd_index].setup = 0
@@ -852,15 +898,17 @@ async function create_player_save_data (playerId, playerName) {
   // Welcome screen
   if (save_data[player_sd_index].setup == 1) {
     let form = new ActionFormData();
-    form.title("Setup guide");
-    form.body("Wellcome!\ncomming soon");
+    form.title("Initial setup");
+    form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-Ultimate");
     form.button("");
+
+    player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick\n§l§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
 
     const showForm = async () => {
       form.show(player).then((response) => {
         if (response.canceled && response.cancelationReason === "UserBusy") {
           showForm()
-        } else {
+        } else if (!response.canceled) {
           // Response
           save_data[player_sd_index].setup = 0
           update_save_data(save_data);
@@ -875,7 +923,7 @@ async function create_player_save_data (playerId, playerName) {
   }
 
   // Update popup
-  if (save_data[player_sd_index].op && (Date.now()/ 1000) > save_data[0].update_message_unix) {
+  if (save_data[player_sd_index].op && (Math.floor(Date.now() / 1000)) > save_data[0].update_message_unix) {
     let form = new ActionFormData();
     form.title("Update time!");
     form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
@@ -886,8 +934,8 @@ async function create_player_save_data (playerId, playerName) {
         if (response.canceled && response.cancelationReason === "UserBusy") {
           showForm()
         } else {
-          if (response.selection === 1) {
-            save_data[0].update_message_unix = (Date.now()/ 1000) + 15897600;
+          if (response.selection === 0) {
+            save_data[0].update_message_unix = (Math.floor(Date.now() / 1000)) + 15897600;
             update_save_data(save_data);
           }
         }
@@ -897,6 +945,31 @@ async function create_player_save_data (playerId, playerName) {
   }
 }
 
+function getBestPlayerName(save_data) {
+  const playerIds = world.getAllPlayers().map(player => player.id);
+  const candidates = save_data.filter(entry => entry.op === true);
+
+  const exactMatches = candidates.filter(entry => playerIds.includes(entry.id));
+  if (exactMatches.length > 0) {
+    return exactMatches[0].name;
+  }
+
+  const now = Date.now();
+  let best = candidates[0];
+  let bestDiff = Math.abs(best.last_unix * 1000 - now);
+
+  for (let i = 1; i < candidates.length; i++) {
+    const entry = candidates[i];
+    const diff = Math.abs(entry.last_unix * 1000 - now);
+    if (diff < bestDiff) {
+      best = entry;
+      bestDiff = diff;
+    }
+  }
+
+  return best.name;
+}
+
 world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
   create_player_save_data(playerId, playerName);
 });
@@ -904,8 +977,12 @@ world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
 world.afterEvents.playerLeave.subscribe(({ playerId, playerName }) => {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
-  save_data[player_sd_index].last_unix = Math.floor(Date.now() / 1000)
-  update_save_data(save_data);
+
+  // When a player's sd gets removed he will kick out of the game triggering this...
+  if (player_sd_index) {
+    save_data[player_sd_index].last_unix = Math.floor(Date.now() / 1000)
+    update_save_data(save_data);
+  }
 });
 /*------------------------
  general helper functions
@@ -1380,8 +1457,80 @@ function apply_design(design, time) {
 
 
 /*------------------------
- Menu: main
+ Menus
 -------------------------*/
+
+function soundkey_test(player, version) {
+  let form = new ActionFormData();
+  let save_data = load_save_data()
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let actions = []
+  form.title("soundkey_test")
+
+  if (version == 1 || version == 2) {
+    form.body("Select an sound you want to play!")
+    for (const key in soundkeys) {
+      const sound = soundkeys[key];
+      
+      if (version == 2 ? sound.extern : sound.extern_l) {
+        form.button(version == 2 ? sound.extern : sound.extern_l, "textures/ui/sound_glyph_color_2x");
+        actions.push(() => {
+          player.playMusic(version == 2 ? sound.extern : sound.extern_l, { fade: 0.3});
+          player.queueMusic(translate_soundkeys("music.menu.settings.debug", player), { fade: 0.3, loop: true });
+          soundkey_test(player, version);
+        });
+      }
+
+      for (const subKey in sound) {
+        const subsound = sound[subKey];
+
+        if (version == 2 ? subsound.extern : subsound.extern_l) {
+          form.button(version == 2 ? subsound.extern : subsound.extern_l, "textures/ui/sound_glyph_color_2x");
+          actions.push(() => {
+            player.playMusic(version == 2 ? subsound.extern : subsound.extern_l, { fade: 0.3 });
+            player.queueMusic(translate_soundkeys("music.menu.settings.debug", player), { fade: 0.3, loop: true });
+            soundkey_test(player, version);
+          });
+        }
+      }
+    }
+    form.button("");
+    actions.push(() => {
+      soundkey_test(player, undefined);
+    });
+  } else {
+    form.body("Choose an interpret!")
+    form.button("V2 (latest)");
+    form.button("V1 (legacy)");
+
+    actions.push(() => {
+      soundkey_test(player, 2);
+    });
+
+    actions.push(() => {
+      soundkey_test(player, 1);
+    });
+
+    if (save_data[0].debug && save_data[player_sd_index].op) {
+      form.button("");
+      actions.push(() => {
+        debug_main(player);
+      });
+    }
+  }
+
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+    if (actions[response.selection]) {
+      actions[response.selection]();
+    }
+  })
+
+}
 
 function main_menu_actions(player, form) {
   let actions = []
@@ -1478,17 +1627,8 @@ function main_menu_actions(player, form) {
 
     if (challenge.progress === 1) {
       if (form) form.button("§cGive up!", "textures/blocks/barrier");
-
       actions.push(() => {
-        player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-        finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
-          (
-            typeof save_data[player_sd_index].design === "number"
-              ? design_template[save_data[player_sd_index].design].content
-              : save_data[player_sd_index].design
-          ).find(item => item.type === "ui"),
-          (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
-        ) +" Thanks for playing."}])
+        splash_end_challenge(player)
       });
     }
 
@@ -1697,6 +1837,39 @@ function splash_start_challenge(player) {
     if (response.selection == 1) {
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       return start_cm_timer()
+    }
+
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+
+    if (response.selection == 0) return main_menu(player);
+  });
+}
+
+function splash_end_challenge(player) {
+  let form = new MessageFormData();
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+
+  form.title("Warning!");
+  form.body({rawtext:[{text: "You are about to end a challenge.\nIf you complete the challenge this way, you will §llose all your progress" + (world.isHardcore? " and this World!§r" : "§r.")}]});
+
+  form.button2("§cGive up");
+  form.button1("");
+
+  form.show(player).then((response) => {
+    if (response.selection == 1) {
+        player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+        finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
+          (
+            typeof save_data[player_sd_index].design === "number"
+              ? design_template[save_data[player_sd_index].design].content
+              : save_data[player_sd_index].design
+          ).find(item => item.type === "ui"),
+          (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
+        ) +" Thanks for playing."}])
     }
 
     if (response.selection == undefined ) {
@@ -2348,7 +2521,6 @@ function settings_main(player) {
       player.removeEffect("night_vision");
       save_data[player_sd_index].fullbright = false;
     }
-    player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     update_save_data(save_data);
     settings_main(player);
   });
@@ -2439,7 +2611,7 @@ function dictionary_about_version(player) {
   form.title("About")
   form.body(
     "Name: " + version_info.name + "\n" +
-    "Version: " + version_info.version + " (" + version_info.build + ")\n" +
+    "Version: " + version_info.version + ((Math.floor(Date.now() / 1000)) > (15897600 + version_info.unix)? " §a(update time)§r" : " (" + version_info.build + ")") + "\n" +
     "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
     "Build date: " + `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})` +
 
@@ -2453,10 +2625,65 @@ function dictionary_about_version(player) {
     });
   }
 
+  form.button("§3Contact");
+  actions.push(() => {
+    dictionary_contact(player, build_date)
+  });
+
   form.button("");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
     return settings_main(player);
+  });
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
+    }
+  });
+}
+
+function dictionary_contact(player, build_date) {
+  let form = new ActionFormData()
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+
+  // Yes, that's right, you're not dumping the full "save_data". The player names are removed here for data protection reasons
+  save_data = save_data.map(entry => {
+    if ("name" in entry) {
+      return { ...entry, name: "" };
+    }
+    return entry;
+  });
+  // and this adds information about the dump date and version to ensure whether a dump matches a bug
+  save_data.push({ dump_unix:Math.floor(Date.now() / 1000), version:version_info.version, build:version_info.build });
+
+  let actions = []
+  form.title("Contact")
+  form.body("If you need want to report a bug, need help, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§r github.com/TheFelixLive/Timer-Ultimate/issues\n\n§8Curseforge:§r curseforge.com/projects/1259478");
+
+  if (save_data[player_sd_index].op) {
+    form.button("Dump SD" + (version_info.release_type !== 2? "\nvia. privat chat" : ""));
+    actions.push(() => {
+      player.sendMessage("§l§7[§fSystem§7]§r SD Dump:\n"+JSON.stringify(save_data))
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    });
+
+    if (version_info.release_type !== 2) {
+      form.button("Dump SD\nvia. server console");
+      actions.push(() => {
+        console.log(JSON.stringify(save_data))
+        player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      });
+    }
+  }
+
+  form.button("");
+  actions.push(() => {
+    dictionary_about_version(player, build_date)
   });
 
   form.show(player).then((response) => {
@@ -2494,7 +2721,7 @@ function dictionary_about_version_changelog(player, build_date) {
     });
   }
 
-  bodyText += `§7As of ${build_date.day}.${build_date.month}.${build_date.year} (`+ getRelativeTime(Date.now()/1000 - version_info.unix) + " ago)";
+  bodyText += `§7As of ${build_date.day}.${build_date.month}.${build_date.year} (`+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) + " ago)";
 
   form.body(bodyText);
   form.button("");
@@ -2524,6 +2751,7 @@ function debug_main(player) {
   form.button("§aAdd player (save data)");
   form.button("§cRemove \"save_data\"");
   form.button("§cClose Server");
+  form.button("soundkey_test");
   form.button("");
 
   form.show(player).then((response) => {
@@ -2534,7 +2762,8 @@ function debug_main(player) {
     if (response.selection == 1) return debug_add_fake_player(player);
     if (response.selection == 2) {world.setDynamicProperty("timerv:save_data", undefined); close_world()}
     if (response.selection == 3) {close_world()}
-    if (response.selection == 4) {
+    if (response.selection == 4) {return soundkey_test(player, undefined)};
+    if (response.selection == 5) {
       player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
       return settings_main(player)
     };
@@ -2858,7 +3087,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
   form.title("Edit "+ selected_save_data.name +"'s permission");
 
 
-  if (selected_save_data.name !== viewing_player.name) {
+  if (selected_save_data.id !== viewing_player.id) {
     if (selected_save_data.op) {
       
       form.button("§cMake deop");
@@ -2875,7 +3104,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
       actions.push(() => {
         form = new MessageFormData();
         form.title("Op advantages");
-        form.body("Your are trying to add op advantages to "+selected_save_data.name+". With them he would be able to:\n\n-Mange other and your OP status\n-Mange Timer modes\n-Mange save data\n-Could delete the timer!\n\nAre you sure you want to add them?\n ");
+        form.body("Your are trying to add op advantages to "+selected_save_data.name+". With them he would be able to:\n\n- Mange other and your OP status\n- Mange Timer modes\n- Mange save data\n- Could delete the timer!\n\nAre you sure you want to add them?\n ");
         form.button1("");
         form.button2("§aMake op");
         form.show(viewing_player).then((response) => {
@@ -3036,7 +3265,7 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
           if (!world.getDimension("overworld").runCommand(`kick ${selected_player.name}`).successCount) {
             const host_form = new MessageFormData()
               .title("Host player information")
-              .body(`${selected_player.name} is the host. To delete their data, the server must shut down.`)
+              .body(`${selected_player.name} is the host. To delete their data, the server must shut down. This usually takes 5 seconds`)
               .button1("")
               .button2("§cShutdown & Delete");
 
@@ -3349,26 +3578,26 @@ const lastRotation   = new Map();
 const isCurrentlyAFK = new Map();
 
 function updateActivity(player) {
-  lastActivity.set(player.name, Date.now());
+  lastActivity.set(player.id, Date.now());
 }
 
 function initPlayer(player) {
   updateActivity(player);
-  lastPosition.set(player.name, {
+  lastPosition.set(player.id, {
     x: player.location.x,
     y: player.location.y,
     z: player.location.z
   });
   const rot = player.getRotation();
-  lastRotation.set(player.name, {
+  lastRotation.set(player.id, {
     yaw: rot.y,
     pitch: rot.x
   });
-  isCurrentlyAFK.set(player.name, false);
+  isCurrentlyAFK.set(player.id, false);
 }
 
 function checkAFKStatus(player) {
-  const last = lastActivity.get(player.name) ?? Date.now();
+  const last = lastActivity.get(player.id) ?? Date.now();
   return (Date.now() - last) > AFK_THRESHOLD_MS;
 }
 
@@ -3388,7 +3617,7 @@ world.afterEvents.itemUseOn.subscribe(evt => updateActivity(evt.source));
 
 system.runInterval(() => {
   for (const player of world.getAllPlayers()) {
-    const name    = player.name;
+    const name    = player.id;
     const currPos = player.location;
     const currRotRaw = player.getRotation();
     const currRot = { yaw: currRotRaw.y, pitch: currRotRaw.x };
@@ -3423,69 +3652,6 @@ function close_world() {
 
 function render_live_actionbar(selected_save_data, do_update) {
   const data = load_save_data();
-  function calcAB(update, id, dayFormat) {
-    const idx = data.findIndex(e => e.id === id);
-    let counting_type, timevalue, timedata;
-
-    if (data[0].global.status) {
-      counting_type = data[0].counting_type
-      timedata = data[0].time
-    } else {
-      counting_type = data[idx].counting_type
-      timedata = data[idx].time
-    }
-    
-
-
-    if (counting_type === 2) {
-      timevalue = { value: system.currentTick, do_count: true };
-    }
-    
-    
-    if (counting_type === 0 || counting_type === 1) {
-        let val = timedata[counting_type === 0 ? "stopwatch" : "timer"];
-        if (update && timedata.do_count) {
-          if (counting_type === 1) {
-            timedata.timer = Math.max(timedata.timer - 1, 0);
-            if (timedata.timer == 0) {
-              if (data[0].challenge.progress == 1) {
-                if (data[0].challenge.goal.pointer == 2 && data[0].challenge.goal.event_pos == 0) {
-                  finished_cm_timer(1, [{text:"You did it! You persevered through the whole time and reached your goal!"}])
-                } else {
-                  finished_cm_timer(0, [{text:"The challenge is over because you went out of time. Thanks for playing."}])
-                }
-                return -1;
-              } else {
-                timedata.do_count = false;
-              }
-            }
-          } else {
-            timedata.stopwatch++;
-          }
-          update_save_data(data);
-        }
-        timevalue = { value: val, do_count: timedata.do_count };
-    }
-
-    if (counting_type === 3 || dayFormat) {
-      if (data[idx].time_source === 1 || data[0].sync_day_time) {
-        const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
-        let now = new Date(),
-        total = (now.getHours() + data[0].utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
-        adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
-        ticks = (adj / MILLIS_DAY) * TICKS;
-        timevalue = { value: ticks, do_count: true };
-
-        if (data[0].sync_day_time && do_update && (!data[0].challenge.active || (data[0].challenge.progress === 1 && data[0].time.do_count))) {
-          world.setTimeOfDay(Math.floor(ticks));
-        }
-            
-      } else {
-        timevalue = { value: world.getTimeOfDay(), do_count: true };
-      }
-    }
-    return timevalue;
-  }
 
   let tv = calcAB(do_update, selected_save_data.id, false);
   if (typeof selected_save_data.design === "number")
@@ -3509,8 +3675,73 @@ function render_live_actionbar(selected_save_data, do_update) {
   }
   
   return d1 
-    ? apply_design(d0, tv.value) + " §r§f| " + apply_design(d1, calcAB(false, selected_save_data.id, true).value)
+    ? apply_design(d0, tv.value) + " §r§f| " + apply_design(d1, calcAB(true, selected_save_data.id, true).value)
     : apply_design(d0, tv.value);
+}
+
+function calcAB(update, id, dayFormat) {
+  const data = load_save_data();
+  const idx = data.findIndex(e => e.id === id);
+  let counting_type, timevalue, timedata;
+
+  if (data[0].global.status) {
+    counting_type = data[0].counting_type
+    timedata = data[0].time
+  } else {
+    counting_type = data[idx].counting_type
+    timedata = data[idx].time
+  }
+  
+
+
+  if (counting_type === 2) {
+    timevalue = { value: system.currentTick, do_count: true };
+  }
+  
+  
+  if (counting_type === 0 || counting_type === 1) {
+      let val = timedata[counting_type === 0 ? "stopwatch" : "timer"];
+      if (update && timedata.do_count && !dayFormat) {
+        if (counting_type === 1) {
+          timedata.timer = Math.max(timedata.timer - 1, 0);
+          if (timedata.timer == 0) {
+            if (data[0].challenge.progress == 1) {
+              if (data[0].challenge.goal.pointer == 2 && data[0].challenge.goal.event_pos == 0) {
+                finished_cm_timer(1, [{text:"You did it! You persevered through the whole time and reached your goal!"}])
+              } else {
+                finished_cm_timer(0, [{text:"The challenge is over because you went out of time. Thanks for playing."}])
+              }
+              return -1;
+            } else {
+              timedata.do_count = false;
+            }
+          }
+        } else {
+          timedata.stopwatch++;
+        }
+        update_save_data(data);
+      }
+      timevalue = { value: val, do_count: timedata.do_count };
+  }
+
+  if (counting_type === 3 || dayFormat) {
+    if (data[idx].time_source === 1 || data[0].sync_day_time) {
+      const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
+      let now = new Date(),
+      total = (now.getHours() + data[0].utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
+      adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
+      ticks = (adj / MILLIS_DAY) * TICKS;
+      timevalue = { value: ticks, do_count: true };
+
+      if (data[0].sync_day_time && update && (!data[0].challenge.active || (data[0].challenge.progress === 1 && data[0].time.do_count))) {
+        world.setTimeOfDay(Math.floor(ticks));
+      }
+          
+    } else {
+      timevalue = { value: world.getTimeOfDay(), do_count: true };
+    }
+  }
+  return timevalue;
 }
 
 
@@ -3523,7 +3754,7 @@ async function update_loop() {
       gesture_jump()
 
       if (save_data[0].global.status) {
-        render_live_actionbar(save_data[1], true)
+        calcAB(true, undefined, false)
       }
 
       if (save_data[0].sync_day_time) {
@@ -3555,7 +3786,7 @@ async function update_loop() {
         let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
         // AFK
-        const wasAFK = isCurrentlyAFK.get(player.name) || false;
+        const wasAFK = isCurrentlyAFK.get(player.id) || false;
         const nowAFK = checkAFKStatus(player);
 
         if (!wasAFK && nowAFK) {
@@ -3574,14 +3805,14 @@ async function update_loop() {
 
             update_save_data(save_data)
           }
-          isCurrentlyAFK.set(player.name, true);
+          isCurrentlyAFK.set(player.id, true);
         } else if (wasAFK && !nowAFK) {
           // Came back
           if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] > 0)) {
             save_data[player_sd_index].time.do_count = true;
             update_save_data(save_data)
           }
-          isCurrentlyAFK.set(player.name, false);
+          isCurrentlyAFK.set(player.id, false);
         }
 
         // Forceing gamemode (cm)
