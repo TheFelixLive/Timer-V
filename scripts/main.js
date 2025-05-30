@@ -525,11 +525,11 @@ const design_template = [
     name: version_info.version,
     content: [
       { type: "ui", blocks: [
-        { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
-        { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
-        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
-        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
-        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
       ]},
       { type: "normal", blocks: [
           { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
@@ -583,12 +583,11 @@ const design_template = [
         { type: "marker", marker: "ms", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
       ]},
       { type: "paused", blocks: [
-          { type: "text", text: "§7" },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ".", position: "after" } },
           { type: "marker", marker: "ms", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
-          { type: "text", text: " §f§o(frozen)" }
+          { type: "text", text: " §7§o(frozen)" }
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "Your time ->\n§l§7" },
@@ -623,11 +622,10 @@ const design_template = [
           
       ]},
       { type: "paused", blocks: [
-          { type: "text", text: "§7" },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
-          { type: "text", text: " §f§o(frozen)" }
+          { type: "text", text: " §7§o(frozen)" }
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "Your time ->\n§l§7" },
@@ -662,11 +660,10 @@ const design_template = [
           
       ]},
       { type: "paused", blocks: [
-          { type: "text", text: "§7" },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
-          { type: "text", text: " §f§o(frozen)" }
+          { type: "text", text: " §7§o(frozen)" }
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "Your time ->\n§l§7" },
@@ -688,22 +685,24 @@ const design_template = [
     name: "v.4.1.0 - v.4.2.2 (Default)",
     content: [
       { type: "ui", blocks: [
+        { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
         { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
         { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
       ]},
       { type: "normal", blocks: [
+        { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
         { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
         { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
           
       ]},
       { type: "paused", blocks: [
-          { type: "text", text: "§7" },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
-          { type: "text", text: " §f§o(frozen)" }
+          { type: "text", text: " §7§o(frozen)" }
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "Your time ->\n§l§7" },
@@ -950,8 +949,8 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
   let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
 
   if (["timerv:debug", "timerv:reset"].includes(event.id)) {
-    const notAvailableMsg = id => `§l§7[§fSystem§7]§r ${id} is not available in stable releases!`;
-    const noPermissionMsg = id => `§l§7[§fSystem§7]§r ${id} could not be changed because you do not have permission!`;
+    const notAvailableMsg = id => `§l§7[§f` + (save_data[0].independent? "System" : version_info.name) + `§7]§r ${id} is not available in stable releases!`;
+    const noPermissionMsg = id => `§l§7[§f` + (save_data[0].independent? "System" : version_info.name) + `§7]§r ${id} could not be changed because you do not have permission!`;
 
     if (!save_data[player_sd_index].op) {
       player.sendMessage(noPermissionMsg(event.id));
@@ -984,6 +983,14 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     return main_menu(event.sourceEntity)
   }
 
+  if (event.id === "timerv:api_menu") {
+    let save_data = load_save_data()
+    save_data[0].independent = false
+    update_save_data(save_data)
+    event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
+    return main_menu(event.sourceEntity)
+  }
+
   if (event.id === "timerv:menu_soundkey") {
     let version;
     if (event.message == "v1") {
@@ -1003,7 +1010,8 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 
 // via. item
 world.beforeEvents.itemUse.subscribe(event => {
-	if (event.itemStack.typeId === "minecraft:stick") {
+  let save_data = load_save_data()
+	if (event.itemStack.typeId === "minecraft:stick" && save_data[0].independent) {
       system.run(() => {
         event.source.playSound(translate_soundkeys("menu.open", event.source));
         event.source.playMusic(translate_soundkeys("music.menu.main", event.source));
@@ -1017,15 +1025,18 @@ const gestureCooldowns = new Map();
 
 async function gesture_jump() {
   const now = Date.now();
+  let save_data = load_save_data()
 
   for (const player of world.getAllPlayers()) {
     const lastUsed = gestureCooldowns.get(player.id) || 0;
 
     if (player.isSneaking && player.isJumping) {
       if (now - lastUsed >= 100) { // 2 Sekunden Cooldown
-        player.playSound(translate_soundkeys("menu.open", player));
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-        main_menu(player);
+        if (save_data[0].independent) {
+          player.playSound(translate_soundkeys("menu.open", player));
+          player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+          main_menu(player);
+        }
         gestureCooldowns.set(player.id, now);
         await system.waitTicks(10)
       }
@@ -1040,6 +1051,7 @@ const playerHeadMovement = new Map();
 
 async function gesture_nod() {
   const now = Date.now();
+  let save_data = load_save_data()
 
   for (const player of world.getAllPlayers()) {
     if (player.getGameMode() !== "spectator") continue;
@@ -1057,9 +1069,11 @@ async function gesture_nod() {
       lastTime = now;
     }
     else if (state === "lookingUp" && pitch > 13) {
-      player.playSound(translate_soundkeys("menu.open", player));
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-      main_menu(player);
+      if (save_data[0].independent) {
+        player.playSound(translate_soundkeys("menu.open", player));
+        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+        main_menu(player);
+      }
 
       state = "idle";
       lastTime = now;
@@ -1084,7 +1098,7 @@ async function gesture_nod() {
 let save_data = load_save_data()  
 if (!save_data) {
     save_data = [
-        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: version_info.release_type == 0? true : false, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, independent: true, debug: version_info.release_type == 0? true : false, update_message_unix: (version_info.unix + 15897600)  }
     ]
     
     if (save_data.debug) {
@@ -1181,7 +1195,7 @@ async function create_player_save_data (playerId, playerName) {
   }
 
   if (version_info.release_type !== 2) {
-    player.sendMessage("§l§7[§fSystem§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
+    player.sendMessage("§l§7[§f" + (save_data[0].independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
     player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
@@ -1196,77 +1210,87 @@ async function create_player_save_data (playerId, playerName) {
 
 
   if (save_data[player_sd_index].setup == 2) {
-    let form = new ActionFormData();
-    form.title("Initial setup");
-    if (world.isHardcore) {
-      form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
-      form.button("Try Hardcore!");
-      form.button("");
-    } else {
-      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
-      form.button("Survival mode");
-      form.button("Creative mode");
-      form.button("");
-    }
+    if (save_data[0].independent) {
+      let form = new ActionFormData();
+      form.title("Initial setup");
+      if (world.isHardcore) {
+        form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
+        form.button("Try Hardcore!");
+        form.button("");
+      } else {
+        form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+        form.button("Survival mode");
+        form.button("Creative mode");
+        form.button("");
+      }
 
 
-    const showForm = async () => {
-      form.show(player).then((response) => {
-        if (response.canceled && response.cancelationReason === "UserBusy") {
-          showForm()
-        } else if (!response.canceled) {
-          if (!world.isHardcore) {
-            // Response
-            save_data[player_sd_index].setup = 0
-            // Survival
-            if (response.selection === 0) {
-              save_data[0].global.status = true
-              save_data[0].challenge.active = true
-              save_data[0].global.last_player_id = player.id
-              world.setTimeOfDay(0);
-              world.getDimension("overworld").setWeather("Clear");
-            }
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else if (!response.canceled) {
+            if (!world.isHardcore) {
+              // Response
+              save_data[player_sd_index].setup = 0
+              // Survival
+              if (response.selection === 0) {
+                save_data[0].global.status = true
+                save_data[0].challenge.active = true
+                save_data[0].global.last_player_id = player.id
+                world.setTimeOfDay(0);
+                world.getDimension("overworld").setWeather("Clear");
+              }
 
-            update_save_data(save_data);
-            if (response.selection >= 0) {
+              update_save_data(save_data);
+              if (response.selection >= 0) {
+                main_menu(player)
+              }
+            } else {
+              save_data[player_sd_index].setup = 0
+              update_save_data(save_data);
               main_menu(player)
             }
-          } else {
-            save_data[player_sd_index].setup = 0
-            update_save_data(save_data);
-            main_menu(player)
           }
-        }
-      });
-    };
-    showForm();
+        });
+      };
+      showForm();
+    } else {
+      save_data[player_sd_index].setup = 0
+      update_save_data(save_data);
+    }
   }
 
   // Welcome screen
   if (save_data[player_sd_index].setup == 1) {
-    let form = new ActionFormData();
-    form.title("Initial setup");
-    form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-Ultimate");
-    form.button("");
+    if (save_data[0].independent) {
+      let form = new ActionFormData();
+      form.title("Initial setup");
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-Ultimate");
+      form.button("");
 
-    player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick\n§l§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
+      player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick\n§l§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
 
-    const showForm = async () => {
-      form.show(player).then((response) => {
-        if (response.canceled && response.cancelationReason === "UserBusy") {
-          showForm()
-        } else if (!response.canceled) {
-          // Response
-          save_data[player_sd_index].setup = 0
-          update_save_data(save_data);
-          if (response.selection === 0) {
-            main_menu(player)
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else if (!response.canceled) {
+            // Response
+            save_data[player_sd_index].setup = 0
+            update_save_data(save_data);
+            if (response.selection === 0) {
+              main_menu(player)
+            }
+            
           }
-          
-        }
-      });
-    };
-    showForm();
+        });
+      };
+      showForm();
+    } else {
+      save_data[player_sd_index].setup = 0
+      update_save_data(save_data);
+    }
   }
 
   // Update popup
@@ -1497,7 +1521,7 @@ function start_cm_timer() {
   });
 
   update_save_data(save_data);
-  world.sendMessage("§l§7[§fSystem§7]§r The Challenge starts now!")
+  world.sendMessage("§l§7[§f"+ (save_data[0].independent? "System" : version_info.name) + "§7]§r The Challenge starts now!")
 }
 
 function finished_cm_timer(rating, message) {
@@ -2115,7 +2139,7 @@ function main_menu_actions(player, form) {
     }
   }
 
-  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore) {
+  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && save_data[0].independent) {
     if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? "§aon" : "§coff"), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
@@ -2128,6 +2152,16 @@ function main_menu_actions(player, form) {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
     settings_main(player);
   });
+
+  // Button: Settings
+  if (!save_data[0].independent) {
+    if(form){form.button("")}
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      player.runCommand("/scriptevent timerv:api_menu_parent")
+    });
+  }
+
 
   return actions
 }
@@ -2377,6 +2411,11 @@ function settings_start_time(player) {
     if (ms < 951) {
       time = { y: 9, w: weeks, d: days, h: hours, m: minutes, s: seconds, ms };
     }
+  }
+
+  if (!allow) {
+    const extraDays = Math.floor(time.y * 365.25) + time.w * 7;
+    time.d += extraDays;
   }
 
   // Slider bauen
@@ -3085,7 +3124,7 @@ function dictionary_contact(player, build_date) {
   if (save_data[player_sd_index].op) {
     form.button("Dump SD" + (version_info.release_type !== 2? "\nvia. privat chat" : ""));
     actions.push(() => {
-      player.sendMessage("§l§7[§fSystem§7]§r SD Dump:\n"+JSON.stringify(save_data))
+      player.sendMessage("§l§7[§f"+ (save_data[0].independent? "System" : version_info.name) + "§7]§r SD Dump:\n"+JSON.stringify(save_data))
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     });
 
@@ -3975,11 +4014,11 @@ function design_preview(player, design, is_custom) {
 
   form.title("Design actionsbar");
 
-  let ui_preview = apply_design(design.find(d => d.type === "ui"), 634396901)
-  let normal_preview = apply_design(design.find(d => d.type === "normal"), 634396901)
-  let paused_preview = apply_design(design.find(d => d.type === "paused"), 634396901)
+  let ui_preview = apply_design(design.find(d => d.type === "ui"), 660822121.4)
+  let normal_preview = apply_design(design.find(d => d.type === "normal"), 660822121.4)
+  let paused_preview = apply_design(design.find(d => d.type === "paused"), 660822121.4)
 
-  let finished_preview = apply_design(design.find(d => d.type === "finished"), 634396901)
+  let finished_preview = apply_design(design.find(d => d.type === "finished"), 660822121.4)
   let day_preview = apply_design(design.find(d => d.type === "day"), 19395.9)
 
   let screen_saver_preview = apply_design(design.find(d => d.type === "screen_saver"), 0)
