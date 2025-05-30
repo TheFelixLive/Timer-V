@@ -1,11 +1,11 @@
 {
   "format_version": 2,
   "header": {
-      "description": "A way to display time in your Minecraft World",
+      "description": "Keep track of the real time you spent in your Minecraft world",
       "name": "Timer V",
       "uuid": "c4d3852f-f902-4807-a8c8-51980fdae4c3",
       "version": [ 5, 0, 0],
-      "min_engine_version": [1, 21, 41]
+      "min_engine_version": [1, 21, 40]
   },
   "modules": [
     {
@@ -25,7 +25,7 @@
   "dependencies": [
     {
       "module_name":"@minecraft/server",
-      "version":"1.17.0"
+      "version":"1.15.0"
     }, 
     {
       "module_name": "@minecraft/server-ui",

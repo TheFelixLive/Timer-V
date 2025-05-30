@@ -5,7 +5,7 @@ const version_info = {
   name: "Timer V",
   version: "v.5.0.0",
   build: "A005",
-  release_type: 1, // 0 = Development version (with debug); 1 = Beta version; 2 = Stable version
+  release_type: 0, // 0 = Development version (with debug); 1 = Beta version; 2 = Stable version
   unix: 1748467278,
   changelog: {
     // new_features
@@ -34,7 +34,8 @@ const version_info = {
       "Each player can now create their own \"timer\" to count down",
       "Native sound effects and menu music have been changed",
       "Shared timers can now be replaced or deactivated by other admins even if the original player is offline",
-      "All Hardcore difficulties are now only available in Hardcore worlds"
+      "All Hardcore difficulties are now only available in Hardcore worlds",
+      "Ultra Hardcore now disables all ways to regenerate hearts"
     ],
     // bug_fixes
     bug_fixes: [
@@ -43,7 +44,8 @@ const version_info = {
       "Fixed a bug where the sound would not play when completing or losing a challenge",
       "Fixed a bug that caused a softlock if the menu doesn't close correctly",
       "Fixed a bug that caused the in game music to overlap with the music from the menu",
-      "Fixed a bug that make totem of undying useless against infinity"
+      "Fixed a bug that make totem of undying useless against infinity",
+      "Fixed a bug that caused lost hearts to regenerate when pausing the timer in Hardcore"
     ]
   }
 }
@@ -222,6 +224,11 @@ const soundkeys = {
     extern_l: "timeru.frozen",
     native: "resonate.amethyst_block"
   },
+  "condition.expired": {
+    extern: "timer.condition.expired",
+    extern_l: "timeru.frozen",
+    native: "resonate.amethyst_block"
+  },
   "challenge.starts": {
     extern: "timer.condition.starts",
     extern_l: "timeru.reset_true",
@@ -236,7 +243,11 @@ const soundkeys = {
     extern: "timer.challenge.end.bad",
     extern_l: "timeru.type_death.target",
     native: "horn.call.7"
-  }
+  },
+  "message.beta.feedback": {
+    extern: "timer.message.beta.feedback",
+    native: "random.orb"
+  },
 };
 
 const timezone_list = [
@@ -511,7 +522,7 @@ var goal_entity = [
 const design_template = [
   {
     // The "ms" marker isn't used here, but it works perfectly. Simply because I don't like it.
-    name: "Default design",
+    name: version_info.version,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
@@ -526,6 +537,7 @@ const design_template = [
           { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
           { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          
       ]},
       { type: "paused", blocks: [
           { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
@@ -554,10 +566,248 @@ const design_template = [
       ]}
     ]
   },
+  {
+    name: "v.4.1.0 - v.4.2.2 (Speedrun)",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+        { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+        { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ".", position: "after" } },
+        { type: "marker", marker: "ms", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "text", text: "§l" },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+        { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+        { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ".", position: "after" } },
+        { type: "marker", marker: "ms", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ".", position: "after" } },
+          { type: "marker", marker: "ms", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+          { type: "text", text: " §f§o(frozen)" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time ->\n§l§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ".", position: "after" } },
+          { type: "marker", marker: "ms", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§lTimer §7V§r §f§oby TheFelixLive" }
+      ]}
+    ]
+  },
+  {
+    name: "v.4.1.0 - v.4.2.2 (Hardcore)",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "text", text: "§c" },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
+          { type: "text", text: " §f§o(frozen)" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time ->\n§l§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§lTimer §7V§r §f§oby TheFelixLive" }
+      ]}
+    ]
+  },
+
+  {
+    name: "v.4.1.0 - v.4.2.2 (Enchant)",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "text", text: "§9" },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
+          { type: "text", text: " §f§o(frozen)" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time ->\n§l§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§lTimer §7V§r §f§oby TheFelixLive" }
+      ]}
+    ]
+  },
+  {
+    name: "v.4.1.0 - v.4.2.2 (Default)",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
+          { type: "text", text: " §f§o(frozen)" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time ->\n§l§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§lTimer §7V§r §f§oby TheFelixLive" }
+      ]}
+    ]
+  },
+
+  {
+    name: "v.4.0.0 - v.4.0.1",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "w", padZero: false, alwaysShow: false, suffix: "w", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "text", text: "§e" },
+        { type: "marker", marker: "w", padZero: false, alwaysShow: false, suffix: "w", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          
+      ]},
+      { type: "paused", blocks: [
+          { type: "marker", marker: "w", padZero: false, alwaysShow: false, suffix: "w", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
+          { type: "text", text: " §o§7(frozen)" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time ->\n§l§7" },
+          { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: { singular: " year, ", plural: " years, " }, separator: { enabled: false } },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§p§lTimer V §r§h§oLite§r" }
+      ]}
+    ]
+  },
+  {
+    name: "v.3.3.0 - v.3.6.1",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "text", text: "§b" },
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+          
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+          { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } },
+          { type: "text", text: " §f§o(frozen)" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time: §l§b" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§b§lTimer V §o§3by TheFelixLive" }
+      ]}
+    ]
+  },
   
   {
-    // ripped from version 3.6 and below
-    name: "Legacy design",
+    name: "v.3.0.0 - v.3.2.2",
     content: [
       { type: "ui", blocks: [
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
@@ -594,10 +844,96 @@ const design_template = [
         { type: "text", text: " o'clock" }
       ]},
       { type: "screen_saver", blocks: [
-          { type: "text", text: "§b§lTimer V" }
+          { type: "text", text: "§b§lTimer V §o§3by TheFelixLive" }
       ]}
     ]
-  },  
+  },
+  /* // Work in progress!
+  {
+    name: "v.2.0.0 - v.2.2.0",
+    content: [
+      { type: "ui", blocks: [
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "marker", marker: "w", padZero: false, alwaysShow: false, suffix: { singular: " §eWeek§r ", plural: " §eWeeks§r " }, separator: { enabled: false }},
+
+        { type: "marker", marker: "d", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eDay§r ", plural: " §eDays§r " }, separator: { enabled: false }},
+        { type: "marker", marker: "d", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w"] }, suffix: "§ed§r", separator: { enabled: true, value: " ", position: "after" } },
+
+        { type: "marker", marker: "h", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eHour§r ", plural: " §eHours§r " }, separator: { enabled: false }},
+        { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w", "d"] }, suffix: "§eh§r", separator: { enabled: true, value: " ", position: "after" } },
+
+        { type: "marker", marker: "m", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eMinute§r ", plural: " §eMinutes§r " }, separator: { enabled: false }},
+        { type: "marker", marker: "m", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w", "d", "h"] }, suffix: "§em§r", separator: { enabled: true, value: " ", position: "after" } },
+
+
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eSecond§r", plural: " §eSeconds§r" }, separator: { enabled: false }},
+        { type: "marker", marker: "s", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w", "d", "h", "m"] }, suffix: "§es§r", separator: { enabled: false }}
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§bTimer V§r is paused\n§l" },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+          { type: "text", text: " <-" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "§bTimer V§r is paused\n§l" },
+          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+          { type: "text", text: " <-" }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+        { type: "marker", marker: "h", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+        { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
+        { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§3Waiting for instructions..." }
+      ]}
+    ]
+  },
+  */
+  {
+    name: "v.1.0.0",
+    content: [
+      { type: "ui", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: false, suffix: "m", separator: { enabled: true, value: " ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: "s", separator: { enabled: false } }
+      ]},
+      { type: "normal", blocks: [
+        { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "§eh", separator: { enabled: true, value: "§r ", position: "after" } },
+        { type: "marker", marker: "m", padZero: false, alwaysShow: true, suffix: "§em", separator: { enabled: true, value: "§r ", position: "after" } },
+        { type: "marker", marker: "s", padZero: false, alwaysShow: true, suffix: "§es", separator: { enabled: false } }
+          
+      ]},
+      { type: "paused", blocks: [
+          { type: "text", text: "§o<§k____§r§o Timer paused §k____§r>" }
+      ]},
+      { type: "finished", blocks: [
+          { type: "text", text: "Your time ->\n§l§7" },
+          { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+      ]},
+      { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
+          { type: "marker", marker: "h", padZero: false, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
+          { type: "text", text: " o'clock" }
+      ]},
+      { type: "screen_saver", blocks: [
+          { type: "text", text: "§o<§k____§r§o Timer paused §k____§r>" }
+      ]}
+    ]
+  },
   {
     name: "Custom design",
     content: undefined
@@ -612,22 +948,31 @@ const design_template = [
 system.afterEvents.scriptEventReceive.subscribe(event=> {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
-  if (save_data[player_sd_index].op) {
-    if (event.id === "timerv:debug") {
-    
-      let debugValue = event.message.toLowerCase() === "true";
-      save_data[0].debug = debugValue;
-      console.log("debug mode is now: " + save_data[0].debug);
-      update_save_data(save_data);
+
+  if (["timerv:debug", "timerv:reset"].includes(event.id)) {
+    const notAvailableMsg = id => `§l§7[§fSystem§7]§r ${id} is not available in stable releases!`;
+    const noPermissionMsg = id => `§l§7[§fSystem§7]§r ${id} could not be changed because you do not have permission!`;
+
+    if (!save_data[player_sd_index].op) {
+      player.sendMessage(noPermissionMsg(event.id));
+      return;
     }
 
-    if (event.id === "timerv:reset") {
-      world.setDynamicProperty("timerv:save_data", undefined);
-      close_world()
+    if (version_info.release_type === 2) {
+      player.sendMessage(notAvailableMsg(event.id));
+      return;
     }
-  } else if (event.id === "timerv:debug" || event.id === "timerv:reset") {
-    player.sendMessage("§l§7[§fSystem§7]§r "+event.id+" could not be changed because you do not have permission!");
+
+    if (event.id === "timerv:debug") {
+      save_data[0].debug = event.message.toLowerCase() === "true";
+      console.log("debug mode is now: " + save_data[0].debug);
+      update_save_data(save_data);
+    } else if (event.id === "timerv:reset") {
+      world.setDynamicProperty("timerv:save_data", undefined);
+      close_world();
+    }
   }
+
 
 /*------------------------
  Open the menu
@@ -739,7 +1084,7 @@ async function gesture_nod() {
 let save_data = load_save_data()  
 if (!save_data) {
     save_data = [
-        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 0, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: version_info.release_type == 0? true : false, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, debug: version_info.release_type == 0? true : false, update_message_unix: (version_info.unix + 15897600)  }
     ]
     
     if (save_data.debug) {
@@ -811,7 +1156,8 @@ async function create_player_save_data (playerId, playerName) {
           lang: 0,
           design: 0,
           setup: shout_be_op ? 2 : 1,
-          last_unix: Math.floor(Date.now() / 1000)
+          last_unix: Math.floor(Date.now() / 1000),
+          health: 20, // is used to save the heart level only in hardcore mode e.g. during a break 
       });
   } else if (save_data[player_sd_index].name !== playerName) {
       save_data[player_sd_index].name = playerName;
@@ -835,7 +1181,8 @@ async function create_player_save_data (playerId, playerName) {
   }
 
   if (version_info.release_type !== 2) {
-    player.sendMessage("§l§7[§fSystem§7]§r "+ save_data[player_sd_index].name +" what are your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
+    player.sendMessage("§l§7[§fSystem§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
+    player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
   // Help reminder: how to open the menu
@@ -1226,19 +1573,27 @@ function check_health(configuration) {
 
 
   for (const player of world.getPlayers()) {
+    let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
     const health = player.getComponent("health");
+
     if (configuration == "infinity") {
       if (save_data[0].challenge.difficulty == 4) {
-          player.applyDamage(health.currentValue - 1)
+        player.applyDamage(health.currentValue - 1)
+      }
+
+      if (save_data[0].challenge.difficulty == 3) {
+        player.applyDamage(health.currentValue - save_data[player_sd_index].health)
+        save_data[player_sd_index].health = health.currentValue
       }
     } else if (configuration == "resistance" && health.currentValue > 0) {
       health.resetToMaxValue();
     }
+    update_save_data(save_data)
   }
 
 }
 
-function render_task_list(player) {
+function render_task_list() {
   let save_data = load_save_data();
   const lines = [];
 
@@ -1247,7 +1602,7 @@ function render_task_list(player) {
     lines.push({ text: "- §4Hard§ccore§f is active\n" });
   }
   if (save_data[0].challenge.difficulty === 3) {
-    lines.push({ text: "- §cUltra §4Hardcore§f: no regeneration\n" });
+    lines.push({ text: "- §cUltra §4Hardcore§f: A heart is lost forever\n" });
   }
   if (save_data[0].challenge.difficulty === 4) {
     lines.push({ text: "- §5Infinity§f: no damage\n" });
@@ -1284,19 +1639,11 @@ function render_task_list(player) {
 }
 
 function enable_gamerules(doDayLightCycle) {
-  let save_data = load_save_data()
   world.gameRules.doDayLightCycle = doDayLightCycle;
   world.gameRules.doEntityDrops = true;
   world.gameRules.doFireTick = true;
   world.gameRules.doWeatherCycle = true;
   world.gameRules.doMobSpawning = true;
-  if (save_data[0].challenge.active) {
-    if (save_data[0].challenge.difficulty > 2) {
-      world.gameRules.naturalRegeneration = false;
-    } else {
-      world.gameRules.naturalRegeneration = true;
-    }
-  }
 }
 
 function disable_gamerules() {
@@ -1306,6 +1653,7 @@ function disable_gamerules() {
   world.gameRules.doWeatherCycle = false;
   world.gameRules.doMobSpawning = false;
 }
+
 world.afterEvents.dataDrivenEntityTrigger.subscribe((eventData) => {
     const entity = eventData.entity;
     const triggerId = eventData.eventId;
@@ -1351,108 +1699,135 @@ Actionbar
 -------------------------*/
 
 function apply_design(design, time) {
-  let timeValues;
-  const units = ["y", "d", "h", "m", "s", "ms"];
+  let timeValues = {};
+  const allUnits = ["y","w","d","h","m","s","ms"];
+
+  // 1) Zeit in Einheiten zerlegen
   if (design.type === "day") {
+    // Tages-Modus bleibt unverändert
     const T = 24000, M = 86400000, O = 6 * 3600000;
     let rm = ((time / T) * M + O) % M;
-    timeValues = { y: 0, d: 0, h: Math.floor(rm / 3600000), m: Math.floor((rm % 3600000) / 60000), s: Math.floor((rm % 60000) / 1000), ms: Math.floor((rm % 1000) / 10) };
-  } else {
     timeValues = {
-      y: String(Math.floor(Math.floor(Math.floor(Math.floor(time / 20) / 60) / 60) / 24 / 365)),
-      d: String(Math.floor(Math.floor(Math.floor(Math.floor(time / 20) / 60) / 60) / 24) % 365),
-      h: String(Math.floor(Math.floor(Math.floor(time / 20) / 60) / 60) % 24),
-      m: String(Math.floor(Math.floor(time / 20) / 60) % 60),
-      s: String(Math.floor(time / 20) % 60),
-      ms: String((time % 20) * 5)
+      y: 0, w: 0, d: 0,
+      h: Math.floor(rm / 3600000),
+      m: Math.floor((rm % 3600000) / 60000),
+      s: Math.floor((rm % 60000) / 1000),
+      ms: Math.floor((rm % 1000) / 10)
     };
-  }
-  const conv = { y: 365, d: 24, h: 60, m: 60, s: 100 };
-  let used = new Set();
-  if (design.blocks) design.blocks.forEach(b => { if (b.type === "marker" && b.marker) used.add(b.marker); });
-  for (let i = 0; i < units.length - 1; i++) {
-    let u = units[i];
-    if (timeValues[u] !== undefined && Number(timeValues[u]) !== 0 && !used.has(u)) {
-      let mult = 1, target = null;
-      for (let j = i + 1; j < units.length; j++) {
-        mult *= conv[units[j - 1]];
-        if (units[j] === "ms" && !used.has("ms")) { target = null; break; }
-        if (used.has(units[j])) { target = units[j]; break; }
+  } else {
+    // Normale Zeit-Umrechnung über Millisekunden
+    let remainingMs = (time / 20) * 1000;
+
+    // Definition der Millisekunden pro Einheit
+    const msPer = {
+      y: 365.25 * 24 * 3600 * 1000,
+      w:          7 * 24 * 3600 * 1000,
+      d:              24 * 3600 * 1000,
+      h:                   3600 * 1000,
+      m:                        60 * 1000,
+      s:                             1000,
+      ms:                             10   // wir interpretieren ms-Wert als 10 ms-Einheit
+    };
+
+    // Welche Marker sind im Design definiert?
+    const used = new Set();
+    (design.blocks || []).forEach(b => {
+      if (b.type === "marker" && allUnits.includes(b.marker)) {
+        used.add(b.marker);
       }
-      if (target) timeValues[target] = (timeValues[target] !== undefined ? Number(timeValues[target]) : 0) + Number(timeValues[u]) * mult;
-      timeValues[u] = 0;
-    }
+    });
+
+    // Jede Einheit von groß nach klein
+    allUnits.forEach(u => {
+      if (used.has(u)) {
+        const val = Math.floor(remainingMs / msPer[u]);
+        timeValues[u] = val;
+        remainingMs -= val * msPer[u];
+      } else {
+        timeValues[u] = 0;
+      }
+    });
   }
-  let result = "";
-  let proc = design.blocks.map(b => {
+
+  // 2) Marker-Logik: Werte zu Blocks mappen
+  const proc = (design.blocks || []).map(b => {
     if (b.type === "marker") {
-      let raw = timeValues[b.marker] !== undefined ? String(timeValues[b.marker]) : "0";
-      let val = b.padZero && raw.length === 1 ? "0" + raw : raw;
-      let num = Number(val), show, candidate = false;
+      const raw = String(timeValues[b.marker] || 0);
+      const val = (b.padZero && raw.length === 1) ? "0" + raw : raw;
+      const num = Number(val);
+      let show = false, candidate = false;
+
       if (num !== 0) show = true;
       else if (b.alwaysShow === true || b.alwaysShow === "always") show = true;
-      else if (b.alwaysShow === "ifAllZero") { show = false; candidate = true; }
+      else if (b.alwaysShow === "ifAllZero") candidate = true;
       else if (typeof b.alwaysShow === "object" && b.alwaysShow.condition === "ifGreater") {
-        const checks = b.alwaysShow.units || [];
-        const anyGreater = checks.some(u => Number(timeValues[u] ?? 0) > 0);
+        const anyGreater = (b.alwaysShow.units || []).some(u => (timeValues[u] || 0) > 0);
         show = anyGreater;
       }
-      else show = false;
+
       return { ...b, value: val, show, ifAllZeroCandidate: candidate };
     }
     return b;
-  });  
-  let allZero = true;
-  for (let b of proc)
-    if(b.type === "marker" && Number(b.value) !== 0) { allZero = false; break; }
-  if(allZero)
-    proc = proc.map(b => (b.type==="marker" && b.ifAllZeroCandidate) ? { ...b, show: true } : b);
+  });
+
+  // 3) ifAllZero-Fallback: falls alle Marker 0 und some haben ifAllZero
+  const allZero = !proc.some(b => b.type === "marker" && Number(b.value) !== 0);
+  if (allZero) {
+    proc.forEach((b, i) => {
+      if (b.type === "marker" && b.ifAllZeroCandidate) proc[i].show = true;
+    });
+  }
+
+  // 4) String-Zusammenbau
+  let result = "";
   for (let i = 0; i < proc.length; i++) {
-    let b = proc[i];
-    if (b.type === "text") result += b.text;
+    const b = proc[i];
+    if (b.type === "text") {
+      result += b.text;
+    }
     else if (b.type === "marker" && b.show) {
-      if (b.separator && b.separator.enabled && (b.separator.position === "before" || b.separator.position === "both")) {
-        let prev = false;
-        for (let j = i - 1; j >= 0; j--) {
-          if (proc[j].type === "marker" && proc[j].show) { prev = true; break; }
-          if (proc[j].type === "text") break;
-        }
+      // Separator „before“
+      if (b.separator?.enabled && ["before","both"].includes(b.separator.position)) {
+        const prev = proc.slice(0,i).some(x => x.type==="marker" && x.show);
         if (prev) result += b.separator.value;
       }
+      // Wert + Suffix
       let suffix = "";
       if (typeof b.suffix === "string") {
         suffix = b.suffix;
+      } else if (typeof b.suffix === "object") {
+        const { singular, plural } = b.suffix;
+        suffix = (Number(b.value) === 1 ? (singular || "") : (plural || ""));
       }
-      else if (typeof b.suffix === "object") {
-        const sing = b.suffix.singular;
-        const plu  = b.suffix.plural;
-        suffix = (Number(b.value) === 1
-          ? (sing != null ? sing : plu)
-          : (plu  != null ? plu  : sing)
-        ) || "";
-      }
-      
       result += b.value + suffix;
-
-      if (b.separator && b.separator.enabled && (b.separator.position === "after" || b.separator.position === "both")) {
-        let next = false;
-        for (let j = i + 1; j < proc.length; j++) {
-          if (proc[j].type === "marker" && proc[j].show) { next = true; break; }
-          if (proc[j].type === "text") break;
-        }
+      // Separator „after“
+      if (b.separator?.enabled && ["after","both"].includes(b.separator.position)) {
+        const next = proc.slice(i+1).some(x => x.type==="marker" && x.show);
         if (next) result += b.separator.value;
       }
     }
   }
-  if (design.type === "day" && design.colorConfig && design.colorConfig.length >= 3) {
-    let h = Number(timeValues.h), m = Number(timeValues.m), tot = h * 60 + m;
-    let color = tot < (4 * 60 + 30) || h >= 19 ? design.colorConfig[0]
-      : ((tot >= (4 * 60 + 30) && tot < (6 * 60)) || (h >= 17 && h < 19)) ? design.colorConfig[1]
-      : design.colorConfig[2];
+
+  // 5) Tages-Farblogik (nur bei type==="day")
+  if (design.type === "day" && Array.isArray(design.colorConfig) && design.colorConfig.length >= 3) {
+    const h = Number(timeValues.h), m = Number(timeValues.m);
+    const tot = h * 60 + m;
+    const color = tot < (4*60+30) || h >= 19
+                ? design.colorConfig[0]
+                : ((tot >= (4*60+30) && tot < (6*60)) || (h >= 17 && h < 19))
+                ? design.colorConfig[1]
+                : design.colorConfig[2];
     result = color + result;
   }
+
   return result;
 }
+
+
+
+
+
+
 
 
 
@@ -1541,7 +1916,7 @@ function main_menu_actions(player, form) {
     if (save_data[0].challenge.active && save_data[0].challenge.progress == 1) {
       form.body({rawtext:[
         { text: "Here's a brief overview, what you have setup:\n" },
-        ...render_task_list(player),
+        ...render_task_list(),
         { text: "\n" }
       ]});
 
@@ -1560,8 +1935,8 @@ function main_menu_actions(player, form) {
   if (!save_data[0].global.status || save_data[0].global.status && save_data[player_sd_index].op) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
-      if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1)) {
-        if(form){form.button("Condition\n" + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
+      if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && (!world.isHardcore || world.isHardcore && save_data[player_sd_index].allow_unnecessary_inputs))) {
+        if(form){form.button("Condition" + (world.isHardcore? " §o(experimental)§r\n" : "\n") + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
           if (timedata.time.do_count === false) {
@@ -1574,6 +1949,10 @@ function main_menu_actions(player, form) {
               } else {
                 t.playSound(translate_soundkeys("condition.resumed", t));
               }
+
+              if (world.isHardcore) {
+                player.applyDamage(20 - save_data[player_sd_index].health)
+              }
             });
           } else {
             timedata.time.do_count = false;
@@ -1584,6 +1963,10 @@ function main_menu_actions(player, form) {
                 player.queueMusic(translate_soundkeys("condition.paused", t))
               } else {
                 t.playSound(translate_soundkeys("condition.paused", t));
+              }
+
+              if (world.isHardcore) {
+                save_data[player_sd_index].health = player.getComponent("health").currentValue
               }
             });
           }
@@ -1828,7 +2211,7 @@ function splash_start_challenge(player) {
   let form = new MessageFormData();
 
   form.title("Warning!");
-  form.body({rawtext:[{text: "You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n"}, ...render_task_list(player), {text: "\n\n"}]});
+  form.body({rawtext:[{text: "You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n"}, ...render_task_list(), {text: "\n\n"}]});
 
   form.button2("§aStart");
   form.button1("");
@@ -1945,77 +2328,97 @@ function splash_globalmode(player) {
 -------------------------*/
 
 function settings_start_time(player) {
-  let form = new ModalFormData();
-  form.title("Start time");
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  const save = load_save_data();
+  const form = new ModalFormData().title(save[0].challenge.active ? "Start time" : "Change time");
+  const idx  = save.findIndex(e => e.id === player.id);
+  const sd   = save[save[0].global.status ? 0 : idx];
+  const allow = save[idx].allow_unnecessary_inputs;
 
-  let ms = save_data[save_data[0].global.status ? 0 : player_sd_index].time[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type ? "timer" : "stopwatch"] * 5;
-  let y = Math.floor(ms / (100 * 60 * 60 * 24 * 365));
-  let d = Math.floor(ms % (100 * 60 * 60 * 24 * 365) / (100 * 60 * 60 * 24));
-  let h = Math.floor(ms % (100 * 60 * 60 * 24) / (100 * 60 * 60));
-  let m = Math.floor(ms % (100 * 60 * 60) / (100 * 60));
-  let s = Math.floor(ms % (100 * 60) / 100);
-  ms = ms % 100;
+  const MS = {
+    year:   365.25 * 24 * 60 * 60 * 1000,
+    day:         24 * 60 * 60 * 1000,
+    hour:             60 * 60 * 1000,
+    minute:                60 * 1000,
+    second:                     1000
+  };
 
-  if (save_data[player_sd_index].allow_unnecessary_inputs) {
-    form.slider("Years", 0, 9, 1, y);
-    form.slider("Days", 0, 355, 1, d);
+  let totalMs = sd.time[sd.counting_type ? "timer" : "stopwatch"] * 50;
+
+  function decomp(ms) {
+    let y = Math.floor(ms / MS.year); ms %= MS.year;
+    let dTot = Math.floor(ms / MS.day); ms %= MS.day;
+    let w = Math.floor(dTot / 7), d = dTot % 7;
+    let h = Math.floor(ms / MS.hour); ms %= MS.hour;
+    let m = Math.floor(ms / MS.minute); ms %= MS.minute;
+    let s = Math.floor(ms / MS.second); ms %= MS.second;
+    return { y, w, d, h, m, s, ms };
+  }
+
+  let time = decomp(totalMs);
+  if (allow && totalMs > MS.year * 9) {
+    let rem = totalMs - MS.year * 9;
+    const weeks = Math.floor(rem / (7 * MS.day));
+    rem -= weeks * 7 * MS.day;
+
+    const days = Math.floor(rem / MS.day);
+    rem -= days * MS.day;
+
+    const hours = Math.floor(rem / MS.hour);
+    rem -= hours * MS.hour;
+
+    const minutes = Math.floor(rem / MS.minute);
+    rem -= minutes * MS.minute;
+
+    const seconds = Math.floor(rem / MS.second);
+    rem -= seconds * MS.second;
+
+    const ms = rem;
+
+    if (ms < 951) {
+      time = { y: 9, w: weeks, d: days, h: hours, m: minutes, s: seconds, ms };
+    }
+  }
+
+  // Slider bauen
+  if (allow) {
+    form.slider("Years",        0,  9,   1, time.y);
+    form.slider("Weeks",        0, 52,   1, time.w);
+    form.slider("Days",         0,  6,   1, time.d);
   } else {
-    form.slider("Days", 0, 30, 1, d);
+    form.slider("Days",         0, 30,   1, time.d);
   }
+  form.slider("Hours",        0, 23,   1, time.h);
+  form.slider("Minutes",      0, 59,   1, time.m);
+  form.slider("Seconds",      0, 59,   1, time.s);
+  if (allow) form.slider("Milliseconds",0,950,  50, time.ms);
+  form.submitButton("Set & count down!");
 
-  form.slider("Hours", 0, 23, 1, h);
-  form.slider("Minutes", 0, 59, 1, m);
-  form.slider("Seconds", 0, 59, 1, s);
-
-  if (save_data[player_sd_index].allow_unnecessary_inputs) {
-    form.slider("Milliseconds", 0, 999, 50, ms);
-  }
-  form.submitButton("Set & count down!")
-
-  form.show(player).then((response) => {
-    if (response.canceled) {
-      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+  form.show(player).then(res => {
+    if (res.canceled) return player.playMusic(translate_soundkeys("menu.close", player),{fade:0.3});
+    let i=0, y=0, w=0, d=0;
+    if (allow) { y=res.formValues[i++]; w=res.formValues[i++]; d=res.formValues[i++]; }
+    else d=res.formValues[i++];
+    const h=res.formValues[i++], m=res.formValues[i++], s=res.formValues[i++],
+          ms=allow?res.formValues[i++]:0;
+    const recomb = y*MS.year + w*7*MS.day + d*MS.day + h*MS.hour + m*MS.minute + s*MS.second + ms;
+    const ticks = Math.floor(recomb/50);
+    sd.time.timer = sd.time.last_value_timer = ticks;
+    sd.counting_type = ticks>0?1:0;
+    if (ticks===0 && save[0].challenge.active && save[0].challenge.goal.pointer===2 && save[0].challenge.goal.event_pos===0) {
+      save[0].challenge.goal.pointer = 0;
     }
-    if (save_data[player_sd_index].allow_unnecessary_inputs) {
-      y = response.formValues[0]
-      d = response.formValues[1]
-      h = response.formValues[2]
-      m = response.formValues[3]
-      s = response.formValues[4]
-      ms = response.formValues[5] / 10
-    } else {
-      d = response.formValues[0]
-      h = response.formValues[1]
-      m = response.formValues[2]
-      s = response.formValues[3]
-      ms = 0
-    }
-
-    const totalMilliseconds = 
-    (y * 365 * 24 * 60 * 60 * 100) +
-    (d * 24 * 60 * 60 * 100) +
-    (h * 60 * 60 * 100) +
-    (m * 60 * 100) +
-    (s * 100) +
-    ms;
-
-    save_data[save_data[0].global.status ? 0 : player_sd_index].time.timer = Math.floor(totalMilliseconds / 5)
-    save_data[save_data[0].global.status ? 0 : player_sd_index].time.last_value_timer = Math.floor(totalMilliseconds / 5);
-    if (totalMilliseconds/5 > 0) {
-      save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 1;
-    } else {
-      save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type = 0;
-      if (save_data[0].challenge.active && save_data[0].challenge.goal.pointer == 2 && save_data[0].challenge.goal.event_pos == 0) {
-        save_data[0].challenge.goal.pointer = 0
-      }
-    }
-    update_save_data(save_data);
-    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 , loop: true});
-    return main_menu(player)
+    update_save_data(save);
+    player.playMusic(translate_soundkeys("music.menu.main", player),{fade:0.3,loop:true});
+    return main_menu(player);
   });
 }
+
+
+
+
+
+
+
 
 
 
@@ -2476,7 +2879,7 @@ function settings_main(player) {
       return names.length > 1 ? names.slice(0, -1).join(", ") + " u. " + names[names.length - 1] : names.join(", ");
     })(), "textures/ui/op");
     actions.push(() => {
-      settings_rights_main(player)
+      settings_rights_main(player, true)
       player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3 , loop: true})
     });  
   }
@@ -2539,7 +2942,21 @@ function settings_main(player) {
     }
   });
 
-  // Button 5: Debug
+  // Button 6: Experimental features
+  if (version_info.release_type !== 2) {
+    form.button("Experimental features\n" + (save_data[player_sd_index].allow_unnecessary_inputs ? "§aon" : "§coff"), "textures/ui/Add-Ons_Nav_Icon36x36");
+    actions.push(() => {
+      if (!save_data[player_sd_index].allow_unnecessary_inputs) {
+        save_data[player_sd_index].allow_unnecessary_inputs = true;
+      } else {
+        save_data[player_sd_index].allow_unnecessary_inputs = false;
+      }
+      update_save_data(save_data);
+      settings_main(player);
+    });
+  }
+
+  // Button 7: Debug
   if (save_data[0].debug && save_data[player_sd_index].op) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => {
@@ -2548,7 +2965,7 @@ function settings_main(player) {
     });
   }
 
-  // Button 6: Dictionary
+  // Button 8: Dictionary
   form.button("About\n", "textures/ui/infobulb");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
@@ -2965,7 +3382,7 @@ function debug_add_fake_player(player) {
   });
 }
 
-function settings_rights_main(player) {
+function settings_rights_main(player, came_from_settings) {
   let form = new ActionFormData();
   let save_data = load_save_data();
 
@@ -2979,24 +3396,60 @@ function settings_rights_main(player) {
   let newList = save_data.slice(1);
   
   newList.sort((a, b) => {
-    const aInPlayers = playerIds.includes(a.id);
-    const bInPlayers = playerIds.includes(b.id);
-  
-    if (aInPlayers && !bInPlayers) return -1;
-    if (bInPlayers && !aInPlayers) return 1;
-    return 0;
+    const now = Math.floor(Date.now() / 1000);
+
+    const aOnline = playerIds.includes(a.id);
+    const bOnline = playerIds.includes(b.id);
+
+    const aOp = a.op;
+    const bOp = b.op;
+
+    const aLastSeen = now - a.last_unix;
+    const bLastSeen = now - b.last_unix;
+
+    const aName = a.name.toLowerCase();
+    const bName = b.name.toLowerCase();
+
+    if (aOnline && !bOnline) return -1;
+    if (!aOnline && bOnline) return 1;
+
+    if (aOnline && bOnline) {
+      if (aOp && !bOp) return -1;
+      if (!aOp && bOp) return 1;
+
+      return aName.localeCompare(bName);
+    }
+    return aLastSeen - bLastSeen;
   });
+
   
   newList.forEach(entry => {
-    if (entry.op) {
-      form.button(entry.name, "textures/ui/op");
+    const isOnline = playerIds.includes(entry.id);
+    let displayName = entry.name;
+
+    if (isOnline) {
+      displayName += "\n§a(online)§r";
     } else {
-      form.button(entry.name, "textures/ui/permissions_member_star");
+      displayName += "\n§o(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix) + " ago)§r";
     }
-    
+
+    if (entry.op) {
+      form.button(displayName, "textures/ui/op");
+    } else {
+      form.button(displayName, "textures/ui/permissions_member_star");
+    }
   });
 
   form.button("");
+
+  if (newList.length == 1) {
+    if (came_from_settings) {
+      return settings_rights_data(player, newList[0]);
+    } else {
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+      return settings_main(player);
+    }
+  }
   
 
   form.show(player).then((response) => {
@@ -3084,10 +3537,9 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
   form.body(body_text);
   let actions = [];
-  form.title("Edit "+ selected_save_data.name +"'s permission");
-
 
   if (selected_save_data.id !== viewing_player.id) {
+    form.title("Edit "+ selected_save_data.name +"'s permission");
     if (selected_save_data.op) {
       
       form.button("§cMake deop");
@@ -3123,6 +3575,8 @@ function settings_rights_data(viewing_player, selected_save_data) {
       });
 
     }
+  } else {
+    form.title("Edit your permission");
   }
   
   if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active)) {
@@ -3134,7 +3588,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
   
   form.button("");
   actions.push(() => {
-    settings_rights_main(viewing_player);
+    settings_rights_main(viewing_player, false);
   });
 
   form.show(viewing_player).then((response) => {
@@ -3246,7 +3700,7 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
   if (is_reset) {
     delete_player_save_data(selected_save_data);
     create_player_save_data(selected_save_data.id, selected_save_data.name);
-    return settings_rights_main(viewing_player);
+    return settings_rights_main(viewing_player, false);
   }
 
   if (is_delete) {
@@ -3282,7 +3736,7 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
             });
           } else {
             delete_player_save_data(selected_save_data);
-            settings_rights_main(viewing_player);
+            settings_rights_main(viewing_player, false);
           }
         } else {
           settings_rights_manage_sd(viewing_player, selected_save_data);
@@ -3291,7 +3745,7 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
 
     } else {
       delete_player_save_data(selected_save_data);
-      settings_rights_main(viewing_player);
+      settings_rights_main(viewing_player, false);
     }
   }
 }
@@ -3481,9 +3935,9 @@ function design_template_ui(player) {
   let hasMatchingDesign = sortedDesigns.some(design => JSON.stringify(design.content) === JSON.stringify(currentDesign));
 
   sortedDesigns.forEach((design) => {
-    let buttonText = design.name;
+    let buttonText = design.name + "\n" // + (apply_design(design.content.find(d => d.type === "screen_saver"), 0)+ " "); // Looks a bit off
     if (JSON.stringify(design.content) === JSON.stringify(currentDesign) || (!hasMatchingDesign && design.content === undefined)) {
-      buttonText += "\n§2(selected)";
+      buttonText += "§r§2(selected)";
     }
     form.button(buttonText);
   });
@@ -3681,7 +4135,7 @@ function render_live_actionbar(selected_save_data, do_update) {
 
 function calcAB(update, id, dayFormat) {
   const data = load_save_data();
-  const idx = data.findIndex(e => e.id === id);
+  let idx = data.findIndex(e => e.id === id);
   let counting_type, timevalue, timedata;
 
   if (data[0].global.status) {
@@ -3714,6 +4168,20 @@ function calcAB(update, id, dayFormat) {
               return -1;
             } else {
               timedata.do_count = false;
+              if (data[0].global.status) {
+                world.getAllPlayers().forEach(player => {
+                  idx = data.findIndex(e => e.id === player.id);
+                  player.sendMessage("§l§4[§cCondition§4]§r The timer expired after "+ apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer) + " and has been paused")
+
+                  player.onScreenDisplay.setTitle("§4Timer expired")
+                  player.playSound(translate_soundkeys("condition.expired", player))
+                });
+              } else {
+                let player = world.getAllPlayers().find(player => player.id == id)
+                player.sendMessage("§l§4[§cCondition§4]§r The timer expired after "+ apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer) + " and has been paused")
+                player.onScreenDisplay.setTitle("§4Timer expired")
+                player.playSound(translate_soundkeys("condition.expired", player))
+              }
             }
           }
         } else {
