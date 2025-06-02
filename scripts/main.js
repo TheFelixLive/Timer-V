@@ -5,8 +5,9 @@ const version_info = {
   name: "Timer V",
   version: "v.5.0.0",
   build: "A005",
-  release_type: 0, // 0 = Development version (with debug); 1 = Beta version; 2 = Stable version
+  release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
   unix: 1748467278,
+  update_message_period_unix: 15897600, // Normally 6 months = 15897600
   changelog: {
     // new_features
     new_features: [
@@ -20,7 +21,7 @@ const version_info = {
     ],
     // general_changes
     general_changes: [
-      "Added years & milisecounds as Time units (not all units have to be used)",
+      "Added years & milisecounds as Time units (not all units have to be used from a design)",
       "Removed all §l/function§r commands",
       "An entire overhaul of the menu",
       "The menu can opened with the sneak-jump (or in spectator with the nod) gesture, with a stick or §l/scriptevent timerv:menu§r",
@@ -300,6 +301,9 @@ var goal_entity = [
     "id": "wither"
   },
   {
+    "id": "elder_guardian"
+  },
+  {
     "id": "warden"
   },
   {
@@ -349,9 +353,6 @@ var goal_entity = [
   },
   {
     "id": "drowned"
-  },
-  {
-    "id": "elder_guardian"
   },
   {
     "id": "enderman"
@@ -948,7 +949,9 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
 
-  if (["timerv:debug", "timerv:reset"].includes(event.id)) {
+  if (event.id == "timerv:universel_updater") return universel_updater(event.sourceEntity, uu_find_gen())
+
+  if (["timerv:reset"].includes(event.id)) {
     const notAvailableMsg = id => `§l§7[§f` + (save_data[0].independent? "System" : version_info.name) + `§7]§r ${id} is not available in stable releases!`;
     const noPermissionMsg = id => `§l§7[§f` + (save_data[0].independent? "System" : version_info.name) + `§7]§r ${id} could not be changed because you do not have permission!`;
 
@@ -960,15 +963,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     if (version_info.release_type === 2) {
       player.sendMessage(notAvailableMsg(event.id));
       return;
-    }
-
-    if (event.id === "timerv:debug") {
-      save_data[0].debug = event.message.toLowerCase() === "true";
-      console.log("debug mode is now: " + save_data[0].debug);
-      update_save_data(save_data);
-    } else if (event.id === "timerv:reset") {
-      world.setDynamicProperty("timerv:save_data", undefined);
-      close_world();
     }
   }
 
@@ -1098,7 +1092,14 @@ async function gesture_nod() {
 let save_data = load_save_data()  
 if (!save_data) {
     save_data = [
-        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false}, counting_type: 0, challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1}, global: {status: world.isHardcore? true : false, last_player_id: undefined}, sync_day_time: false, utc: 0, independent: true, debug: version_info.release_type == 0? true : false, update_message_unix: (version_info.unix + 15897600)  }
+        {time: {stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false},
+        counting_type: 0,
+        challenge: {active: world.isHardcore? true : false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1},
+        global: {status: world.isHardcore? true : false, last_player_id: undefined},
+        sync_day_time: false,
+        utc: 0,
+        independent: true,
+        update_message_unix: (version_info.unix + version_info.update_message_period_unix)  }
     ]
     
     if (save_data.debug) {
@@ -1135,7 +1136,7 @@ function delete_player_save_data(player) {
 
 
 // Add player if not present
-async function create_player_save_data (playerId, playerName) {
+function create_player_save_data (playerId, playerName, modifier) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
 
@@ -1149,7 +1150,7 @@ async function create_player_save_data (playerId, playerName) {
           }
       }
 
-      if (save_data[0].debug) {
+      if (version_info.release_type === 0) {
         console.log(`Player ${playerName} (${playerId}) added with op=${shout_be_op}!`);
       }
 
@@ -1177,9 +1178,52 @@ async function create_player_save_data (playerId, playerName) {
       save_data[player_sd_index].name = playerName;
   }
 
-  update_save_data(save_data);
+  const player_data = save_data[player_sd_index === -1 ? save_data.length - 1 : player_sd_index];
   
+  for (let key in modifier) {
+    if (player_data.hasOwnProperty(key)) {
+      player_data[key] = modifier[key];
+    }
+  }
 
+  update_save_data(save_data);
+}
+
+
+function getBestPlayerName(save_data) {
+  const playerIds = world.getAllPlayers().map(player => player.id);
+  const candidates = save_data.filter(entry => entry.op === true);
+
+  const exactMatches = candidates.filter(entry => playerIds.includes(entry.id));
+  if (exactMatches.length > 0) {
+    return exactMatches[0].name;
+  }
+
+  const now = Date.now();
+  let best = candidates[0];
+  let bestDiff = Math.abs(best.last_unix * 1000 - now);
+
+  for (let i = 1; i < candidates.length; i++) {
+    const entry = candidates[i];
+    const diff = Math.abs(entry.last_unix * 1000 - now);
+    if (diff < bestDiff) {
+      best = entry;
+      bestDiff = diff;
+    }
+  }
+
+  return best.name;
+}
+
+/*------------------------
+Startup popups
+-------------------------*/
+
+world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
+  create_player_save_data(playerId, playerName);
+
+
+  let save_data = load_save_data()
   let player;
   while (!player) {
     player = world.getAllPlayers().find(player => player.id == playerId)
@@ -1188,8 +1232,8 @@ async function create_player_save_data (playerId, playerName) {
   // I don't know why but in single player, the server is active about 60 ticks before the player of the server is reachable via getAllPlayers
 
   // Resets AFK
-  player_sd_index = save_data.findIndex(entry => entry.id === playerId);
-  if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] > 0)) {
+  let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
+  if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"] > 0)) {
     save_data[player_sd_index].time.do_count = true;
     update_save_data(save_data)
   }
@@ -1203,11 +1247,39 @@ async function create_player_save_data (playerId, playerName) {
   if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800)) {
     player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
   }
-  
-  /*------------------------
-  Startup popups
-  -------------------------*/
 
+  let gen = uu_find_gen()
+
+  if (typeof(gen) === 'number') {
+    return universel_updater(player, gen)
+  }
+
+  startup_popups(player)
+
+});
+
+function startup_popups(player) {
+  // Update popup
+  if (save_data[player_sd_index].op && (Math.floor(Date.now() / 1000)) > save_data[0].update_message_unix) {
+    let form = new ActionFormData();
+    form.title("Update time!");
+    form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
+    form.button("Mute");
+
+    const showForm = async () => {
+      form.show(player).then((response) => {
+        if (response.canceled && response.cancelationReason === "UserBusy") {
+          showForm()
+        } else {
+          if (response.selection === 0) {
+            save_data[0].update_message_unix = (Math.floor(Date.now() / 1000)) + version_info.update_message_period_unix;
+            update_save_data(save_data);
+          }
+        }
+      });
+    };
+    showForm();
+  }
 
   if (save_data[player_sd_index].setup == 2) {
     if (save_data[0].independent) {
@@ -1243,13 +1315,15 @@ async function create_player_save_data (playerId, playerName) {
               }
 
               update_save_data(save_data);
-              if (response.selection >= 0) {
+              if (response.selection >= 0 && !Math.floor(Date.now() / 1000) > save_data[0].update_message_unix) {
                 main_menu(player)
               }
             } else {
               save_data[player_sd_index].setup = 0
               update_save_data(save_data);
-              main_menu(player)
+              if (!Math.floor(Date.now() / 1000) > save_data[0].update_message_unix) {
+                main_menu(player)
+              }
             }
           }
         });
@@ -1292,58 +1366,7 @@ async function create_player_save_data (playerId, playerName) {
       update_save_data(save_data);
     }
   }
-
-  // Update popup
-  if (save_data[player_sd_index].op && (Math.floor(Date.now() / 1000)) > save_data[0].update_message_unix) {
-    let form = new ActionFormData();
-    form.title("Update time!");
-    form.body("Your current version (" + version_info.version + ") is older than 6 months.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
-    form.button("Mute");
-
-    const showForm = async () => {
-      form.show(player).then((response) => {
-        if (response.canceled && response.cancelationReason === "UserBusy") {
-          showForm()
-        } else {
-          if (response.selection === 0) {
-            save_data[0].update_message_unix = (Math.floor(Date.now() / 1000)) + 15897600;
-            update_save_data(save_data);
-          }
-        }
-      });
-    };
-    showForm();
-  }
 }
-
-function getBestPlayerName(save_data) {
-  const playerIds = world.getAllPlayers().map(player => player.id);
-  const candidates = save_data.filter(entry => entry.op === true);
-
-  const exactMatches = candidates.filter(entry => playerIds.includes(entry.id));
-  if (exactMatches.length > 0) {
-    return exactMatches[0].name;
-  }
-
-  const now = Date.now();
-  let best = candidates[0];
-  let bestDiff = Math.abs(best.last_unix * 1000 - now);
-
-  for (let i = 1; i < candidates.length; i++) {
-    const entry = candidates[i];
-    const diff = Math.abs(entry.last_unix * 1000 - now);
-    if (diff < bestDiff) {
-      best = entry;
-      bestDiff = diff;
-    }
-  }
-
-  return best.name;
-}
-
-world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
-  create_player_save_data(playerId, playerName);
-});
 
 world.afterEvents.playerLeave.subscribe(({ playerId, playerName }) => {
   let save_data = load_save_data();
@@ -1355,6 +1378,228 @@ world.afterEvents.playerLeave.subscribe(({ playerId, playerName }) => {
     update_save_data(save_data);
   }
 });
+
+/*------------------------
+  Universel Updater
+-------------------------*/
+
+function universel_updater(player, gen) {
+
+  // Testing
+  /*
+  world.scoreboard.getObjective("timer_actionbar_time").getParticipants().forEach(o => {
+    console.log(JSON.stringify(o.displayName))
+    console.log(JSON.stringify(o.id))
+    console.log(JSON.stringify(o.type))
+    console.log(JSON.stringify(o.getEntity().id))
+  });
+  */
+
+  let gen_list = [
+    "v.4.1.0 - v.4.2.2", // gen 0 (s)
+    "v.4.1.0 - v.4.2.2", // gen 1 (c)
+  ]
+
+  let form = new ActionFormData();
+  form.title("Convert");
+  form.body("It looks like you've used the timer before.\nDo you want to update your save data from "+ gen_list[gen] +" to "+ version_info.version +"?\n\n§7Note: Once you update your save data to a newer version, you can no longer use it with the older version!");
+  form.button("§9Update");
+  form.button("");
+  form.show(player).then((response) => {
+    if (response.selection == 1) {
+      startup_popups(player)
+    }
+    if (response.selection == 0) {
+      uu_apply_gen(gen, player)
+    }
+  })
+
+
+  
+}
+
+function uu_find_gen() {
+  let gen;
+  if (world.scoreboard.getObjective("timer_settings")) {
+    gen = 0
+  }
+  // is under development and not is not working
+  /*
+  if (world.scoreboard.getObjective("timer_custom_music")) {
+    gen = 1
+  }
+  */
+  return gen
+}
+
+function uu_apply_gen(gen, player) {
+  let note_message;
+
+  // gen 0
+  if (gen == 0) {
+
+    const getScoreSafe = (objective, scoreName, defaultValue = 0) => {
+      try {
+        return objective.getScore(scoreName) || defaultValue;
+      } catch (error) {
+        console.error(`Error getting '${scoreName}' from '${objective}': `, error);
+        return defaultValue;
+      }
+    };
+
+    let settings = world.scoreboard.getObjective("timer_settings");
+    let time = world.scoreboard.getObjective("timer_time");
+    let old_goal = getScoreSafe(settings, "goal", 1);
+
+    let stopwatchTime = getScoreSafe(settings, "shoud_count_down") === 0 
+      ? (getScoreSafe(time, "ms") / 5 + getScoreSafe(time, "sec") * 20 + getScoreSafe(time, "min") * 20 * 60 + getScoreSafe(time, "h") * 20 * 60 * 60)
+      : 0;
+
+    let timerTime = getScoreSafe(settings, "shoud_count_down") === 1 
+      ? (getScoreSafe(time, "ms") / 5 + getScoreSafe(time, "sec") * 20 + getScoreSafe(time, "min") * 20 * 60 + getScoreSafe(time, "h") * 20 * 60 * 60)
+      : 0;
+
+    let save_data = [{
+      time: { stopwatch: stopwatchTime, timer: timerTime, last_value_timer: timerTime, do_count: getScoreSafe(settings, "do_count") === 1 },
+      counting_type: getScoreSafe(settings, "shoud_count_down") === 1 ? 1 : 0,
+      challenge: {
+        active: true,
+        progress: getScoreSafe(settings, "mode"),
+        rating: getScoreSafe(settings, "reset_type") === 2 ? 1 : 0,
+        goal: { pointer: old_goal === 8 ? 0 : old_goal < 5 ? 1 : 2, entity_pos: old_goal - 1, event_pos: old_goal === 5 ? 1 : 0 },
+        difficulty: getScoreSafe(settings, "difficulty"),
+      },
+      global: { status: true, last_player_id: player.id },
+      sync_day_time: false,
+      utc: 0,
+      independent: true,
+      update_message_unix: (version_info.unix + version_info.update_message_period_unix)
+    }];
+
+    try {
+      update_save_data(save_data);
+    } catch (error) {
+      console.error("Error updating save data: ", error);
+    }
+
+    world.getAllPlayers().forEach(player => {
+      try {
+        create_player_save_data(player.id, player.name, {
+          setup: 0,
+          op: player.hasTag("trust_player_control"),
+          custom_sounds: getScoreSafe(settings, "custom_music") === 1 ? 2 : 0,
+          fullbright: getScoreSafe(settings, "night_vision") === 1
+        });
+        if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
+      } catch (error) {
+        console.error(`Error processing player data for player ${player.name}: `, error);
+      }
+    });
+
+
+    const objectives = [
+      "timer_settings", 
+      "timer_time", 
+      "timer_menu", 
+      "timer_addon", 
+      "timer_actionbar_time", 
+      "timer_show_actionbar"
+    ];
+
+    objectives.forEach(obj => {
+      try {
+        world.scoreboard.removeObjective(obj);
+      } catch (error) {
+        console.error("Error removing objective", obj, ": ", error);
+      }
+    });
+  }
+
+  if (gen == 1) {
+    let afk = world.scoreboard.getObjective("timer_afk");
+    let custom_sounds = world.scoreboard.getObjective("custom_music");
+    let old_global = world.scoreboard.getObjective("timer_menu").getScore("host_mode");
+    let night_vision = world.scoreboard.getObjective("timer_night_vision");
+    let do_count = world.scoreboard.getObjective("timer_do_count");
+    let shoud_count_down = world.scoreboard.getObjective("timer_shoud_count_down");
+
+    let time_ms = world.scoreboard.getObjective("timer_time_ms");
+    let time_sec = world.scoreboard.getObjective("timer_time_sec");
+    let time_min = world.scoreboard.getObjective("timer_time_min");
+    let time_h = world.scoreboard.getObjective("timer_time_h");
+    let time_d = world.scoreboard.getObjective("timer_time_d");
+
+
+    let save_data = [{
+      time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
+      counting_type: 0,
+      global: { status: old_global == 1? true : false, last_player_id: world.getAllPlayers().find(player => {player.hasTag("target_host")})?.id || player.id},
+
+      challenge: {active: false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1},
+      sync_day_time: false,
+      utc: 0,
+      independent: true,
+      update_message_unix: (version_info.unix + version_info.update_message_period_unix)
+    }];
+
+    try {
+      update_save_data(save_data);
+    } catch (error) {
+      console.error("Error updating save data: ", error);
+    }
+
+    world.getAllPlayers().forEach(player => {
+      try {
+        create_player_save_data(player.id, player.name, {
+          setup: 0,
+          op: player.hasTag("trust_player_control"),
+          custom_sounds: getScoreSafe(settings, "custom_music") === 1 ? 2 : 0,
+          fullbright: getScoreSafe(settings, "night_vision") === 1
+        });
+        if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
+      } catch (error) {
+        console.error(`Error processing player data for player ${player.name}: `, error);
+      }
+    });
+
+
+    const objectives = [
+      "timer_settings", 
+      "timer_time", 
+      "timer_menu", 
+      "timer_addon", 
+      "timer_actionbar_time", 
+      "timer_show_actionbar"
+    ];
+
+    objectives.forEach(obj => {
+      try {
+        world.scoreboard.removeObjective(obj);
+      } catch (error) {
+        console.error("Error removing objective", obj, ": ", error);
+      }
+    });
+  }
+
+  let form = new ActionFormData();
+  form.title("Convert");
+  form.body("It's done!\nYou can now enjoy the new "+ version_info.name + (note_message? "\n\n§7Note: " + note_message : ""));
+  form.button("§9Changelog");
+  form.button("");
+  form.show(player).then((response) => {
+    if (response.selection == 0) {
+      player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
+      return dictionary_about_version_changelog(player, convertUnixToDate(version_info.unix, save_data[0].utc))
+    }
+    if (response.selection == 1) {
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+      return main_menu(player)
+    }
+  })
+
+}
+
+
 /*------------------------
  general helper functions
 -------------------------*/
@@ -1910,7 +2155,7 @@ function soundkey_test(player, version) {
       soundkey_test(player, 1);
     });
 
-    if (save_data[0].debug && save_data[player_sd_index].op) {
+    if (version_info.release_type === 0 && save_data[player_sd_index].op) {
       form.button("");
       actions.push(() => {
         debug_main(player);
@@ -1959,7 +2204,7 @@ function main_menu_actions(player, form) {
   if (!save_data[0].global.status || save_data[0].global.status && save_data[player_sd_index].op) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
-      if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && (!world.isHardcore || world.isHardcore && save_data[player_sd_index].allow_unnecessary_inputs))) {
+      if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && (!world.isHardcore || world.isHardcore && save_data[player_sd_index].allow_unnecessary_inputs))) {
         if(form){form.button("Condition" + (world.isHardcore? " §o(experimental)§r\n" : "\n") + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
@@ -1998,7 +2243,7 @@ function main_menu_actions(player, form) {
         });
       }
   
-      if (timedata.time[timedata.counting_type ? "timer" : "stopwatch"] > 0 && !save_data[0].challenge.active) {
+      if (timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] > 0 && !save_data[0].challenge.active) {
         if (!save_data[0].global.status) {
           if(form){form.button("Intelligent condition\n" + (save_data[player_sd_index].afk === true ? "§aon" : "§coff"), (save_data[player_sd_index].afk === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
           actions.push(() => {
@@ -2013,9 +2258,9 @@ function main_menu_actions(player, form) {
           });
         }
 
-        if(form){form.button("§cReset "+(timedata.counting_type ? "timer" : "stopwatch"), "textures/ui/recap_glyph_color_2x")}
+        if(form){form.button("§cReset "+(timedata.counting_type == 1 ? "timer" : "stopwatch"), "textures/ui/recap_glyph_color_2x")}
         actions.push(() => {
-          timedata.time[timedata.counting_type ? "timer" : "stopwatch"] = 0;
+          timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
           timedata.time.do_count = false;
           save_data[player_sd_index].afk = false
     
@@ -2046,7 +2291,7 @@ function main_menu_actions(player, form) {
         if (challenge.rating === 1) {
           challenge.goal.pointer = 0;
         } else {
-          save_data[0].time[timedata.counting_type ? "timer" : "stopwatch"] = 0;
+          save_data[0].time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
           world.setTimeOfDay(0);
           world.getDimension("overworld").setWeather("Clear");
         }
@@ -2111,7 +2356,7 @@ function main_menu_actions(player, form) {
                 ? design_template[save_data[player_sd_index].design].content
                 : save_data[player_sd_index].design
             ).find(item => item.type === "ui"),
-            timedata.time[timedata.counting_type ? "timer" : "stopwatch"]
+            timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"]
           ),
           "textures/ui/color_plus"
         );
@@ -2309,7 +2554,7 @@ function splash_globalmode(player) {
 
   form.title("Shared timer");
   form.body("The shared timer feature coppies your timer to an additional timer that is enforced on all players." +
-    (save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name + " is currently sharing his timer. You can §cstop§f this or §ereplace§f it with your own time ("+ apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"]) + "§r§f)." : "" :
+    (save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name + " is currently sharing his timer. You can §cstop§f this or §ereplace§f it with your own time ("+ apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"]) + "§r§f)." : "" :
     
     "\nOnly admins can control it.") + "\n\n§7Required for challenge mode.\n\n");
 
@@ -2376,7 +2621,7 @@ function settings_start_time(player) {
     second:                     1000
   };
 
-  let totalMs = sd.time[sd.counting_type ? "timer" : "stopwatch"] * 50;
+  let totalMs = sd.time[sd.counting_type == 1 ? "timer" : "stopwatch"] * 50;
 
   function decomp(ms) {
     let y = Math.floor(ms / MS.year); ms %= MS.year;
@@ -2467,10 +2712,10 @@ function settings_difficulty(player) {
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
 
   form.title("Difficulty");
-  form.body("Select your difficulty!\n§7Note: " + 
-  (!world.isHardcore
+  form.body("Select your difficulty!" + 
+  (save_data[player_sd_index].allow_unnecessary_inputs? "" : "\n§7Note: " + (!world.isHardcore
     ? "Hardcore difficulties are only available if the world was started in hardcore."
-    : "Easier difficulty levels are only available if you start the world normally."));
+    : "Easier difficulty levels are only available if you start the world normally.")));
 
 
   let visibleDifficulties = [];
@@ -2996,7 +3241,7 @@ function settings_main(player) {
   }
 
   // Button 7: Debug
-  if (save_data[0].debug && save_data[player_sd_index].op) {
+  if (version_info.release_type === 0 && save_data[player_sd_index].op) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => {
       debug_main(player);
@@ -3067,7 +3312,7 @@ function dictionary_about_version(player) {
   form.title("About")
   form.body(
     "Name: " + version_info.name + "\n" +
-    "Version: " + version_info.version + ((Math.floor(Date.now() / 1000)) > (15897600 + version_info.unix)? " §a(update time)§r" : " (" + version_info.build + ")") + "\n" +
+    "Version: " + version_info.version + ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? " §a(update time)§r" : " (" + version_info.build + ")") + "\n" +
     "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
     "Build date: " + `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})` +
 
@@ -3115,7 +3360,7 @@ function dictionary_contact(player, build_date) {
     return entry;
   });
   // and this adds information about the dump date and version to ensure whether a dump matches a bug
-  save_data.push({ dump_unix:Math.floor(Date.now() / 1000), version:version_info.version, build:version_info.build });
+  save_data.push({ dump_unix:Math.floor(Date.now() / 1000), name:version_info.name, version:version_info.version, build:version_info.build });
 
   let actions = []
   form.title("Contact")
@@ -3512,12 +3757,12 @@ function settings_rights_data(viewing_player, selected_save_data) {
   let body_text = "";
 
   body_text += "Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n";
-  if (save_data[0].debug) {
+  if (version_info.release_type === 0) {
     body_text += "Language: " + ["English" /* Placeholder! */][selected_save_data.lang] + "\n";
   }
 
   if (selected_player) {
-      if (save_data[0].debug) {
+      if (version_info.release_type === 0) {
           let memory_text = "";
           switch (selected_player.clientSystemInfo.memoryTier) {
               case 0:
@@ -3672,7 +3917,7 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
         const own_time = apply_design(
           design,
           save_data[player_sd_index].time[
-            save_data[player_sd_index].counting_type ? "timer" : "stopwatch"
+            save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"
           ]
         );
 
@@ -3857,7 +4102,7 @@ function settings_type_info(player, response) {
   }
 
   form.title("Information");
-  form.body("Your "+ (save_data[player_sd_index].counting_type ? "timer" : "stopwatch") +" is not paused! If you change now the mode to "+ (timer_modes[response.selection].label) +" it will be paused!");
+  form.body("Your "+ (save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch") +" is not paused! If you change now the mode to "+ (timer_modes[response.selection].label) +" it will be paused!");
   form.button1("");
   form.button2("Change to: "+timer_modes[response.selection].label);
 
@@ -4301,7 +4546,7 @@ async function update_loop() {
           if (!save_data[0].global.status && save_data[player_sd_index].afk && save_data[player_sd_index].time.do_count) {
             save_data[player_sd_index].time.do_count = false;
 
-            let key = save_data[player_sd_index].counting_type ? "timer" : "stopwatch";
+            let key = save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch";
             let delta = save_data[player_sd_index].counting_type ? 15 * 20 : -15 * 20;
 
             save_data[player_sd_index].time[key] += delta;
@@ -4315,7 +4560,7 @@ async function update_loop() {
           isCurrentlyAFK.set(player.id, true);
         } else if (wasAFK && !nowAFK) {
           // Came back
-          if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type ? "timer" : "stopwatch"] > 0)) {
+          if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"] > 0)) {
             save_data[player_sd_index].time.do_count = true;
             update_save_data(save_data)
           }
