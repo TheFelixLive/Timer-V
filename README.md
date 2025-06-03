@@ -1,14 +1,11 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
-> [!NOTE]
-> I'm currently developing the new major version called Timer V (v.5.0.0). Check it out [here](https://github.com/TheFelixLive/Timer-Ultimate/tree/rewrite)!
-
 ![Minecraft2025-05-0421-27-24-ezgif com-video-to-gif-converter(1)](https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f)
 
 ## About
 
 Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
 That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
-It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release `v.1.21.81` of Minecraft Bedorck **compatible**.
+It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release of Minecraft Bedorck **compatible**.
 Click [here](#installation-and-configuration) for the installation!
 
 > [!TIP]
@@ -146,7 +143,7 @@ Here you can change your difficulty and yes it does more than make mobs stronger
 | Minecraft difficulty | Easy | Normal | Hard | Hard | Hard |
 | In case of a [negative end](#negative-ending) | Resets the timer | Resets the timer | Locks the world | Locks the world | Locks the world |
 | Complicates regeneration | | | | Yes |  |
-| Died with any damage | | | | | Yes |
+| Died with any damage | | | | | Yes* |
 | Notes | Not available in combination with Minecraft's native Hardcore mode | Not available in combination with Minecraft's native Hardcore mode | | | |
 
 You can also switch the difficultys by using[^5]:
@@ -155,7 +152,7 @@ You can also switch the difficultys by using[^5]:
 ```
 
 > [!CAUTION]
->  [*] Infinity ignores the Totem of Immortality, so don't feel so safe 
+>  [*] Infinity ignores the Totem of undying, so don't feel so safe
 
 ## Addons
 This is for toggling your Modification on or off and manage your installed Challenges, kind of mod menu.
