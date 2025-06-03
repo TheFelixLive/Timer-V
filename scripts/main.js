@@ -5,17 +5,17 @@ const version_info = {
   name: "Timer V",
   version: "v.5.0.0",
   build: "A005",
-  release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
+  release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
   unix: 1748467278,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   changelog: {
     // new_features
     new_features: [
-      "Survival and Creative are now one main Mode",
+      "Survival and creativ are no longer separate",
+      "An entire overhaul of the menu",
       "Over 80 new Goals have been added in addition to the existing Goals",
       "Taking advantage of the hardcore mode",
-      "You now get a summary what you setuped in Challenge Mode",
-      "The actionsbar can now completely changed with different designs",
+      "The actionbar can now completely changed with different designs",
       "The day time (realtime / gametime) can be displayed in the actionbar",
       "Player storage data (such as rights) can now be partially viewed, changed and deleted by admins even when that Player is offline"
     ],
@@ -23,11 +23,11 @@ const version_info = {
     general_changes: [
       "Added years & milisecounds as Time units (not all units have to be used from a design)",
       "Removed all §l/function§r commands",
-      "An entire overhaul of the menu",
       "The menu can opened with the sneak-jump (or in spectator with the nod) gesture, with a stick or §l/scriptevent timerv:menu§r",
       "The menu is now more stable and no longer prone to errors while opening",
       "The menu can now be used by multiple players at the same time",
       "The menu woun't change your gamemode as well as the condition",
+      "You now get a summary in the menu what you setuped in challenge mode",
       "The menu music loops and fade into each other",
       "The Fulbright modification is now native, but can be adjusted individually for each player",
       "Custom Sound (formerly known as Custom Music) can be customized for each player and uses a new syntax (the old syntax is still available but not fully supported)",
@@ -36,17 +36,22 @@ const version_info = {
       "Native sound effects and menu music have been changed",
       "Shared timers can now be replaced or deactivated by other admins even if the original player is offline",
       "All Hardcore difficulties are now only available in Hardcore worlds",
-      "Ultra Hardcore now disables all ways to regenerate hearts"
+      "Ultra Hardcore now disables all ways to regenerate hearts",
+      "The timer can now convert old save data from v.4.1.0 or newer",
+      "An update notification has been added",
+      "Removed speedrun & dimension"
     ],
     // bug_fixes
     bug_fixes: [
       "Fixed a bug that allowed players to cheat by changing certain scoreboard entries",
       "Fixed a bug that allowed players to gain unwanted admin rights",
-      "Fixed a bug where the sound would not play when completing or losing a challenge",
+      "Fixed a bug that allowed players to drain all damage by quickly opening the menu",
       "Fixed a bug that caused a softlock if the menu doesn't close correctly",
       "Fixed a bug that caused the in game music to overlap with the music from the menu",
       "Fixed a bug that make totem of undying useless against infinity",
-      "Fixed a bug that caused lost hearts to regenerate when pausing the timer in Hardcore"
+      "Fixed a bug that caused lost hearts to regenerate when pausing the timer in Hardcore",
+      "Fixed a bug that makes the timer disappearing after pausing it in Hardcore",
+      "Fixed a bug where the sound would not play when completing or losing a challenge"
     ]
   }
 }
@@ -554,7 +559,7 @@ const design_template = [
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
           { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
           { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
       ]},
       // Same goes for here: the "s" marker isn't used here, but it works perfectly.
       { type: "day", colorConfig: ["§9", "§e", "§b"], blocks: [
@@ -944,6 +949,7 @@ const design_template = [
   Hidden Fetures
 -------------------------*/
 
+let independent = true
 
 system.afterEvents.scriptEventReceive.subscribe(event=> {
   let save_data = load_save_data();
@@ -952,8 +958,8 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
   if (event.id == "timerv:universel_updater") return universel_updater(event.sourceEntity, uu_find_gen())
 
   if (["timerv:reset"].includes(event.id)) {
-    const notAvailableMsg = id => `§l§7[§f` + (save_data[0].independent? "System" : version_info.name) + `§7]§r ${id} is not available in stable releases!`;
-    const noPermissionMsg = id => `§l§7[§f` + (save_data[0].independent? "System" : version_info.name) + `§7]§r ${id} could not be changed because you do not have permission!`;
+    const notAvailableMsg = id => `§l§7[§f` + (independent? "System" : version_info.name) + `§7]§r ${id} is not available in stable releases!`;
+    const noPermissionMsg = id => `§l§7[§f` + (independent? "System" : version_info.name) + `§7]§r ${id} could not be changed because you do not have permission!`;
 
     if (!save_data[player_sd_index].op) {
       player.sendMessage(noPermissionMsg(event.id));
@@ -979,10 +985,15 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 
   if (event.id === "timerv:api_menu") {
     let save_data = load_save_data()
-    save_data[0].independent = false
+    independent = false
     update_save_data(save_data)
     event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
     return main_menu(event.sourceEntity)
+  }
+
+  if (event.id === "timerv:sd") {
+    let save_data = load_save_data()
+    console.log(JSON.stringify(save_data))
   }
 
   if (event.id === "timerv:menu_soundkey") {
@@ -1005,7 +1016,7 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 // via. item
 world.beforeEvents.itemUse.subscribe(event => {
   let save_data = load_save_data()
-	if (event.itemStack.typeId === "minecraft:stick" && save_data[0].independent) {
+	if (event.itemStack.typeId === "minecraft:stick" && independent) {
       system.run(() => {
         event.source.playSound(translate_soundkeys("menu.open", event.source));
         event.source.playMusic(translate_soundkeys("music.menu.main", event.source));
@@ -1019,14 +1030,13 @@ const gestureCooldowns = new Map();
 
 async function gesture_jump() {
   const now = Date.now();
-  let save_data = load_save_data()
 
   for (const player of world.getAllPlayers()) {
     const lastUsed = gestureCooldowns.get(player.id) || 0;
 
     if (player.isSneaking && player.isJumping) {
       if (now - lastUsed >= 100) { // 2 Sekunden Cooldown
-        if (save_data[0].independent) {
+        if (independent) {
           player.playSound(translate_soundkeys("menu.open", player));
           player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
           main_menu(player);
@@ -1063,7 +1073,7 @@ async function gesture_nod() {
       lastTime = now;
     }
     else if (state === "lookingUp" && pitch > 13) {
-      if (save_data[0].independent) {
+      if (independent) {
         player.playSound(translate_soundkeys("menu.open", player));
         player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
         main_menu(player);
@@ -1098,7 +1108,6 @@ if (!save_data) {
         global: {status: world.isHardcore? true : false, last_player_id: undefined},
         sync_day_time: false,
         utc: 0,
-        independent: true,
         update_message_unix: (version_info.unix + version_info.update_message_period_unix)  }
     ]
     
@@ -1161,7 +1170,7 @@ function create_player_save_data (playerId, playerName, modifier) {
           custom_sounds: 0,
           afk: false,
           counting_type: 0,
-          time_day_actionsbar: false,
+          time_day_actionbar: false,
           allow_unnecessary_inputs: false,
           time_source: 0,
           name: playerName,
@@ -1239,7 +1248,7 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
   }
 
   if (version_info.release_type !== 2) {
-    player.sendMessage("§l§7[§f" + (save_data[0].independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
+    player.sendMessage("§l§7[§f" + (independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
     player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
@@ -1250,7 +1259,7 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
 
   let gen = uu_find_gen()
 
-  if (typeof(gen) === 'number') {
+  if (typeof(gen) === 'number' && save_data[player_sd_index].op) {
     return universel_updater(player, gen)
   }
 
@@ -1259,6 +1268,8 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
 });
 
 function startup_popups(player) {
+  let save_data = load_save_data()
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   // Update popup
   if (save_data[player_sd_index].op && (Math.floor(Date.now() / 1000)) > save_data[0].update_message_unix) {
     let form = new ActionFormData();
@@ -1282,7 +1293,7 @@ function startup_popups(player) {
   }
 
   if (save_data[player_sd_index].setup == 2) {
-    if (save_data[0].independent) {
+    if (independent) {
       let form = new ActionFormData();
       form.title("Initial setup");
       if (world.isHardcore) {
@@ -1321,7 +1332,7 @@ function startup_popups(player) {
             } else {
               save_data[player_sd_index].setup = 0
               update_save_data(save_data);
-              if (!Math.floor(Date.now() / 1000) > save_data[0].update_message_unix) {
+              if (!(Math.floor(Date.now() / 1000) > save_data[0].update_message_unix)) {
                 main_menu(player)
               }
             }
@@ -1337,7 +1348,7 @@ function startup_popups(player) {
 
   // Welcome screen
   if (save_data[player_sd_index].setup == 1) {
-    if (save_data[0].independent) {
+    if (independent) {
       let form = new ActionFormData();
       form.title("Initial setup");
       form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-Ultimate");
@@ -1383,21 +1394,24 @@ world.afterEvents.playerLeave.subscribe(({ playerId, playerName }) => {
   Universel Updater
 -------------------------*/
 
-function universel_updater(player, gen) {
+function uu_find_gen() {
+  let gen;
+  if (world.scoreboard.getObjective("timer_settings")) {
+    gen = 0
+  }
+  if (world.scoreboard.getObjective("timer_custom_music")) {
+    gen = 1
+  }
+  return gen
+}
 
-  // Testing
-  /*
-  world.scoreboard.getObjective("timer_actionbar_time").getParticipants().forEach(o => {
-    console.log(JSON.stringify(o.displayName))
-    console.log(JSON.stringify(o.id))
-    console.log(JSON.stringify(o.type))
-    console.log(JSON.stringify(o.getEntity().id))
-  });
-  */
+
+
+function universel_updater(player, gen) {
 
   let gen_list = [
     "v.4.1.0 - v.4.2.2", // gen 0 (s)
-    "v.4.1.0 - v.4.2.2", // gen 1 (c)
+    "v.4.1.0", // gen 1 (c)
   ]
 
   let form = new ActionFormData();
@@ -1413,25 +1427,9 @@ function universel_updater(player, gen) {
       uu_apply_gen(gen, player)
     }
   })
-
-
-  
 }
 
-function uu_find_gen() {
-  let gen;
-  if (world.scoreboard.getObjective("timer_settings")) {
-    gen = 0
-  }
-  // is under development and not is not working
-  /*
-  if (world.scoreboard.getObjective("timer_custom_music")) {
-    gen = 1
-  }
-  */
-  return gen
-}
-
+// is something to improve
 function uu_apply_gen(gen, player) {
   let note_message;
 
@@ -1472,7 +1470,6 @@ function uu_apply_gen(gen, player) {
       global: { status: true, last_player_id: player.id },
       sync_day_time: false,
       utc: 0,
-      independent: true,
       update_message_unix: (version_info.unix + version_info.update_message_period_unix)
     }];
 
@@ -1513,74 +1510,128 @@ function uu_apply_gen(gen, player) {
         console.error("Error removing objective", obj, ": ", error);
       }
     });
+    uu_gen_successfull(player, note_message)
   }
 
   if (gen == 1) {
-    let afk = world.scoreboard.getObjective("timer_afk");
-    let custom_sounds = world.scoreboard.getObjective("custom_music");
-    let old_global = world.scoreboard.getObjective("timer_menu").getScore("host_mode");
-    let night_vision = world.scoreboard.getObjective("timer_night_vision");
-    let do_count = world.scoreboard.getObjective("timer_do_count");
-    let shoud_count_down = world.scoreboard.getObjective("timer_shoud_count_down");
+    let totalPlayers = 0;
+    let onlinePlayers = 0;
 
-    let time_ms = world.scoreboard.getObjective("timer_time_ms");
-    let time_sec = world.scoreboard.getObjective("timer_time_sec");
-    let time_min = world.scoreboard.getObjective("timer_time_min");
-    let time_h = world.scoreboard.getObjective("timer_time_h");
-    let time_d = world.scoreboard.getObjective("timer_time_d");
+    world.scoreboard.getObjective("timer_time_ms").getParticipants().forEach(o => {
+      if (o.type == "Player") {
+        totalPlayers++;
+        try {
+          let entity = o.getEntity();
+          if (entity && entity.id) {
+            onlinePlayers++;
+          }
+        } catch (error) {
+          // Entity nicht verfügbar – zählt nicht als online
+        }
+      }
+    });
 
+    let dataLossPercent = totalPlayers > 0
+      ? Math.floor(((totalPlayers - onlinePlayers) / totalPlayers) * 100)
+      : 0;
 
-    let save_data = [{
-      time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
-      counting_type: 0,
-      global: { status: old_global == 1? true : false, last_player_id: world.getAllPlayers().find(player => {player.hasTag("target_host")})?.id || player.id},
-
-      challenge: {active: false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1},
-      sync_day_time: false,
-      utc: 0,
-      independent: true,
-      update_message_unix: (version_info.unix + version_info.update_message_period_unix)
-    }];
-
-    try {
-      update_save_data(save_data);
-    } catch (error) {
-      console.error("Error updating save data: ", error);
+    if (dataLossPercent > 0) {
+      let form = new ActionFormData();
+      form.title("Convert");
+      form.body(`This version contains save data for a total of ${totalPlayers} players, ${onlinePlayers} of which are online.\nOnly save data from players who are online can be transferred. This would result in a data loss of ${dataLossPercent} Percent!`);
+      form.button("§9Update");
+      form.button("");
+      form.show(player).then((response) => {
+        if (response.selection == 1) {
+          startup_popups(player);
+        }
+        if (response.selection == 0) {
+          gen_1();
+        }
+      });
+    } else {
+      gen_1();
     }
 
-    world.getAllPlayers().forEach(player => {
+    function gen_1() {
+      let afk = world.scoreboard.getObjective("timer_afk");
+      let night_vision = world.scoreboard.getObjective("timer_night_vision");
+      let custom_sounds = world.scoreboard.getObjective("timer_custom_music");
+      let old_global = world.scoreboard.getObjective("timer_menu").getScore("host_mode");
+      let do_count = world.scoreboard.getObjective("timer_do_count");
+      let shoud_count_down = world.scoreboard.getObjective("timer_shoud_count_down").getScore("host");
+
+      let time_ms = world.scoreboard.getObjective("timer_time_ms");
+      let time_sec = world.scoreboard.getObjective("timer_time_sec");
+      let time_min = world.scoreboard.getObjective("timer_time_min");
+      let time_h = world.scoreboard.getObjective("timer_time_h");
+      let time_d = world.scoreboard.getObjective("timer_time_d");
+
+      let save_data = [{
+        time: { stopwatch: shoud_count_down? 0 : (time_ms.getScore("host") / 5 + time_sec.getScore("host") * 20 + time_min.getScore("host") * 20 * 60 + time_h.getScore("host") * 20 * 60 * 60 + time_d.getScore("host") * 20 * 60 * 60 * 24), timer: shoud_count_down? (time_ms.getScore("host") / 5 + time_sec.getScore("host") * 20 + time_min.getScore("host") * 20 * 60 + time_h.getScore("host") * 20 * 60 * 60 + time_d.getScore("host") * 20 * 60 * 60 * 24) : 0, last_value_timer: shoud_count_down? (time_ms.getScore("host") / 5 + time_sec.getScore("host") * 20 + time_min.getScore("host") * 20 * 60 + time_h.getScore("host") * 20 * 60 * 60 + time_d.getScore("host") * 20 * 60 * 60 * 24) : 0, do_count: old_global == 1? do_count.getScore("host") == 1? true : false : false },
+        counting_type: shoud_count_down? 1 : 0,
+        global: { status: old_global == 1? true : false, last_player_id: world.getAllPlayers().find(player => {player.hasTag("target_host")})?.id || player.id},
+
+        challenge: {active: false, progress: 0, rating: 0, goal: {pointer: 1, entity_pos: 0, event_pos: 0}, difficulty: world.isHardcore? 2 : 1},
+        sync_day_time: false,
+        utc: 0,
+        update_message_unix: (version_info.unix + version_info.update_message_period_unix)
+      }];
+
       try {
-        create_player_save_data(player.id, player.name, {
-          setup: 0,
-          op: player.hasTag("trust_player_control"),
-          custom_sounds: getScoreSafe(settings, "custom_music") === 1 ? 2 : 0,
-          fullbright: getScoreSafe(settings, "night_vision") === 1
-        });
-        if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
+        update_save_data(save_data);
       } catch (error) {
-        console.error(`Error processing player data for player ${player.name}: `, error);
+        console.error("Error updating save data: ", error);
       }
-    });
+
+      for (const player of world.getAllPlayers()) {
+        try {
+          create_player_save_data(player.id, player.name, {
+            time: {do_count: do_count.getScore(player) == 1? true : false, timer: 0, last_value_timer: 0, stopwatch: (time_ms.getScore(player) / 5 + time_sec.getScore(player) * 20 + time_min.getScore(player) * 20 * 60 + time_h.getScore(player) * 20 * 60 * 60 + time_d.getScore(player) * 20 * 60 * 60 * 24)},
+            counting_type: old_global == 2? 2 : 0,
+            setup: 0,
+            afk: afk.getScore(player) === 1 ? true : false,
+            op: player.hasTag("trust_player_control")? true : false,
+            custom_sounds: custom_sounds.getScore(player) === 1 ? 2 : 0,
+            fullbright: night_vision.getScore(player) === 1 ? true : false,
+          });
+          if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
+        } catch (error) {
+          console.error(`Error processing player data for player ${player.name}: `, error);
+        }
+      };
 
 
-    const objectives = [
-      "timer_settings", 
-      "timer_time", 
-      "timer_menu", 
-      "timer_addon", 
-      "timer_actionbar_time", 
-      "timer_show_actionbar"
-    ];
+      const objectives = [
+        "timer_night_vision",
+        "timer_custom_music",
+        "timer_afk", 
+        "timer_menu",
+        "timer_do_count",
+        "timer_shoud_count_down", 
+        "timer_time_ms",
+        "timer_time_sec", 
+        "timer_time_min",
+        "timer_time_h", 
+        "timer_time_d", 
+        "timer_actionbar_time", 
+        "timer_show_actionbar"
+      ];
 
-    objectives.forEach(obj => {
-      try {
-        world.scoreboard.removeObjective(obj);
-      } catch (error) {
-        console.error("Error removing objective", obj, ": ", error);
-      }
-    });
+      objectives.forEach(obj => {
+        try {
+          world.scoreboard.removeObjective(obj);
+        } catch (error) {
+          console.error("Error removing objective", obj, ": ", error);
+        }
+      });
+      uu_gen_successfull(player, note_message)
+    }
   }
 
+}
+
+function uu_gen_successfull(player, note_message) {
   let form = new ActionFormData();
   form.title("Convert");
   form.body("It's done!\nYou can now enjoy the new "+ version_info.name + (note_message? "\n\n§7Note: " + note_message : ""));
@@ -1596,7 +1647,6 @@ function uu_apply_gen(gen, player) {
       return main_menu(player)
     }
   })
-
 }
 
 
@@ -1766,7 +1816,7 @@ function start_cm_timer() {
   });
 
   update_save_data(save_data);
-  world.sendMessage("§l§7[§f"+ (save_data[0].independent? "System" : version_info.name) + "§7]§r The Challenge starts now!")
+  world.sendMessage("§l§7[§f"+ (independent? "System" : version_info.name) + "§7]§r The Challenge starts now!")
 }
 
 function finished_cm_timer(rating, message) {
@@ -1909,6 +1959,7 @@ function render_task_list() {
 
 function enable_gamerules(doDayLightCycle) {
   world.gameRules.doDayLightCycle = doDayLightCycle;
+  world.gameRules.playerssleepingpercentage = doDayLightCycle? 101 : 100;
   world.gameRules.doEntityDrops = true;
   world.gameRules.doFireTick = true;
   world.gameRules.doWeatherCycle = true;
@@ -1917,6 +1968,7 @@ function enable_gamerules(doDayLightCycle) {
 
 function disable_gamerules() {
   world.gameRules.doDayLightCycle = false;
+  world.gameRules.playerssleepingpercentage = 101;
   world.gameRules.doEntityDrops = false;
   world.gameRules.doFireTick = false;
   world.gameRules.doWeatherCycle = false;
@@ -2369,7 +2421,7 @@ function main_menu_actions(player, form) {
   }
 
 
-  if ((save_data[player_sd_index].time_day_actionsbar == true || timedata.counting_type == 3) && save_data[0].challenge.progress !== 2) {
+  if ((save_data[player_sd_index].time_day_actionbar == true || timedata.counting_type == 3) && save_data[0].challenge.progress !== 2) {
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
       if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time ? "§aon" : "§coff"), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
@@ -2384,7 +2436,7 @@ function main_menu_actions(player, form) {
     }
   }
 
-  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && save_data[0].independent) {
+  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && independent) {
     if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? "§aon" : "§coff"), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
@@ -2399,7 +2451,7 @@ function main_menu_actions(player, form) {
   });
 
   // Button: Settings
-  if (!save_data[0].independent) {
+  if (!independent) {
     if(form){form.button("")}
     actions.push(() => {
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
@@ -3168,8 +3220,8 @@ function settings_main(player) {
     });  
   }
 
-  // Button 2: Actionsbar
-  form.button("Actionsbar\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
+  // Button 2: Actionbar
+  form.button("Actionbar\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 , loop: true})
     settings_actionbar(player)
@@ -3369,7 +3421,7 @@ function dictionary_contact(player, build_date) {
   if (save_data[player_sd_index].op) {
     form.button("Dump SD" + (version_info.release_type !== 2? "\nvia. privat chat" : ""));
     actions.push(() => {
-      player.sendMessage("§l§7[§f"+ (save_data[0].independent? "System" : version_info.name) + "§7]§r SD Dump:\n"+JSON.stringify(save_data))
+      player.sendMessage("§l§7[§f"+ (independent? "System" : version_info.name) + "§7]§r SD Dump:\n"+JSON.stringify(save_data))
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     });
 
@@ -4127,7 +4179,7 @@ function settings_actionbar(player) {
 
   let actions = [];
 
-  form.title("Actionsbar");
+  form.title("Actionbar");
   form.body("Select an option!");
 
   form.button(
@@ -4140,7 +4192,7 @@ function settings_actionbar(player) {
   });
 
   form.button(
-    "Use actionsbar\n" + (save_data[player_sd_index].visibility ? "§aon" : "§coff"),
+    "Use actionbar\n" + (save_data[player_sd_index].visibility ? "§aon" : "§coff"),
     save_data[player_sd_index].visibility ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
   );
   actions.push(() => {
@@ -4151,17 +4203,17 @@ function settings_actionbar(player) {
 
   if (save_data[player_sd_index].counting_type !== 3) {
     form.button(
-      "Show day time\n" + (save_data[player_sd_index].time_day_actionsbar ? "§aon" : "§coff"),
-      save_data[player_sd_index].time_day_actionsbar ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
+      "Show day time\n" + (save_data[player_sd_index].time_day_actionbar ? "§aon" : "§coff"),
+      save_data[player_sd_index].time_day_actionbar ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
     );
     actions.push(() => {
-      save_data[player_sd_index].time_day_actionsbar = !save_data[player_sd_index].time_day_actionsbar;
+      save_data[player_sd_index].time_day_actionbar = !save_data[player_sd_index].time_day_actionbar;
       update_save_data(save_data);
       settings_actionbar(player);
     });
   }
 
-  if (save_data[player_sd_index].time_day_actionsbar || save_data[player_sd_index].counting_type == 3) {
+  if (save_data[player_sd_index].time_day_actionbar || save_data[player_sd_index].counting_type == 3) {
     if (!save_data[0].sync_day_time) {
       if(form){form.button("Time Source\n§9" + (save_data[player_sd_index].time_source === 0 ? "Minecraft" : "Real Life"), "textures/ui/share_microsoft")};
       actions.push(() => {
@@ -4203,7 +4255,7 @@ function design_template_ui(player) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  form.title("Design actionsbar");
+  form.title("Design actionbar");
   form.body("Select a template or create your own custom design!");
 
   var currentDesign = save_data[player_sd_index].design;
@@ -4226,7 +4278,6 @@ function design_template_ui(player) {
     form.button(buttonText);
   });
 
-  // Rück-Button hinzufügen
   form.button("");
 
   form.show(player).then((response) => {
@@ -4257,7 +4308,7 @@ function design_preview(player, design, is_custom) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  form.title("Design actionsbar");
+  form.title("Design actionbar");
 
   let ui_preview = apply_design(design.find(d => d.type === "ui"), 660822121.4)
   let normal_preview = apply_design(design.find(d => d.type === "normal"), 660822121.4)
@@ -4406,7 +4457,7 @@ function render_live_actionbar(selected_save_data, do_update) {
             ? selected_save_data.design.find(d => d.type === "screen_saver")
             : selected_save_data.design.find(d => d.type === "paused"));
   }
-    if (selected_save_data.time_day_actionsbar)
+    if (selected_save_data.time_day_actionbar)
       d1 = selected_save_data.design.find(d => d.type === "day");
   } else {
     d0 = selected_save_data.design.find(d => d.type === "day");
@@ -4425,6 +4476,10 @@ function calcAB(update, id, dayFormat) {
   if (data[0].global.status) {
     counting_type = data[0].counting_type
     timedata = data[0].time
+    // Prevent conting on dedicated server if no player is online
+    if (!world.getAllPlayers()) {
+      update = false
+    }
   } else {
     counting_type = data[idx].counting_type
     timedata = data[idx].time
@@ -4511,8 +4566,10 @@ async function update_loop() {
 
       if (save_data[0].sync_day_time) {
         world.gameRules.doDayLightCycle = false;
+        world.gameRules.playerssleepingpercentage = 101;
       } else {
         world.gameRules.doDayLightCycle = true;
+        world.gameRules.playerssleepingpercentage = 100;
       }
 
 
