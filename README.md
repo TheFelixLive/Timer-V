@@ -1,5 +1,5 @@
 # Timer Ulitmate: Timer, Stopwatch, Challenges and more
-![Minecraft2025-05-0421-27-24-ezgif com-video-to-gif-converter(1)](https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f)
+<img src="https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f" width="1920" height="auto" />
 
 ## About
 
@@ -71,7 +71,7 @@ Can also be triggered via:
 Isn't it ironic that the plugin is called **Timer** Ultimate and has nothing to do with a timer so far?
 Now, if global mode is enabled, you can set a start time here, and it will count down from there.
 
-![Image](https://github.com/user-attachments/assets/51ad6b9c-0129-40a2-8841-ac62740a58e8)
+<img src="https://github.com/user-attachments/assets/51ad6b9c-0129-40a2-8841-ac62740a58e8" width="1920" height="auto" />
 
 ## Control
 > [!IMPORTANT]
@@ -113,7 +113,7 @@ Where do I start with this, there is a lot to cover...
 So the basic idea is that at the beginning of your survival world, you set a goal that you want to achieve. The timer in this case makes it easier or more difficult for you to reach your goal. Click [here](#survival-mode---survival) to go with the default setup.
 Otherwise let's cover everything we **can do before** we start our survival journey. That's the Main Menu:
 
-![Image](https://github.com/user-attachments/assets/72b5df6b-6ded-4d3a-bca5-35d92c3ab737)
+<img src="https://github.com/user-attachments/assets/72b5df6b-6ded-4d3a-bca5-35d92c3ab737" width="1920" height="auto" />
 
 ## Goals
 It's pretty self-explanatory, you choose a goal from the following and when you defeat it or you finish the event, the timer stops automatically.
@@ -308,7 +308,7 @@ There are in toal 18 different restrictions available and by default no one is a
 
 **Here you can choose between [survival](#survival-mode---initial-setup) and [creative](#creative-mode).**
 
-![Image](https://github.com/user-attachments/assets/f59543ef-3abb-4fd7-b6d2-a8907b9c7075)
+<img src="https://github.com/user-attachments/assets/f59543ef-3abb-4fd7-b6d2-a8907b9c7075" width="1920" height="auto" />
 
 > [!IMPORTANT]
 > When you use the  "Challenge Addon" select [survival](#survival-mode---initial-setup) otherwise it will not work!
