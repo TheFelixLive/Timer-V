@@ -18,8 +18,9 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 
 ---
 
-> [!IMPORTANT]
-> If you are looking for Timer Ultimate (v.4.2.2 or older) please use [this guide](https://github.com/TheFelixLive/Timer-Ultimate/tree/d005c13a41b5fe50cac348d51a233ee79c1cc088) instead!
+### Update?
+If you are actively looking for the Timer Ultimate (v.4.2.2 or older), please use [this guide](https://github.com/TheFelixLive/Timer-Ultimate/tree/d005c13a41b5fe50cac348d51a233ee79c1cc088) instead!
+When you are using such a version, it can be simply updated be follow these steps.
 
 
 # Setup
