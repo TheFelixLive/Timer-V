@@ -19,7 +19,7 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 ---
 
 ### Update?
-If you are actively looking for the Timer Ultimate (v.4.2.2 or older), please use [this guide](https://github.com/TheFelixLive/Timer-Ultimate/tree/d005c13a41b5fe50cac348d51a233ee79c1cc088) instead!
+If you are actively looking for the Timer Ultimate (v.4.2.2 or older), please use [this guide](https://github.com/TheFelixLive/Timer-Ultimate/tree/9dd11eccb10fe2d0877da4243555df7bc23d7413) instead!
 When you are using such a version, it can be simply updated be follow these steps.
 
 
@@ -42,7 +42,7 @@ From now on every player can open the menu of the timer at any time using these 
 Let's break this down into pieces. What do these buttons?
 
 ## Condition
-This is as far as possible always available. It lets you **pause or resume** your stopwatch or [if setuped the timer](#change-time).
+This is as far as possible always available. It lets you **pause or resume** your stopwatch or [if set up the timer](#change-time).
 If it's not available, you shouldn't have a reason to.
 
 ## Reset \<stopwatch or timer\>
@@ -125,7 +125,7 @@ On this occasion, let's take another look at the main menu to get an overview of
 Guess what, you choose a goal from the following and when you defeat it or you finish the event, the timer stops automatically.
 - Defeat a specific creature from Minecraft (e.g the Ender Dragon as you can see in the picture)
 - Raid
-- Survive a preset time (only when a timer is setuped)
+- Survive a preset time (only when a timer is set up)
 
 ## Start-Time
 It is the same as [change time](#change-time) except you can not change the time after you have started the challenge.
@@ -163,7 +163,7 @@ Now to pause the timer we have to use the menu for that[^1]:
 
 > During a break, **all players** are put into `spectator` mode[^2]!
 
-Speaking of which, we can see live what we have [setuped](#challenge-mode-sometimes-called-mode-survival-mode).
+Speaking of which, we can see live what we have [set up](#challenge-mode-sometimes-called-mode-survival-mode).
 Moveover in the menu we could give up, what results in a [negative ending](#negative-ending).
 
 ![Image](https://github.com/user-attachments/assets/cea9de99-2e72-47ce-bc70-5f2750cebfae)
