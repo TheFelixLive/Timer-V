@@ -4,7 +4,7 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.0.0",
-  build: "A005",
+  build: "B005",
   release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
   unix: 1748467278,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
@@ -39,7 +39,8 @@ const version_info = {
       "Ultra Hardcore now disables all ways to regenerate hearts",
       "The timer can now convert old save data from v.4.1.0 or newer",
       "An update notification has been added",
-      "Removed speedrun & dimension"
+      "Removed speedrun & dimension",
+      "All title animations have been removed"
     ],
     // bug_fixes
     bug_fixes: [
@@ -207,6 +208,11 @@ const soundkeys = {
   },
   "music.menu.settings.actionbar.design": {
     extern: "timer.music.menu.settings.actionbar.design",
+    native: "music.overworld.grove"
+  },
+  "music.menu.setup": {
+    extern: "timer.music.menu.setup",
+    extern_l: "timeru.music.menu_0.1",
     native: "music.overworld.grove"
   },
 
@@ -1015,7 +1021,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 
 // via. item
 world.beforeEvents.itemUse.subscribe(event => {
-  let save_data = load_save_data()
 	if (event.itemStack.typeId === "minecraft:stick" && independent) {
       system.run(() => {
         event.source.playSound(translate_soundkeys("menu.open", event.source));
@@ -1260,7 +1265,12 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
   let gen = uu_find_gen()
 
   if (typeof(gen) === 'number' && save_data[player_sd_index].op) {
-    return universel_updater(player, gen)
+    if (save_data[player_sd_index].setup == 0) {
+        player.sendMessage("§l§1[§9Update§1]§r We found save data from "+ gen_list[gen] +"! You can convert them and use it in "+version_info.version)
+    } else {
+      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
+      return universel_updater(player, gen)
+    }
   }
 
   startup_popups(player)
@@ -1272,6 +1282,7 @@ function startup_popups(player) {
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   // Update popup
   if (save_data[player_sd_index].op && (Math.floor(Date.now() / 1000)) > save_data[0].update_message_unix) {
+    player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
     let form = new ActionFormData();
     form.title("Update time!");
     form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
@@ -1286,69 +1297,69 @@ function startup_popups(player) {
             save_data[0].update_message_unix = (Math.floor(Date.now() / 1000)) + version_info.update_message_period_unix;
             update_save_data(save_data);
           }
+          if (response.selection == undefined ) {
+            return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+          }
         }
       });
     };
     showForm();
   }
+  if (independent) {
+    player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
+    if (save_data[player_sd_index].setup == 2) {
+        let form = new ActionFormData();
+        form.title("Initial setup");
+        if (world.isHardcore) {
+          form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
+          form.button("Try Hardcore!");
+          form.button("");
+        } else {
+          form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+          form.button("Survival mode");
+          form.button("Creative mode");
+          form.button("");
+        }
 
-  if (save_data[player_sd_index].setup == 2) {
-    if (independent) {
-      let form = new ActionFormData();
-      form.title("Initial setup");
-      if (world.isHardcore) {
-        form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
-        form.button("Try Hardcore!");
-        form.button("");
-      } else {
-        form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
-        form.button("Survival mode");
-        form.button("Creative mode");
-        form.button("");
-      }
 
-
-      const showForm = async () => {
-        form.show(player).then((response) => {
-          if (response.canceled && response.cancelationReason === "UserBusy") {
-            showForm()
-          } else if (!response.canceled) {
-            if (!world.isHardcore) {
-              // Response
-              save_data[player_sd_index].setup = 0
-              // Survival
-              if (response.selection === 0) {
-                save_data[0].global.status = true
-                save_data[0].challenge.active = true
-                save_data[0].global.last_player_id = player.id
-                world.setTimeOfDay(0);
-                world.getDimension("overworld").setWeather("Clear");
-              }
-
-              update_save_data(save_data);
-              if (response.selection >= 0 && !Math.floor(Date.now() / 1000) > save_data[0].update_message_unix) {
-                main_menu(player)
-              }
+        const showForm = async () => {
+          form.show(player).then((response) => {
+            if (response.canceled && response.cancelationReason === "UserBusy") {
+              showForm()
             } else {
-              save_data[player_sd_index].setup = 0
-              update_save_data(save_data);
-              if (!(Math.floor(Date.now() / 1000) > save_data[0].update_message_unix)) {
-                main_menu(player)
+              if (response.selection == undefined ) {
+                return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+              }
+              if (!world.isHardcore) {
+                // Response
+                save_data[player_sd_index].setup = 0
+                // Survival
+                if (response.selection === 0) {
+                  save_data[0].global.status = true
+                  save_data[0].challenge.active = true
+                  save_data[0].global.last_player_id = player.id
+                  world.setTimeOfDay(0);
+                  world.getDimension("overworld").setWeather("Clear");
+                }
+
+                update_save_data(save_data);
+                if (response.selection >= 0 && Math.floor(Date.now() / 1000) < save_data[0].update_message_unix) {
+                  main_menu(player)
+                }
+              } else {
+                save_data[player_sd_index].setup = 0
+                update_save_data(save_data);
+                if (Math.floor(Date.now() / 1000) < save_data[0].update_message_unix) {
+                  main_menu(player)
+                }
               }
             }
-          }
-        });
-      };
-      showForm();
-    } else {
-      save_data[player_sd_index].setup = 0
-      update_save_data(save_data);
+          });
+        };
+        showForm();
     }
-  }
-
-  // Welcome screen
-  if (save_data[player_sd_index].setup == 1) {
-    if (independent) {
+    // Welcome screen
+    if (save_data[player_sd_index].setup == 1) {
       let form = new ActionFormData();
       form.title("Initial setup");
       form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-Ultimate");
@@ -1360,7 +1371,10 @@ function startup_popups(player) {
         form.show(player).then((response) => {
           if (response.canceled && response.cancelationReason === "UserBusy") {
             showForm()
-          } else if (!response.canceled) {
+          } else {
+            if (response.selection == undefined ) {
+              return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+            }
             // Response
             save_data[player_sd_index].setup = 0
             update_save_data(save_data);
@@ -1372,10 +1386,11 @@ function startup_popups(player) {
         });
       };
       showForm();
-    } else {
-      save_data[player_sd_index].setup = 0
-      update_save_data(save_data);
     }
+
+  } else {
+    save_data[player_sd_index].setup = 0
+    update_save_data(save_data);
   }
 }
 
@@ -1405,28 +1420,43 @@ function uu_find_gen() {
   return gen
 }
 
-
+let gen_list = [
+  "v.4.1.0 - v.4.2.2", // gen 0 (s)
+  "v.4.1.0", // gen 1 (c)
+]
 
 function universel_updater(player, gen) {
-
-  let gen_list = [
-    "v.4.1.0 - v.4.2.2", // gen 0 (s)
-    "v.4.1.0", // gen 1 (c)
-  ]
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
   let form = new ActionFormData();
   form.title("Convert");
   form.body("It looks like you've used the timer before.\nDo you want to update your save data from "+ gen_list[gen] +" to "+ version_info.version +"?\n\n§7Note: Once you update your save data to a newer version, you can no longer use it with the older version!");
   form.button("§9Update");
   form.button("");
+  const showForm = async () => {
   form.show(player).then((response) => {
-    if (response.selection == 1) {
-      startup_popups(player)
+    if (response.canceled && response.cancelationReason === "UserBusy") {
+      showForm()
+    } else {
+      if (response.selection == 1) {
+        if (save_data[player_sd_index].setup == 0) {
+          player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+          settings_main(player)
+        } else {
+          startup_popups(player)
+        }
+      }
+      if (response.selection == 0) {
+        uu_apply_gen(gen, player)
+      }
+      if (response.selection == undefined ) {
+        return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      }
     }
-    if (response.selection == 0) {
-      uu_apply_gen(gen, player)
-    }
-  })
+  });
+};
+showForm();
 }
 
 // is something to improve
@@ -1542,6 +1572,9 @@ function uu_apply_gen(gen, player) {
       form.button("§9Update");
       form.button("");
       form.show(player).then((response) => {
+        if (response.selection == undefined ) {
+          return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+        }
         if (response.selection == 1) {
           startup_popups(player);
         }
@@ -1560,6 +1593,7 @@ function uu_apply_gen(gen, player) {
       let old_global = world.scoreboard.getObjective("timer_menu").getScore("host_mode");
       let do_count = world.scoreboard.getObjective("timer_do_count");
       let shoud_count_down = world.scoreboard.getObjective("timer_shoud_count_down").getScore("host");
+      let show_actionbar = world.scoreboard.getObjective("timer_show_actionbar");
 
       let time_ms = world.scoreboard.getObjective("timer_time_ms");
       let time_sec = world.scoreboard.getObjective("timer_time_sec");
@@ -1594,6 +1628,7 @@ function uu_apply_gen(gen, player) {
             op: player.hasTag("trust_player_control")? true : false,
             custom_sounds: custom_sounds.getScore(player) === 1 ? 2 : 0,
             fullbright: night_vision.getScore(player) === 1 ? true : false,
+            visibility: show_actionbar.getScore(player) === 1? true : false,
           });
           if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
         } catch (error) {
@@ -1638,6 +1673,9 @@ function uu_gen_successfull(player, note_message) {
   form.button("§9Changelog");
   form.button("");
   form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
     if (response.selection == 0) {
       player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
       return dictionary_about_version_changelog(player, convertUnixToDate(version_info.unix, save_data[0].utc))
@@ -2436,7 +2474,7 @@ function main_menu_actions(player, form) {
     }
   }
 
-  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && independent) {
+  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore) {
     if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? "§aon" : "§coff"), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
@@ -3301,12 +3339,22 @@ function settings_main(player) {
     });
   }
 
-  // Button 8: Dictionary
-  form.button("About\n", "textures/ui/infobulb");
-  actions.push(() => {
-    player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
-    dictionary_about_version(player)
-  });
+  // Button 8: Update / Dictionary
+  let gen = uu_find_gen()
+
+  if (typeof(gen) === 'number' && save_data[player_sd_index].op) {
+    form.button("Update\n" + gen_list[gen] + " -> " + version_info.version, "textures/ui/icon_bell");
+    actions.push(() => {
+      universel_updater(player, gen)
+      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
+    });
+  } else {
+    form.button("About\n", "textures/ui/infobulb");
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
+      dictionary_about_version(player)
+    });
+  }
 
   // Back to main menu
 
