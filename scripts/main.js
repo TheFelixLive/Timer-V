@@ -1504,7 +1504,7 @@ function uu_apply_gen(gen, player) {
 
   // gen 0
   if (gen == 0) {
-
+    note_message = "Challenge settings could not be transferred because they are not currently supported"
     const getScoreSafe = (objective, scoreName, defaultValue = 0) => {
       try {
         return objective.getScore(scoreName) || defaultValue;
