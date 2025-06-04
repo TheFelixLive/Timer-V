@@ -20,7 +20,7 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 
 ### Update?
 If you are actively looking for the Timer Ultimate (v.4.2.2 or older), please use [this guide](https://github.com/TheFelixLive/Timer-Ultimate/tree/9dd11eccb10fe2d0877da4243555df7bc23d7413) instead!
-When you are using such a version, it can be simply updated be follow these steps.
+When you are using such a version, it can be simply updated be [follow these](#updating) steps.
 
 
 # Setup
@@ -196,17 +196,25 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 ![Image](https://github.com/user-attachments/assets/1a094ed0-da30-4451-9d61-8c9fffb3ae36)
 > Was captured during a death with [difficulty](#difficulty) infinity in v.4.1.0, but it behaves almost identically in v5. The player name was subsequently removed
 
-# Installation and configuration
+# Installation
 1. **Download** the latest release from [here](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
-
 2. **Open** the `.mcpack` or `.mcaddon` file with Minecraft.
-3. **Create** a new world OR edit an existing world with: <img src="https://github.com/user-attachments/assets/2def9d21-84ba-4222-92b6-c42bc3ada5bf" width="35"/>
-4. **Navigate to**: <img src="https://github.com/user-attachments/assets/eeaba65d-f9a1-4e2f-9f6b-dc9e4a7f8b04" width="120"/>
-5. **Click on** "Available".
-6. Activate the timer by using <img src="https://github.com/user-attachments/assets/67678b1f-7e2d-41e9-ac57-3a59bc1414b5" width="35"/> next to it.
-7. **Have fun!**
+3. **Create** a new world OR **edit** an existing world
+4. **Navigate to**: Behavior packs.
+5. **Click on** "Available"
+6. **Activate** the timer
+
+## Updating
+> Please follow the steps from the [installation](#installation) before
+7. **Disable** the old version *(e.g. Timer Ultimate)*
+8. **Start** your world
+
+**From here, please proceed with the on-screen instructions[^3]**
+
+![Screenshot 2025-06-04 153655](https://github.com/user-attachments/assets/8a5b0ed3-c7a4-4a78-8b10-76f943388466)
 
 # Credits
+
 > [!NOTE]
 > These are mainly german YouTubers, since the original version and the associated idea were actually in german.
 
@@ -215,3 +223,4 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 
 [^1]: This feature is experimental while using hardcore
 [^2]: While hardcore, they remain survival but invulnerable, until a mob 1 shots you e.g. the warden
+[^3]: You may need to confirm the update process several times. Under certain circumstances, not all data can be transferred.
