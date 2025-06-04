@@ -8,7 +8,7 @@ const version_info = {
   version: "v.5.0.0",
   build: "B005",
   release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1748467278,
+  unix: 1749045567,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   changelog: {
     // new_features
@@ -1706,6 +1706,7 @@ function uu_apply_gen(gen, player) {
 }
 
 function uu_gen_successfull(player, note_message) {
+  player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
   let form = new ActionFormData();
   form.title("Convert");
   form.body("It's done!\nYou can now enjoy the new "+ version_info.name + (note_message? "\n\n§7Note: " + note_message : ""));
