@@ -1,0 +1,35 @@
+{
+  "format_version": 2,
+  "header": {
+      "description": "Keep track of the real time you spent in your Minecraft world",
+      "name": "Timer V",
+      "uuid": "c4d3852f-f902-4807-a8c8-51980fdae4c3",
+      "version": [ 5, 0, 0],
+      "min_engine_version": [1, 21, 40]
+  },
+  "modules": [
+    {
+        "description": "",
+        "type": "data",
+        "uuid": "10ef79fe-9658-4651-ba9f-01f5c6ab8709",
+        "version": [5, 0, 0]
+    },
+    {
+      "description": "",
+        "type": "script",
+        "uuid": "459c24c2-dce4-41c2-a6a6-a0ec2b2f1142",
+        "version": [5, 0, 0],
+        "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name":"@minecraft/server",
+      "version":"1.15.0"
+    }, 
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "1.3.0"
+    }
+ ]
+}
