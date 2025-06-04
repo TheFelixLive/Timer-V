@@ -1,6 +1,8 @@
 import { world, system } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
+let independent = true
+
 const version_info = {
   name: "Timer V",
   version: "v.5.0.0",
@@ -952,12 +954,53 @@ const design_template = [
 ]
 
 /*------------------------
+  Handshake for independent = false
+-------------------------*/
+
+async function timer_handshake() {
+  if (!independent) {
+    if (version_info.release_type == 0) {
+      console.log("Timer: Receiving handshake!");
+    }
+
+    if (version_info.release_type == 0) {
+      console.log("Timer: Receiving handshake!");
+    }
+    world.scoreboard.addObjective("timer_handshake")
+
+    await system.waitTicks(2);
+
+    try {
+      if (world.scoreboard.removeObjective("timer_handshake")) {
+        if (version_info.release_type == 0) {
+          console.log("Timer: Handshake timeout!");
+        }
+        return -1
+      }
+    } catch {}
+
+    if (version_info.release_type == 0) {
+      console.log("Timer: Clientmode enabled!");
+    }
+    independent = false
+  } else {
+    if (version_info.release_type == 0) {
+      console.log("Clientmode is already enabled!");
+    }
+  }
+}
+
+/*------------------------
   Hidden Fetures
 -------------------------*/
 
-let independent = true
-
 system.afterEvents.scriptEventReceive.subscribe(event=> {
+  // Have to be on the top to be able to trigger using getDimension.runCommand
+  if (event.id === "timerv:api_client_mode") {
+    return timer_handshake()
+  }
+
+
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
 
@@ -990,9 +1033,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
   }
 
   if (event.id === "timerv:api_menu") {
-    let save_data = load_save_data()
-    independent = false
-    update_save_data(save_data)
     event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
     return main_menu(event.sourceEntity)
   }
@@ -1060,7 +1100,6 @@ const playerHeadMovement = new Map();
 
 async function gesture_nod() {
   const now = Date.now();
-  let save_data = load_save_data()
 
   for (const player of world.getAllPlayers()) {
     if (player.getGameMode() !== "spectator") continue;
@@ -2465,7 +2504,7 @@ function main_menu_actions(player, form) {
       actions.push(() => {
         if (!save_data[0].sync_day_time) {
           save_data[0].sync_day_time = true;
-        } else {
+        } else {1
           save_data[0].sync_day_time = false;
         }
         update_save_data(save_data);
