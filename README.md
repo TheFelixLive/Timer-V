@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Timer V - Timer, Stopwatch, Real time and more
 <img src="https://github.com/user-attachments/assets/6e1c269f-858b-4e9b-94c0-30a4c13659e0" width="1920" height="auto" />
 
@@ -5,6 +6,96 @@
 When you think of a timer in Minecraft Bedrock, what comes to mind? Maybe a point in the future that you want to reach or something as banal as a stopwatch to keep you grounded.
 My idea of ​​it is the **Timer V**, you could say it redefines what a timer should do do in Minecraft Bedrock.
 Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate/issues/new?template=feature_request.md) you think about it!
+=======
+# Timer Ulitmate: Timer, Stopwatch, Challenges and more
+<img src="https://github.com/user-attachments/assets/cc264e11-f5db-470d-a8ec-3c36d017ef0f" width="1920" height="auto" />
+
+## About
+
+Timer Ultimate is basically tool to track your time in your Minecraft World. However when you play Minecraft, you also play differently depending on your game mode.
+That's why there are different timers: one for [survival](#survival-mode---initial-setup) and one for [creative](#creative-mode).
+It requires **at least** a version of Minecraft Bedrock `v.1.21.41`, so it is with the latest release of Minecraft Bedorck **compatible**.
+Click [here](#installation-and-configuration) for the installation!
+
+> [!TIP]
+>  To control the timer, you can use different functions which are in this syntax: `/function timer/[...]`
+>  or you use the **recommended menu**, which will open with `/function timer/menu` and in [survival mode](#survival-mode---initial-setup) by jumping and sneaking at the same time.
+>  Make shure you have the right **[permission](#permissions)**!
+
+
+# Creative Mode
+The creative mode is kind of a lightweight mode if you compare them. It's designed to allow multiple timers to be tracked simultaneously.
+What do I mean by that? Player 1 can have a different time than Player 2. In fact, someone can pause their timer while another person's timer continues counting[^1].
+So much for the theory, let's talk about the home screen:
+
+![Image](https://github.com/user-attachments/assets/f4102726-7c00-4bb6-941b-b167d8107cdc)
+
+Here we have the following buttons, these can be different depending on your [rights](#permissions) you may or may not have and the current [submode](#local-mode)
+
+
+## Mode
+This button allows you to **pause** or **resume** the timer, as well as **hide it** completely from the action bar.
+>  If you are using [global mode](#global-mode), pause and resume will also be applied to other players.
+
+To switch between resume and pause you can also use:
+```mcfunction
+/function timer/mode
+``` 
+and for the visibly
+```mcfunction
+/function timer/visible
+``` 
+
+## Addon
+Here you can togelle some Modification on or off. It's a kind of mod menu, but again nothing compared to the other one.
+| Name| Fullbright | Custom Music  | AFK |
+|--------|--------|--------|--------|
+|Description| As long as the timer is running, you will have night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
+|Limitations| Enforced in [global mode](#global-mode) | Requires a compatible resource pack | Only available in [local mode](#local-mode) |
+|Commands| `/function timer/mods/night_vision` || `/function timer/mods/afk`|
+
+## Reset
+As the title suggests it sets the timer to 0, which also can be used in [global mode](#global-mode).
+
+## Status / Time
+
+> [!IMPORTANT]
+>  These ones are special feature and are only available to [admins](#permissions)!
+
+### Status ([local mode](#local-mode))
+Gives you an overview of every player in the world:
+- Name (is the player name)
+- Time (there courned timer)
+- State (0 means paused and 1 resumed)
+- Fullbright (0 means off and 1 means on)
+- Music (reprends Custom Music; 0 means off and 1 means on)
+
+Can also be triggered via:
+```mcfunction
+/function timer/system/testfor
+``` 
+
+---
+### Time ([global mode](#global-mode))
+Isn't it ironic that the plugin is called **Timer** Ultimate and has nothing to do with a timer so far?
+Now, if global mode is enabled, you can set a start time here, and it will count down from there.
+
+<img src="https://github.com/user-attachments/assets/51ad6b9c-0129-40a2-8841-ac62740a58e8" width="1920" height="auto" />
+
+## Control
+> [!IMPORTANT]
+> This one is a special feature and is only available to [admins](#permissions)!
+
+Well this button let you switch between thoes 3 submodes.
+OR you use that Command:
+```mcfunction
+/function timer/system/control
+``` 
+---
+
+### Local mode
+This is the default mode and it allows every player in the world to have and control their own timer.
+>>>>>>> main
 
 ---
 
@@ -76,6 +167,7 @@ If no [timer is shared](#special-ones) and the [challenge mode](#challenge-mode-
 
 So what the hell does that even mean "admins"? Well, admins are players who have special rights. Using the permission feature, these player can now also appoint other players to be an admin. There is also some general information available, e.g. when a player last played in the world.
 
+<<<<<<< HEAD
 > Operators (players who can, among other things, execute commands) or members do not necessarily have to be admins! I know it's a little confusing
 
 ## Time zone
@@ -120,12 +212,25 @@ The basic idea is setting a goal that you want to achieve and the timer could ma
 On this occasion, let's take another look at the main menu to get an overview of everything we can do before starting our survival journey.
 
 ![Image](https://github.com/user-attachments/assets/33370d9a-0f22-4d50-8be0-c300aa6f13c9)
+=======
+<img src="https://github.com/user-attachments/assets/72b5df6b-6ded-4d3a-bca5-35d92c3ab737" width="1920" height="auto" />
+>>>>>>> main
 
 ## Goals
 Guess what, you choose a goal from the following and when you defeat it or you finish the event, the timer stops automatically.
 - Defeat a specific creature from Minecraft (e.g the Ender Dragon as you can see in the picture)
 - Raid
+<<<<<<< HEAD
 - Survive a preset time (only when a timer is set up)
+=======
+
+In addition, it can be randomly generated (which is the default one and will be revealed [here](#survival-mode---survival)), survive a period of time (the [period](#start-time) have to be set first) or be indefinite, where you have to finish the timer while playing.
+You can also switch the goals by using[^5]:
+```mcfunction
+/function timer/settings/goal
+```
+
+>>>>>>> main
 
 ## Start-Time
 It is the same as [change time](#change-time) except you can not change the time after you have started the challenge.
@@ -139,6 +244,7 @@ Here you can change your difficulty and yes it does more than make mobs stronger
 | Name | Easy | Normal | Hardcore | Ultra Hardcore | Infinity |
 |--------|--------|--------|--------|--------|--------|
 | Minecraft difficulty | Easy | Normal | Hard | Hard | Hard |
+<<<<<<< HEAD
 | Requers Minecraft's native Hardcore mode | No, would not be available | No, would not be available | Yes | Yes | Yes |
 | Maximum hearts available | 10 | 10 | 10 | 10 | 0,5 |
 | Disabled regeneration | | | | Yes | Yes |
@@ -151,13 +257,89 @@ Now we have everything setup how we want, we can start the timer by using `start
 Great! Our multiple day long adventure has begun.
 - All player are in survival mode
 - The timer is and all settings are up and running
+=======
+| In case of a [negative end](#negative-ending) | Resets the timer | Resets the timer | Locks the world | Locks the world | Locks the world |
+| Complicates regeneration | | | | Yes |  |
+| Died with any damage | | | | | Yes* |
+| Notes | Not available in combination with Minecraft's native Hardcore mode | Not available in combination with Minecraft's native Hardcore mode | | | |
+
+You can also switch the difficultys by using[^5]:
+```mcfunction
+/function timer/settings/difficulty
+```
+
+> [!CAUTION]
+>  [*] Infinity ignores the Totem of undying, so don't feel so safe
+
+## Addons
+This is for toggling your Modification on or off and manage your installed Challenges, kind of mod menu.
+> [!TIP]
+> Modifications can also be changed during the timer, whereas in contrast to challenges you can only check whether they are active
+### Mods
+| Name| Fullbright | Custom Music  | AFK |
+|--------|--------|--------|--------|
+|Description| As long as the timer is running, you will have night vision | Replaces all sounds from the timer with the ones you specify | Pauses the timer automatically |
+|Limitations| | Requires a compatible resource pack | Pauses the timer for all |
+| Allowed in speedruns ||Yes |
+|Commands| `/function timer/mods/night_vision` [^5] || `/function timer/mods/afk` [^5]|
+
+> Challenges are not pre installed! Check out the [Challenge Addon](#survival-mode---addons) for that.
+
+## Dimension
+A quick way to start your adventure e.g. in the nether. _If you're tired of the overworld_
+You can also switch the dimensions by using[^5]:
+```mcfunction
+/function timer/settings/dimension
+```
+
+![Image](https://github.com/user-attachments/assets/af78f566-f872-4308-928a-064c10be5720)
+
+> [!WARNING]
+> "The  End" as a dimension is intentionally unavailable due to instability
+
+## Speedrun
+This tweak can only be activated immediately after creating the world. It activates milliseconds for your best time possible and <ins>deactivates</ins> the following features:
+- Start-Time
+- Pausing the timer
+- <ins>Some</ins> Modifications (see [here](#addons))
+- Challenges
+- Dimentions
+- Difficulty
+- Goal nothing and period of time
+- Menu
+
+# Survival Mode - Survival
+Now we have everything setup how we want, we can start the timer by using the menu:
+
+![Image](https://github.com/user-attachments/assets/3e6c4238-fca3-455d-9bb2-65a07d96669c)
+
+OR running[^5]:
+```mcfunction
+/function timer/control
+```
+
+Great! Our multiple day long adventure has begun.
+- All player are in survival mode
+- All twecks, modifications & challenges are up and running
+>>>>>>> main
 - Day & Wetherciyle are now working
 - In case of a [random goal](#goals) it is now shown for the first time
 
 ---
 
 ### Pause & more
+<<<<<<< HEAD
 Now to pause the timer we have to use the menu for that[^1]:
+=======
+Now to pause[^3] the timer we can run the command again[^5]:
+```mcfunction
+/function timer/control
+```
+OR:
+- change the gamemode
+- go afk[^4]
+- by opening the menu
+>>>>>>> main
 
 ![Image](https://github.com/user-attachments/assets/b91e7668-194a-4b43-8f19-be344f0432ba)
 
@@ -180,7 +362,14 @@ This end occurs when you have met the goal requirements.
 
 As you can see in the images, all players change their game mode to Creative[^2] immediately after reaching the goal.
 The idea behind this ending is that you now revisit this world.
+<<<<<<< HEAD
 If you want to choose another goal, you can do that via the menu.
+=======
+If you want to choose another goal, you can return to the main menu via the menu (what a saying) and the following command[^5]:
+```mcfunction
+/function timer/control
+```
+>>>>>>> main
 
 ---
 
@@ -196,7 +385,49 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 ![Image](https://github.com/user-attachments/assets/1a094ed0-da30-4451-9d61-8c9fffb3ae36)
 > Was captured during a death with [difficulty](#difficulty) infinity in v.4.1.0, but it behaves almost identically in v5. The player name was subsequently removed
 
+<<<<<<< HEAD
 # Installation
+=======
+# Survival Mode - Addons
+To start thinks off the Challenge Addon is another Behavior Pack, which added addition challenges to the timer. It can be downloaded or installed together with the timer or separately, both are available in the [releases](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
+Regardless of that, what are new challenges in this context?
+In a nutshell, challenges add variety to the game. How big of an impact they have depends on the challenge itself. Therefore, here's a list of all 8 challenges and what they do.
+
+> [!NOTE]
+> This table was changed with the introduction of movement restrictions in v.4.2.0.
+> If you are using an older version, please refer to [this table](https://github.com/TheFelixLive/Timer-Ultimate/tree/v.4.1.1?tab=readme-ov-file#survival-mode---addons) instead.
+
+### Challenges:
+| Name | Description | Limitations | Command |
+|--------|--------|--------|--------|
+| Movement | Lets you restrict your movement individually by choosing from [18 different aspects](#movement-restrictions) | Some restrictions are incompatible with some challenges | |
+| Speed X | Everything gets speed x, whoever doesn't take advantage of this will lose the timer | Incompatible with Level = Boder | `/function ca/addon/speed_x` [^5] |
+| The floor is lava | The title says it all | Is not very stable | `/function ca/addon/BiL` [^5] |
+| Enchant | Each tool is enchanted as best as possible | | `/function ca/addon/enchant` [^5] |
+| Gravity | Everything flies up, whoever sneaks comes down but the ground is your enemy | Incompatible with ice & no sneaking | `/function ca/addon/gravity` [^5] |
+| Ice | When you sneak, a layer of ice appears under you | Incompatible with gravity & no sneaking | `/function ca/addon/ice` [^5] |
+| Invisibility | Almost all creatures are invisible | | `/function ca/addon/invisibility` [^5]|
+| Level = Boder | The world shrinks to one block and each level enlarges the world | Incompatible with Speed X | `/function ca/addon/levelborder` [^5] |
+
+### Movement restrictions:
+There are in toal 18 different restrictions available and by default no one is active, so you have to `Add` them. When you find something interesting you get short description what it's restricts and you can choose between **punishing** and **disable**. The difference lies in the behavior if the restriction is violated. If **disabled**, you simply cannot perform this action at all, and if **punishing** is seleced, the entire challenge get canceled.
+
+| Name | Description | Supported modes | Incompatibility |
+|--------|--------|--------|--------|
+| Armor | Removes the ability to use armor | punishing & disable | |
+| Block break | Triggered when a block is destroyed | punishing & disable | |
+| Block place | Triggered when a block is placed | punishing & disable | |
+| Interactions | Triggered when interacting with a block (e.g. with a chest) | punishing & disable | |
+| Jumping | Triggered when when a player jumps | punishing & disable | |
+| Water | Triggered when when a player touches water | punishing | |
+| Sprinting | Triggered when when a player sprints | punishing | |
+| Sneaking | Triggered when when a player sneaks | punishing & disable | Gravity &  Ice |
+| General movement | Let you manage the left, right, forward, backward movement as well as the camera and mounting and unmounting on entities| disable | Speed X |
+| Only | Every block a player goes down (or up), is he no longer allowed to go up (or down). | If you called that way: punishing  | Gravity & Timer [Dimension feature](#dimension) |
+
+
+# Installation and configuration
+>>>>>>> main
 1. **Download** the latest release from [here](https://github.com/TheFelixLive/Timer-Ultimate/releases/latest).
 2. **Open** the `.mcpack` or `.mcaddon` file with Minecraft.
 3. **Create** a new world OR **edit** an existing world
@@ -209,9 +440,74 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 7. **Disable** the old version *(e.g. Timer Ultimate)*
 8. **Start** your world
 
+<<<<<<< HEAD
 **From here, please proceed with the on-screen instructions[^3]**
 
 ![Screenshot 2025-06-04 153655](https://github.com/user-attachments/assets/8a5b0ed3-c7a4-4a78-8b10-76f943388466)
+=======
+<img src="https://github.com/user-attachments/assets/f59543ef-3abb-4fd7-b6d2-a8907b9c7075" width="1920" height="auto" />
+
+> [!IMPORTANT]
+> When you use the  "Challenge Addon" select [survival](#survival-mode---initial-setup) otherwise it will not work!
+
+# Uninstallation 
+Since the timer installs automatically, it cannot be easily removed.
+Before you presite **make sure** you have the [right permission](#permissions)!
+
+> [!CAUTION]
+> In some cases the timer **can't** be uninstalled and therefore **should not be** deactivated.
+> _Unless you realy want to cheat!_
+
+### Steps
+
+1. Run the command: `/funtion timer/menu`
+2. Click on the "Delete" Button.
+3. Confirm your decision by pressing Delete again.
+4. Quit the world.
+5. Remove the behavior pack from your world.
+6. Relaunch the world.
+7. Run the command: `/scoreboard objectives remove timer_setup`
+
+### Troubleshooting
+> I didn't found the "Delete" Button in step 2!
+
+Sometimes it is on the 2nd page or in the reset category.
+- If you have the option "Status", press it and then "Give up". Now try to continue with step 1.
+- If you have the option "Game & Menu", press it and continue with step 2.
+
+> Do I have to uninstall the Challenge Addon separately?
+
+No, it will uninstall automatically along with the timer.
+
+# Permissions
+> [!Note]
+> Please share your experience with multiplayer [here](https://github.com/TheFelixLive/Timer-Ultimate/issues/new/choose) as it has not been tested extensively yet!
+
+![Minecraft 22 05 2025 18_41_02](https://github.com/user-attachments/assets/e2715c1d-7853-47cf-9225-969dcd3880e3)
+
+When the timer is installed on a world for the first time one player gets the tag `trust_player_control`. With this tag, players have the opportunity to use extra functions in **[creative mode](#creative-mode)**.
+Those are marked in this guid with an admin popup ([see here as an example](#Control)).
+
+In **[survival mode](#survival-mode---initial-setup)** players without the tag can do nothing except pausing the timer with the [afk modification](#mods).
+
+To promote a player you can use the menu (as shown in the pictures, only works in [survival](#survival-mode---initial-setup)) or enter the following command[^5], _remember to replace the player name_:
+```mcfunction
+
+/tag [player name] add trust_player_control
+```
+
+> [!WARNING]
+> Players with this tag also have the power to uninstall the timer as well!
+
+# Third party implementations
+![Image](https://github.com/user-attachments/assets/c589e87d-def1-4338-ae47-9aa7b30387ca)
+
+I know it's a little niche and unnecessary but as a (small) developer (if you can call it that) you have 2 (technically 3) interfaces from the timer that you can integrate into your code. Check it [here](./Timer%20Ultimate/sample%20resource%20pack) out.
+- the challenge addon
+- custom music
+- (custom language)
+> For the 3th one are references in the survival and challenge addon code but it's not finished.
+>>>>>>> main
 
 # Credits
 
@@ -221,6 +517,14 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 - **The actual idea for the timer**: [Hasenzahn](https://www.youtube.com/watch?v=CZRczUj__P8)
 - **Inspiration for the challenges**: [BastiGHG](https://www.youtube.com/@bastighg)
 
+<<<<<<< HEAD
 [^1]: This feature is experimental while using hardcore
 [^2]: While hardcore, they remain survival but invulnerable, until a mob 1 shots you e.g. the warden
 [^3]: You may need to confirm the update process several times. Under certain circumstances, not all data can be transferred.
+=======
+[^1]: Only while using [local mode](#local-mode)
+[^2]: If the timer has previously [counted down](#time-global-mode), the timer will not be synchronized because this function is <ins>not available</ins> in local mode
+[^3]: Only possible, regardless of the method, if [Speedrun](#speedrun) is not active
+[^4]: Only when the [modification](#mods) AFK is activ
+[^5]: To perform functions you need cheats, which are not available in Minecraft's native Hardcore mode.
+>>>>>>> main
