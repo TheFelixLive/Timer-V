@@ -1292,7 +1292,7 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
   }
 
   if (version_info.release_type !== 2) {
-    player.sendMessage("§l§7[§f" + (independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-Ultimate")
+    player.sendMessage("§l§7[§f" + (independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-V")
     player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
@@ -1324,7 +1324,7 @@ function startup_popups(player) {
     player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
     let form = new ActionFormData();
     form.title("Update time!");
-    form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-Ultimate");
+    form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-V");
     form.button("Mute");
 
     const showForm = async () => {
@@ -1401,7 +1401,7 @@ function startup_popups(player) {
     if (save_data[player_sd_index].setup == 1) {
       let form = new ActionFormData();
       form.title("Initial setup");
-      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-Ultimate");
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-V");
       form.button("");
 
       player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick\n§l§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
@@ -3504,7 +3504,7 @@ function dictionary_contact(player, build_date) {
 
   let actions = []
   form.title("Contact")
-  form.body("If you need want to report a bug, need help, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§r github.com/TheFelixLive/Timer-Ultimate/issues\n\n§8Curseforge:§r curseforge.com/projects/1259478");
+  form.body("If you need want to report a bug, need help, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§r github.com/TheFelixLive/Timer-V/issues\n\n§8Curseforge:§r curseforge.com/projects/1259478");
 
   if (save_data[player_sd_index].op) {
     form.button("Dump SD" + (version_info.release_type !== 2? "\nvia. privat chat" : ""));
