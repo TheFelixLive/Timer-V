@@ -1,60 +1,29 @@
-import { world, system } from "@minecraft/server";
+import { world, system, EntityTypes } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
 let independent = true
 
 const version_info = {
   name: "Timer V",
-  version: "v.5.0.0",
-  build: "B005",
-  release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749045567,
+  version: "v.5.0.1",
+  build: "B008",
+  release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
+  unix: 1749155200,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   changelog: {
     // new_features
     new_features: [
-      "Survival and creativ are no longer separate",
-      "An entire overhaul of the menu",
-      "Over 80 new Goals have been added in addition to the existing Goals",
-      "Taking advantage of the hardcore mode",
-      "The actionbar can now completely changed with different designs",
-      "The day time (realtime / gametime) can be displayed in the actionbar",
-      "Player storage data (such as rights) can now be partially viewed, changed and deleted by admins even when that Player is offline"
     ],
     // general_changes
     general_changes: [
-      "Added years & milisecounds as Time units (not all units have to be used from a design)",
-      "Removed all §l/function§r commands",
-      "The menu can opened with the sneak-jump (or in spectator with the nod) gesture, with a stick or §l/scriptevent timerv:menu§r",
-      "The menu is now more stable and no longer prone to errors while opening",
-      "The menu can now be used by multiple players at the same time",
-      "The menu woun't change your gamemode as well as the condition",
-      "You now get a summary in the menu what you setuped in challenge mode",
-      "The menu music loops and fade into each other",
-      "The Fulbright modification is now native, but can be adjusted individually for each player",
-      "Custom Sound (formerly known as Custom Music) can be customized for each player and uses a new syntax (the old syntax is still available but not fully supported)",
-      "Intelligent condition (formerly known as AFK Modification) now better detects whether you are AFK and is only available when you use your own timer",
-      "Each player can now create their own \"timer\" to count down",
-      "Native sound effects and menu music have been changed",
-      "Shared timers can now be replaced or deactivated by other admins even if the original player is offline",
-      "All Hardcore difficulties are now only available in Hardcore worlds",
-      "Ultra Hardcore now disables all ways to regenerate hearts",
-      "The timer can now convert old save data from v.4.1.0 or newer",
-      "An update notification has been added",
-      "Removed speedrun & dimension",
-      "All title animations have been removed"
+      "All entities can now be set as goal",
+      "Changed the convert ui",
     ],
     // bug_fixes
     bug_fixes: [
-      "Fixed a bug that allowed players to cheat by changing certain scoreboard entries",
-      "Fixed a bug that allowed players to gain unwanted admin rights",
-      "Fixed a bug that allowed players to drain all damage by quickly opening the menu",
-      "Fixed a bug that caused a softlock if the menu doesn't close correctly",
-      "Fixed a bug that caused the in game music to overlap with the music from the menu",
-      "Fixed a bug that make totem of undying useless against infinity",
-      "Fixed a bug that caused lost hearts to regenerate when pausing the timer in Hardcore",
-      "Fixed a bug that makes the timer disappearing after pausing it in Hardcore",
-      "Fixed a bug where the sound would not play when completing or losing a challenge"
+      "Fixed a bug that caused setup to play music even though the menu did not open",
+      "Fixed a bug that caused the menu to close unexpectedly when exiting setup",
+      "Fixed a bug that that caused the handshake protocol to always fail",
     ]
   }
 }
@@ -305,6 +274,13 @@ const timezone_list = [
   { name: "Tonga Time", utc: 13, short: "TOT", location: ["Tonga", "Tokelau"] },
   { name: "Line Islands Time", utc: 14, short: "LINT", location: ["Kiritimati", "Line Islands"] }
 ];
+
+/*
+EntityTypes.getAll().forEach(e => {
+  console.log(e.id)
+});
+*/
+
 
 var goal_entity = [
   {
@@ -958,11 +934,7 @@ const design_template = [
 -------------------------*/
 
 async function timer_handshake() {
-  if (!independent) {
-    if (version_info.release_type == 0) {
-      console.log("Timer: Receiving handshake!");
-    }
-
+  if (independent) {
     if (version_info.release_type == 0) {
       console.log("Timer: Receiving handshake!");
     }
@@ -1000,11 +972,9 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     return timer_handshake()
   }
 
-
+  let player = event.sourceEntity
   let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === event.sourceEntity.id);
-
-  if (event.id == "timerv:universel_updater") return universel_updater(event.sourceEntity, uu_find_gen())
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
   if (["timerv:reset"].includes(event.id)) {
     const notAvailableMsg = id => `§l§7[§f` + (independent? "System" : version_info.name) + `§7]§r ${id} is not available in stable releases!`;
@@ -1021,26 +991,36 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     }
   }
 
+/*------------------------
+  API Requests
+-------------------------*/
+
+  if (event.id === "timerv:api_menu") {
+    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+    return main_menu(player)
+  }
+
+  if (event.id === "timerv:api_show_actionbar") {
+    save_data[player_sd_index].absolute_visibility = true
+    update_save_data(save_data)
+  }
+
+  if (event.id === "timerv:api_hide_actionbar") {
+    save_data[player_sd_index].absolute_visibility = false
+    update_save_data(save_data)
+  }
+
 
 /*------------------------
  Open the menu
 -------------------------*/
 
   if (event.id === "timerv:menu") {
-    event.sourceEntity.playSound(translate_soundkeys("menu.open", event.sourceEntity));
-    event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
-    return main_menu(event.sourceEntity)
+    player.playSound(translate_soundkeys("menu.open", player));
+    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+    return main_menu(player)
   }
 
-  if (event.id === "timerv:api_menu") {
-    event.sourceEntity.playMusic(translate_soundkeys("music.menu.main", event.sourceEntity), { fade: 0.3, loop: true });
-    return main_menu(event.sourceEntity)
-  }
-
-  if (event.id === "timerv:sd") {
-    let save_data = load_save_data()
-    console.log(JSON.stringify(save_data))
-  }
 
   if (event.id === "timerv:menu_soundkey") {
     let version;
@@ -1050,9 +1030,9 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     if (event.message == "v2") {
       version = 2
     }
-    event.sourceEntity.playSound(translate_soundkeys("menu.open", event.sourceEntity));
-    event.sourceEntity.queueMusic(translate_soundkeys("music.menu.settings.debug", event.sourceEntity), { fade: 0.3, loop: true });
-    return soundkey_test(event.sourceEntity, version)
+    player.playSound(translate_soundkeys("menu.open", player));
+    player.queueMusic(translate_soundkeys("music.menu.settings.debug", player), { fade: 0.3, loop: true });
+    return soundkey_test(player, version)
   }
   
   
@@ -1219,7 +1199,8 @@ function create_player_save_data (playerId, playerName, modifier) {
           time_source: 0,
           name: playerName,
           op: shout_be_op,
-          visibility: true,
+          visibility_setting: true,
+          absolute_visibility: true,
           fullbright: false,
           lang: 0,
           design: 0,
@@ -1297,7 +1278,7 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
   }
 
   // Help reminder: how to open the menu
-  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800)) {
+  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800) && independent) {
     player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
   }
 
@@ -1345,60 +1326,61 @@ function startup_popups(player) {
     showForm();
   }
   if (independent) {
-    player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
     if (save_data[player_sd_index].setup == 2) {
-        let form = new ActionFormData();
-        form.title("Initial setup");
-        if (world.isHardcore) {
-          form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
-          form.button("Try Hardcore!");
-          form.button("");
-        } else {
-          form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
-          form.button("Survival mode");
-          form.button("Creative mode");
-          form.button("");
-        }
+      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
+      let form = new ActionFormData();
+      form.title("Initial setup");
+      if (world.isHardcore) {
+        form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen\n§7Best regards, TheFelixLive (the developer)");
+        form.button("Try Hardcore!");
+        form.button("");
+      } else {
+        form.body("Wellcome "+ save_data[player_sd_index].name + "!\nAs you may recall, in previous versions you had the option to choose between Survival and Creative modes. These functions are now native and across the timer, making them less distinguishable.\nHowever, you can use these templates here in the setup to access the same functions as before!\n\n§7Best regards, TheFelixLive (the developer)");
+        form.button("Survival mode");
+        form.button("Creative mode");
+        form.button("");
+      }
 
 
-        const showForm = async () => {
-          form.show(player).then((response) => {
-            if (response.canceled && response.cancelationReason === "UserBusy") {
-              showForm()
-            } else {
-              if (response.selection == undefined ) {
-                return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      const showForm = async () => {
+        form.show(player).then((response) => {
+          if (response.canceled && response.cancelationReason === "UserBusy") {
+            showForm()
+          } else {
+            if (response.selection == undefined ) {
+              return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+            }
+            if (!world.isHardcore) {
+              // Response
+              save_data[player_sd_index].setup = 0
+              // Survival
+              if (response.selection === 0) {
+                save_data[0].global.status = true
+                save_data[0].challenge.active = true
+                save_data[0].global.last_player_id = player.id
+                world.setTimeOfDay(0);
+                world.getDimension("overworld").setWeather("Clear");
               }
-              if (!world.isHardcore) {
-                // Response
-                save_data[player_sd_index].setup = 0
-                // Survival
-                if (response.selection === 0) {
-                  save_data[0].global.status = true
-                  save_data[0].challenge.active = true
-                  save_data[0].global.last_player_id = player.id
-                  world.setTimeOfDay(0);
-                  world.getDimension("overworld").setWeather("Clear");
-                }
 
-                update_save_data(save_data);
-                if (response.selection >= 0 && Math.floor(Date.now() / 1000) < save_data[0].update_message_unix) {
-                  main_menu(player)
-                }
-              } else {
-                save_data[player_sd_index].setup = 0
-                update_save_data(save_data);
-                if (Math.floor(Date.now() / 1000) < save_data[0].update_message_unix) {
-                  main_menu(player)
-                }
+              update_save_data(save_data);
+              if (response.selection >= 0 && Math.floor(Date.now() / 1000) < save_data[0].update_message_unix) {
+                main_menu(player)
+              }
+            } else {
+              save_data[player_sd_index].setup = 0
+              update_save_data(save_data);
+              if (Math.floor(Date.now() / 1000) < save_data[0].update_message_unix) {
+                main_menu(player)
               }
             }
-          });
-        };
-        showForm();
+          }
+        });
+      };
+      showForm();
     }
     // Welcome screen
     if (save_data[player_sd_index].setup == 1) {
+      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
       let form = new ActionFormData();
       form.title("Initial setup");
       form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-V");
@@ -1468,17 +1450,17 @@ function universel_updater(player, gen) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  let form = new ActionFormData();
+  let form = new MessageFormData();
   form.title("Convert");
   form.body("It looks like you've used the timer before.\nDo you want to update your save data from "+ gen_list[gen] +" to "+ version_info.version +"?\n\n§7Note: Once you update your save data to a newer version, you can no longer use it with the older version!");
-  form.button("§9Update");
-  form.button("");
+  form.button2("§9Update");
+  form.button1("");
   const showForm = async () => {
   form.show(player).then((response) => {
     if (response.canceled && response.cancelationReason === "UserBusy") {
       showForm()
     } else {
-      if (response.selection == 1) {
+      if (response.selection == 0) {
         if (save_data[player_sd_index].setup == 0) {
           player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
           settings_main(player)
@@ -1486,7 +1468,7 @@ function universel_updater(player, gen) {
           startup_popups(player)
         }
       }
-      if (response.selection == 0) {
+      if (response.selection == 1) {
         uu_apply_gen(gen, player)
       }
       if (response.selection == undefined ) {
@@ -1516,6 +1498,7 @@ function uu_apply_gen(gen, player) {
 
     let settings = world.scoreboard.getObjective("timer_settings");
     let time = world.scoreboard.getObjective("timer_time");
+    let show_actionbar = world.scoreboard.getObjective("timer_show_actionbar");
     let old_goal = getScoreSafe(settings, "goal", 1);
 
     let stopwatchTime = getScoreSafe(settings, "shoud_count_down") === 0 
@@ -1554,7 +1537,8 @@ function uu_apply_gen(gen, player) {
           setup: 0,
           op: player.hasTag("trust_player_control"),
           custom_sounds: getScoreSafe(settings, "custom_music") === 1 ? 2 : 0,
-          fullbright: getScoreSafe(settings, "night_vision") === 1
+          fullbright: getScoreSafe(settings, "night_vision") === 1,
+          visibility_setting: show_actionbar.getScore(player) === 1? true : false,
         });
         if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
       } catch (error) {
@@ -1569,7 +1553,8 @@ function uu_apply_gen(gen, player) {
       "timer_menu", 
       "timer_addon", 
       "timer_actionbar_time", 
-      "timer_show_actionbar"
+      "timer_show_actionbar",
+      "timer_setup"
     ];
 
     objectives.forEach(obj => {
@@ -1595,7 +1580,6 @@ function uu_apply_gen(gen, player) {
             onlinePlayers++;
           }
         } catch (error) {
-          // Entity nicht verfügbar – zählt nicht als online
         }
       }
     });
@@ -1605,19 +1589,25 @@ function uu_apply_gen(gen, player) {
       : 0;
 
     if (dataLossPercent > 0) {
-      let form = new ActionFormData();
-      form.title("Convert");
-      form.body(`This version contains save data for a total of ${totalPlayers} players, ${onlinePlayers} of which are online.\nOnly save data from players who are online can be transferred. This would result in a data loss of ${dataLossPercent} Percent!`);
-      form.button("§9Update");
-      form.button("");
+      let form = new MessageFormData();
+      let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+      form.title("Some data will be lost");
+      form.body(`This version contains save data for a total of ${totalPlayers} players, ${onlinePlayers} of which are online.\nOnly save data from players who are online can be transferred.\n\nThis would result in a data loss of §l§c${dataLossPercent} Percent§r!`);
+      form.button2("§cProceed");
+      form.button1("");
       form.show(player).then((response) => {
         if (response.selection == undefined ) {
           return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
         }
-        if (response.selection == 1) {
-          startup_popups(player);
-        }
         if (response.selection == 0) {
+          if (save_data[player_sd_index].setup == 0) {
+            player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+            settings_main(player)
+          } else {
+            startup_popups(player)
+          }
+        }
+        if (response.selection == 1) {
           gen_1();
         }
       });
@@ -1667,7 +1657,7 @@ function uu_apply_gen(gen, player) {
             op: player.hasTag("trust_player_control")? true : false,
             custom_sounds: custom_sounds.getScore(player) === 1 ? 2 : 0,
             fullbright: night_vision.getScore(player) === 1 ? true : false,
-            visibility: show_actionbar.getScore(player) === 1? true : false,
+            visibility_setting: show_actionbar.getScore(player) === 1? true : false,
           });
           if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
         } catch (error) {
@@ -1689,7 +1679,8 @@ function uu_apply_gen(gen, player) {
         "timer_time_h", 
         "timer_time_d", 
         "timer_actionbar_time", 
-        "timer_show_actionbar"
+        "timer_show_actionbar",
+        "timer_setup"
       ];
 
       objectives.forEach(obj => {
@@ -1707,20 +1698,20 @@ function uu_apply_gen(gen, player) {
 
 function uu_gen_successfull(player, note_message) {
   player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
-  let form = new ActionFormData();
+  let form = new MessageFormData();
   form.title("Convert");
   form.body("It's done!\nYou can now enjoy the new "+ version_info.name + (note_message? "\n\n§7Note: " + note_message : ""));
-  form.button("§9Changelog");
-  form.button("");
+  form.button2("§9Changelog");
+  form.button1("");
   form.show(player).then((response) => {
     if (response.selection == undefined ) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (response.selection == 0) {
+    if (response.selection == 1) {
       player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
       return dictionary_about_version_changelog(player, convertUnixToDate(version_info.unix, save_data[0].utc))
     }
-    if (response.selection == 1) {
+    if (response.selection == 0) {
       player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       return main_menu(player)
     }
@@ -4280,11 +4271,12 @@ function settings_actionbar(player) {
   });
 
   form.button(
-    "Use actionbar\n" + (save_data[player_sd_index].visibility ? "§aon" : "§coff"),
-    save_data[player_sd_index].visibility ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
+    "Use actionbar\n" + (save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting? "§9dynamic" : "§aon" : "§coff"),
+    save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting ? "textures/ui/toggle_on_hover" : "textures/ui/toggle_on" : "textures/ui/toggle_off"
+
   );
   actions.push(() => {
-    save_data[player_sd_index].visibility = !save_data[player_sd_index].visibility;
+    save_data[player_sd_index].visibility_setting = !save_data[player_sd_index].visibility_setting;
     update_save_data(save_data);
     settings_actionbar(player);
   });
@@ -4726,7 +4718,7 @@ async function update_loop() {
 
 
 
-        if (save_data[player_sd_index].visibility == true) {
+        if (save_data[player_sd_index].absolute_visibility == true) {
           player.onScreenDisplay.setActionBar(render_live_actionbar(save_data[player_sd_index], save_data[0].global.status ? false : true));
         }
         
