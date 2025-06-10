@@ -10,7 +10,6 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 
 ### Planned features
 - Updates the save data of an older timer version (at start, 4.1.0 will be fully supported and it is planned to be rolled out further with each feature update)
-- Third Party goals - Creatures from a behavior pack can also be selected as a goal (planed for `v.5.1.0` or `v.5.2.0`)
 - Statistics e.g. stores, for example, which blocks were mined or placed or how far someone has travelled (planed for `v.5.x.0`)
 - Players can create their own template (planed for `v.5.x.0`)
 - A global search for all features of the timer (planed for `v.5.x.0`)

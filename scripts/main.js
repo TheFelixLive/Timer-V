@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData, uiManager  } from "@min
 const version_info = {
   name: "Timer V",
   version: "v.5.1.0",
-  build: "B010",
-  release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749572454,
+  build: "B011",
+  release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
+  unix: 1749574428,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   changelog: {
     // new_features
