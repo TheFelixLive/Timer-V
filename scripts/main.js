@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData, uiManager  } from "@min
 const version_info = {
   name: "Timer V",
   version: "v.5.1.0",
-  build: "B011",
+  build: "B012",
   release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749574428,
+  unix: 1749575342,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   changelog: {
     // new_features
@@ -4915,6 +4915,7 @@ async function update_loop() {
       let save_data = load_save_data();
       gesture_nod()
       gesture_jump()
+      gesture_emote()
 
       if (save_data[0].global.status) {
         calcAB(true, undefined, false)
