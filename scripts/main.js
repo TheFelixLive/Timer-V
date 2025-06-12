@@ -4,10 +4,11 @@ import { ActionFormData, ModalFormData, MessageFormData, uiManager  } from "@min
 const version_info = {
   name: "Timer V",
   version: "v.5.1.0",
-  build: "B012",
-  release_type: 2, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749575342,
+  build: "B013",
+  release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
+  unix: 1749747980,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
+  edition: 0,
   changelog: {
     // new_features
     new_features: [
@@ -29,6 +30,11 @@ const version_info = {
     ]
   }
 }
+
+const links = [
+  {name: "§l§5Github:§r", link: "github.com/TheFelixLive/Timer-V"},
+  {name: "§8Curseforge:§r", link: "curseforge.com/projects/1259478"},
+]
 
 // These lists are NOT customizable
 
@@ -170,6 +176,11 @@ const soundkeys = {
     extern: "timer.music.menu.settings.gestures",
     native: "music.game.snowy_slopes"
   },
+  "music.menu.settings.lang": {
+    extern: "timer.music.menu.settings.lang",
+    extern_l: "timeru.music.menu.lang",
+    native: "music.game.snowy_slopes"
+  },
   "music.menu.settings.time_zone": {
     extern: "timer.music.menu.settings.time_zone",
     native: "music.game.snowy_slopes"
@@ -237,6 +248,55 @@ const soundkeys = {
     extern: "timer.message.beta.feedback",
     native: "random.orb"
   },
+};
+
+const supportedLangs = [
+  {
+    id: "en",
+    name: "English",
+    humanTranslated: true
+  },
+  {
+    id: "de",
+    name: "Deutsch",
+    humanTranslated: true
+  }
+];
+// The system is done but it's basicly unused!
+const textkeys = {
+  // Menu
+  "menu.select_option": {
+    en: "Select an option!",
+    de: "Wähle eine Option!"
+  },
+
+  "menu.toggle_on": {
+    en: "on",
+    de: "AN"
+  },
+
+  "menu.toggle_off": {
+    en: "off",
+    de: "AUS"
+  },
+
+  "menu.toggle_dynamic": {
+    en: "dynamic"
+  },
+
+  "menu.settings.lang.title": {
+    en: "Language",
+    de: "Sprache"
+  },
+
+  "menu.settings.actionbar.title": {
+    en: "Actionbar"
+  },
+
+  "menu.settings.actionbar.using": {
+    en: "Use actionbar",
+    de: "Benutze actionbar"
+  }
 };
 
 const timezone_list = [
@@ -1084,7 +1144,7 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
   }
 
   if (version_info.release_type !== 2) {
-    player.sendMessage("§l§7[§f" + (independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §lgithub.com/TheFelixLive/Timer-V")
+    player.sendMessage("§l§7[§f" + (independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §l"+links[0].link)
     player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
@@ -1116,7 +1176,7 @@ function startup_popups(player) {
     player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
     let form = new ActionFormData();
     form.title("Update time!");
-    form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7github.com/TheFelixLive/Timer-V");
+    form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7"+links[0].link);
     form.button("Mute");
 
     const showForm = async () => {
@@ -1194,7 +1254,7 @@ function startup_popups(player) {
       player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
       let form = new ActionFormData();
       form.title("Initial setup");
-      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at github.com/TheFelixLive/Timer-V");
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming, you can also ask "+ getBestPlayerName(save_data) +" or check out the guide at "+links[0].link);
       form.button("");
 
       player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick\n§l§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
@@ -1772,7 +1832,7 @@ async function gesture_nod() {
 
 function print(input) {
   if (version_info.release_type === 0) {
-    console.log(version_info.name + " - " + input)
+    console.log(version_info.name + " - " + JSON.stringify(input))
   }
 }
 
@@ -1800,6 +1860,17 @@ function getRelativeTime(diff) {
     return `${minutes} minute${minutes > 1 ? 's' : ''}`;
   }
   return `a few seconds`;
+}
+
+function translate_textkeys(key, langIndex) {
+  const entry = textkeys[key];
+  if (!entry) {
+    return key;
+  }
+
+  const langObj = supportedLangs[langIndex].id || supportedLangs[0].id;
+
+  return entry[langObj] != null ? entry[langObj] : entry.en;
 }
 
 function translate_soundkeys(key, player) {
@@ -2998,7 +3069,6 @@ async function settings_cs_setup(player) {
 function settings_goals_main(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   const pointer = save_data[0].challenge.goal.pointer;
 
   form.title("Goal");
@@ -3349,6 +3419,7 @@ function settings_main(player) {
   let actions = [];
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
 
   form.title("Settings");
   form.body("Select an option!");
@@ -3378,7 +3449,7 @@ function settings_main(player) {
   }
 
   // Button 2: Actionbar
-  form.button("Actionbar\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
+  form.button(translate_textkeys("menu.settings.actionbar.title", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 , loop: true})
     settings_actionbar(player)
@@ -3390,6 +3461,15 @@ function settings_main(player) {
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.gestures", player), { fade: 0.3 , loop: true})
       settings_gestures(player)
+    });
+  }
+
+  // Button 2.7: Language
+  if (save_data[player_sd_index].allow_unnecessary_inputs) {
+    form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§9"+supportedLangs[lang].name, "textures/ui/language_glyph_color");
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("music.menu.settings.lang", player), { fade: 0.3 , loop: true})
+      settings_lang(player)
     });
   }
 
@@ -3502,6 +3582,56 @@ function settings_main(player) {
     if (response.selection !== undefined && actions[response.selection]) {
       actions[response.selection]();
     }
+  });
+}
+
+/*------------------------
+ Language
+-------------------------*/
+
+function settings_lang(player) {
+  const form = new ActionFormData();
+  const save_data = load_save_data();
+  const player_sd_index = save_data.findIndex(e => e.id === player.id);
+  let lang = save_data[player_sd_index].lang
+
+  let actions = [];
+
+
+
+  form.title(translate_textkeys("menu.settings.lang.title", lang));
+  form.body(translate_textkeys("menu.select_option", lang));
+
+
+
+  supportedLangs.forEach(l => {
+    if (supportedLangs[lang].id == l.id) {
+      form.button(l.humanTranslated? l.name: (l.name + "\n§o(translated)"), "textures/ui/realms_slot_check");
+    } else {
+      form.button(l.humanTranslated? l.name: (l.name + "\n§o(translated)"));
+    }
+
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+      save_data[player_sd_index].lang = supportedLangs.findIndex(lang => lang.id == l.id)
+      update_save_data(save_data)
+      settings_main(player);
+    });
+
+  });
+
+  form.button("");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+    settings_main(player);
+  });
+
+  form.show(player).then(response => {
+    if (response.selection === undefined) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    const sel = response.selection;
+    if (typeof actions[sel] === "function") actions[sel]();
   });
 }
 
@@ -3676,7 +3806,13 @@ function dictionary_contact(player, build_date) {
 
   let actions = []
   form.title("Contact")
-  form.body("If you need want to report a bug, need help, or have suggestions to improvements to the project, you can reach me via these platforms:\n\n§l§5Github:§r github.com/TheFelixLive/Timer-V/issues\n\n§8Curseforge:§r curseforge.com/projects/1259478");
+  let message = "If you want to report a bug, need help, or have suggestions to improve the project, you can reach me via these platforms:\n\n";
+
+  for (const entry of links) {
+    message += `${entry.name} ${entry.link}\n\n`;
+  }
+
+  form.body(message);
 
   if (save_data[player_sd_index].op) {
     form.button("Dump SD" + (version_info.release_type !== 2? "\nvia. privat chat" : ""));
@@ -4168,7 +4304,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
   body_text += "Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n";
   if (version_info.release_type === 0) {
-    body_text += "Language: " + ["English" /* Placeholder! */][selected_save_data.lang] + "\n";
+    body_text += "Language: " + supportedLangs[selected_save_data.lang].name + "\n";
   }
 
   if (selected_player) {
@@ -4534,11 +4670,12 @@ function settings_actionbar(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
 
   let actions = [];
 
-  form.title("Actionbar");
-  form.body("Select an option!");
+  form.title(translate_textkeys("menu.settings.actionbar.title", lang));
+  form.body(translate_textkeys("menu.select_option", lang));
 
   form.button(
     "Change the look!\n" + render_live_actionbar(save_data[player_sd_index], false),
@@ -4550,7 +4687,7 @@ function settings_actionbar(player) {
   });
 
   form.button(
-    "Use actionbar\n" + (save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting? "§9dynamic" : "§aon" : "§coff"),
+    translate_textkeys("menu.settings.actionbar.using", lang)+ "\n" + (save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting? "§9dynamic" : "§aon" : "§coff"),
     save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting ? "textures/ui/automation_glyph_color" : "textures/ui/toggle_on" : "textures/ui/toggle_off"
 
   );
