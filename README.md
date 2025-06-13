@@ -9,7 +9,7 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 ---
 
 ### Planned features
-- Updates the save data of an older timer version (at start, 4.1.0 will be fully supported and it is planned to be rolled out further with each feature update)
+- Updates the save data of an older timer version (It's planned to be rolled out further with each feature update; [read more here](#updating))
 - Statistics e.g. stores, for example, which blocks were mined or placed or how far someone has travelled (planed for `v.5.x.0`)
 - Players can create their own template (planed for `v.5.x.0`)
 - A global search for all features of the timer (planed for `v.5.x.0`)
@@ -204,7 +204,49 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 6. **Activate** the timer
 
 ## Updating
-> Please follow the steps from the [installation](#installation) before
+Currently, **not all older versions** of the timer can be updated! Therefore, compare your current version with the table.
+In most cases, everything should work, as these older versions are no longer available for download.
+
+<details><summary>Version table</summary>
+<p>
+
+> Legend:
+> - `supported` means that you can update without further ado
+> - `-` means this version with this mode cannot be updated at the moment
+> - ` ` means this version in combination with this mode does not exist **or** the mode has not been updated in this version
+
+| Version | Normal mode | Challenge mode | Challenge mode + | Server mode |
+|--------|--------|--------|--------|--------|
+| v.4.2.2 | | supported | | |
+| v.4.2.1 | | supported | | |
+| v.4.2.0 | | supported | | |
+| v.4.1.1 | | supported | | |
+| v.4.1.0 | supported | supported | | |
+| v.4.0.1 | supported | | | |
+| v.4.0.0 | supported | | | |
+| v.3.6.1 |  | - | | |
+| v.3.6.0 |  | - | | |
+| v.3.5.3 | - | - | | |
+| v.3.5.1 | - | - | | |
+| v.3.5.0 | - | - | | |
+| v.3.4.0 | - | - | - | |
+| v.3.3.0 | | - | | |
+| v.3.2.2 | - | | | - |
+| v.3.2.1 | - | - | - | - |
+| v.3.2.0 | - | - | - | - |
+| v.3.1.1 | - | - | - | |
+| v.3.1.0 | - | - | - | |
+| v.3.0.13 | - | - | | |
+| v.3.0.1 | - | - | | |
+| v.2.2.0 | - | - | | |
+| v.2.1.0 | - | - | | |
+| v.2.0.0 | - | - | | |
+| v.1.0.0 | - | - | | |
+
+</p>
+</details>
+
+> If your version is `supported`, follow the steps from the [installation](#installation) before
 7. **Disable** the old version *(e.g. Timer Ultimate)*
 8. **Start** your world
 
@@ -212,13 +254,6 @@ Whether you can continue playing in this world now depends now on the Hardcore m
 
 ![Screenshot 2025-06-04 153655](https://github.com/user-attachments/assets/8a5b0ed3-c7a4-4a78-8b10-76f943388466)
 
-# Credits
-
-> [!NOTE]
-> These are mainly german YouTubers, since the original version and the associated idea were actually in german.
-
-- **The actual idea for the timer**: [Hasenzahn](https://www.youtube.com/watch?v=CZRczUj__P8)
-- **Inspiration for the challenges**: [BastiGHG](https://www.youtube.com/@bastighg)
 
 [^1]: This feature is experimental while using hardcore
 [^2]: While hardcore, they remain survival but invulnerable, until a mob 1 shots you e.g. the warden

@@ -1,32 +1,29 @@
 import { world, system, EntityTypes } from "@minecraft/server";
-import { ActionFormData, ModalFormData, MessageFormData, uiManager  } from "@minecraft/server-ui"
+import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
 const version_info = {
   name: "Timer V",
-  version: "v.5.1.0",
-  build: "B013",
+  version: "v.5.2.0",
+  build: "B014",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749747980,
+  unix: 1749848158,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0,
   changelog: {
     // new_features
     new_features: [
-      "All entities can now be set as a goal",
+      "Added Language settings",
     ],
     // general_changes
     general_changes: [
-      "Changed the convert ui",
-      "Added emoting as a Gestures",
-      "Gestures can now be changed in the menu",
+      "Added UU-Support for v.4.0.0 & v.4.0.1",
+      "After an update of an older version, the design of this older version is now adopted"
     ],
     // bug_fixes
     bug_fixes: [
-      "Fixed a bug that caused setup to play music even though the menu did not open",
-      "Fixed a bug that caused the menu to close unexpectedly when exiting setup",
-      "Fixed a bug that caused the handshake protocol to always fail",
-      "Fixed a bug that prevented the timer from stopping after defeating a zombie villager or a normal villager with it as the goal",
-      "Gestures should no longer cause the menu to open twice"
+      "Fixed a bug that allowed invalid identities to be selected by a random goal",
+      "Fixed a bug that allowed players to disable almost all gestures, which could lead to the menu being unavailable in Hardcore",
+      "Fixed a bug that caused the timer to end 5 milliseconds early and is therefore not able reset properly later"
     ]
   }
 }
@@ -254,39 +251,44 @@ const supportedLangs = [
   {
     id: "en",
     name: "English",
-    humanTranslated: true
+    creator: "TheFelixLive"
   },
   {
     id: "de",
     name: "Deutsch",
-    humanTranslated: true
+    creator: "TheFelixLive"
   }
 ];
 // The system is done but it's basicly unused!
 const textkeys = {
   // Menu
-  "menu.select_option": {
+  "menu.general.description": {
     en: "Select an option!",
     de: "Wähle eine Option!"
   },
 
   "menu.toggle_on": {
-    en: "on",
-    de: "AN"
+    en: "§aon",
+    de: "§aAN"
   },
 
   "menu.toggle_off": {
-    en: "off",
-    de: "AUS"
+    en: "§coff",
+    de: "§cAUS"
   },
 
   "menu.toggle_dynamic": {
-    en: "dynamic"
+    en: "§9dynamic"
+  },
+
+  "menu.item_selected": {
+    en: "§2(selected)",
+    de: "§2(ausgewählt)"
   },
 
   "menu.settings.lang.title": {
-    en: "Language",
-    de: "Sprache"
+    en: "Language §o(experimental)§r",
+    de: "Sprache §o(experimentel)§r"
   },
 
   "menu.settings.actionbar.title": {
@@ -295,8 +297,52 @@ const textkeys = {
 
   "menu.settings.actionbar.using": {
     en: "Use actionbar",
-    de: "Benutze actionbar"
-  }
+    de: "Nutze actionbar"
+  },
+
+  "menu.settings.actionbar.day_time": {
+    en: "Show day time",
+    de: "Tageszeit"
+  },
+
+  "menu.settings.actionbar.time_source": {
+    en: "Time Source",
+    de: "Zeitquelle"
+  },
+
+  "menu.settings.actionbar.time_source.in_game": {
+    en: "Minecraft"
+  },
+
+  "menu.settings.actionbar.time_source.real_life": {
+    en: "Real Life",
+    de: "Echt Zeit"
+  },
+
+  "menu.settings.actionbar.design.button": {
+    en: "Change the look!",
+    de: "Ändere das Aussehen!"
+  },
+
+  "menu.settings.actionbar.design.title": {
+    en: "Design actionbar"
+  },
+
+  "menu.settings.actionbar.design.description": {
+    en: "Select a template or create your own custom design!",
+    de: "Wählen Sie aus einer der Vorlagen aus oder erstellen Sie Ihr eigenes Design!"
+  },
+
+  "menu.settings.actionbar.design.preview": {
+    "en": "Here is a preview of your selected design. It shows all possible variables at once.\n\nScreen saver: %{screen_saver}%§r\n\nIn the menu: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPaused: %{paused}%§r\n\nFinished (CM only): %{finished}%§r\n\nDay-Time: %{day}%§r\n\nDo you like it?",
+    "de": "Hier ist eine Vorschau deines Designs. Es zeigt alle möglichen Zeiten auf einmal:\n\nBildschirmschoner: %{screen_saver}%§r\n\nIm Menü: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPausiert: %{paused}%§r\n\nAbgeschlossen (Nur im CM): %{finished}%§r\n\nTageszeit: %{day}%§r\n\nGefällt es dir?"
+  },
+
+  "menu.settings.actionbar.design.preview.apply": {
+    en: "§aApply!",
+    de: "§aAnwenden!"
+  },
+
 };
 
 const timezone_list = [
@@ -501,6 +547,7 @@ const design_template = [
   {
     // The "ms" marker isn't used here, but it works perfectly. Simply because I don't like it.
     name: version_info.version,
+    id: 0,
     content: [
       { type: "ui", blocks: [
           { type: "marker", marker: "y", padZero: false, alwaysShow: false, suffix: "y", separator: { enabled: true, value: " ", position: "after" } },
@@ -546,6 +593,7 @@ const design_template = [
   },
   {
     name: "v.4.1.0 - v.4.2.2 (Speedrun)",
+    id: 1,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
@@ -586,6 +634,7 @@ const design_template = [
   },
   {
     name: "v.4.1.0 - v.4.2.2 (Hardcore)",
+    id: 2,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
@@ -617,13 +666,14 @@ const design_template = [
           { type: "text", text: " o'clock" }
       ]},
       { type: "screen_saver", blocks: [
-          { type: "text", text: "§lTimer §7V§r §f§oby TheFelixLive" }
+          { type: "text", text: "§lTimer §7V §4[§cHardcore Mode§4]§r §f§oby TheFelixLive" }
       ]}
     ]
   },
 
   {
     name: "v.4.1.0 - v.4.2.2 (Enchant)",
+    id: 3,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
@@ -655,12 +705,13 @@ const design_template = [
           { type: "text", text: " o'clock" }
       ]},
       { type: "screen_saver", blocks: [
-          { type: "text", text: "§lTimer §7V§r §f§oby TheFelixLive" }
+          { type: "text", text: "§9Timer V §b§oby TheFelixLive" }
       ]}
     ]
   },
   {
     name: "v.4.1.0 - v.4.2.2 (Default)",
+    id: 4,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: "d", separator: { enabled: true, value: " ", position: "after" } },
@@ -701,6 +752,7 @@ const design_template = [
 
   {
     name: "v.4.0.0 - v.4.0.1",
+    id: 5,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "w", padZero: false, alwaysShow: false, suffix: "w", separator: { enabled: true, value: " ", position: "after" } },
@@ -746,6 +798,7 @@ const design_template = [
   },
   {
     name: "v.3.3.0 - v.3.6.1",
+    id: 6,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
@@ -785,6 +838,7 @@ const design_template = [
 
   {
     name: "v.3.0.0 - v.3.2.2",
+    id: 7,
     content: [
       { type: "ui", blocks: [
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
@@ -828,6 +882,7 @@ const design_template = [
   /* // Work in progress!
   {
     name: "v.2.0.0 - v.2.2.0",
+    id: 8,
     content: [
       { type: "ui", blocks: [
           { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
@@ -880,6 +935,7 @@ const design_template = [
   */
   {
     name: "v.1.0.0",
+    id: 9,
     content: [
       { type: "ui", blocks: [
         { type: "marker", marker: "h", padZero: false, alwaysShow: false, suffix: "h", separator: { enabled: true, value: " ", position: "after" } },
@@ -913,6 +969,7 @@ const design_template = [
   },
   {
     name: "Custom design",
+    id: 10,
     content: undefined
   }
 ]
@@ -1023,7 +1080,7 @@ function create_player_save_data(playerId, playerName, modifier) {
       visibility_setting: true,
       absolute_visibility: true,
       fullbright: false,
-      lang: 0,
+      lang: "en",
       design: 0,
       setup: is_op_initial ? 2 : 1, // Setup value based on op status
       last_unix: Math.floor(Date.now() / 1000),
@@ -1309,12 +1366,16 @@ function uu_find_gen() {
   if (world.scoreboard.getObjective("timer_custom_music")) {
     gen = 1
   }
+  if (world.scoreboard.getObjective("timer_data")) {
+    gen = 2
+  }
   return gen
 }
 
 let gen_list = [
   "v.4.1.0 - v.4.2.2", // gen 0 (s)
   "v.4.1.0", // gen 1 (c)
+  "v.4.0.0 - v.4.0.1"
 ]
 
 function universel_updater(player, gen) {
@@ -1368,6 +1429,7 @@ function uu_apply_gen(gen, player) {
     };
 
     let settings = world.scoreboard.getObjective("timer_settings");
+    let addon = world.scoreboard.getObjective("timer_addon");
     let time = world.scoreboard.getObjective("timer_time");
     let show_actionbar = world.scoreboard.getObjective("timer_show_actionbar");
     let old_goal = getScoreSafe(settings, "goal", 1);
@@ -1402,6 +1464,20 @@ function uu_apply_gen(gen, player) {
       console.error("Error updating save data: ", error);
     }
 
+    let design_id = 4
+
+    if (getScoreSafe(settings, "speed_run") == 1) {
+      design_id = 1
+    }
+
+    if (getScoreSafe(addon, "enchant") == 1) {
+      design_id = 3
+    }
+
+    if (getScoreSafe(settings, "difficulty") >= 2) {
+      design_id = 2
+    }
+
     world.getAllPlayers().forEach(player => {
       try {
         create_player_save_data(player.id, player.name, {
@@ -1410,6 +1486,7 @@ function uu_apply_gen(gen, player) {
           custom_sounds: getScoreSafe(settings, "custom_music") === 1 ? 2 : 0,
           fullbright: getScoreSafe(settings, "night_vision") === 1,
           visibility_setting: show_actionbar.getScore(player) === 1? true : false,
+          design: design_id,
         });
         if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
       } catch (error) {
@@ -1529,6 +1606,7 @@ function uu_apply_gen(gen, player) {
             custom_sounds: custom_sounds.getScore(player) === 1 ? 2 : 0,
             fullbright: night_vision.getScore(player) === 1 ? true : false,
             visibility_setting: show_actionbar.getScore(player) === 1? true : false,
+            design: 4
           });
           if (player.hasTag("trust_player_control")) player.removeTag("trust_player_control");
         } catch (error) {
@@ -1563,6 +1641,73 @@ function uu_apply_gen(gen, player) {
       });
       uu_gen_successfull(player, note_message)
     }
+  }
+
+  if (gen == 2) {
+    const getScoreSafe = (objective, scoreName, defaultValue = 0) => {
+      try {
+        return objective.getScore(scoreName) || defaultValue;
+      } catch (error) {
+        console.error(`Error getting '${scoreName}' from '${objective}': `, error);
+        return defaultValue;
+      }
+    };
+
+    let data = world.scoreboard.getObjective("timer_data");
+    let stopwatchTime = (
+      getScoreSafe(data, "tick") +
+      getScoreSafe(data, "sec") * 20 +
+      getScoreSafe(data, "min") * 20 * 60 +
+      getScoreSafe(data, "h")   * 20 * 60 * 60 +
+      getScoreSafe(data, "w")   * 20 * 60 * 60 * 24 * 7
+    );
+
+
+    let save_data = [{
+      time: { stopwatch: stopwatchTime, timer: 0, last_value_timer: 0, do_count: getScoreSafe(data, "mode") >= 1 ? true : false },
+      counting_type: 0,
+
+      global: { status: true, last_player_id: player.id},
+
+      challenge: {active: false, progress: 0, rating: 0, goal: {pointer: 1, entity_id: "minecraft:ender_dragon", event_pos: 0}, difficulty: world.isHardcore? 2 : 1},
+      sync_day_time: false,
+      utc: 0,
+      update_message_unix: (version_info.unix + version_info.update_message_period_unix)
+    }];
+
+    try {
+      update_save_data(save_data);
+    } catch (error) {
+      console.error("Error updating save data: ", error);
+    }
+
+    world.getAllPlayers().forEach(player => {
+      try {
+        create_player_save_data(player.id, player.name, {
+          setup: 0,
+          op: player.hasTag("timer_permissions"),
+          design: 5,
+          visibility_setting: getScoreSafe(data, "mode") == 2 ? false : true
+        });
+        if (player.hasTag("timer_permissions")) player.removeTag("timer_permissions");
+      } catch (error) {
+        console.error(`Error processing player data for player ${player.name}: `, error);
+      }
+    });
+
+
+    const objectives = [
+      "timer_data"
+    ];
+
+    objectives.forEach(obj => {
+      try {
+        world.scoreboard.removeObjective(obj);
+      } catch (error) {
+        console.error("Error removing objective", obj, ": ", error);
+      }
+    });
+    uu_gen_successfull(player, note_message)
   }
 
 }
@@ -1642,6 +1787,9 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
       player.sendMessage(notAvailableMsg(event.id));
       return;
     }
+
+    update_save_data(undefined)
+    close_world()
   }
 
 /*------------------------
@@ -1862,16 +2010,18 @@ function getRelativeTime(diff) {
   return `a few seconds`;
 }
 
-function translate_textkeys(key, langIndex) {
+function translate_textkeys(key, lang, vars = {}) {
   const entry = textkeys[key];
-  if (!entry) {
-    return key;
-  }
+  if (!entry) return key;
+  let str = entry[lang] != null ? entry[lang] : entry.en;
 
-  const langObj = supportedLangs[langIndex].id || supportedLangs[0].id;
+  str = str.replace(/%\{(\w+)\}%/g, (_, name) => {
+    return vars[name] != null ? vars[name] : "";
+  });
 
-  return entry[langObj] != null ? entry[langObj] : entry.en;
+  return str;
 }
+
 
 function translate_soundkeys(key, player) {
   const entry = soundkeys[key];
@@ -1956,7 +2106,16 @@ function start_cm_timer() {
   save_data[0].time.do_count = true
 
   if(save_data[0].challenge.goal.pointer == 0) {
-    const availableEntities = goal_entity_list.filter(g => g.id.startsWith("minecraft:"));
+    const availableEntities = goal_entity_list.filter(g => {
+      const id = g.id;
+      const baseId = id.replace(/^minecraft:/, "");
+
+      if (goal_entity_blocklist.find(blocked => blocked.id === baseId)) return false;
+
+      if (id.startsWith("minecraft:")) return true;
+
+      return false;
+    });
     const availableEvents   = goal_event.filter(g => g.condition(save_data));
 
     const totalEntities = availableEntities.length;
@@ -2181,6 +2340,14 @@ world.afterEvents.dataDrivenEntityTrigger.subscribe((eventData) => {
 world.afterEvents.entityDie.subscribe(event => {
   const save_data = load_save_data();
 
+  if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count && save_data[0].challenge.goal.pointer == 1 && event.deadEntity?.typeId === save_data[0].challenge.goal.entity_id) {
+    if (event.deadEntity?.typeId == "minecraft:player") {
+      return finished_cm_timer(1, [{text: "You guys really did it. Choosing and achieving such a stupid goal that "+ event.deadEntity.name +" had to die for. I'm at a loss for words."}])
+    } else {
+      return finished_cm_timer(1, [{text: "You did it! You defeated the "}, {translate: ("entity."+save_data[0].challenge.goal.entity_id.replace(/^minecraft:/, "")+".name")}, {text: " in an epic battle! Good Game!"}])
+    }
+  }
+
   if (event.deadEntity?.typeId === "minecraft:player") {
     const player = event.deadEntity;
     const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
@@ -2189,16 +2356,12 @@ world.afterEvents.entityDie.subscribe(event => {
       finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
             (
               typeof save_data[player_sd_index].design === "number"
-                ? design_template[save_data[player_sd_index].design].content
+                ? design_template.find(t => t.id == save_data[player_sd_index].design).content
                 : save_data[player_sd_index].design
             ).find(item => item.type === "ui"),
             (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
           ) +" Thanks for playing."}])
     }
-  }
-
-  if (save_data[0].challenge.progress == 1 && save_data[0].time.do_count && save_data[0].challenge.goal.pointer == 1 && event.deadEntity?.typeId === save_data[0].challenge.goal.entity_id) {
-    finished_cm_timer(1, [{text: "You did it! You defeated the "}, {translate: ("entity."+save_data[0].challenge.goal.entity_id.replace(/^minecraft:/, "")+".name")}, {text: " in an epic battle! Good Game!"}])
   }
 });
 
@@ -2489,7 +2652,7 @@ function main_menu_actions(player, form) {
 
       if (timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] > 0 && !save_data[0].challenge.active) {
         if (!save_data[0].global.status) {
-          if(form){form.button("Intelligent condition\n" + (save_data[player_sd_index].afk === true ? "§aon" : "§coff"), (save_data[player_sd_index].afk === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
+          if(form){form.button("Intelligent condition\n" + (save_data[player_sd_index].afk === true ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].afk === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
           actions.push(() => {
             if (save_data[player_sd_index].afk) {
               save_data[player_sd_index].afk = false
@@ -2597,7 +2760,7 @@ function main_menu_actions(player, form) {
           apply_design(
             (
               typeof save_data[player_sd_index].design === "number"
-                ? design_template[save_data[player_sd_index].design].content
+                ? design_template.find(t => t.id == save_data[player_sd_index].design).content
                 : save_data[player_sd_index].design
             ).find(item => item.type === "ui"),
             timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"]
@@ -2615,7 +2778,7 @@ function main_menu_actions(player, form) {
 
   if ((save_data[player_sd_index].time_day_actionbar == true || timedata.counting_type == 3) && save_data[0].challenge.progress !== 2) {
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
-      if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time ? "§aon" : "§coff"), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
+      if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (!save_data[0].sync_day_time) {
           save_data[0].sync_day_time = true;
@@ -2629,7 +2792,7 @@ function main_menu_actions(player, form) {
   }
 
   if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore) {
-    if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? "§aon" : "§coff"), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+    if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
     });
@@ -2771,7 +2934,7 @@ function splash_end_challenge(player) {
         finished_cm_timer(0, [{text:"The challenge is over. Time invested: "+ apply_design(
           (
             typeof save_data[player_sd_index].design === "number"
-              ? design_template[save_data[player_sd_index].design].content
+              ? design_template.find(t => t.id == save_data[player_sd_index].design).content
               : save_data[player_sd_index].design
           ).find(item => item.type === "ui"),
           (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
@@ -2787,13 +2950,11 @@ function splash_end_challenge(player) {
   });
 }
 
-
-
 function splash_globalmode(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let design = (typeof save_data[player_sd_index].design === "number"? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "ui");
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "ui");
   let actions = [];
 
   form.title("Shared timer");
@@ -2968,7 +3129,7 @@ function settings_difficulty(player) {
     if (diff.is_hardcore == world.isHardcore || save_data[player_sd_index].allow_unnecessary_inputs) {
       let name = diff.name;
       if (save_data[0].challenge.difficulty === index) {
-        name += "\n§2(selected)";
+        name += "\n"+translate_textkeys("menu.item_selected", save_data[player_sd_index].lang);
       }
       form.button(name, diff.icon);
       visibleDifficulties.push({ diff, index });
@@ -3128,26 +3289,26 @@ async function settings_goals_select(player, type) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   const isEvent = type === "event";
-  const isRandom = save_data[0].challenge.goal.pointer === 0
+  const isRandom = save_data[0].challenge.goal.pointer === 0;
   const pointerValue = isEvent ? 2 : 1;
   const goalArray = isEvent ? goal_event : goal_entity_list; // für Entities goal_entity_list benutzen
 
   // Für Entity-Typen: aktuell gespeicherte entity_id
-  const currentGoalID = !isEvent && !isRandom ? save_data[0].challenge.goal.entity_id : undefined;
-  // Für Event-Typen weiterhin mit Index arbeiten
-  const currentGoalIndex = isEvent && !isRandom ? save_data[0].challenge.goal.event_pos : undefined;
+  const currentGoalID = (!isEvent && !isRandom && save_data[0].challenge.goal.pointer === 1)
+    ? save_data[0].challenge.goal.entity_id
+    : undefined;
+  // Für Event-Typen: aktuell gespeicherter Event-Index
+  const currentGoalIndex = (isEvent && !isRandom && save_data[0].challenge.goal.pointer === 2)
+    ? save_data[0].challenge.goal.event_pos
+    : undefined;
 
   form.title(`Goal - ${isEvent ? "Event" : "Entity"}`);
   form.body("Select your goal!");
 
   let visibleGoals;
   if (isEvent) {
-    // Event-Ziele filtern wie bisher
     visibleGoals = goalArray.filter(goal => goal.condition(save_data));
   } else {
-    // Entity-Ziele filtern nach deinem all_EntityTypes-Filter:
-    // - id beginnt mit "minecraft:" oder allow_unnecessary_inputs erlaubt
-    // - nicht in goal_entity_blocklist
     visibleGoals = goalArray.filter(e => {
       const id = e.id;
       const baseId = id.replace(/^minecraft:/, "");
@@ -3157,8 +3318,9 @@ async function settings_goals_select(player, type) {
     });
   }
 
-  // Aktuelles Ziel (Entity) ggf. oben anstellen und aus der Liste entfernen
-  let selectedGoal = undefined;
+  // Aktuelles Ziel ggf. oben anstellen und aus der Liste entfernen,
+  // aber nur wenn pointer zum Typ passt
+  let selectedGoal;
   if (isEvent && currentGoalIndex !== undefined) {
     const goal = goalArray[currentGoalIndex];
     if (visibleGoals.includes(goal)) {
@@ -3166,19 +3328,17 @@ async function settings_goals_select(player, type) {
       visibleGoals = visibleGoals.filter(g => g !== goal);
     }
   } else if (!isEvent && currentGoalID) {
-    selectedGoal = visibleGoals.find(g => g.id === currentGoalID);
-    if (selectedGoal) {
+    const goal = visibleGoals.find(g => g.id === currentGoalID);
+    if (goal) {
+      selectedGoal = goal;
       visibleGoals = visibleGoals.filter(g => g.id !== currentGoalID);
     }
   }
 
-  // Sortierung wie in all_EntityTypes
   visibleGoals.sort((a, b) => {
-    if (isEvent) {
-      return a.name.localeCompare(b.name);
-    } else {
-      return a.id.localeCompare(b.id);
-    }
+    return isEvent
+      ? a.name.localeCompare(b.name)
+      : a.id.localeCompare(b.id);
   });
 
   if (selectedGoal) {
@@ -3186,28 +3346,32 @@ async function settings_goals_select(player, type) {
   }
 
   visibleGoals.forEach(goal => {
-    // realIndex wird nur für Event gebraucht (Index im Array)
-    const realIndex = isEvent ? goalArray.findIndex(g => g.name === goal.name) : undefined;
+    const realIndex = isEvent
+      ? goalArray.findIndex(g => g.name === goal.name)
+      : undefined;
+
+    const pointer = save_data[0].challenge.goal.pointer;
+    const isSelected = isEvent
+      ? (pointer === 2 && currentGoalIndex === realIndex)
+      : (pointer === 1 && currentGoalID === goal.id);
 
     const labelText = {
       rawtext: [
         isEvent
           ? { text: goal.name }
           : { translate: "entity." + goal.id.replace(/^minecraft:/, "") + ".name" },
-        {
-          text:
-            (isEvent
-              ? currentGoalIndex === realIndex
-              : currentGoalID === goal.id)
-              ? "\n§2(selected)"
-              : "",
+        { text: isSelected
+            ? "\n" + translate_textkeys("menu.item_selected", save_data[player_sd_index].lang)
+            : ""
         },
       ],
     };
 
     const icon = goal.icon
       ? goal.icon
-      : (isEvent ? undefined : goal_entity_exceptionlist[goal.id.replace(/^minecraft:/, "")]? goal_entity_exceptionlist[goal.id.replace(/^minecraft:/, "")].icon : `textures/items/spawn_eggs/spawn_egg_${goal.id.replace(/^minecraft:/, "")}`);
+      : (!isEvent && goal_entity_exceptionlist[goal.id.replace(/^minecraft:/, "")]
+        ? goal_entity_exceptionlist[goal.id.replace(/^minecraft:/, "")].icon
+        : `textures/items/spawn_eggs/spawn_egg_${goal.id.replace(/^minecraft:/, "")}`);
 
     form.button(labelText, icon);
   });
@@ -3223,16 +3387,16 @@ async function settings_goals_select(player, type) {
         const realIndex = goalArray.findIndex(goal => goal.name === selectedGoal.name);
         save_data[0].challenge.goal.event_pos = realIndex;
       } else {
-        // Jetzt speichern wir die entity_id statt entity_pos
         save_data[0].challenge.goal.entity_id = selectedGoal.id;
       }
       save_data[0].challenge.goal.pointer = pointerValue;
-
       update_save_data(save_data);
     }
     if (response.selection >= 0) return settings_goals_main(player);
   });
 }
+
+
 
 
 
@@ -3304,7 +3468,7 @@ function settings_time_zone(player, viewing_mode) {
         (zone.name.length > 30 ? zone.short : zone.name) + "\n" +
         apply_design(
           (typeof save_data[player_sd_index].design === "number"
-            ? design_template[save_data[player_sd_index].design].content
+            ? design_template.find(t => t.id == save_data[player_sd_index].design).content
             : save_data[player_sd_index].design
           ).find(item => item.type === "day"),
           ticks
@@ -3338,7 +3502,7 @@ function settings_time_zone(player, viewing_mode) {
         adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
         ticks = (adj / MILLIS_DAY) * TICKS;
 
-        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
+        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
         actions.push(() => {
           save_data[0].utc = zone.utc
           update_save_data(save_data);
@@ -3366,7 +3530,7 @@ function settings_time_zone(player, viewing_mode) {
         adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
         ticks = (adj / MILLIS_DAY) * TICKS;
 
-        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
+        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
         actions.push(() => {
           save_data[0].utc = zone.utc
           update_save_data(save_data);
@@ -3384,7 +3548,7 @@ function settings_time_zone(player, viewing_mode) {
       adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
       ticks = (adj / MILLIS_DAY) * TICKS;
 
-      form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template[save_data[player_sd_index].design].content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
+      form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
       actions.push(() => {
         save_data[0].utc = zone.utc
         update_save_data(save_data);
@@ -3466,7 +3630,7 @@ function settings_main(player) {
 
   // Button 2.7: Language
   if (save_data[player_sd_index].allow_unnecessary_inputs) {
-    form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§9"+supportedLangs[lang].name, "textures/ui/language_glyph_color");
+    form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§9"+supportedLangs.find(l=> l.id == lang).name, "textures/ui/language_glyph_color");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.lang", player), { fade: 0.3 , loop: true})
       settings_lang(player)
@@ -3498,7 +3662,7 @@ function settings_main(player) {
   }
 
   // Button 4: Fullbright
-  form.button("Fullbright\n" + (save_data[player_sd_index].fullbright ? "§aon" : "§coff"), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
+  form.button("Fullbright\n" + (save_data[player_sd_index].fullbright ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
   actions.push(() => {
     if (!save_data[player_sd_index].fullbright) {
       save_data[player_sd_index].fullbright = true;
@@ -3512,7 +3676,7 @@ function settings_main(player) {
 
 
   // Button 5: Custom Sounds
-  form.button("Custom Sounds\n" + (save_data[player_sd_index].custom_sounds > 0 ? save_data[player_sd_index].custom_sounds == 1 ? "§aon" : "§aon (legacy)" : "§coff"), save_data[player_sd_index].custom_sounds > 0 ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
+  form.button("Custom Sounds\n" + (save_data[player_sd_index].custom_sounds > 0 ? save_data[player_sd_index].custom_sounds == 1 ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : "§aon (legacy)" : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[player_sd_index].custom_sounds > 0 ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
   actions.push(() => {
     if (save_data[player_sd_index].custom_sounds > 0) {
       save_data[player_sd_index].custom_sounds = 0
@@ -3526,7 +3690,7 @@ function settings_main(player) {
 
   // Button 6: Experimental features
   if (version_info.release_type !== 2) {
-    form.button("Experimental features\n" + (save_data[player_sd_index].allow_unnecessary_inputs ? "§aon" : "§coff"), "textures/ui/Add-Ons_Nav_Icon36x36");
+    form.button("Experimental features\n" + (save_data[player_sd_index].allow_unnecessary_inputs ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), "textures/ui/Add-Ons_Nav_Icon36x36");
     actions.push(() => {
       if (!save_data[player_sd_index].allow_unnecessary_inputs) {
         return settings_allow_unnecessary_inputs(player)
@@ -3597,28 +3761,36 @@ function settings_lang(player) {
 
   let actions = [];
 
-
-
   form.title(translate_textkeys("menu.settings.lang.title", lang));
-  form.body(translate_textkeys("menu.select_option", lang));
+  form.body(translate_textkeys("menu.general.description", lang));
 
+  const selected = supportedLangs.find(l=> l.id == lang);
+  const enLang = supportedLangs.find(l => l.id === "en");
 
+  const otherLangs = supportedLangs.filter(l => l.id !== selected.id && l.id !== "en");
+  const sortedOthers = otherLangs.sort((a, b) => a.name.localeCompare(b.name));
 
-  supportedLangs.forEach(l => {
-    if (supportedLangs[lang].id == l.id) {
-      form.button(l.humanTranslated? l.name: (l.name + "\n§o(translated)"), "textures/ui/realms_slot_check");
-    } else {
-      form.button(l.humanTranslated? l.name: (l.name + "\n§o(translated)"));
-    }
+  const displayLangs = [selected];
+  if (enLang && enLang.id !== selected.id) displayLangs.push(enLang);
+  displayLangs.push(...sortedOthers);
+
+  displayLangs.forEach(l => {
+    form.button(
+      `${l.name}\n§o(by ${l.creator})`,
+      l.id === selected.id ? "textures/ui/realms_slot_check" : undefined
+    );
 
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-      save_data[player_sd_index].lang = supportedLangs.findIndex(lang => lang.id == l.id)
-      update_save_data(save_data)
+      save_data[player_sd_index].lang = l.id;
+      update_save_data(save_data);
       settings_main(player);
     });
-
   });
+
+
+
+
 
   form.button("");
   actions.push(() => {
@@ -3646,13 +3818,17 @@ function settings_gestures(player) {
   const playerGestures = save_data[idx].gesture;
   let actions = [];
 
-  const configured_gestures = {
-    emote:    ["su","a","c"],
-    sneak:    ["su","a","c"],
-    nod:      ["sp"],
-    stick:    ["su","a","c"],
-    command:  ["su","a","c","sp"],
+  let configured_gestures = {
+    emote:  ["su", "a", "c"],
+    sneak:  ["su", "a", "c"],
+    nod:    ["sp"],
+    stick:  ["su", "a", "c"],
   };
+
+  if (!world.isHardcore) {
+    configured_gestures.command = ["su", "a", "c", "sp"];
+  }
+
 
   form.title("Gestures");
   form.body("Choose your own configuration of how the menu should open!");
@@ -3679,7 +3855,7 @@ function settings_gestures(player) {
 
   available.forEach(gesture => {
     const isOn = playerGestures[gesture];
-    let label = `${capitalize(gesture)}\n${isOn ? "§aon" : "§coff"}`;
+    let label = `${capitalize(gesture)}\n${isOn ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)}`;
     let icon = isOn ? "textures/ui/toggle_on" : "textures/ui/toggle_off";
     let alwaysActive = false;
 
@@ -3896,7 +4072,7 @@ function debug_main(player) {
   let form = new ActionFormData()
   let actions = []
 
-  form.body("DynamicPropertyTotalByteCount: "+world.getDynamicPropertyTotalByteCount() +" of 32767 bytes used")
+  form.body("DynamicPropertyTotalByteCount: "+world.getDynamicPropertyTotalByteCount() +" of 32767 bytes used ("+Math.floor((world.getDynamicPropertyTotalByteCount()/32767)*100) +" Procent)")
 
 
   form.button("§e\"save_data\" Editor");
@@ -3929,11 +4105,6 @@ function debug_main(player) {
     return soundkey_test(player, undefined)
   });
 
-  form.button("all_EntityTypes");
-  actions.push(() => {
-    return all_EntityTypes(player)
-  });
-
   form.button("");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -3951,56 +4122,11 @@ function debug_main(player) {
   });
 }
 
-function all_EntityTypes(player) {
-  let form = new ActionFormData()
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-  let actions = []
-
-  goal_entity_list
-  .sort((a, b) => a.id.localeCompare(b.id)) // Nach ID sortieren
-  .forEach(e => {
-
-    if (e.id.startsWith("minecraft:") || save_data[player_sd_index].allow_unnecessary_inputs) {
-      const id = e.id.replace(/^minecraft:/, "");
-
-      // Deletes all entries that are on the blocklist!
-      if (!goal_entity_blocklist.find(entity => entity.id == id)) {
-        let icon = "textures/items/spawn_eggs/spawn_egg_" + id;
-
-        if (goal_entity_exceptionlist[id]) {
-          icon = goal_entity_exceptionlist[id].icon;
-        }
-
-        form.button({ rawtext: [{ translate: "entity." + id + ".name" }]}, icon);
-        actions.push(() => {
-          player.runCommand("summon " + id);
-        });
-      }
-    }
-  });
-
-
-  form.button("");
-  actions.push(() => {
-    return debug_main(player)
-  });
-
-
-  form.show(player).then((response) => {
-    if (response.selection == undefined ) {
-      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-    }
-    if (response.selection !== undefined && actions[response.selection]) {
-      actions[response.selection]();
-    }
-  });
-}
-
 
 
 function debug_sd_editor(player, onBack, path = []) {
   const save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
   let current = save_data;
   for (const key of path) {
@@ -4053,7 +4179,7 @@ function debug_sd_editor(player, onBack, path = []) {
       const val = current[key];
       if (typeof val === "boolean") {
         form.button(
-          `${key}\n${val ? "§aON" : "§cOFF"}`,
+          `${key}\n${val ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)}`,
           val ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
         );
       } else if (typeof val === "number") {
@@ -4304,7 +4430,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
   body_text += "Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n";
   if (version_info.release_type === 0) {
-    body_text += "Language: " + supportedLangs[selected_save_data.lang].name + "\n";
+    body_text += "Language: " + supportedLangs.find(l=> l.id == selected_save_data.lang).name + "\n";
   }
 
   if (selected_player) {
@@ -4456,7 +4582,7 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
       const player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
 
         const design_data = typeof save_data[player_sd_index].design === "number"
-          ? design_template[save_data[player_sd_index].design].content
+          ? design_template.find(t => t.id == save_data[player_sd_index].design).content
           : save_data[player_sd_index].design;
         const design = design_data.find(item => item.type === "ui");
 
@@ -4601,7 +4727,7 @@ function settings_type(player) {
       : button.show_if) {
       validSelections.push(index);
       if (save_data[player_sd_index].counting_type === index) {
-        form.button(button.label + "\n§2(selected)", button.icon);
+        form.button(button.label + "\n"+translate_textkeys("menu.item_selected", save_data[save_data.findIndex(entry => entry.id === player.id)].lang), button.icon);
       } else {
         form.button(button.label, button.icon);
       }
@@ -4675,10 +4801,10 @@ function settings_actionbar(player) {
   let actions = [];
 
   form.title(translate_textkeys("menu.settings.actionbar.title", lang));
-  form.body(translate_textkeys("menu.select_option", lang));
+  form.body(translate_textkeys("menu.general.description", lang));
 
   form.button(
-    "Change the look!\n" + render_live_actionbar(save_data[player_sd_index], false),
+    translate_textkeys("menu.settings.actionbar.design.button", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false),
     "textures/ui/mashup_PaintBrush"
   );
   actions.push(() => {
@@ -4687,7 +4813,7 @@ function settings_actionbar(player) {
   });
 
   form.button(
-    translate_textkeys("menu.settings.actionbar.using", lang)+ "\n" + (save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting? "§9dynamic" : "§aon" : "§coff"),
+    translate_textkeys("menu.settings.actionbar.using", lang)+ "\n" + (save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting? translate_textkeys("menu.toggle_dynamic", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)),
     save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting ? "textures/ui/automation_glyph_color" : "textures/ui/toggle_on" : "textures/ui/toggle_off"
 
   );
@@ -4699,7 +4825,7 @@ function settings_actionbar(player) {
 
   if (save_data[player_sd_index].counting_type !== 3) {
     form.button(
-      "Show day time\n" + (save_data[player_sd_index].time_day_actionbar ? "§aon" : "§coff"),
+      translate_textkeys("menu.settings.actionbar.day_time", lang)+"\n" + (save_data[player_sd_index].time_day_actionbar ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)),
       save_data[player_sd_index].time_day_actionbar ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
     );
     actions.push(() => {
@@ -4711,7 +4837,7 @@ function settings_actionbar(player) {
 
   if (save_data[player_sd_index].time_day_actionbar || save_data[player_sd_index].counting_type == 3) {
     if (!save_data[0].sync_day_time) {
-      if(form){form.button("Time Source\n§9" + (save_data[player_sd_index].time_source === 0 ? "Minecraft" : "Real Life"), "textures/ui/share_microsoft")};
+      if(form){form.button(translate_textkeys("menu.settings.actionbar.time_source", save_data[player_sd_index].lang)+"\n§9" + (save_data[player_sd_index].time_source === 0 ? translate_textkeys("menu.settings.actionbar.time_source.in_game", save_data[player_sd_index].lang) : translate_textkeys("menu.settings.actionbar.time_source.real_life", save_data[player_sd_index].lang)), "textures/ui/share_microsoft")};
       actions.push(() => {
         if (save_data[player_sd_index].time_source === 0) {
           save_data[player_sd_index].time_source = 1;
@@ -4751,25 +4877,30 @@ function design_template_ui(player) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  form.title("Design actionbar");
-  form.body("Select a template or create your own custom design!");
+
+
+  form.title(translate_textkeys("menu.settings.actionbar.design.title", save_data[player_sd_index].lang));
+  form.body(translate_textkeys("menu.settings.actionbar.design.description", save_data[player_sd_index].lang));
 
   var currentDesign = save_data[player_sd_index].design;
 
   if (typeof save_data[player_sd_index].design == "number") {
-    currentDesign = design_template[save_data[player_sd_index].design].content
+    currentDesign = design_template.find(t => t.id == save_data[player_sd_index].design).content
   }
 
   let sortedDesigns = design_template
-    .filter(design => design.content !== undefined)
+    .filter(design => {
+      return save_data[player_sd_index].allow_unnecessary_inputs || design.content !== undefined;
+    })
     .sort((a, b) => (b.content === currentDesign) - (a.content === currentDesign));
+
 
   let hasMatchingDesign = sortedDesigns.some(design => JSON.stringify(design.content) === JSON.stringify(currentDesign));
 
   sortedDesigns.forEach((design) => {
     let buttonText = design.name + "\n" // + (apply_design(design.content.find(d => d.type === "screen_saver"), 0)+ " "); // Looks a bit off
     if (JSON.stringify(design.content) === JSON.stringify(currentDesign) || (!hasMatchingDesign && design.content === undefined)) {
-      buttonText += "§r§2(selected)";
+      buttonText += "§r"+translate_textkeys("menu.item_selected", save_data[player_sd_index].lang);
     }
     form.button(buttonText);
   });
@@ -4788,7 +4919,7 @@ function design_template_ui(player) {
       let selectedDesign = sortedDesigns[response.selection];
 
       if (selectedDesign.content === undefined) {
-        return settings_actionbar(player);
+        return //design_maker(player)
       } else {
         return design_preview(player, selectedDesign.content, false);
       }
@@ -4804,7 +4935,7 @@ function design_preview(player, design, is_custom) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  form.title("Design actionbar");
+  form.title(translate_textkeys("menu.settings.actionbar.design.title", save_data[player_sd_index].lang));
 
   let ui_preview = apply_design(design.find(d => d.type === "ui"), 660822121.4)
   let normal_preview = apply_design(design.find(d => d.type === "normal"), 660822121.4)
@@ -4815,9 +4946,21 @@ function design_preview(player, design, is_custom) {
 
   let screen_saver_preview = apply_design(design.find(d => d.type === "screen_saver"), 0)
 
-  form.body("Here is a preview of your selected design. It shows all possible variable at ones.\n\nScreen saver:\n"+screen_saver_preview+"§r§f\n\nIn the menu:\n" + ui_preview + "§r§f\n\nNormal:\n" + normal_preview + "§r§f\n\nPaused:\n"+paused_preview+ "§r§f\n\nFinshied (CM only):\n" +finished_preview+ "§r§f\n\nDay-Time:\n" +day_preview+ "§r§f\n\nDo you like it?");
+  form.body(translate_textkeys(
+    "menu.settings.actionbar.design.preview",
+    save_data[player_sd_index].lang,
+    {
+      screen_saver: screen_saver_preview,
+      ui: ui_preview,
+      normal: normal_preview,
+      paused: paused_preview,
+      finished: finished_preview,
+      day: day_preview
+    }
+  ));
 
-  form.button("§aApply!");
+
+  form.button(translate_textkeys("menu.settings.actionbar.design.preview.apply", save_data[player_sd_index].lang));
 
 
   form.button("");
@@ -4832,7 +4975,7 @@ function design_preview(player, design, is_custom) {
       if (is_custom) {
         save_data[player_sd_index].design = design
       } else {
-        save_data[player_sd_index].design = design_template.findIndex(d => d.content === design)
+        save_data[player_sd_index].design = design_template.find(d => d.content === design).id
       }
 
       update_save_data(save_data);
@@ -4992,7 +5135,6 @@ function calcAB(update, id, dayFormat) {
       let val = timedata[counting_type === 0 ? "stopwatch" : "timer"];
       if (update && timedata.do_count && !dayFormat) {
         if (counting_type === 1) {
-          timedata.timer = Math.max(timedata.timer - 1, 0);
           if (timedata.timer == 0) {
             if (data[0].challenge.progress == 1) {
               if (data[0].challenge.goal.pointer == 2 && data[0].challenge.goal.event_pos == 0) {
@@ -5019,6 +5161,7 @@ function calcAB(update, id, dayFormat) {
               }
             }
           }
+          timedata.timer = Math.max(timedata.timer - 1, 0);
         } else {
           timedata.stopwatch++;
         }
