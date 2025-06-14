@@ -4,26 +4,31 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B014",
+  build: "B015",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749904760,
+  unix: 1749927981,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0,
   changelog: {
     // new_features
     new_features: [
-      "Added Language settings",
+      "Added language settings",
+      "Updated timezone settings",
     ],
     // general_changes
     general_changes: [
       "Added UU-Support for v.4.0.0 & v.4.0.1",
-      "After an update of an older version, the design of this older version is now adopted"
+      "After an update of an older version, the design of this older version is now adopted",
+      "Changed the license to the mit license",
+      "The relative time is now more naturally formatted",
     ],
     // bug_fixes
     bug_fixes: [
       "Fixed a bug that allowed invalid identities to be selected by a random goal",
       "Fixed a bug that allowed players to disable almost all gestures, which could lead to the menu being unavailable in Hardcore",
-      "Fixed a bug that caused the timer to end 5 milliseconds early and is therefore not able reset properly later"
+      "Fixed a bug that caused the timer to end 5 milliseconds early and is therefore not able reset properly later",
+      "Fixed a bug that sometimes caused a softlock when the command /reload got executed",
+      "Fixed a bug where the timer would crash when Clone Realtime was enabled and your local time reached 6:00 AM in a timezone ahead of UTC (e.g., UTC+1 or higher)",
     ]
   }
 }
@@ -249,16 +254,32 @@ const soundkeys = {
 
 const supportedLangs = [
   {
-    id: "en",
-    name: "English",
-    creator: "TheFelixLive"
+    id: "en_us",
+    name: "English (US)",
+    creator: "TheFelixLive",
+    ai: true
   },
   {
-    id: "de",
-    name: "Deutsch",
-    creator: "TheFelixLive"
+    id: "en_uk",
+    name: "English (UK)",
+    creator: "TheFelixLive",
+    ai: false
+  },
+  {
+    id: "de_de",
+    name: "Deutsch (Deutschland)",
+    creator: "TheFelixLive",
+    ai: false
+  },
+  {
+    id: "de_at",
+    name: "Deutsch (Österreich)",
+    creator: "TheFelixLive",
+    ai: true
   }
 ];
+
+
 // The system is done but it's basicly unused!
 const textkeys = {
   // Menu
@@ -286,10 +307,21 @@ const textkeys = {
     de: "§2(ausgewählt)"
   },
 
-  "menu.settings.lang.title": {
-    en: "Language §o(experimental)§r",
-    de: "Sprache §o(experimentel)§r"
+  "menu.item_experimental": {
+    en: "§o(experimental)",
+    de: "§o(experimental)"
   },
+
+  "menu.settings.lang.title": {
+    en: "Language",
+    de: "Sprache"
+  },
+
+  "menu.settings.lang.recommendation": {
+    en: "based on your timezone",
+    de: "nach deiner Zeitzone"
+  },
+
 
   "menu.settings.actionbar.title": {
     en: "Actionbar"
@@ -334,8 +366,8 @@ const textkeys = {
   },
 
   "menu.settings.actionbar.design.preview": {
-    "en": "Here is a preview of your selected design. It shows all possible variables at once.\n\nScreen saver: %{screen_saver}%§r\n\nIn the menu: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPaused: %{paused}%§r\n\nFinished (CM only): %{finished}%§r\n\nDay-Time: %{day}%§r\n\nDo you like it?",
-    "de": "Hier ist eine Vorschau deines Designs. Es zeigt alle möglichen Zeiten auf einmal:\n\nBildschirmschoner: %{screen_saver}%§r\n\nIm Menü: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPausiert: %{paused}%§r\n\nAbgeschlossen (Nur im CM): %{finished}%§r\n\nTageszeit: %{day}%§r\n\nGefällt es dir?"
+    en: "Here is a preview of your selected design. It shows all possible variables at once.\n\nScreen saver: %{screen_saver}%§r\n\nIn the menu: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPaused: %{paused}%§r\n\nFinished (CM only): %{finished}%§r\n\nDay-Time: %{day}%§r\n\nDo you like it?",
+    de: "Hier ist eine Vorschau deines Designs. Es zeigt alle möglichen Zeiten auf einmal:\n\nBildschirmschoner: %{screen_saver}%§r\n\nIm Menü: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPausiert: %{paused}%§r\n\nAbgeschlossen (Nur im CM): %{finished}%§r\n\nTageszeit: %{day}%§r\n\nGefällt es dir?"
   },
 
   "menu.settings.actionbar.design.preview.apply": {
@@ -346,46 +378,282 @@ const textkeys = {
 };
 
 const timezone_list = [
-  { name: "Baker Island Time", utc: -12, short: "BIT", location: ["Baker Island"] },
-  { name: "Niue Time", utc: -11, short: "NUT", location: ["Niue", "American Samoa"] },
-  { name: "Hawaii-Aleutian Standard Time", utc: -10, short: "HAST", location: ["Hawaii", "Honolulu"] },
-  { name: "Marquesas Time", utc: -9.5, short: "MART", location: ["Marquesas Islands"] },
-  { name: "Alaska Standard Time", utc: -9, short: "AKST", location: ["Anchorage"] },
-  { name: "Pacific Standard Time", utc: -8, short: "PST", location: ["Los Angeles (Winter)", "Vancouver (Winter)"] },
-  { name: "Pacific Daylight / Mountain Standard Time", utc: -7, short: "PDT / MST", location: ["Los Angeles (Summer)", "Vancouver (Summer)", "Denver (Winter)", "Phoenix"] },
-  { name: "Mountain Daylight / Central Standard Time", utc: -6, short: "MDT / CST", location: ["Denver (Summer)", "Chicago (Winter)", "Mexico City (Winter)"] },
-  { name: "Central Daylight / Eastern Standard Time", utc: -5, short: "CDT / EST", location: ["Chicago (Summer)", "New York (Winter)", "Toronto (Winter)"] },
-  { name: "Atlantic Standard / Eastern Daylight Time", utc: -4, short: "AST / EDT", location: ["Santiago (Winter)", "Caracas (Winter)", "New York (Summer)", "Toronto (Summer)"] },
-  { name: "Atlantic Daylight / Argentina Time", utc: -3, short: "ADT / ART", location: ["Santiago (Summer)", "Buenos Aires", "São Paulo"] },
-  { name: "Newfoundland Standard Time", utc: -3.5, short: "NST", location: ["St. John's (Winter)"] },
-  { name: "Newfoundland Daylight Time", utc: -2.5, short: "NDT", location: ["St. John's (Summer)"] },
-  { name: "South Georgia Time", utc: -2, short: "GST", location: ["South Georgia"] },
-  { name: "Azores Standard Time", utc: -1, short: "AZOT", location: ["Azores (Winter)"] },
-  { name: "Greenwich Mean Time / Azores Summer Time", utc: 0, short: "GMT / AZOST", location: ["London (Winter)", "Reykjavík", "Azores (Summer)"] },
-  { name: "Central European Time / British Summer Time", utc: 1, short: "CET / BST", location: ["Berlin (Winter)", "Paris (Winter)", "Rome (Winter)", "London (Summer)"] },
-  { name: "Central European Summer / Eastern European Time", utc: 2, short: "CEST / EET", location: ["Berlin (Summer)", "Paris (Summer)", "Rome (Summer)", "Athens (Winter)", "Cairo (Winter)", "Helsinki (Winter)"] },
-  { name: "Eastern European Summer / Moscow Time", utc: 3, short: "EEST / MSK", location: ["Athens (Summer)", "Cairo (Summer)", "Moscow", "Istanbul"] },
-  { name: "Iran Standard Time", utc: 3.5, short: "IRST", location: ["Tehran (Winter)"] },
-  { name: "Iran Daylight Time / Gulf Standard Time", utc: 4, short: "IRDT / GST", location: ["Tehran (Summer)", "Dubai", "Abu Dhabi"] },
-  { name: "Afghanistan Time", utc: 4.5, short: "AFT", location: ["Kabul"] },
-  { name: "Pakistan Standard Time", utc: 5, short: "PKT", location: ["Karachi", "Islamabad"] },
-  { name: "India Standard Time", utc: 5.5, short: "IST", location: ["New Delhi", "Mumbai", "Colombo"] },
-  { name: "Nepal Time", utc: 5.75, short: "NPT", location: ["Kathmandu"] },
-  { name: "Bangladesh Time", utc: 6, short: "BST", location: ["Dhaka"] },
-  { name: "Cocos Islands Time", utc: 6.5, short: "CCT", location: ["Cocos Islands"] },
-  { name: "Indochina Time", utc: 7, short: "ICT", location: ["Bangkok", "Hanoi", "Jakarta"] },
-  { name: "China Standard Time", utc: 8, short: "CST", location: ["Beijing", "Shanghai", "Singapore"] },
-  { name: "Australian Central Western Time", utc: 8.75, short: "ACWST", location: ["Eucla"] },
-  { name: "Japan Standard Time", utc: 9, short: "JST", location: ["Tokyo", "Seoul"] },
-  { name: "Australian Central Standard Time", utc: 9.5, short: "ACST", location: ["Adelaide", "Darwin"] },
-  { name: "Australian Eastern Standard Time", utc: 10, short: "AEST", location: ["Brisbane", "Melbourne", "Sydney"] },
-  { name: "Lord Howe Standard Time", utc: 10.5, short: "LHST", location: ["Lord Howe Island"] },
-  { name: "Solomon Islands Time", utc: 11, short: "SBT", location: ["Honiara", "New Caledonia"] },
-  { name: "New Zealand Standard Time", utc: 12, short: "NZST", location: ["Wellington", "Auckland"] },
-  { name: "Chatham Islands Standard Time", utc: 12.75, short: "CHAST", location: ["Chatham Islands"] },
-  { name: "Tonga Time", utc: 13, short: "TOT", location: ["Tonga", "Tokelau"] },
-  { name: "Line Islands Time", utc: 14, short: "LINT", location: ["Kiritimati", "Line Islands"] }
+  {
+    name: "Baker Island Time",
+    utc: -12,
+    short: "BIT",
+    location: ["Baker Island"],
+    lang: ["en_us"]
+  },
+  {
+    name: "Niue Time",
+    utc: -11,
+    short: "NUT",
+    location: ["Niue", "American Samoa"],
+    lang: ["en_us"]
+  },
+  {
+    name: "Hawaii-Aleutian Standard Time",
+    utc: -10,
+    short: "HAST",
+    location: ["Hawaii", "Honolulu"],
+    lang: ["en_us"]
+  },
+  {
+    name: "Marquesas Time",
+    utc: -9.5,
+    short: "MART",
+    location: ["Marquesas Islands"],
+    lang: ["fr_fr", "ty_ty"]
+  },
+  {
+    name: "Alaska Standard Time",
+    utc: -9,
+    short: "AKST",
+    location: ["Anchorage"],
+    lang: ["en_us"]
+  },
+  {
+    name: "Pacific Standard Time",
+    utc: -8,
+    short: "PST",
+    location: ["Los Angeles (Winter)", "Vancouver (Winter)"],
+    lang: ["en_us", "en_ca"]
+  },
+  {
+    name: "Pacific Daylight / Mountain Standard Time",
+    utc: -7,
+    short: "PDT / MST",
+    location: ["Los Angeles (Summer)", "Vancouver (Summer)", "Denver (Winter)", "Phoenix"],
+    lang: ["en_us", "en_ca"]
+  },
+  {
+    name: "Mountain Daylight / Central Standard Time",
+    utc: -6,
+    short: "MDT / CST",
+    location: ["Denver (Summer)", "Chicago (Winter)", "Mexico City (Winter)"],
+    lang: ["en_us", "es_mx"]
+  },
+  {
+    name: "Central Daylight / Eastern Standard Time",
+    utc: -5,
+    short: "CDT / EST",
+    location: ["Chicago (Summer)", "New York (Winter)", "Toronto (Winter)"],
+    lang: ["en_us", "fr_ca", "fr_fr"]
+  },
+  {
+    name: "Atlantic Standard / Eastern Daylight Time",
+    utc: -4,
+    short: "AST / EDT",
+    location: ["Santiago (Winter)", "Caracas (Winter)", "New York (Summer)", "Toronto (Summer)"],
+    lang: ["en_us", "es_cl", "es_ve", "fr_ca"]
+  },
+  {
+    name: "Atlantic Daylight / Argentina Time",
+    utc: -3,
+    short: "ADT / ART",
+    location: ["Santiago (Summer)", "Buenos Aires", "São Paulo"],
+    lang: ["es_cl", "es_ar", "pt_br"]
+  },
+  {
+    name: "Newfoundland Standard Time",
+    utc: -3.5,
+    short: "NST",
+    location: ["St. John's (Winter)"],
+    lang: ["en_ca"]
+  },
+  {
+    name: "Newfoundland Daylight Time",
+    utc: -2.5,
+    short: "NDT",
+    location: ["St. John's (Summer)"],
+    lang: ["en_ca"]
+  },
+  {
+    name: "South Georgia Time",
+    utc: -2,
+    short: "GST",
+    location: ["South Georgia"],
+    lang: ["en_gb"]
+  },
+  {
+    name: "Azores Standard Time",
+    utc: -1,
+    short: "AZOT",
+    location: ["Azores (Winter)"],
+    lang: ["pt_pt"]
+  },
+  {
+    name: "Greenwich Mean Time / Azores Summer Time",
+    utc: 0,
+    short: "GMT / AZOST",
+    location: ["London (Winter)", "Reykjavík", "Azores (Summer)"],
+    lang: ["en_gb", "is_is", "pt_pt"]
+  },
+  {
+    name: "Central European Time / British Summer Time",
+    utc: 1,
+    short: "CET / BST",
+    location: ["Berlin (Winter)", "Paris (Winter)", "Rome (Winter)", "London (Summer)"],
+    lang: [ "de_de", "de_at", "de_ch", "fr_fr", "fr_be", "fr_ch", "it_it", "en_gb"]
+  },
+  {
+    name: "Central European Summer / Eastern European Time",
+    utc: 2,
+    short: "CEST / EET",
+    location: ["Berlin (Summer)", "Paris (Summer)", "Rome (Summer)", "Athens (Winter)", "Cairo (Winter)", "Helsinki (Winter)"],
+    lang: ["de_de", "de_at", "de_ch", "fr_fr", "fr_be", "fr_ch", "it_it", "el_gr", "ar_eg", "ar_sa", "fi_fi", "sv_se"]
+  },
+  {
+    name: "Eastern European Summer / Moscow Time",
+    utc: 3,
+    short: "EEST / MSK",
+    location: ["Athens (Summer)", "Cairo (Summer)", "Moscow", "Istanbul"],
+    lang: ["el_gr", "ar_eg", "ar_sa", "ru_ru", "ru_ua", "tr_tr"]
+  },
+  {
+    name: "Iran Standard Time",
+    utc: 3.5,
+    short: "IRST",
+    location: ["Tehran (Winter)"],
+    lang: ["fa_ir"]
+  },
+  {
+    name: "Iran Daylight Time / Gulf Standard Time",
+    utc: 4,
+    short: "IRDT / GST",
+    location: ["Tehran (Summer)", "Dubai", "Abu Dhabi"],
+    lang: ["fa_ir", "ar_ae", "ar_sa"]
+  },
+  {
+    name: "Afghanistan Time",
+    utc: 4.5,
+    short: "AFT",
+    location: ["Kabul"],
+    lang: ["ps_af", "fa_ir"]
+  },
+  {
+    name: "Pakistan Standard Time",
+    utc: 5,
+    short: "PKT",
+    location: ["Karachi", "Islamabad"],
+    lang: ["en_pk", "ur_pk"]
+  },
+  {
+    name: "India Standard Time",
+    utc: 5.5,
+    short: "IST",
+    location: ["New Delhi", "Mumbai", "Colombo"],
+    lang: ["en_in", "hi_in", "si_lk", "ta_in", "ta_lk"]
+  },
+  {
+    name: "Nepal Time",
+    utc: 5.75,
+    short: "NPT",
+    location: ["Kathmandu"],
+    lang: ["ne_np"]
+  },
+  {
+    name: "Bangladesh Time",
+    utc: 6,
+    short: "BST",
+    location: ["Dhaka"],
+    lang: ["bn_bd"]
+  },
+  {
+    name: "Cocos Islands Time",
+    utc: 6.5,
+    short: "CCT",
+    location: ["Cocos Islands"],
+    lang: ["en_au"]
+  },
+  {
+    name: "Indochina Time",
+    utc: 7,
+    short: "ICT",
+    location: ["Bangkok", "Hanoi", "Jakarta"],
+    lang: ["th_th", "vi_vn", "id_id"]
+  },
+  {
+    name: "China Standard Time",
+    utc: 8,
+    short: "CST",
+    location: ["Beijing", "Shanghai", "Singapore"],
+    lang: ["zh_cn", "en_sg", "ms_sg", "ta_sg"]
+  },
+  {
+    name: "Australian Central Western Time",
+    utc: 8.75,
+    short: "ACWST",
+    location: ["Eucla"],
+    lang: ["en_au"]
+  },
+  {
+    name: "Japan Standard Time",
+    utc: 9,
+    short: "JST",
+    location: ["Tokyo", "Seoul"],
+    lang: ["ja_jp", "ko_kr"]
+  },
+  {
+    name: "Australian Central Standard Time",
+    utc: 9.5,
+    short: "ACST",
+    location: ["Adelaide", "Darwin"],
+    lang: ["en_au"]
+  },
+  {
+    name: "Australian Eastern Standard Time",
+    utc: 10,
+    short: "AEST",
+    location: ["Brisbane", "Melbourne", "Sydney"],
+    lang: ["en_au"]
+  },
+  {
+    name: "Lord Howe Standard Time",
+    utc: 10.5,
+    short: "LHST",
+    location: ["Lord Howe Island"],
+    lang: ["en_au"]
+  },
+  {
+    name: "Solomon Islands Time",
+    utc: 11,
+    short: "SBT",
+    location: ["Honiara", "New Caledonia"],
+    lang: ["en_nz", "fr_nc"]
+  },
+  {
+    name: "New Zealand Standard Time",
+    utc: 12,
+    short: "NZST",
+    location: ["Wellington", "Auckland"],
+    lang: ["en_nz", "mi_nz"]
+  },
+  {
+    name: "Chatham Islands Standard Time",
+    utc: 12.75,
+    short: "CHAST",
+    location: ["Chatham Islands"],
+    lang: ["en_nz", "mi_nz"]
+  },
+  {
+    name: "Tonga Time",
+    utc: 13,
+    short: "TOT",
+    location: ["Tonga", "Tokelau"],
+    lang: ["en_nz", "to_to"]
+  },
+  {
+    name: "Line Islands Time",
+    utc: 14,
+    short: "LINT",
+    location: ["Kiritimati", "Line Islands"],
+    lang: ["en_ki", "gil_ki"]
+  }
 ];
+
+
 
 const goal_entity_list = EntityTypes.getAll()
 
@@ -990,7 +1258,7 @@ const default_save_data_structure = {
     challenge: { active: world.isHardcore ? true : false, progress: 0, rating: 0, goal: { pointer: 1, entity_id: "minecraft:ender_dragon", event_pos: 0 }, difficulty: world.isHardcore ? 2 : 1 },
     global: { status: world.isHardcore ? true : false, last_player_id: undefined },
     sync_day_time: false,
-    utc: 0,
+    utc: undefined,
     update_message_unix: (version_info.unix + version_info.update_message_period_unix)
 };
 
@@ -1080,7 +1348,7 @@ function create_player_save_data(playerId, playerName, modifier) {
       visibility_setting: true,
       absolute_visibility: true,
       fullbright: false,
-      lang: "en",
+      lang: "en_us",
       design: 0,
       setup: is_op_initial ? 2 : 1, // Setup value based on op status
       last_unix: Math.floor(Date.now() / 1000),
@@ -1985,35 +2253,87 @@ function print(input) {
 }
 
 function getRelativeTime(diff) {
-  let seconds = diff;
-  let minutes = Math.floor(seconds / 60);
-  let hours = Math.floor(minutes / 60);
-  let days = Math.floor(hours / 24);
-  let months = Math.floor(days / 30);
-  let years = Math.floor(days / 365);
+  const seconds = Math.round(diff);
+  const minutes = seconds / 60;
+  const hours = seconds / 3600;
+  const days = seconds / 86400;
+  const weeks = days / 7;
+  const months = days / 30.44;   // average month length
+  const years = days / 365.25;   // average year length (leap years included)
+  const decades = years / 10;
+  const centuries = years / 100;
 
-  if (years > 0) {
-    return `${years} year${years > 1 ? 's' : ''}`;
+  if (centuries >= 0.95) {
+    if (centuries < 1.5) return "about a century";
+    return `${Math.round(centuries)} centuries`;
   }
-  if (months > 0) {
-    return `${months} month${months > 1 ? 's' : ''}`;
+
+  if (decades >= 0.95) {
+    if (decades < 1.5) return "about a decade";
+    return `${Math.round(decades)} decades`;
   }
-  if (days > 0) {
-    return `${days} day${days > 1 ? 's' : ''}`;
+
+  if (years >= 0.95) {
+    if (years < 1.5) return "about a year";
+    return `${Math.round(years)} years`;
   }
-  if (hours > 0) {
-    return `${hours} hour${hours > 1 ? 's' : ''}`;
+
+  if (months >= 0.95) {
+    if (months < 1.5) return "about a month";
+    return `${Math.round(months)} months`;
   }
-  if (minutes > 0) {
-    return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+
+  if (weeks >= 0.95) {
+    if (weeks < 1.5) return "about a week";
+    return `${Math.round(weeks)} weeks`;
   }
-  return `a few seconds`;
+
+  if (days >= 0.95) {
+    if (days < 1.25) return "almost a whole day";
+    if (days < 1.5) return "a bit more than a day";
+    return `${Math.round(days)} days`;
+  }
+
+  if (hours >= 0.95) {
+    if (hours < 1.25) return "about an hour";
+    if (hours < 1.75) return "about an hour and a half";
+    if (hours < 2.25) return "about two hours";
+    return `${Math.round(hours)} hours`;
+  }
+
+  if (minutes >= 1) {
+    if (minutes < 1.5) return "about a minute";
+    if (minutes < 15) return `${Math.round(minutes)} minutes`;
+    if (minutes < 20) return "a quarter hour";
+    if (minutes < 40) return "half an hour";
+    if (minutes < 55) return "three quarters of an hour";
+    return "about an hour";
+  }
+
+  if (seconds < 10) return "a few seconds";
+  if (seconds < 30) return "less than half a minute";
+  return "about half a minute";
 }
+
+
+
 
 function translate_textkeys(key, lang, vars = {}) {
   const entry = textkeys[key];
   if (!entry) return key;
-  let str = entry[lang] != null ? entry[lang] : entry.en;
+
+  let str = entry[lang];
+
+  if (str == null) {
+    const baseLang = lang.split("_")[0];
+    str = entry[baseLang];
+  }
+
+  if (str == null) {
+    str = entry["en"];
+  }
+
+  if (str == null) return key;
 
   str = str.replace(/%\{(\w+)\}%/g, (_, name) => {
     return vars[name] != null ? vars[name] : "";
@@ -2021,6 +2341,8 @@ function translate_textkeys(key, lang, vars = {}) {
 
   return str;
 }
+
+
 
 
 function translate_soundkeys(key, player) {
@@ -2612,7 +2934,7 @@ function main_menu_actions(player, form) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
       if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && (!world.isHardcore || world.isHardcore && save_data[player_sd_index].allow_unnecessary_inputs))) {
-        if(form){form.button("Condition" + (world.isHardcore? " §o(experimental)§r\n" : "\n") + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
+        if(form){form.button("Condition " + (world.isHardcore? translate_textkeys("menu.item_experimental", save_data[player_sd_index].lang) +"§r\n" : "\n") + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
           if (timedata.time.do_count === false) {
@@ -3405,178 +3727,178 @@ async function settings_goals_select(player, type) {
 
 
 
-function settings_time_zone(player, viewing_mode) {
-  let form = new ActionFormData();
-  let actions = [];
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-
-  form.title("Time zone settings");
-  form.body("Select your current time zone!");
-
+function settings_time_zone(player, viewing_mode = 0) {
+  const form = new ActionFormData();
+  const actions = [];
+  const save_data = load_save_data();
+  const player_sd = save_data.find(entry => entry.id === player.id);
+  const now = new Date();
   const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
-  let now = new Date()
 
-  let current_zone_index = timezone_list.findIndex(zone => zone.utc === save_data[0].utc);
+  let current_utc = save_data[0].utc;
 
-  if (current_zone_index === -1) {
-    let closestDiff = Infinity;
-    current_zone_index = 0;
-
-    timezone_list.forEach((zone, index) => {
-      const diff = Math.abs(zone.utc - save_data[0].utc);
-      if (diff < closestDiff) {
-        closestDiff = diff;
-        current_zone_index = index;
-      }
-    });
+  if (current_utc === undefined) {
+    viewing_mode = 3;
   }
 
-  // 5 clostes time zones
-  if (viewing_mode == 0) {
-    let start = current_zone_index - 2;
-    let end = current_zone_index + 2;
+  form.title("Time zone settings").body("Select your current time zone!");
 
-    if (start < 0) {
-      end += -start;
-      start = 0;
-    }
-    if (end >= timezone_list.length) {
-      start -= (end - timezone_list.length + 1);
-      end = timezone_list.length - 1;
-    }
-    if (start < 0) start = 0;
-
-    // Show previous time zones button
-    if (start > 0) {
-      form.button("Show previous time zones", "textures/ui/up_arrow");
-      actions.push(() => {
-        settings_time_zone(player, 1);
-      });
-    }
-
-    for (let index = start; index <= end; index++) {
-      const zone = timezone_list[index];
-      let total = (now.getHours() + zone.utc) * 3600000 +
-                  now.getMinutes() * 60000 +
-                  now.getSeconds() * 1000 +
-                  Math.floor(now.getMilliseconds() / 10) * 10;
-      let adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET;
-      let ticks = (adj / MILLIS_DAY) * TICKS;
-
-      form.button(
-        (zone.name.length > 30 ? zone.short : zone.name) + "\n" +
-        apply_design(
-          (typeof save_data[player_sd_index].design === "number"
-            ? design_template.find(t => t.id == save_data[player_sd_index].design).content
-            : save_data[player_sd_index].design
-          ).find(item => item.type === "day"),
-          ticks
-        ),
-        index === current_zone_index ? "textures/ui/realms_slot_check" : ""
-      );
-
-      actions.push(() => {
-        save_data[0].utc = zone.utc;
-        update_save_data(save_data);
-        player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-        settings_main(player);
-      });
-    }
-
-    // Show later time zones button
-    if (end < timezone_list.length - 1) {
-      form.button("Show later time zones", "textures/ui/down_arrow");
-      actions.push(() => {
-        settings_time_zone(player, 2);
-      });
-    }
-  }
+  const current_zone_index = timezone_list.findIndex(z => z.utc === current_utc)
+    ?? timezone_list.reduce((closest, zone, i) =>
+         Math.abs(zone.utc - current_utc) < Math.abs(timezone_list[closest].utc - current_utc) ? i : closest, 0);
 
 
-  // all previous time zones
-  if (viewing_mode == 1) {
-    timezone_list.forEach((zone, index) => {
-      if (current_zone_index >= index) {
-        let total = (now.getHours() + zone.utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
-        adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
-        ticks = (adj / MILLIS_DAY) * TICKS;
+  const getTicks = utc => {
+    const total = (now.getHours() + utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10;
+    const adj = (total - START_OFFSET + MILLIS_DAY) % MILLIS_DAY;
+    return (adj / MILLIS_DAY) * TICKS;
+  };
 
-        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
-        actions.push(() => {
-          save_data[0].utc = zone.utc
-          update_save_data(save_data);
-          player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-          settings_main(player);
-        });
-      }
-    });
-    form.button("Show later time zones", "textures/ui/down_arrow");
+  const renderZoneButton = (zone, index) => {
+    const ticks = getTicks(zone.utc);
+
+    const design = typeof player_sd.design === "number"
+      ? design_template.find(t => t.id === player_sd.design).content
+      : player_sd.design;
+
+    const label = (zone.name.length > 28 ? zone.short : zone.name) + "\n" +
+                  apply_design(design.find(i => i.type === "day"), ticks);
+
+    const utcHours = (now.getUTCHours() + zone.utc + 24) % 24;
+    const utcMinutes = now.getUTCMinutes();
+    const totalMinutes = utcHours * 60 + utcMinutes;
+
+    const getTimeIcon = (minutes) => {
+      if (minutes < 270) return "textures/ui/time_6midnight";        // 00:00–04:30
+      if (minutes < 360) return "textures/ui/time_1sunrise";         // 04:30–06:00
+      if (minutes < 720) return "textures/ui/time_2day";             // 06:00–12:00
+      if (minutes < 1020) return "textures/ui/time_3noon";           // 12:00–17:00
+      if (minutes < 1140) return "textures/ui/time_4sunset";         // 17:00–19:00
+      return "textures/ui/time_5night";                              // 19:00–00:00
+    };
+
+    const icon = index === current_zone_index
+      ? "textures/ui/realms_slot_check"
+      : getTimeIcon(totalMinutes);
+
+    form.button(label, icon);
+
     actions.push(() => {
-      settings_time_zone(player, 3)
-    });
-  }
-
-  // all later time zones
-  if (viewing_mode == 2) {
-    form.button("Show previous time zones", "textures/ui/up_arrow");
-    actions.push(() => {
-      settings_time_zone(player, 3)
-    });
-
-    timezone_list.forEach((zone, index) => {
-      if (current_zone_index <= index) {
-        let total = (now.getHours() + zone.utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
-        adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
-        ticks = (adj / MILLIS_DAY) * TICKS;
-
-        form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
-        actions.push(() => {
-          save_data[0].utc = zone.utc
-          update_save_data(save_data);
-          player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-          settings_main(player);
+      if (icon === "textures/ui/realms_slot_check") {
+        save_data.forEach(entry => {
+          if (entry.time_source === 1) {
+            entry.time_source = 0;
+          }
         });
+        save_data[0].utc = undefined;
+        update_save_data(save_data);
+        settings_time_zone(player);
+      } else {
+        settings_time_zone_preview(player, zone, viewing_mode);
       }
     });
-  }
+  };
 
-  // all time zones
-  if (viewing_mode == 3) {
-    timezone_list.forEach((zone, index) => {
-      let total = (now.getHours() + zone.utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10,
-      adj = total - START_OFFSET < 0 ? total - START_OFFSET + MILLIS_DAY : total - START_OFFSET,
-      ticks = (adj / MILLIS_DAY) * TICKS;
 
-      form.button((zone.name.length > 30 ? zone.short : zone.name) + "\n" + apply_design((typeof save_data[player_sd_index].design === "number" ? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "day"), ticks), index == current_zone_index? "textures/ui/realms_slot_check" : "");
-      actions.push(() => {
-        save_data[0].utc = zone.utc
-        update_save_data(save_data);
-        player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-        settings_main(player);
-      });
+
+
+  const navButton = (label, icon, mode) => {
+    form.button(label, icon);
+    actions.push(() => settings_time_zone(player, mode));
+  };
+
+  const renderZones = (filterFn) => {
+    timezone_list.forEach((zone, i) => {
+      if (filterFn(i)) renderZoneButton(zone, i);
     });
+  };
+
+  if (viewing_mode === 0) {
+    let start = Math.max(0, current_zone_index - 2);
+    let end = Math.min(timezone_list.length - 1, current_zone_index + 2);
+
+    if (start > 0) navButton("Show previous time zones", "textures/ui/up_arrow", 1);
+    for (let i = start; i <= end; i++) renderZoneButton(timezone_list[i], i);
+    if (end < timezone_list.length - 1) navButton("Show later time zones", "textures/ui/down_arrow", 2);
+  } else {
+    if (viewing_mode === 1) navButton("Show less", "textures/ui/down_arrow", 0);
+    if (viewing_mode === 2 && current_zone_index !== 0) navButton("Show previous time zones", "textures/ui/up_arrow", 3);
+    if (viewing_mode === 3 && current_utc !== undefined) navButton("Show less", "textures/ui/down_arrow", 2);
+
+    renderZones(i =>
+      viewing_mode === 3 ||
+      (viewing_mode === 1 && i <= current_zone_index) ||
+      (viewing_mode === 2 && i >= current_zone_index)
+    );
+
+    if (viewing_mode === 1 && current_zone_index !== timezone_list.length) navButton("Show later time zones", "textures/ui/down_arrow", 3);
+    if (viewing_mode === 2) navButton("Show less", "textures/ui/up_arrow", 0);
+    if (viewing_mode === 3 && current_utc !== undefined) navButton("Show less", "textures/ui/up_arrow", 1);
   }
 
-
-
-
-  // go back to settings
   form.button("");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
     settings_main(player);
-});
+  });
+
+  form.show(player).then(res => {
+    if (res.selection === undefined) {
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    } else {
+      actions[res.selection]?.();
+    }
+  });
+}
+
+
+function settings_time_zone_preview (player, zone, viewing_mode) {
+  const save_data = load_save_data();
+  const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let form = new MessageFormData();
+  const now = new Date();
+  const TICKS = 24000, MILLIS_DAY = 86400000, START_OFFSET = 6 * 3600000;
+
+  const getTicks = utc => {
+    const total = (now.getHours() + utc) * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + Math.floor(now.getMilliseconds() / 10) * 10;
+    const adj = (total - START_OFFSET + MILLIS_DAY) % MILLIS_DAY;
+    return (adj / MILLIS_DAY) * TICKS;
+  };
+
+  const ticks = getTicks(zone.utc);
+
+  const design = typeof save_data[player_sd_index].design === "number"
+    ? design_template.find(t => t.id === save_data[player_sd_index].design).content
+    : save_data[player_sd_index].design;
+
+
+  form.title("Time zone preview");
+  form.body(
+    "Time zone: " + zone.name +
+    "\nUTC: "+ (zone.utc >= 0 ? "+" : "") + zone.utc +
+    "\nTime: " + apply_design(design.find(i => i.type === "day"), ticks) +
+    "§r\nLocation: " + zone.location.join(", ") +
+    "\n\nDo you want to use this time zone?\n "
+  )
+
+  form.button2("Use "+zone.short);
+  form.button1("");
 
   form.show(player).then((response) => {
     if (response.selection == undefined ) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (actions[response.selection]) {
-      actions[response.selection]();
+    if (response.selection == 1) {
+      save_data[0].utc = zone.utc;
+      update_save_data(save_data);
+      return settings_time_zone(player, 0);
     }
+    settings_time_zone(player, viewing_mode);
   });
+
 }
+
+
 
 function settings_main(player) {
   let form = new ActionFormData();
@@ -3630,7 +3952,7 @@ function settings_main(player) {
 
   // Button 2.7: Language
   if (save_data[player_sd_index].allow_unnecessary_inputs) {
-    form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§9"+supportedLangs.find(l=> l.id == lang).name, "textures/ui/language_glyph_color");
+    form.button(translate_textkeys("menu.settings.lang.title", lang)+ " " +translate_textkeys("menu.item_experimental", lang)+"\n§r§9"+supportedLangs.find(l=> l.id == lang).name, "textures/ui/language_glyph_color");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.lang", player), { fade: 0.3 , loop: true})
       settings_lang(player)
@@ -3643,17 +3965,20 @@ function settings_main(player) {
       let zone = timezone_list.find(zone => zone.utc === save_data[0].utc), zone_text;
 
       if (!zone) {
-        zone = timezone_list.reduce((closest, current) => {
-          const currentDiff = Math.abs(current.utc - save_data[0].utc);
-          const closestDiff = Math.abs(closest.utc - save_data[0].utc);
-          return currentDiff < closestDiff ? current : closest;
-        });
-         zone_text = "Prob. " + ("Prob. "+ zone.name.length > 30 ? zone.short : zone.name)
+        if (zone !== undefined) {
+          zone = timezone_list.reduce((closest, current) => {
+            const currentDiff = Math.abs(current.utc - save_data[0].utc);
+            const closestDiff = Math.abs(closest.utc - save_data[0].utc);
+            return currentDiff < closestDiff ? current : closest;
+          });
+          zone_text = "Prob. " + ("Prob. "+ zone.name.length > 30 ? zone.short : zone.name)
+        }
       } else {
-         zone_text = zone.name.length > 30 ? zone.short : zone.name
+        zone_text = zone.name.length > 30 ? zone.short : zone.name
       }
 
-      form.button("Time zone\n§9"+zone_text, "textures/ui/world_glyph_color_2x")
+
+      form.button("Time zone" + (zone !== undefined? "\n§9"+zone_text : ""), "textures/ui/world_glyph_color_2x")
     };
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.time_zone", player), { fade: 0.3 , loop: true})
@@ -3757,28 +4082,54 @@ function settings_lang(player) {
   const form = new ActionFormData();
   const save_data = load_save_data();
   const player_sd_index = save_data.findIndex(e => e.id === player.id);
-  let lang = save_data[player_sd_index].lang
+  let lang = save_data[player_sd_index].lang;
 
-  let actions = [];
+  let timezone_langs = timezone_list.find(zone => zone.utc === save_data[0].utc)?.lang;
+  if (!Array.isArray(timezone_langs)) timezone_langs = [];
 
-  form.title(translate_textkeys("menu.settings.lang.title", lang));
+  const selected = supportedLangs.find(l => l.id === lang);
+  const enLang = supportedLangs.find(l => l.id === "en_us");
+
+  // Kategorie 4: alle übrigen Sprachen (noch ungefiltert)
+  let otherLangs = supportedLangs.filter(l => l.id !== selected.id && l.id !== "en_us");
+
+  // Kategorie 3: Zeitzonen-Sprachen (nur wenn sie in otherLangs und supportedLangs sind)
+  const timezoneLangsFiltered = otherLangs
+    .filter(l => timezone_langs.includes(l.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  // Entferne timezone-basierte Sprachen aus Kategorie 4
+  otherLangs = otherLangs.filter(l => !timezoneLangsFiltered.some(tz => tz.id === l.id));
+  otherLangs.sort((a, b) => a.name.localeCompare(b.name));
+
+  const displayLangs = [];
+
+  // Kategorie 1: ausgewählte Sprache
+  displayLangs.push({ ...selected, note: "\n" + translate_textkeys("menu.item_selected", lang) });
+
+  // Kategorie 2: Englisch US (falls nicht ausgewählt)
+  if (enLang && enLang.id !== selected.id) {
+    const note = timezone_langs.includes(enLang.id) ? "\n§5("+ translate_textkeys("menu.settings.lang.recommendation", lang) +")§r" : "";
+    displayLangs.push({ ...enLang, note });
+  }
+
+  // Kategorie 3: Zeitzonenbasierte Vorschläge
+  timezoneLangsFiltered.forEach(l => {
+    displayLangs.push({ ...l, note: "\n§5("+ translate_textkeys("menu.settings.lang.recommendation", lang) +")§r" });
+  });
+
+  // Kategorie 4: Restliche Sprachen
+  otherLangs.forEach(l => {
+    displayLangs.push({ ...l, note: "" });
+  });
+
+  const actions = [];
+
+  form.title(translate_textkeys("menu.settings.lang.title", lang) + " " + translate_textkeys("menu.item_experimental", lang));
   form.body(translate_textkeys("menu.general.description", lang));
 
-  const selected = supportedLangs.find(l=> l.id == lang);
-  const enLang = supportedLangs.find(l => l.id === "en");
-
-  const otherLangs = supportedLangs.filter(l => l.id !== selected.id && l.id !== "en");
-  const sortedOthers = otherLangs.sort((a, b) => a.name.localeCompare(b.name));
-
-  const displayLangs = [selected];
-  if (enLang && enLang.id !== selected.id) displayLangs.push(enLang);
-  displayLangs.push(...sortedOthers);
-
   displayLangs.forEach(l => {
-    form.button(
-      `${l.name}\n§o(by ${l.creator})`,
-      l.id === selected.id ? "textures/ui/realms_slot_check" : undefined
-    );
+    form.button(l.name + (l.note || ""), l.ai ? "textures/ui/servers" : "textures/ui/sidebar_icons/my_characters");
 
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -3787,10 +4138,6 @@ function settings_lang(player) {
       settings_main(player);
     });
   });
-
-
-
-
 
   form.button("");
   actions.push(() => {
@@ -3806,6 +4153,7 @@ function settings_lang(player) {
     if (typeof actions[sel] === "function") actions[sel]();
   });
 }
+
 
 /*------------------------
  Gestures
@@ -3855,7 +4203,7 @@ function settings_gestures(player) {
 
   available.forEach(gesture => {
     const isOn = playerGestures[gesture];
-    let label = `${capitalize(gesture)}\n${isOn ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)}`;
+    let label = `${capitalize(gesture)}\n${isOn ? translate_textkeys("menu.toggle_on", save_data[idx].lang) : translate_textkeys("menu.toggle_off", save_data[idx].lang)}`;
     let icon = isOn ? "textures/ui/toggle_on" : "textures/ui/toggle_off";
     let alwaysActive = false;
 
@@ -3932,7 +4280,10 @@ function dictionary_about_version(player) {
     "Name: " + version_info.name + "\n" +
     "Version: " + version_info.version + ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? " §a(update time)§r" : " (" + version_info.build + ")") + "\n" +
     "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
-    "Build date: " + `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})` +
+
+    "Build date: " + ((save_data[0].utc == undefined)
+      ? (getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) + " ago \n\n§7Note: Set the time zone to see detailed information")
+      : (`${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})`))+
 
     "\n\n§7© 2022-"+ build_date.year + " TheFelixLive. Licensed under the MIT License."
   )
@@ -4836,7 +5187,7 @@ function settings_actionbar(player) {
   }
 
   if (save_data[player_sd_index].time_day_actionbar || save_data[player_sd_index].counting_type == 3) {
-    if (!save_data[0].sync_day_time) {
+    if (!save_data[0].sync_day_time && save_data[0].utc !== undefined) {
       if(form){form.button(translate_textkeys("menu.settings.actionbar.time_source", save_data[player_sd_index].lang)+"\n§9" + (save_data[player_sd_index].time_source === 0 ? translate_textkeys("menu.settings.actionbar.time_source.in_game", save_data[player_sd_index].lang) : translate_textkeys("menu.settings.actionbar.time_source.real_life", save_data[player_sd_index].lang)), "textures/ui/share_microsoft")};
       actions.push(() => {
         if (save_data[player_sd_index].time_source === 0) {
@@ -4847,7 +5198,7 @@ function settings_actionbar(player) {
         update_save_data(save_data);
         settings_actionbar(player);
       });
-    } else {
+    } else if (save_data[0].utc !== undefined) {
       save_data[player_sd_index].time_source = 1
       update_save_data(save_data);
     }
@@ -5043,32 +5394,6 @@ world.afterEvents.playerSpawn.subscribe(evt => {
 world.afterEvents.itemUse  .subscribe(evt => updateActivity(evt.source));
 world.afterEvents.itemUseOn.subscribe(evt => updateActivity(evt.source));
 
-system.runInterval(() => {
-  for (const player of world.getAllPlayers()) {
-    const name    = player.id;
-    const currPos = player.location;
-    const currRotRaw = player.getRotation();
-    const currRot = { yaw: currRotRaw.y, pitch: currRotRaw.x };
-
-    const prevPos = lastPosition.get(name);
-    const moved = !prevPos
-      || prevPos.x !== currPos.x
-      || prevPos.y !== currPos.y
-      || prevPos.z !== currPos.z;
-
-    const prevRot = lastRotation.get(name);
-    const rotated = !prevRot
-      || prevRot.yaw   !== currRot.yaw
-      || prevRot.pitch !== currRot.pitch;
-
-    if (moved || rotated) {
-      updateActivity(player);
-      lastPosition.set(name, { x: currPos.x, y: currPos.y, z: currPos.z });
-      lastRotation.set(name, currRot);
-    }
-  }
-}, 1); // 1 Tick = 1/20 Sekunde
-
 /*------------------------
  Update loop
 -------------------------*/
@@ -5180,7 +5505,7 @@ function calcAB(update, id, dayFormat) {
       timevalue = { value: ticks, do_count: true };
 
       if (data[0].sync_day_time && update && (!data[0].challenge.active || (data[0].challenge.progress === 1 && data[0].time.do_count))) {
-        world.setTimeOfDay(Math.floor(ticks));
+        world.setTimeOfDay(Math.floor(((ticks % 24000) + 24000) % 24000));
       }
 
     } else {
@@ -5279,6 +5604,31 @@ async function update_loop() {
           player.onScreenDisplay.setActionBar(render_live_actionbar(save_data[player_sd_index], save_data[0].global.status ? false : true));
         }
 
+      }
+
+      // AFK
+      for (const player of world.getAllPlayers()) {
+        const name    = player.id;
+        const currPos = player.location;
+        const currRotRaw = player.getRotation();
+        const currRot = { yaw: currRotRaw.y, pitch: currRotRaw.x };
+
+        const prevPos = lastPosition.get(name);
+        const moved = !prevPos
+          || prevPos.x !== currPos.x
+          || prevPos.y !== currPos.y
+          || prevPos.z !== currPos.z;
+
+        const prevRot = lastRotation.get(name);
+        const rotated = !prevRot
+          || prevRot.yaw   !== currRot.yaw
+          || prevRot.pitch !== currRot.pitch;
+
+        if (moved || rotated) {
+          updateActivity(player);
+          lastPosition.set(name, { x: currPos.x, y: currPos.y, z: currPos.z });
+          lastRotation.set(name, currRot);
+        }
       }
 
 

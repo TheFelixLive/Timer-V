@@ -29,10 +29,11 @@ If you can't do anything with it, that's no problem. You can simply continue wit
 ![Image](https://github.com/user-attachments/assets/10ff20dd-b433-43cb-b36b-f8d60cf96047)
 
 # Control
-From now on every player can open the menu of the timer at any time using these methots:
+From now on every player can open the menu of the timer at any time using these methots (can be activated or deactivated [here](#settings)):
 - jumping and sneaking at the same time (jump gesture)
 - by interacting using a stick (right click)
 - by nodding (only in specator mode)
+- by emoting (is not enabled by default)
 - entering `/scriptevent timerv:menu`
 
 # Usual main menu
@@ -89,7 +90,23 @@ Gives you permanent night vision. What can I say about it? That it always works.
 ## Custom Sounds
 Replaces all sounds from the timer with the ones you specify. It requires a compatible resource pack more on that [here](url)
 
+<!--
+
+## Language
+> [!NOTE]
+> Only available since 5.2.0
+Believe it or not, there are players who can't read English! And they can choose their language here.
+
+-->
+
+## Gestures
+> [!NOTE]
+> Only available since 5.1.0
+Let you choose your own configuration of how the menu should open!
+
 ## Actionbar
+> [!NOTE]
+> Only available for admins
 Long story short, it lets you change your entire actionbar:
 
 ![Image](https://github.com/user-attachments/assets/4b188043-851d-42ac-a7da-8d1fb2d83f78)
@@ -110,7 +127,7 @@ As you can see in the picture, a time (17:23 o'clock) is displayed after the spl
 
 I'm really serious. This allows you to change how the timer displays time. For example, you could add a text like "Yay" to the actionbar when the timer runs over an hour.
 
-# Challenge Mode (sometimes called mode survival mode)
+# Challenge Mode (sometimes called survival mode)
 > [!CAUTION]
 > This mode heavily changes how the timer and the world behaves, as it was designed for Survival / Hardcore mode in Minecraft!
  
