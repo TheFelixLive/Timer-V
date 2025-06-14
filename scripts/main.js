@@ -6,7 +6,7 @@ const version_info = {
   version: "v.5.2.0",
   build: "B014",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749900365,
+  unix: 1749904760,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0,
   changelog: {
@@ -3934,7 +3934,7 @@ function dictionary_about_version(player) {
     "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
     "Build date: " + `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})` +
 
-    "\n\n§7© 2022-"+ build_date.year + " TheFelixLive. All rights reserved."
+    "\n\n§7© 2022-"+ build_date.year + " TheFelixLive. Licensed under the MIT License."
   )
 
   if (version_info.changelog.new_features.length > 0 || version_info.changelog.general_changes.length > 0 || version_info.changelog.bug_fixes.length > 0) {

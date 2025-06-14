@@ -254,6 +254,29 @@ In most cases, everything should work, as these older versions are no longer ava
 
 ![Screenshot 2025-06-04 153655](https://github.com/user-attachments/assets/8a5b0ed3-c7a4-4a78-8b10-76f943388466)
 
+# License & Attribution
+This project is licensed under the [MIT License](./LICENSE).
+
+### Attribution Requirements
+1. **Social Media Reviews:**
+   - If you share reviews, screenshots, videos, or posts about this project on social media, please include:
+     - the project name: **Timer‑V**
+     - the official download link: `https://github.com/TheFelixLive/Timer-V`
+     - the creator: **TheFelixLive**
+
+2. **Using Code in Your Own Projects:**
+   - You are allowed to use code snippets from this repository in your own projects under the following conditions:
+     - The copied code does **not** make up the **majority** of your project.
+     - The reused code must be **clearly marked** with a comment in your code, for example:
+        ```
+        /* ─────────────────────────────────────────────────────────
+           This code is part of Timer‑V by TheFelixLive:
+           https://github.com/TheFelixLive/Timer‑V
+        ─────────────────────────────────────────────────────────*/
+        ```
+
+> Thank you for respecting the license terms and supporting this project!
+
 
 [^1]: This feature is experimental while using hardcore
 [^2]: While hardcore, they remain survival but invulnerable, until a mob 1 shots you e.g. the warden
