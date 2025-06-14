@@ -6,7 +6,7 @@ const version_info = {
   version: "v.5.2.0",
   build: "B014",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1749848158,
+  unix: 1749900365,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0,
   changelog: {
