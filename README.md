@@ -95,6 +95,7 @@ Replaces all sounds from the timer with the ones you specify. It requires a comp
 ## Language
 > [!NOTE]
 > Only available since 5.2.0
+
 Believe it or not, there are players who can't read English! And they can choose their language here.
 
 -->
@@ -102,6 +103,7 @@ Believe it or not, there are players who can't read English! And they can choose
 ## Gestures
 > [!NOTE]
 > Only available since 5.1.0
+
 Let you choose your own configuration of how the menu should open!
 
 ## Actionbar
