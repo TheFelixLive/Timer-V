@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B016",
+  build: "B017",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750013493,
+  unix: 1750105837,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -18,6 +18,7 @@ const version_info = {
     ],
     // general_changes
     general_changes: [
+      "Added a new design template \"v.2.0.0\" for the actionbar",
       "Added UU-Support for v.4.0.0 & v.4.0.1",
       "After an update of an older version, the design of this older version is now adopted",
       "Changed the license to the mit license",
@@ -30,6 +31,8 @@ const version_info = {
       "Fixed a bug that caused the timer to end 5 milliseconds early and is therefore not able reset properly later",
       "Fixed a bug that sometimes caused a softlock when the command /reload got executed",
       "Fixed a bug where the timer would crash when Clone Realtime was enabled and your local time reached 6:00 AM in a timezone ahead of UTC (e.g., UTC+1 or higher)",
+      "Fixed a bug that caused a softlock when the goal was Time Goal and the timer got turned off in the settings menu",
+      "Fixed a bug that caused the timer to continue playing the music after the menu was colosed in the settings type menu",
     ]
   }
 }
@@ -1154,41 +1157,34 @@ const design_template = [
       ]}
     ]
   },
-  /* // Work in progress!
   {
     name: "v.2.0.0 - v.2.2.0",
     id: 8,
     edition: [0],
     content: [
       { type: "ui", blocks: [
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
-          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } }
+        { type: "marker", marker: "w", largest: true, padZero: false, suffixFull: { singular: " week ",  plural: " weeks "  }, suffixAbbr: "w "},
+        { type: "marker", marker: "d", largest: true, padZero: false, suffixFull: { singular: " day ",   plural: " days "   }, suffixAbbr: "d "},
+        { type: "marker", marker: "h", largest: true, padZero: false, suffixFull: { singular: " hour ",  plural: " hours "  }, suffixAbbr: "h "},
+        { type: "marker", marker: "m", largest: true, padZero: false, suffixFull: { singular: " minute ", plural: " minutes "}, suffixAbbr: "m "},
+        { type: "marker", marker: "s", largest: true, padZero: false, suffixFull: { singular: " second", plural: " seconds"}, suffixAbbr: "s "}
+
       ]},
       { type: "normal", blocks: [
-        { type: "marker", marker: "w", padZero: false, alwaysShow: false, suffix: { singular: " §eWeek§r ", plural: " §eWeeks§r " }, separator: { enabled: false }},
-
-        { type: "marker", marker: "d", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eDay§r ", plural: " §eDays§r " }, separator: { enabled: false }},
-        { type: "marker", marker: "d", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w"] }, suffix: "§ed§r", separator: { enabled: true, value: " ", position: "after" } },
-
-        { type: "marker", marker: "h", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eHour§r ", plural: " §eHours§r " }, separator: { enabled: false }},
-        { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w", "d"] }, suffix: "§eh§r", separator: { enabled: true, value: " ", position: "after" } },
-
-        { type: "marker", marker: "m", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eMinute§r ", plural: " §eMinutes§r " }, separator: { enabled: false }},
-        { type: "marker", marker: "m", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w", "d", "h"] }, suffix: "§em§r", separator: { enabled: true, value: " ", position: "after" } },
-
-
-        { type: "marker", marker: "s", padZero: false, alwaysShow: "ifAllZero", suffix: { singular: " §eSecond§r", plural: " §eSeconds§r" }, separator: { enabled: false }},
-        { type: "marker", marker: "s", padZero: false, alwaysShow: { condition: "ifGreater", units: ["w", "d", "h", "m"] }, suffix: "§es§r", separator: { enabled: false }}
+        { type: "text", text: "Playtime: ", showIfUnitsZero: true },
+        { type: "marker", marker: "w", largest: true, padZero: false, suffixFull: { singular: " §eweek§r ",  plural: " §eweeks§r "  }, suffixAbbr: "§ew§r "},
+        { type: "marker", marker: "d", largest: true, padZero: false, suffixFull: { singular: " §eday§r ",   plural: " §edays§r "   }, suffixAbbr: "§ed§r "},
+        { type: "marker", marker: "h", largest: true, padZero: false, suffixFull: { singular: " §ehour§r ",  plural: " §ehours§r "  }, suffixAbbr: "§eh§r "},
+        { type: "marker", marker: "m", largest: true, padZero: false, suffixFull: { singular: " §eminute§r ", plural: " §eminutes§r "},suffixAbbr: "§em§r "},
+        { type: "marker", marker: "s", largest: true, padZero: false, suffixFull: { singular: " §esecond§r", plural: " §eseconds§r"},suffixAbbr: "§es§r"}
       ]},
       { type: "paused", blocks: [
-          { type: "text", text: "§bTimer V§r is paused\n§l" },
-          { type: "marker", marker: "d", padZero: false, alwaysShow: false, suffix: { singular: " day, ", plural: " days, " }, separator: { enabled: false } },
-          { type: "marker", marker: "h", padZero: false, alwaysShow: { condition: "ifGreater", units: ["y", "d"] }, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "m", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: true, value: ":", position: "after" } },
-          { type: "marker", marker: "s", padZero: true, alwaysShow: true, suffix: "", separator: { enabled: false } },
-          { type: "text", text: " <-" }
+          { type: "text", text: "§3§oTimer paused at §r" },
+          { type: "marker", marker: "w", largest: true, padZero: false, suffixFull: { singular: " §eweek§r ",  plural: " §eweeks§r "  }, suffixAbbr: "§ew§r "},
+          { type: "marker", marker: "d", largest: true, padZero: false, suffixFull: { singular: " §eday§r ",   plural: " §edays§r "   }, suffixAbbr: "§ed§r "},
+          { type: "marker", marker: "h", largest: true, padZero: false, suffixFull: { singular: " §ehour§r ",  plural: " §ehours§r "  }, suffixAbbr: "§eh§r "},
+          { type: "marker", marker: "m", largest: true, padZero: false, suffixFull: { singular: " §eminute§r ", plural: " §eminutes§r "},suffixAbbr: "§em§r "},
+          { type: "marker", marker: "s", largest: true, padZero: false, suffixFull: { singular: " §esecond§r", plural: " §eseconds§r"},suffixAbbr: "§es§r"}
       ]},
       { type: "finished", blocks: [
           { type: "text", text: "§bTimer V§r is paused\n§l" },
@@ -1208,7 +1204,7 @@ const design_template = [
       ]}
     ]
   },
-  */
+
   {
     name: "v.1.0.0",
     id: 9,
@@ -1439,14 +1435,10 @@ function create_player_save_data(playerId, playerName, modifier) {
 world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
   create_player_save_data(playerId, playerName);
 
-
   let save_data = load_save_data()
-  let player;
-  while (!player) {
-    player = world.getAllPlayers().find(player => player.id == playerId)
-    await system.waitTicks(20);
-  }
-  // I don't know why but in single player, the server is active about 60 ticks before the player of the server is reachable via getAllPlayers
+  await system.waitTicks(100);
+  let player = world.getAllPlayers().find(player => player.id == playerId)
+
 
   // Resets AFK
   let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
@@ -1455,13 +1447,13 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
     update_save_data(save_data)
   }
 
-  if (version_info.release_type !== 2) {
+  if (version_info.release_type !== 2 && save_data[player_sd_index].setup == 100) {
     player.sendMessage("§l§7[§f" + (independent? "System" : version_info.name) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §l"+links[0].link)
     player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
   // Help reminder: how to open the menu
-  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800) && independent) {
+  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800) && independent && save_data[player_sd_index].setup == 100) {
     player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
   }
 
@@ -1532,6 +1524,7 @@ function universel_updater(player, gen) {
         uu_apply_gen(gen, player)
       }
       if (response.selection == undefined ) {
+        if (save_data[player_sd_index].setup !== 100) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
         return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       }
     }
@@ -2599,10 +2592,8 @@ function apply_design(design, time) {
       ms: Math.floor((rm % 1000) / 10)
     };
   } else {
-    // Normale Zeit-Umrechnung über Millisekunden
+    // Normal- & Playtime-Modus: Zeit in ms und nur für vorhandene Marker zerlegen
     let remainingMs = (time / 20) * 1000;
-
-    // Definition der Millisekunden pro Einheit
     const msPer = {
       y: 365.25 * 24 * 3600 * 1000,
       w:          7 * 24 * 3600 * 1000,
@@ -2610,19 +2601,16 @@ function apply_design(design, time) {
       h:                   3600 * 1000,
       m:                        60 * 1000,
       s:                             1000,
-      ms:                             10   // wir interpretieren ms-Wert als 10 ms-Einheit
+      ms:                             10
     };
-
-    // Welche Marker sind im Design definiert?
-    const used = new Set();
-    (design.blocks || []).forEach(b => {
-      if (b.type === "marker" && allUnits.includes(b.marker)) {
-        used.add(b.marker);
-      }
-    });
-
-    // Jede Einheit von groß nach klein
-    allUnits.forEach(u => {
+    // Welche Einheiten sind im Design überhaupt vorhanden?
+    const used = new Set(
+      (design.blocks || [])
+        .filter(b => b.type === "marker" && allUnits.includes(b.marker))
+        .map(b => b.marker)
+    );
+    // Für jede Einheit: wenn verwendet, extrahieren, sonst 0 lassen und ms im Rest belassen
+    for (let u of allUnits) {
       if (used.has(u)) {
         const val = Math.floor(remainingMs / msPer[u]);
         timeValues[u] = val;
@@ -2630,75 +2618,118 @@ function apply_design(design, time) {
       } else {
         timeValues[u] = 0;
       }
-    });
+    }
   }
 
-  // 2) Marker-Logik: Werte zu Blocks mappen
-  const proc = (design.blocks || []).map(b => {
-    if (b.type === "marker") {
-      const raw = String(timeValues[b.marker] || 0);
-      const val = (b.padZero && raw.length === 1) ? "0" + raw : raw;
-      const num = Number(val);
-      let show = false, candidate = false;
+  // 2) Basis-Verarbeitung der Blöcke
+  const blocks = (design.blocks || []).map(b => ({
+    ...b,
+    valueNum: b.type === "marker" ? (timeValues[b.marker] || 0) : undefined,
+    show:      false,
+    _useFull:  false,
+    _useAbbr:  false,
+    ifAllZeroCandidate: false
+  }));
 
-      if (num !== 0) show = true;
-      else if (b.alwaysShow === true || b.alwaysShow === "always") show = true;
-      else if (b.alwaysShow === "ifAllZero") candidate = true;
-      else if (typeof b.alwaysShow === "object" && b.alwaysShow.condition === "ifGreater") {
-        const anyGreater = (b.alwaysShow.units || []).some(u => (timeValues[u] || 0) > 0);
-        show = anyGreater;
+  // 3) Prüfen auf Playtime‑Modus (largest-Flag)
+  const playMode = blocks.some(b => b.type==="marker" && b.largest);
+
+  if (playMode) {
+    // Playtime: größte Unit + alle folgenden anzeigen (auch wenn 0)
+    const markers = blocks.filter(b => b.type==="marker");
+    let hit = false;
+    for (let b of markers) {
+      if (!hit && b.valueNum > 0) {
+        b.show = true; b._useFull = true; hit = true;
+      } else if (hit) {
+        b.show = true; b._useAbbr = true;
+      } else {
+        b.show = false;
       }
-
-      return { ...b, value: val, show, ifAllZeroCandidate: candidate };
     }
-    return b;
-  });
-
-  // 3) ifAllZero-Fallback: falls alle Marker 0 und some haben ifAllZero
-  const allZero = !proc.some(b => b.type === "marker" && Number(b.value) !== 0);
-  if (allZero) {
-    proc.forEach((b, i) => {
-      if (b.type === "marker" && b.ifAllZeroCandidate) proc[i].show = true;
-    });
+    // Sonderfall: alles 0 → Sekunden voll anzeigen
+    if (!hit) {
+      const sec = markers.find(b => b.marker==="s");
+      if (sec) { sec.show = true; sec._useFull = true; }
+    }
+  } else {
+    // Alter Modus: alwaysShow-/ifAllZero‑Logik
+    for (let b of blocks) {
+      if (b.type !== "marker") continue;
+      const v = b.valueNum;
+      if (v !== 0) b.show = true;
+      else if (b.alwaysShow === true || b.alwaysShow === "always") b.show = true;
+      else if (b.alwaysShow === "ifAllZero") b.ifAllZeroCandidate = true;
+      else if (typeof b.alwaysShow === "object" && b.alwaysShow.condition === "ifGreater") {
+        const anyGreater = b.alwaysShow.units.some(u => (timeValues[u] || 0) > 0);
+        if (anyGreater) b.show = true;
+      }
+    }
+    // ifAllZero-Fallback
+    const any = blocks.some(b => b.type==="marker" && b.show);
+    if (!any) {
+      blocks.forEach(b => {
+        if (b.type==="marker" && b.ifAllZeroCandidate) b.show = true;
+      });
+    }
   }
 
   // 4) String-Zusammenbau
   let result = "";
-  for (let i = 0; i < proc.length; i++) {
-    const b = proc[i];
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i];
+
+    // → Text‑Block: evtl. nur show, wenn w,d,h==0
     if (b.type === "text") {
-      result += b.text;
+      if (b.showIfUnitsZero) {
+        if (timeValues.w===0 && timeValues.d===0 && timeValues.h===0) {
+          result += b.text;
+        }
+      } else {
+        result += b.text;
+      }
+      continue;
     }
-    else if (b.type === "marker" && b.show) {
-      // Separator „before“
+
+    // → Marker-Block
+    if (b.type === "marker" && b.show) {
+      // Separator before
       if (b.separator?.enabled && ["before","both"].includes(b.separator.position)) {
-        const prev = proc.slice(0,i).some(x => x.type==="marker" && x.show);
+        const prev = blocks.slice(0,i).some(x => x.type==="marker" && x.show);
         if (prev) result += b.separator.value;
       }
-      // Wert + Suffix
-      let suffix = "";
-      if (typeof b.suffix === "string") {
-        suffix = b.suffix;
-      } else if (typeof b.suffix === "object") {
-        const { singular, plural } = b.suffix;
-        suffix = (Number(b.value) === 1 ? (singular || "") : (plural || ""));
+      // Wert mit Padding
+      const raw = String(b.valueNum);
+      const val = b.padZero && raw.length===1 ? "0"+raw : raw;
+      result += val;
+      // Suffix wählen
+      if (b._useFull) {
+        const { singular, plural } = b.suffixFull;
+        result += (b.valueNum===1 ? singular : plural);
+      } else if (b._useAbbr) {
+        result += b.suffixAbbr || "";
+      } else {
+        if (typeof b.suffix === "string") result += b.suffix;
+        else if (typeof b.suffix === "object") {
+          const { singular, plural } = b.suffix;
+          result += (b.valueNum===1 ? singular : plural);
+        }
       }
-      result += b.value + suffix;
-      // Separator „after“
+      // Separator after
       if (b.separator?.enabled && ["after","both"].includes(b.separator.position)) {
-        const next = proc.slice(i+1).some(x => x.type==="marker" && x.show);
+        const next = blocks.slice(i+1).some(x => x.type==="marker" && x.show);
         if (next) result += b.separator.value;
       }
     }
   }
 
-  // 5) Tages-Farblogik (nur bei type==="day")
-  if (design.type === "day" && Array.isArray(design.colorConfig) && design.colorConfig.length >= 3) {
+  // 5) Tages‑Farblogik (unverändert)
+  if (design.type==="day" && Array.isArray(design.colorConfig) && design.colorConfig.length>=3) {
     const h = Number(timeValues.h), m = Number(timeValues.m);
-    const tot = h * 60 + m;
-    const color = tot < (4*60+30) || h >= 19
+    const tot = h*60 + m;
+    const color = tot<(4*60+30)||h>=19
                 ? design.colorConfig[0]
-                : ((tot >= (4*60+30) && tot < (6*60)) || (h >= 17 && h < 19))
+                : ((tot>=(4*60+30)&&tot<(6*60))||(h>=17&&h<19))
                 ? design.colorConfig[1]
                 : design.colorConfig[2];
     result = color + result;
@@ -2706,6 +2737,8 @@ function apply_design(design, time) {
 
   return result;
 }
+
+
 
 /*------------------------
  Menus
@@ -2782,8 +2815,8 @@ function setup_menu(player) {
 
   /*
   ### Admins
-  - Language (20%)
-  - UTC (40%)
+  - Language
+  - UTC (20%)
   - Updates (60%)
   - Custome Sounds (80%)
   - Challenge Mode (90%)
@@ -2791,8 +2824,8 @@ function setup_menu(player) {
 
 
   ### Members
-  - Language (33%)
-  - Custome Sounds (66%)
+  - Language (0%)
+  - Custome Sounds (50%)
   - Intruduction (100%)
   */
 
@@ -2826,7 +2859,7 @@ function setup_menu(player) {
   }
 
   // Custome Sounds
-  if ((save_data[player_sd_index].setup == 80 && save_data[player_sd_index].op) || save_data[player_sd_index].setup == 66 && !save_data[player_sd_index].op) {
+  if ((save_data[player_sd_index].setup == 80 && save_data[player_sd_index].op) || save_data[player_sd_index].setup == 50 && !save_data[player_sd_index].op) {
     return settings_cs_setup(player, true)
   }
 
@@ -2848,14 +2881,12 @@ function setup_menu(player) {
     if (world.isHardcore) {
       form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen.\n\n§7Best regards, TheFelixLive (the developer)");
     } else {
-      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nWell, the timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming"+ (save_data[player_sd_index].op? " feel free to " : (" just ask "+ getBestHostName(save_data) + "or ")) +" check out the guide at "+links[0].link+"\n\n§7Best regards, TheFelixLive (the developer)");
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nthe timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming"+ (save_data[player_sd_index].op? " feel free to " : (" just ask "+ getBestHostName(save_data) + " or ")) +" check out the guide at "+links[0].link+"\n\n§7Best regards, TheFelixLive (the developer)");
     }
     form.button("Main menu");
 
-    player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with gestures or the command §l/scriptevent timerv:menu§f\n§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
-
-
     form.show(player).then((response) => {
+      player.sendMessage("§l§6[§eHelp§6]§r You can always open the menu with gestures or the command §l/scriptevent timerv:menu§f\n§8[§7Note§8]§r If you want to look at the guide but have forgotten the website, you can find it via §oMenu > (Settings >) About > Contact")
       if (response.selection == undefined ) {
         return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       }
@@ -3254,6 +3285,7 @@ function splash_challengemode(player, in_setup) {
       save_data[0].challenge.active = save_data[0].challenge.active ? false : true,
       update_save_data(save_data);
       if (!in_setup) {
+        if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
         player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       }
     }
@@ -3528,7 +3560,7 @@ function settings_difficulty(player) {
   });
 }
 
-// Behaves a bit strange
+
 async function settings_cs_setup(player, in_setup) {
   const saveData = load_save_data();
   const idx = saveData.findIndex(e => e.id === player.id);
@@ -3551,7 +3583,7 @@ async function settings_cs_setup(player, in_setup) {
 
 
   let heard = false;
-  let finalMsg = `${HEADER}\nUnder current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.`;
+  let finalMsg = `${HEADER}${sep}Under current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.`;
 
   for (const { soundKey, saveValue, resultMsg } of tests) {
     player.playMusic(soundKey, { fade: 0.5 });
@@ -3563,6 +3595,7 @@ async function settings_cs_setup(player, in_setup) {
       .show(player);
 
     if (resp.canceled) {
+      if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
 
@@ -3591,6 +3624,7 @@ async function settings_cs_setup(player, in_setup) {
     .show(player)
     .then((response) => {
       if (response.canceled) {
+        if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
         return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       }
       if (in_setup) {
@@ -3903,6 +3937,7 @@ function settings_time_zone(player, viewing_mode, in_setup) {
 
   form.show(player).then(res => {
     if (res.selection === undefined) {
+      if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     } else {
       actions[res.selection]?.();
@@ -3945,6 +3980,7 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
 
   form.show(player).then((response) => {
     if (response.selection == undefined ) {
+      if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
     if (response.selection == 1) {
@@ -4201,7 +4237,7 @@ function settings_lang(player, in_setup) {
         if (save_data[player_sd_index].op) {
           save_data[player_sd_index].setup = 20;
         } else {
-          save_data[player_sd_index].setup = 33;
+          save_data[player_sd_index].setup = 50;
         }
         update_save_data(save_data);
         setup_menu(player);
@@ -4223,6 +4259,7 @@ function settings_lang(player, in_setup) {
 
   form.show(player).then(response => {
     if (response.selection === undefined) {
+      if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
     const sel = response.selection;
@@ -5145,8 +5182,8 @@ function settings_type(player) {
   let form = new ActionFormData();
   form.title("Timer types");
   form.body("Select an option!");
-  let save_data = load_save_data();
 
+  let save_data = load_save_data();
   let player_sd_index;
 
   if (save_data[0].global.status) {
@@ -5156,44 +5193,55 @@ function settings_type(player) {
   }
 
   let validSelections = [];
+  let actions = [];
+
   timer_modes.forEach((button, index) => {
-    if (typeof button.show_if === 'function'
-      ? button.show_if(save_data, player_sd_index)
-      : button.show_if) {
+    if (typeof button.show_if === 'function' ? button.show_if(save_data, player_sd_index) : button.show_if) {
       validSelections.push(index);
       if (save_data[player_sd_index].counting_type === index) {
-        form.button(button.label + "\n"+translate_textkeys("menu.item_selected", save_data[save_data.findIndex(entry => entry.id === player.id)].lang), button.icon);
+        form.button(button.label + "\n" +translate_textkeys("menu.item_selected", save_data[save_data.findIndex(entry => entry.id === player.id)].lang), button.icon);
       } else {
         form.button(button.label, button.icon);
       }
+
+      actions.push(() => {
+        let selectedIndex = validSelections[validSelections.indexOf(index)];
+        if (selectedIndex !== undefined) {
+          if (save_data[0].counting_type == 1 && save_data[player_sd_index].counting_type !== selectedIndex && save_data[0].challenge.goal.event_pos === 0 && save_data[0].challenge.goal.pointer === 2) {
+            save_data[0].challenge.goal.pointer = 0;
+          }
+          if ((save_data[player_sd_index].counting_type === 0 || save_data[player_sd_index].counting_type === 1) &&
+              save_data[player_sd_index].time.do_count &&
+              save_data[player_sd_index].counting_type !== selectedIndex) {
+            return settings_type_info(player);
+          }
+
+          save_data[player_sd_index].counting_type = selectedIndex;
+          if (save_data[player_sd_index].counting_type !== selectedIndex) {
+            save_data[player_sd_index].time.do_count = false;
+          }
+
+          update_save_data(save_data);
+          return settings_main(player);
+        }
+      });
     }
   });
 
   form.button("");
+  actions.push(() => {});
 
   form.show(player).then((response) => {
-    if (response.selection === undefined) return -1;
-
-    let selectedIndex = validSelections[response.selection];
-    if (selectedIndex === undefined) {
-      return settings_main(player);
+    if (response.selection === undefined) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
 
-    if ((save_data[player_sd_index].counting_type === 0 || save_data[player_sd_index].counting_type === 1) &&
-        save_data[player_sd_index].time.do_count &&
-        save_data[player_sd_index].counting_type !== selectedIndex) {
-      return settings_type_info(player, response);
+    if (actions[response.selection]) {
+      actions[response.selection]();
     }
-
-    save_data[player_sd_index].counting_type = selectedIndex;
-    if (save_data[player_sd_index].counting_type !== selectedIndex) {
-      save_data[player_sd_index].time.do_count = false;
-    }
-
-    update_save_data(save_data);
-    return settings_main(player);
   });
 }
+
 
 
 function settings_type_info(player, response) {
@@ -5209,23 +5257,37 @@ function settings_type_info(player, response) {
   }
 
   form.title("Information");
-  form.body("Your "+ (save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch") +" is not paused! If you change now the mode to "+ (timer_modes[response.selection].label) +" it will be paused!");
+  form.body("Your " + (save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch") +
+    " is not paused! If you change now the mode to " + (timer_modes[response.selection].label) +
+    " it will be paused!");
+
+  let actions = [];
+
   form.button1("");
-  form.button2("Change to: "+timer_modes[response.selection].label);
+  actions.push(() => {
+    return settings_type(player); // Zurück zur settings_type Funktion
+  });
+
+  form.button2("Change to: " + timer_modes[response.selection].label);
+  actions.push(() => {
+    save_data[player_sd_index].counting_type = response.selection;
+    save_data[player_sd_index].time.do_count = false;
+
+    update_save_data(save_data);
+    return settings_main(player);
+  });
 
   form.show(player).then((response_2) => {
-    if (response_2.selection == 1) {
-      save_data[player_sd_index].counting_type = response.selection;
-      save_data[player_sd_index].time.do_count = false;
-
-      update_save_data(save_data);
-      return settings_main(player);
+    if (response_2.selection == undefined) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (response_2.selection == 0) {
-      return settings_type(player)
+
+    if (actions[response_2.selection]) {
+      actions[response_2.selection]();
     }
   });
 }
+
 
 function settings_actionbar(player) {
   let form = new ActionFormData();
@@ -5325,7 +5387,7 @@ function design_template_ui(player) {
 
   let sortedDesigns = design_template
     .filter(design => {
-      return (save_data[player_sd_index].allow_unnecessary_inputs || design.content !== undefined) && edition.includes(version_info.edition);
+      return (save_data[player_sd_index].allow_unnecessary_inputs || design.content !== undefined) && design.edition.includes(version_info.edition);
     })
     .sort((a, b) => (b.content === currentDesign) - (a.content === currentDesign));
 
@@ -5492,7 +5554,7 @@ function render_live_actionbar(selected_save_data, do_update) {
 
   let tv = calcAB(do_update, selected_save_data.id, false);
   if (typeof selected_save_data.design === "number")
-    selected_save_data.design = design_template[selected_save_data.design].content;
+    selected_save_data.design = design_template.find(item => item.id == selected_save_data.design).content;
 
   let d0, d1;
   if (selected_save_data.counting_type !== 3) {
