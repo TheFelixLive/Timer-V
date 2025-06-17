@@ -107,11 +107,8 @@ Believe it or not, there are players who can't read English! And they can choose
 Let you choose your own configuration of how the menu should open!
 
 ## Actionbar
-> [!NOTE]
-> Only available for admins
-Long story short, it lets you change your entire actionbar:
-
 ![Image](https://github.com/user-attachments/assets/4b188043-851d-42ac-a7da-8d1fb2d83f78)
+> Long story short, it lets you change your entire actionbar:
 
 ### Use actionbar
 If this is switched off, the timer will continue to run normally, but will no longer be displayed in your actionbar
@@ -278,8 +275,8 @@ This project is licensed under the [MIT License](./LICENSE).
 
 ### Attribution Requirements
 1. **Social Media Reviews:**
-   - If you share reviews, screenshots, videos, or posts about this project on social media, please include:
-     - the project name: **Timer‑V**
+   - If you share reviews, screenshots, videos, or posts about this project on social media what I would preshade, please include:
+     - the project name: **Timer V**
      - the official download link: `https://github.com/TheFelixLive/Timer-V`
      - the creator: **TheFelixLive**
 

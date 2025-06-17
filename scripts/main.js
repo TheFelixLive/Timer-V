@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B017",
+  build: "B018",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750105837,
+  unix: 1750174598,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -32,7 +32,7 @@ const version_info = {
       "Fixed a bug that sometimes caused a softlock when the command /reload got executed",
       "Fixed a bug where the timer would crash when Clone Realtime was enabled and your local time reached 6:00 AM in a timezone ahead of UTC (e.g., UTC+1 or higher)",
       "Fixed a bug that caused a softlock when the goal was Time Goal and the timer got turned off in the settings menu",
-      "Fixed a bug that caused the timer to continue playing the music after the menu was colosed in the settings type menu",
+      "Fixed a bug that caused the timer to continue playing the music after the menu was closed in the settings type menu",
     ]
   }
 }
@@ -40,6 +40,7 @@ const version_info = {
 const links = [
   {name: "§l§5Github:§r", link: "github.com/TheFelixLive/Timer-V"},
   {name: "§8Curseforge:§r", link: "curseforge.com/projects/1259478"},
+  {name: "§aMcpedl:§r", link: "mcpedl.com/timer"},
 ]
 
 // These lists are NOT customizable
@@ -286,12 +287,30 @@ const supportedLangs = [
 
 // The system is done but it's basicly unused!
 const textkeys = {
-  // Menu
-  "menu.general.description": {
-    en: "Select an option!",
-    de: "Wähle eine Option!"
+  /*------------------------
+  Messages
+  -------------------------*/
+
+  // Header
+  "message.header.system": {
+    en: "System",
   },
 
+  "message.header.help": {
+    en: "Help",
+  },
+
+  "message.header.note": {
+    en: "Note",
+  },
+
+  // Messages
+
+
+  /*------------------------
+    Menu - General
+  -------------------------*/
+  // Toggles
   "menu.toggle_on": {
     en: "§aon",
     de: "§aAN"
@@ -306,6 +325,11 @@ const textkeys = {
     en: "§9dynamic"
   },
 
+  "menu.toggle_restricted": {
+    en: "§orestricted",
+    de: "§oeingeschränkt"
+  },
+
   "menu.item_selected": {
     en: "§2(selected)",
     de: "§2(ausgewählt)"
@@ -316,6 +340,107 @@ const textkeys = {
     de: "§o(experimental)"
   },
 
+  "menu.button_skip": {
+    en: "Skip",
+    de: "Überspringen"
+  },
+
+  "menu.button_continue": {
+    en: "Continue",
+    de: "Fortfahren"
+  },
+
+  "menu.button_switch": {
+    en: "Switch to %{name}%",
+    de: "Nutze %{name}%"
+  },
+
+  "menu.general.description": {
+    en: "Select an option!",
+    de: "Wähle eine Option!"
+  },
+
+
+  /*------------------------
+    Menu - Custom Sounds
+  -------------------------*/
+
+  "menu.settings.cs.title": {
+    "en": "Custom Sounds"
+  },
+
+  "menu.settings.cs.description_0": {
+    "en": "Do you hear a test sound?",
+    "de": "Hörst du einen Testsound?"
+  },
+
+  "menu.settings.cs.description_1": {
+    "en": "Do you hear a test sound now?",
+    "de": "Hörst du jetzt einen Testsound?"
+  },
+
+  "menu.settings.cs.button.yes": {
+    "en": "§2Yes, there is a sound",
+    "de": "§2Ja, ich höre einen Sound"
+  },
+
+  "menu.settings.cs.button.no": {
+    "en": "§4No, silence",
+    "de": "§4Nein"
+  },
+
+  "menu.settings.cs.result.header": {
+    "en": "The setup process is now complete.",
+    "de": "Die Einrichtung ist nun abgeschlossen."
+  },
+
+  "menu.settings.cs.result.message_v1": {
+    "en": "The timer will now use custom sounds from the resource pack.",
+    "de": "Der Timer verwendet nun Custom Sounds aus dem Ressourcenpaket."
+  },
+
+  "menu.settings.cs.result.message_v2": {
+    "en": "Your resources pack only supports legacy custom music, so not all timer sounds can be replaced.",
+    "de": "Dein Ressourcenpaket unterstützt nur legacy custom music, daher können nicht alle Timer-Sounds ersetzt werden."
+  },
+
+  "menu.settings.cs.result.message_bad": {
+    "en": "Under current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.",
+    "de": "Unter den aktuellen Bedingungen können keine Custom Sounds abgespielt werden.\n\n§7Überprüfe die Kompatibilität deines Ressourcenpakets und die Musiklautstärke vom Spiel."
+  },
+
+
+  /*------------------------
+    Menu - Settings
+  -------------------------*/
+
+  "menu.settings.title": {
+    en: "Settings",
+    de: "Einstellungen"
+  },
+
+  "menu.settings.fullbright": {
+    en: "Fullbright",
+    de: "Nachtsicht"
+  },
+
+  "menu.settings.experimental_features": {
+    en: "Experimental features",
+    de: "Experimentelle Funktionen"
+  },
+
+  "menu.settings.update": {
+    en: "Update"
+  },
+
+  "menu.settings.about": {
+    en: "About",
+    de: "Über diese Version"
+  },
+
+  /*------------------------
+    Menu - Language
+  -------------------------*/
   "menu.settings.lang.title": {
     en: "Language",
     de: "Sprache"
@@ -326,6 +451,97 @@ const textkeys = {
     de: "nach deiner Zeitzone"
   },
 
+  "menu.settings.lang.preview.messages": {
+    en: "You have selected: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nI confirm that I have understood the sentence in the specified language and would like to use it.\n ",
+    de: "Du hast die Sprache %{name}% ausgewählt\n\n§o§8\"%{preview}%\"§r\n\nIch bestätige, dass ich den Satz in der angegebenen Sprache verstanden habe und sie verwenden möchte.\n "
+  },
+
+  "menu.settings.lang.preview.messages.ai": {
+    en: "Languages are constantly changing. Please share your experience, e.g., translation mistakes. For more infos check Contacts in the \"About\" section!\n\n§o§8\"%{preview}%\"§r\n\nI confirm that I have understood the sentence in the specified language and would like to use it.\n ",
+    de: "Sprachen verändern sich ständig. Bitte teile deine Erfahrungen, z.B. durchs melden von Übersetzungsfehlern. Weitere Infos findest du unter \"Über diese Version\" im Abschnitt Kontakte!\n\n§o§8\"%{preview}%\"§r\n\nIch bestätige, dass ich den Satz in der angegebenen Sprache verstanden habe und sie verwenden möchte.\n "
+  },
+
+  "menu.settings.lang.preview.test": {
+    en: "Mining diamonds at dawn is the best way to start a Minecraft adventure.",
+    de: "In Minecraft baue ich am liebsten eine gemütliche Holzhütte im Wald."
+  },
+
+  /*------------------------
+    Menu - Gestures
+  -------------------------*/
+
+  "menu.settings.gestures.title": {
+    "en": "Gestures",
+    "de": "Gesten"
+  },
+
+  "menu.settings.gestures.description": {
+    "en": "Choose your own configuration of how the menu should open!",
+    "de": "Wähle deine eigene Konfiguration, wie das Menü geöffnet werden soll!"
+  },
+
+  "menu.settings.gestures.emote": {
+    "en": "Emote"
+  },
+
+  "menu.settings.gestures.sneak": {
+    "en": "Sneak",
+    "de": "Schleichen"
+  },
+
+  "menu.settings.gestures.nod": {
+    "en": "Nod",
+    "de": "Nicken"
+  },
+
+  "menu.settings.gestures.stick": {
+    "en": "Stick",
+    "de": "Mit einem Stock"
+  },
+
+  "menu.settings.gestures.command": {
+    "en": "Command",
+    "de": "Befehl"
+  },
+
+  /*------------------------
+    Menu - Timezone
+  -------------------------*/
+
+  "menu.settings.time_zone.title": {
+    "en": "Time zone",
+    "de": "Zeitzone"
+  },
+
+  "menu.settings.time_zone.description": {
+    "en": "Select your current time zone!",
+    "de": "Wähle deine aktuelle Zeitzone!"
+  },
+
+  "menu.settings.time_zone.show_later": {
+    "en": "Show later time zones",
+    "de": "Spätere Zeitzonen"
+  },
+
+  "menu.settings.time_zone.show_previous": {
+    "en": "Show previous time zones",
+    "de": "Frühere Zeitzonen"
+  },
+
+  "menu.settings.time_zone.show_less": {
+    "en": "Show less",
+    "de": "Weniger anzeigen"
+  },
+
+  "menu.settings.time_zone.preview": {
+    "en": "Time zone: %{name}%\nUTC: %{utc}%\nTime: %{time}%§r\nLocation(s): %{location}%\n\nDo you want to use this time zone?\n ",
+    "de": "Zeitzone: %{name}%\nUTC: %{utc}%\nUhrzeit: %{time}%§r\nOrt(e): %{location}%\n\nMöchtest du diese Zeitzone verwenden?\n "
+  },
+
+
+  /*------------------------
+    Menu - Actionbar
+  -------------------------*/
 
   "menu.settings.actionbar.title": {
     en: "Actionbar"
@@ -2881,7 +3097,7 @@ function setup_menu(player) {
     if (world.isHardcore) {
       form.body("Wellcome "+ save_data[player_sd_index].name + "!\n\This looks like your next hardcore adventure.\nBe aware that some features may work differently or may simply not be availablen.\n\n§7Best regards, TheFelixLive (the developer)");
     } else {
-      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nthe timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming"+ (save_data[player_sd_index].op? " feel free to " : (" just ask "+ getBestHostName(save_data) + " or ")) +" check out the guide at "+links[0].link+"\n\n§7Best regards, TheFelixLive (the developer)");
+      form.body("Wellcome "+ save_data[player_sd_index].name + "!\nDo you also think that this would be a good time to briefly introduce Timer V?\n\nThe timer should be pretty intuitive to use. That's why my recommendation is to try it rather than study it, just explore it yourself.\n\nIf this sounds a bit overwhelming"+ (save_data[player_sd_index].op? " feel free to " : (" just ask "+ getBestHostName(save_data) + " or ")) +" check out the guide at "+links[0].link+"\n\n§7Best regards, TheFelixLive (the developer)");
     }
     form.button("Main menu");
 
@@ -3255,6 +3471,7 @@ function splash_challengemode(player, in_setup) {
 
   form.show(player).then((response) => {
     if (response.canceled) {
+      if (in_setup) player.sendMessage("§l§6[§eHelp§6]§r The menu got closed! You can always open it again with the sneak-jump (or in spectator with the nod) gesture, with the command §l/scriptevent timerv:menu§r§f or with a stick")
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
 
@@ -3565,33 +3782,33 @@ async function settings_cs_setup(player, in_setup) {
   const saveData = load_save_data();
   const idx = saveData.findIndex(e => e.id === player.id);
 
-  const HEADER = in_setup ? "" : "The setup process is now complete.";
+  const HEADER = in_setup ? "" : translate_textkeys("menu.settings.cs.result.header", saveData[idx].lang);
   const sep = in_setup ? "" : "\n";
 
   const tests = [
     {
       soundKey: "timer.test",
       saveValue: 1,
-      resultMsg: `${HEADER}${sep}The timer will now use custom sounds from the resource pack.`
+      resultMsg: HEADER + sep + translate_textkeys("menu.settings.cs.result.message_v1", saveData[idx].lang)
     },
     {
       soundKey: "timeru.test",
       saveValue: 2,
-      resultMsg: `${HEADER}${sep}Your resources pack only supports legacy custom music, so not all timer sounds can be replaced.`
+      resultMsg: HEADER + sep + translate_textkeys("menu.settings.cs.result.message_v2", saveData[idx].lang)
     }
   ];
 
 
   let heard = false;
-  let finalMsg = `${HEADER}${sep}Under current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.`;
+  let finalMsg = HEADER + sep + translate_textkeys("menu.settings.cs.result.message_bad", saveData[idx].lang)
 
   for (const { soundKey, saveValue, resultMsg } of tests) {
     player.playMusic(soundKey, { fade: 0.5 });
     const resp = await new MessageFormData()
-      .title("Custom Sounds - Setup")
-      .body("Do you hear a test sound" + (saveValue == 2? " now" : "") + "?")
-      .button2("§2Yes, there is a sound")
-      .button1("§4No, silence")
+      .title(translate_textkeys("menu.settings.cs.title", saveData[idx].lang))
+      .body(saveValue == 2? translate_textkeys("menu.settings.cs.description_0", saveData[idx].lang): translate_textkeys("menu.settings.cs.description_1", saveData[idx].lang))
+      .button2(translate_textkeys("menu.settings.cs.button.yes", saveData[idx].lang))
+      .button1(translate_textkeys("menu.settings.cs.button.no", saveData[idx].lang))
       .show(player);
 
     if (resp.canceled) {
@@ -3618,9 +3835,9 @@ async function settings_cs_setup(player, in_setup) {
     loop: true
   });
   await new ActionFormData()
-    .title("Custom Sounds - Setup")
+    .title(translate_textkeys("menu.settings.cs.title", saveData[idx].lang))
     .body(finalMsg)
-    .button(in_setup? "Continue" : "")
+    .button(in_setup? translate_textkeys("menu.button_continue", saveData[idx].lang) : "")
     .show(player)
     .then((response) => {
       if (response.canceled) {
@@ -3832,7 +4049,7 @@ function settings_time_zone(player, viewing_mode, in_setup) {
     viewing_mode = 3;
   }
 
-  form.title("Time zone settings").body("Select your current time zone!");
+  form.title(translate_textkeys("menu.settings.time_zone.title", player_sd.lang)).body(translate_textkeys("menu.settings.time_zone.description", player_sd.lang));
 
   const current_zone_index = timezone_list.findIndex(z => z.utc === current_utc)
     ?? timezone_list.reduce((closest, zone, i) =>
@@ -3908,13 +4125,13 @@ function settings_time_zone(player, viewing_mode, in_setup) {
     let start = Math.max(0, current_zone_index - 2);
     let end = Math.min(timezone_list.length - 1, current_zone_index + 2);
 
-    if (start > 0) navButton("Show previous time zones", "textures/ui/up_arrow", 1);
+    if (start > 0) navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 1);
     for (let i = start; i <= end; i++) renderZoneButton(timezone_list[i], i);
-    if (end < timezone_list.length - 1) navButton("Show later time zones", "textures/ui/down_arrow", 2);
+    if (end < timezone_list.length - 1) navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 2);
   } else {
-    if (viewing_mode === 1) navButton("Show less", "textures/ui/down_arrow", 0);
-    if (viewing_mode === 2 && current_zone_index !== 0) navButton("Show previous time zones", "textures/ui/up_arrow", 3);
-    if (viewing_mode === 3 && current_utc !== undefined) navButton("Show less", "textures/ui/down_arrow", 2);
+    if (viewing_mode === 1) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 0);
+    if (viewing_mode === 2 && current_zone_index !== 0) navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 3);
+    if (viewing_mode === 3 && current_utc !== undefined) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 2);
 
     renderZones(i =>
       viewing_mode === 3 ||
@@ -3922,12 +4139,19 @@ function settings_time_zone(player, viewing_mode, in_setup) {
       (viewing_mode === 2 && i >= current_zone_index)
     );
 
-    if (viewing_mode === 1 && current_zone_index !== timezone_list.length) navButton("Show later time zones", "textures/ui/down_arrow", 3);
-    if (viewing_mode === 2) navButton("Show less", "textures/ui/up_arrow", 0);
-    if (viewing_mode === 3 && current_utc !== undefined) navButton("Show less", "textures/ui/up_arrow", 1);
+    if (viewing_mode === 1 && current_zone_index !== timezone_list.length) navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 3);
+    if (viewing_mode === 2) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 0);
+    if (viewing_mode === 3 && current_utc !== undefined) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 1);
   }
 
-  if (!in_setup) {
+  if (in_setup) {
+    form.button(translate_textkeys("menu.button_skip", player_sd.lang));
+    actions.push(() => {
+      player_sd.setup = 60
+      update_save_data(save_data);
+      return setup_menu(player)
+    });
+  } else {
     form.button("");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -3966,7 +4190,7 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
     : save_data[player_sd_index].design;
 
 
-  form.title("Time zone preview");
+  form.title(translate_textkeys("menu.settings.time_zone.title", save_data[player_sd_index].lang));
   form.body(
     "Time zone: " + zone.name +
     "\nUTC: "+ (zone.utc >= 0 ? "+" : "") + zone.utc +
@@ -3975,7 +4199,19 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
     "\n\nDo you want to use this time zone?\n "
   )
 
-  form.button2("Use "+zone.short);
+  form.body(translate_textkeys(
+    "menu.settings.time_zone.preview",
+    save_data[player_sd_index].lang,
+    {
+      name: zone.name,
+      utc: zone.utc,
+      time: apply_design(design.find(i => i.type === "day"), ticks),
+      location: zone.location.join(", ")
+    }
+
+  ))
+
+  form.button2(translate_textkeys("menu.button_switch", save_data[player_sd_index].lang, {name: zone.short}));
   form.button1("");
 
   form.show(player).then((response) => {
@@ -3992,7 +4228,8 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
         return setup_menu(player)
       }
       update_save_data(save_data);
-      return settings_time_zone(player, 0);
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+      return settings_main(player);
     }
     settings_time_zone(player, viewing_mode, in_setup);
   });
@@ -4008,8 +4245,8 @@ function settings_main(player) {
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   let lang = save_data[player_sd_index].lang
 
-  form.title("Settings");
-  form.body("Select an option!");
+  form.title(translate_textkeys("menu.settings.title", lang));
+  form.body(translate_textkeys("menu.general.description", lang));
 
   // Button 0: Type
   if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
@@ -4020,20 +4257,27 @@ function settings_main(player) {
 
   // Button 1: Permission
   if (save_data[player_sd_index].op) {
-    form.button("Permission\n" + (() => {
-      const players = world.getAllPlayers();
-      const ids = players.map(p => p.id);
-      const names = save_data.slice(1).sort((a, b) =>
+    const players = world.getAllPlayers();
+    const ids = players.map(p => p.id);
+    const names = save_data.slice(1)
+      .sort((a, b) =>
         ids.includes(a.id) && !ids.includes(b.id) ? -1 :
         ids.includes(b.id) && !ids.includes(a.id) ? 1 : 0
-      ).map(e => e.name);
-      return names.length > 1 ? names.slice(0, -1).join(", ") + " u. " + names[names.length - 1] : names.join(", ");
-    })(), "textures/ui/op");
-    actions.push(() => {
-      settings_rights_main(player, true)
-      player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3 , loop: true})
-    });
+      )
+      .map(e => e.name);
+
+    if (names.length > 1) {
+      form.button("Permission\n" + (
+        names.slice(0, -1).join(", ") + " & " + names[names.length - 1]
+      ), "textures/ui/op");
+
+      actions.push(() => {
+        settings_rights_main(player, true);
+        player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
+      });
+    }
   }
+
 
   // Button 2: Actionbar
   form.button(translate_textkeys("menu.settings.actionbar.title", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
@@ -4044,7 +4288,7 @@ function settings_main(player) {
 
   // Button 2.5: Gestures
   if (independent) {
-    form.button("Gestures", "textures/ui/sidebar_icons/emotes");
+    form.button(translate_textkeys("menu.settings.gestures.title", lang), "textures/ui/sidebar_icons/emotes");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.gestures", player), { fade: 0.3 , loop: true})
       settings_gestures(player)
@@ -4077,7 +4321,7 @@ function settings_main(player) {
       }
 
 
-      form.button("Time zone" + (zone !== undefined? "\n§9"+zone_text : ""), "textures/ui/world_glyph_color_2x")
+      form.button(translate_textkeys("menu.settings.time_zone.title", save_data[player_sd_index].lang) + (zone !== undefined? "\n§9"+zone_text : ""), "textures/ui/world_glyph_color_2x")
     };
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.time_zone", player), { fade: 0.3 , loop: true})
@@ -4086,7 +4330,7 @@ function settings_main(player) {
   }
 
   // Button 4: Fullbright
-  form.button("Fullbright\n" + (save_data[player_sd_index].fullbright ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
+  form.button(translate_textkeys("menu.settings.fullbright", save_data[player_sd_index].lang)+"\n" + (save_data[player_sd_index].fullbright ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
   actions.push(() => {
     if (!save_data[player_sd_index].fullbright) {
       save_data[player_sd_index].fullbright = true;
@@ -4100,7 +4344,7 @@ function settings_main(player) {
 
 
   // Button 5: Custom Sounds
-  form.button("Custom Sounds\n" + (save_data[player_sd_index].custom_sounds > 0 ? save_data[player_sd_index].custom_sounds == 1 ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : "§aon (legacy)" : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[player_sd_index].custom_sounds > 0 ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
+  form.button(translate_textkeys("menu.settings.cs.title", lang)+ "\n" + (save_data[player_sd_index].custom_sounds > 0 ? save_data[player_sd_index].custom_sounds == 1 ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : "§aon (legacy)" : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[player_sd_index].custom_sounds > 0 ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
   actions.push(() => {
     if (save_data[player_sd_index].custom_sounds > 0) {
       save_data[player_sd_index].custom_sounds = 0
@@ -4114,7 +4358,7 @@ function settings_main(player) {
 
   // Button 6: Experimental features
   if (version_info.release_type !== 2) {
-    form.button("Experimental features\n" + (save_data[player_sd_index].allow_unnecessary_inputs ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), "textures/ui/Add-Ons_Nav_Icon36x36");
+    form.button(translate_textkeys("menu.settings.experimental_features", lang)+"\n" + (save_data[player_sd_index].allow_unnecessary_inputs ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), "textures/ui/Add-Ons_Nav_Icon36x36");
     actions.push(() => {
       if (!save_data[player_sd_index].allow_unnecessary_inputs) {
         return settings_allow_unnecessary_inputs(player)
@@ -4139,13 +4383,13 @@ function settings_main(player) {
   let gen = uu_find_gen()
 
   if (typeof(gen) === 'number' && save_data[player_sd_index].op) {
-    form.button("Update\n" + gen_list[gen] + " -> " + version_info.version, "textures/ui/icon_bell");
+    form.button(translate_textkeys("menu.settings.update", lang)+"\n" + gen_list[gen] + " -> " + version_info.version, "textures/ui/icon_bell");
     actions.push(() => {
       universel_updater(player, gen)
       player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
     });
   } else {
-    form.button("About\n", "textures/ui/infobulb");
+    form.button(translate_textkeys("menu.settings.about", lang)+"\n", "textures/ui/infobulb");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
       dictionary_about_version(player)
@@ -4231,9 +4475,8 @@ function settings_lang(player, in_setup) {
     form.button(l.name + (l.note || ""), l.ai ? "textures/ui/servers" : "textures/ui/sidebar_icons/my_characters");
 
     actions.push(() => {
-      save_data[player_sd_index].lang = l.id;
-
       if (in_setup) {
+        save_data[player_sd_index].lang = l.id;
         if (save_data[player_sd_index].op) {
           save_data[player_sd_index].setup = 20;
         } else {
@@ -4242,9 +4485,7 @@ function settings_lang(player, in_setup) {
         update_save_data(save_data);
         setup_menu(player);
       } else {
-        update_save_data(save_data);
-        player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-        settings_main(player);
+        settings_lang_preview(player, l, in_setup)
       }
     });
   });
@@ -4267,6 +4508,55 @@ function settings_lang(player, in_setup) {
   });
 }
 
+function settings_lang_preview(player, selected_lang) {
+  const save_data = load_save_data();
+  const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let form = new MessageFormData();
+  let current_lang_id = save_data[player_sd_index].lang;
+
+
+  form.title(translate_textkeys("menu.settings.lang.title", current_lang_id));
+
+  form.body(!selected_lang.ai? translate_textkeys(
+    "menu.settings.lang.preview.messages",
+    current_lang_id,
+    {
+      name: selected_lang.name,
+      preview: translate_textkeys("menu.settings.lang.preview.test", selected_lang.id),
+    }
+  ) : translate_textkeys(
+    "menu.settings.lang.preview.messages.ai",
+    current_lang_id,
+    {
+      name: selected_lang.name,
+      preview: translate_textkeys("menu.settings.lang.preview.test", selected_lang.id),
+    }
+  ));
+
+  form.button2(translate_textkeys(
+    "menu.button_switch",
+    current_lang_id,
+    {
+      name: selected_lang.name,
+    }
+  ));
+  form.button1("");
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (response.selection == 1) {
+      save_data[player_sd_index].lang = selected_lang.id;
+
+      update_save_data(save_data);
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+      return settings_main(player);
+    }
+    settings_lang(player);
+  });
+
+}
 
 /*------------------------
  Gestures
@@ -4277,53 +4567,47 @@ function settings_gestures(player) {
   const save_data = load_save_data();
   const idx = save_data.findIndex(e => e.id === player.id);
   const playerGestures = save_data[idx].gesture;
+  let lang = save_data[idx].lang;
   let actions = [];
 
-  let configured_gestures = {
-    emote:  ["su", "a", "c"],
-    sneak:  ["su", "a", "c"],
-    nod:    ["sp"],
-    stick:  ["su", "a", "c"],
-  };
+  // configured_gestures als Array mit Objekten
+  let configured_gestures = [
+    { name: translate_textkeys("menu.settings.gestures.emote", lang), id: "emote", modes: ["su", "a", "c"] },
+    { name: translate_textkeys("menu.settings.gestures.sneak", lang), id: "sneak", modes: ["su", "a", "c"] },
+    { name: translate_textkeys("menu.settings.gestures.nod", lang), id: "nod", modes: ["sp"] },
+    { name: translate_textkeys("menu.settings.gestures.stick", lang), id: "stick", modes: ["su", "a", "c"] },
+  ];
 
   if (save_data[idx].openend_menu_via_command) {
-    configured_gestures.command = ["su", "a", "c", "sp"];
+    configured_gestures.push({ name: translate_textkeys("menu.settings.gestures.command", lang), id: "command", modes: ["su", "a", "c", "sp"] });
   }
 
+  form.title(translate_textkeys("menu.settings.gestures.title", lang));
+  form.body(translate_textkeys("menu.settings.gestures.description", lang));
 
-  form.title("Gestures");
-  form.body("Choose your own configuration of how the menu should open!");
 
-  const available = Object.keys(configured_gestures);
-
-  // Hilfsfunktion für Großschreibung
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  // Zähle für jeden Modus (su, a, c, sp) wie viele Gesten aktiv sind
   const modeCounts = {
     su: 0, a: 0, c: 0, sp: 0
   };
 
-  available.forEach(gesture => {
-    if (playerGestures[gesture]) {
-      configured_gestures[gesture].forEach(mode => {
+  configured_gestures.forEach(({ id, modes }) => {
+    if (playerGestures[id]) {
+      modes.forEach(mode => {
         modeCounts[mode]++;
       });
     }
   });
 
-  available.forEach(gesture => {
-    const isOn = playerGestures[gesture];
-    let label = `${capitalize(gesture)}\n${isOn ? translate_textkeys("menu.toggle_on", save_data[idx].lang) : translate_textkeys("menu.toggle_off", save_data[idx].lang)}`;
+  configured_gestures.forEach(({ name, id, modes }) => {
+    const isOn = playerGestures[id];
+    let label = `${name}\n${isOn ? translate_textkeys("menu.toggle_on", lang) : translate_textkeys("menu.toggle_off", lang)}`;
     let icon = isOn ? "textures/ui/toggle_on" : "textures/ui/toggle_off";
     let alwaysActive = false;
 
     // Wenn diese Geste aktiv ist und in einem Modus die einzige aktive Geste ist → restricted
-    const restricted = isOn && configured_gestures[gesture].some(mode => modeCounts[mode] === 1);
+    const restricted = isOn && modes.some(mode => modeCounts[mode] === 1);
     if (restricted) {
-      label = `${capitalize(gesture)}\n§orestricted`;
+      label = name + "\n" + translate_textkeys("menu.toggle_restricted", lang);
       icon = "textures/ui/hammer_l_disabled";
       alwaysActive = true;
     }
@@ -4332,7 +4616,7 @@ function settings_gestures(player) {
 
     actions.push(() => {
       if (!alwaysActive) {
-        playerGestures[gesture] = !playerGestures[gesture];
+        playerGestures[id] = !playerGestures[id];
         update_save_data(save_data);
       }
       settings_gestures(player);
@@ -4353,6 +4637,8 @@ function settings_gestures(player) {
     if (typeof actions[sel] === "function") actions[sel]();
   });
 }
+
+
 
 
 
@@ -4387,7 +4673,7 @@ function dictionary_about_version(player) {
   let save_data = load_save_data()
   let form = new ActionFormData()
   let actions = []
-  let build_date = convertUnixToDate(version_info.unix, save_data[0].utc);
+  let build_date = convertUnixToDate(version_info.unix, save_data[0].utc || 2);
   form.title("About")
   form.body(
     "Name: " + version_info.name + "\n" +
@@ -4688,27 +4974,11 @@ function debug_sd_editor(player, onBack, path = []) {
         update_save_data(fresh);
         returnToCurrentMenu();
 
-      } else if (typeof val === "number") {
+      } else if (typeof val === "number" || typeof val === "string") {
         // Number-Editor
-        openNumberEditor(
-          player,
-          val,
-          nextPath,
-          newVal => {
-            target[key] = newVal;
-            update_save_data(fresh);
-            returnToCurrentMenu();
-          },
-          () => {
-            player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-          }
-        );
-
-      } else if (typeof val === "string") {
-        // Text-Editor
         openTextEditor(
           player,
-          val,
+          String(val),
           nextPath,
           newText => {
             target[key] = newText;
@@ -4727,28 +4997,6 @@ function debug_sd_editor(player, onBack, path = []) {
   }
 }
 
-
-
-function openNumberEditor(player, current, path, onSave, onCancel) {
-  const displaySegments = path.map((seg, idx) => {
-    if (idx === 0) {
-      return seg === 0 ? "server" : save_data[Number(seg)]?.id ?? seg;
-    }
-    return seg;
-  });
-  const fullPath = `save_data/${displaySegments.join("/")}`;
-  const form = new ModalFormData();
-  form.title("Edit Number");
-  form.slider(`Path: §7${fullPath} > Value`, 0, 100, 1, current);
-  form.submitButton("Save");
-  form.show(player).then(res => {
-    if (res.canceled) {
-      return onCancel();
-    }
-    onSave(res.formValues[0]);
-  });
-}
-
 function openTextEditor(player, current, path, onSave, onCancel) {
   const displaySegments = path.map((seg, idx) => {
     if (idx === 0) {
@@ -4756,18 +5004,28 @@ function openTextEditor(player, current, path, onSave, onCancel) {
     }
     return seg;
   });
+
   const fullPath = `save_data/${displaySegments.join("/")}`;
   const form = new ModalFormData();
   form.title("Edit Text");
   form.textField(`Path: ${fullPath} > Value:`, "Enter text...", current);
   form.submitButton("Save");
+
   form.show(player).then(res => {
     if (res.canceled) {
       return onCancel();
     }
-    onSave(res.formValues[0]);
+
+    let input = res.formValues[0];
+    // Wenn der String nur aus Ziffern besteht, in Zahl umwandeln
+    if (/^\d+$/.test(input)) {
+      input = Number(input);
+    }
+
+    onSave(input);
   });
 }
+
 
 
 
@@ -5229,7 +5487,9 @@ function settings_type(player) {
   });
 
   form.button("");
-  actions.push(() => {});
+  actions.push(() => {
+    return settings_main(player);
+  });
 
   form.show(player).then((response) => {
     if (response.selection === undefined) {
