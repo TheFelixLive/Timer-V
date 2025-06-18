@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B018",
+  build: "B019",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750174598,
+  unix: 1750286099,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -296,6 +296,10 @@ const textkeys = {
     en: "System",
   },
 
+  "message.header.system.client_mode": {
+    en: version_info.name,
+  },
+
   "message.header.help": {
     en: "Help",
   },
@@ -305,6 +309,113 @@ const textkeys = {
   },
 
   // Messages
+
+
+
+  /*------------------------
+    Relative Time
+  -------------------------*/
+
+  "menu.relative_time.years": {
+    en: "%{time}% years",
+    de: "%{time}% Jahre"
+  },
+
+  "menu.relative_time.year": {
+    en: "about a year",
+    de: "ungefähr ein Jahr"
+  },
+
+  "menu.relative_time.months": {
+    en: "%{time}% months",
+    de: "%{time}%  Monate"
+  },
+
+  "menu.relative_time.month": {
+    en: "about a month",
+    de: "fast ein Monat"
+  },
+
+  "menu.relative_time.weeks": {
+    en: "%{time}% weeks",
+    de: "%{time}% Wochen"
+  },
+
+  "menu.relative_time.week": {
+    en: "about a week",
+    de: "ungefähr eine Woche"
+  },
+
+  "menu.relative_time.days": {
+    en: "%{time}% days",
+    de: "%{time}% Tage"
+  },
+
+  "menu.relative_time.day_more": {
+    en: "a bit more than a day",
+    de: "etwas mehr als einen Tag"
+  },
+
+  "menu.relative_time.day_less": {
+    en: "almost a whole day",
+    de: "fast einen ganzen Tag"
+  },
+
+  "menu.relative_time.hours": {
+    en: "%{time}% hours",
+    de: "%{time}% Stunden"
+  },
+
+  "menu.relative_time.hour": {
+    en: "about an hour",
+    de: "ungefähr eine Stunde"
+  },
+
+  "menu.relative_time.hour_half": {
+    en: "about an hour and a half",
+    de: "ungefähr eineinhalb Stunden"
+  },
+
+  "menu.relative_time.minutes": {
+    en: "%{time}% minutes",
+    de: "%{time}% Minuten"
+  },
+
+  "menu.relative_time.minute": {
+    en: "about a minute",
+    de: "ungefähr eine Minute"
+  },
+
+  "menu.relative_time.quarter_hour": {
+    en: "a quarter hour",
+    de: "eine Viertelstunde"
+  },
+
+  "menu.relative_time.half_hour": {
+    en: "half an hour",
+    de: "eine halbe Stunde"
+  },
+
+  "menu.relative_time.three_quarters_hour": {
+    en: "three quarters of an hour",
+    de: "drei Viertelstunde"
+  },
+
+  "menu.relative_time.few_seconds": {
+    en: "a few seconds",
+    de: "ein paar Sekunden"
+  },
+
+  "menu.relative_time.less_than_half_minute": {
+    en: "less than half a minute",
+    de: "weniger als eine halbe Minute"
+  },
+
+  "menu.relative_time.half_minute": {
+    en: "about half a minute",
+    de: "ungefähr eine halbe Minute"
+  },
+
 
 
   /*------------------------
@@ -359,6 +470,7 @@ const textkeys = {
     en: "Select an option!",
     de: "Wähle eine Option!"
   },
+
 
 
   /*------------------------
@@ -419,6 +531,11 @@ const textkeys = {
     de: "Einstellungen"
   },
 
+  "menu.settings.type": {
+    en: "Switch mode",
+    de: "Modus wechseln"
+  },
+
   "menu.settings.fullbright": {
     en: "Fullbright",
     de: "Nachtsicht"
@@ -441,6 +558,7 @@ const textkeys = {
   /*------------------------
     Menu - Language
   -------------------------*/
+
   "menu.settings.lang.title": {
     en: "Language",
     de: "Sprache"
@@ -594,6 +712,77 @@ const textkeys = {
     en: "§aApply!",
     de: "§aAnwenden!"
   },
+
+  /*------------------------
+    Menu - Dictionary
+  -------------------------*/
+
+  "menu.settings.dictionary.title": {
+    en: "About",
+    de: version_info.version
+  },
+
+  "menu.settings.dictionary.text": {
+    en: "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nBuild Date: %{build_date}%\n\n%{license}%",
+    de: "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nBuild Datum: %{build_date}%\n\n%{license}%"
+  },
+
+  "menu.settings.dictionary.text.utc": {
+    en: "Note: Set the time zone to see detailed information",
+    de: "Hinweis: Stelle die Zeitzone ein, um detaillierte Informationen zu sehen"
+  },
+
+  "menu.settings.dictionary.text.dateformat": {
+    en: "%{month}%/%{day}%/%{year}% %{hours}%:%{minutes}%:%{seconds}% (UTC%{utcOffset}%)",
+    de: "%{day}%.%{month}%.%{year}% %{hours}%:%{minutes}%:%{seconds}% (UTC%{utcOffset}%)"
+  },
+
+  "menu.settings.dictionary.changelog.title": {
+    en: "Changelog"
+  },
+
+  "menu.settings.dictionary.changelog.new_features": {
+    en: "New Features",
+    de: "Neue Funktionen"
+  },
+
+  "menu.settings.dictionary.changelog.general_changes": {
+    en: "General Changes",
+    de: "Allgemeine Änderungen"
+  },
+
+  "menu.settings.dictionary.changelog.bug_fixes": {
+    en: "Bug fixes",
+    de: "Fehlerbehebungen"
+  },
+
+  "menu.settings.dictionary.changelog.build": {
+    en: "As of %{month}%/%{day}%/%{year}% (%{relative_time}% ago)",
+    de: "Stand %{day}%.%{month}%.%{year}% (%{relative_time}% her)"
+  },
+
+  "menu.settings.dictionary.contact.title": {
+    en: "Contact",
+    de: "Kontakt"
+  },
+
+  "menu.settings.dictionary.contact.description": {
+    en: "If you want to report a bug, need help, or have suggestions to improve the project, you can reach me via these platforms:",
+    de: "Wenn du einen Fehler melden, Hilfe benötigst oder Verbesserungsvorschläge für das Projekt hast, kannst du mich über diese Plattformen erreichen:"
+  },
+
+  "menu.settings.dictionary.contact.sd": {
+    en: "Dump SD",
+  },
+
+  "menu.settings.dictionary.contact.sd.mode_0": {
+    en: "via. privat chat"
+  },
+
+  "menu.settings.dictionary.contact.sd.mode_1": {
+    en: "via. server console"
+  }
+
 
 };
 
@@ -2323,7 +2512,34 @@ function print(input) {
   }
 }
 
-function getRelativeTime(diff) {
+function convertUnixToDate(unixSeconds, utcOffset) {
+  const date = new Date(unixSeconds*1000);
+  const localDate = new Date(date.getTime() + utcOffset * 60 * 60 * 1000);
+
+  // Format the date (YYYY-MM-DD HH:MM:SS)
+  const year = localDate.getUTCFullYear();
+  const month = String(localDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getUTCDate()).padStart(2, '0');
+  const hours = String(localDate.getUTCHours()).padStart(2, '0');
+  const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
+
+  return {
+    day: day,
+    month: month,
+    year: year,
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds,
+    utcOffset: utcOffset
+  };
+}
+
+function getRelativeTime(diff, player) {
+  const save_data = load_save_data();
+  const idx = save_data.findIndex(e => e.id === player.id);
+  const lang = save_data[idx].lang
+
   const seconds = Math.round(diff);
   const minutes = seconds / 60;
   const hours = seconds / 3600;
@@ -2331,60 +2547,48 @@ function getRelativeTime(diff) {
   const weeks = days / 7;
   const months = days / 30.44;   // average month length
   const years = days / 365.25;   // average year length (leap years included)
-  const decades = years / 10;
-  const centuries = years / 100;
-
-  if (centuries >= 0.95) {
-    if (centuries < 1.5) return "about a century";
-    return `${Math.round(centuries)} centuries`;
-  }
-
-  if (decades >= 0.95) {
-    if (decades < 1.5) return "about a decade";
-    return `${Math.round(decades)} decades`;
-  }
 
   if (years >= 0.95) {
-    if (years < 1.5) return "about a year";
-    return `${Math.round(years)} years`;
+    if (years < 1.5) return translate_textkeys("menu.relative_time.year", lang);
+    return translate_textkeys("menu.relative_time.years", lang, { time: Math.round(years) });
   }
 
   if (months >= 0.95) {
-    if (months < 1.5) return "about a month";
-    return `${Math.round(months)} months`;
+    if (months < 1.5) return translate_textkeys("menu.relative_time.month", lang);
+    return translate_textkeys("menu.relative_time.months", lang, { time: Math.round(months) });
   }
 
   if (weeks >= 0.95) {
-    if (weeks < 1.5) return "about a week";
-    return `${Math.round(weeks)} weeks`;
+    if (weeks < 1.5) return translate_textkeys("menu.relative_time.week", lang);
+    return translate_textkeys("menu.relative_time.weeks", lang, { time: Math.round(weeks) });
   }
 
   if (days >= 0.95) {
-    if (days < 1.25) return "almost a whole day";
-    if (days < 1.5) return "a bit more than a day";
-    return `${Math.round(days)} days`;
+    if (days < 1.25) return translate_textkeys("menu.relative_time.day_less", lang);
+    if (days < 1.5) return translate_textkeys("menu.relative_time.day_more", lang);
+    return translate_textkeys("menu.relative_time.days", lang, { time: Math.round(days) });
   }
 
   if (hours >= 0.95) {
-    if (hours < 1.25) return "about an hour";
-    if (hours < 1.75) return "about an hour and a half";
-    if (hours < 2.25) return "about two hours";
-    return `${Math.round(hours)} hours`;
+    if (hours < 1.25) return translate_textkeys("menu.relative_time.hour", lang);
+    if (hours < 1.75) return translate_textkeys("menu.relative_time.hour_half", lang);
+    return translate_textkeys("menu.relative_time.hours", lang, { time: Math.round(hours) });
   }
 
   if (minutes >= 1) {
-    if (minutes < 1.5) return "about a minute";
-    if (minutes < 15) return `${Math.round(minutes)} minutes`;
-    if (minutes < 20) return "a quarter hour";
-    if (minutes < 40) return "half an hour";
-    if (minutes < 55) return "three quarters of an hour";
-    return "about an hour";
+    if (minutes < 1.5) return translate_textkeys("menu.relative_time.minute", lang);
+    if (minutes < 15) return translate_textkeys("menu.relative_time.minutes", lang, { time: Math.round(minutes) });
+    if (minutes < 20) return translate_textkeys("menu.relative_time.quarter_hour", lang);
+    if (minutes < 40) return translate_textkeys("menu.relative_time.half_hour", lang);
+    if (minutes < 55) return translate_textkeys("menu.relative_time.three_quarters_hour", lang);
+    return translate_textkeys("menu.relative_time.hour", lang);
   }
 
-  if (seconds < 10) return "a few seconds";
-  if (seconds < 30) return "less than half a minute";
-  return "about half a minute";
+  if (seconds < 10) return translate_textkeys("menu.relative_time.few_seconds", lang);
+  if (seconds < 30) return translate_textkeys("menu.relative_time.less_than_half_minute", lang);
+  return translate_textkeys("menu.relative_time.half_minute", lang);
 }
+
 
 
 
@@ -2657,7 +2861,7 @@ function check_health(configuration) {
 
 }
 
-function render_task_list() {
+function render_task_list(player) {
   let save_data = load_save_data();
   const lines = [];
 
@@ -2687,11 +2891,11 @@ function render_task_list() {
   // goals pointer 2 = event/time-based
   if (save_data[0].challenge.goal.pointer === 2 && save_data[0].challenge.goal.event_pos === 0) {
     // survive timer only
-    lines.push({ text: "- §aSurvive:§f " + getRelativeTime(save_data[0].time.timer / 20) + "\n" });
+    lines.push({ text: "- §aSurvive:§f " + getRelativeTime(save_data[0].time.timer / 20, player) + "\n" });
   } else {
     // time available
     if (save_data[0].counting_type === 1) {
-      lines.push({ text: "- §aTime available:§f " + getRelativeTime(save_data[0].time.timer / 20) + "§r§f\n" });
+      lines.push({ text: "- §aTime available:§f " + getRelativeTime(save_data[0].time.timer / 20, player) + "§r§f\n" });
     }
     // goal event
     if (save_data[0].challenge.goal.pointer === 2) {
@@ -2979,7 +3183,7 @@ function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
       player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
       let form = new ActionFormData();
       form.title("Update time!");
-      form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7"+links[0].link);
+      form.body("Your current version (" + version_info.version + ") is now "+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player) +" old.\nThere MIGHT be a newer version out. Feel free to update to enjoy the latest features!\n\nCheck out: §7"+links[0].link);
       form.button("Mute");
 
       const showForm = async () => {
@@ -3200,7 +3404,7 @@ function main_menu_actions(player, form) {
     if (save_data[0].challenge.active && save_data[0].challenge.progress == 1) {
       form.body({rawtext:[
         { text: "Here's a brief overview, what you have setup:\n" },
-        ...render_task_list(),
+        ...render_task_list(player),
         { text: "\n" }
       ]});
 
@@ -3520,7 +3724,7 @@ function splash_start_challenge(player) {
   let form = new MessageFormData();
 
   form.title("Warning!");
-  form.body({rawtext:[{text: "You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n"}, ...render_task_list(), {text: "\n\n"}]});
+  form.body({rawtext:[{text: "You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n"}, ...render_task_list(player), {text: "\n\n"}]});
 
   form.button2("§aStart");
   form.button1("");
@@ -4250,7 +4454,7 @@ function settings_main(player) {
 
   // Button 0: Type
   if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
-    form.button("Type\n§9" + timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon);
+    form.button(translate_textkeys("menu.settings.type", lang)+"\n§9" + timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon);
     actions.push(() => settings_type(player));
   }
 
@@ -4646,55 +4850,47 @@ function settings_gestures(player) {
  Dictionary
 -------------------------*/
 
-function convertUnixToDate(unixSeconds, utcOffset) {
-  const date = new Date(unixSeconds*1000);
-  const localDate = new Date(date.getTime() + utcOffset * 60 * 60 * 1000);
-
-  // Format the date (YYYY-MM-DD HH:MM:SS)
-  const year = localDate.getUTCFullYear();
-  const month = String(localDate.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(localDate.getUTCDate()).padStart(2, '0');
-  const hours = String(localDate.getUTCHours()).padStart(2, '0');
-  const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
-  const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
-
-  return {
-    day: day,
-    month: month,
-    year: year,
-    hours: hours,
-    minutes: minutes,
-    seconds: seconds,
-    utcOffset: utcOffset
-  };
-}
-
 function dictionary_about_version(player) {
   let save_data = load_save_data()
   let form = new ActionFormData()
   let actions = []
   let build_date = convertUnixToDate(version_info.unix, save_data[0].utc || 2);
-  form.title("About")
-  form.body(
-    "Name: " + version_info.name + "\n" +
-    "Version: " + version_info.version + ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? " §a(update time)§r" : " (" + version_info.build + ")") + "\n" +
-    "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
+  const player_sd_index = save_data.findIndex(e => e.id === player.id);
+  let lang = save_data[player_sd_index].lang;
 
-    "Build date: " + ((save_data[0].utc == undefined)
-      ? (getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) + " ago \n\n§7Note: Set the time zone to see detailed information")
-      : (`${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})`))+
+  const formattedDate = translate_textkeys("menu.settings.dictionary.text.dateformat", lang, {
+    day: build_date.day,
+    month: build_date.month,
+    year: build_date.year,
+    hours: build_date.hours,
+    minutes: build_date.minutes,
+    seconds: build_date.seconds,
+    utcOffset: (build_date.utcOffset >= 0 ? "+" : "") + build_date.utcOffset
+  });
 
-    "\n\n§7© 2022-"+ build_date.year + " TheFelixLive. Licensed under the MIT License."
-  )
+
+  form.title(translate_textkeys("menu.settings.dictionary.title", lang))
+  form.body(translate_textkeys("menu.settings.dictionary.text", lang, {
+    name: version_info.name,
+    version: version_info.version,
+    build: ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? "§aupdate time§r" : version_info.build),
+    release_type: ["dev", "preview", "stable"][version_info.release_type],
+
+    build_date: ((save_data[0].utc == undefined)
+      ? (getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player) + " ago \n\n§7"+ translate_textkeys("menu.settings.dictionary.text.utc", lang))
+      : formattedDate),
+
+    license: "§7© 2022-"+ build_date.year + " TheFelixLive. Licensed under the MIT License."
+  }))
 
   if (version_info.changelog.new_features.length > 0 || version_info.changelog.general_changes.length > 0 || version_info.changelog.bug_fixes.length > 0) {
-    form.button("§9Changelog");
+    form.button("§9"+ translate_textkeys("menu.settings.dictionary.changelog.title", lang));
     actions.push(() => {
       dictionary_about_version_changelog(player, build_date)
     });
   }
 
-  form.button("§3Contact");
+  form.button("§3"+ translate_textkeys("menu.settings.dictionary.contact.title", lang));
   actions.push(() => {
     dictionary_contact(player, build_date)
   });
@@ -4719,6 +4915,7 @@ function dictionary_contact(player, build_date) {
   let form = new ActionFormData()
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang;
 
   // Yes, that's right, you're not dumping the full "save_data". The player names are removed here for data protection reasons
   save_data = save_data.map(entry => {
@@ -4731,8 +4928,8 @@ function dictionary_contact(player, build_date) {
   save_data.push({ dump_unix:Math.floor(Date.now() / 1000), name:version_info.name, version:version_info.version, build:version_info.build });
 
   let actions = []
-  form.title("Contact")
-  let message = "If you want to report a bug, need help, or have suggestions to improve the project, you can reach me via these platforms:\n\n";
+  form.title(translate_textkeys("menu.settings.dictionary.contact.title", lang))
+  let message = translate_textkeys("menu.settings.dictionary.contact.description", lang) + "\n\n";
 
   for (const entry of links) {
     message += `${entry.name} ${entry.link}\n\n`;
@@ -4741,14 +4938,14 @@ function dictionary_contact(player, build_date) {
   form.body(message);
 
   if (save_data[player_sd_index].op) {
-    form.button("Dump SD" + (version_info.release_type !== 2? "\nvia. privat chat" : ""));
+    form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang) + (version_info.release_type !== 2? "\n"+translate_textkeys("menu.settings.dictionary.contact.sd.mode_0", lang) : ""));
     actions.push(() => {
-      player.sendMessage("§l§7[§f"+ (independent? "System" : version_info.name) + "§7]§r SD Dump:\n"+JSON.stringify(save_data))
+      player.sendMessage("§l§7[§f"+ (independent? "System" : version_info.name) + "§7]§r "+ translate_textkeys("menu.settings.dictionary.contact.sd", lang) +":\n"+JSON.stringify(save_data))
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     });
 
     if (version_info.release_type !== 2) {
-      form.button("Dump SD\nvia. server console");
+      form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang)+"\n" + translate_textkeys("menu.settings.dictionary.contact.sd.mode_1", lang));
       actions.push(() => {
         console.log(JSON.stringify(save_data))
         player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
@@ -4773,30 +4970,40 @@ function dictionary_contact(player, build_date) {
 
 function dictionary_about_version_changelog(player, build_date) {
   let form = new ActionFormData()
-  form.title("Changelog - "+version_info.version)
+  let save_data = load_save_data()
+  let player_sd_index = save_data.findIndex(e => e.id === player.id);
+  let lang = save_data[player_sd_index].lang;
+
+
+  form.title(translate_textkeys("menu.settings.dictionary.changelog.title", lang)+" - "+version_info.version)
   let bodyText = "";
   if (version_info.changelog.new_features.length > 0) {
-    bodyText += "§l§bNew Features§r\n\n";
+    bodyText += "§l§b"+ translate_textkeys("menu.settings.dictionary.changelog.new_features", lang) +"§r\n\n";
     version_info.changelog.new_features.forEach(feature => {
       bodyText += `- ${feature}\n\n`;
     });
   }
 
   if (version_info.changelog.general_changes.length > 0) {
-    bodyText += "§l§aGeneral Changes§r\n\n";
+    bodyText += "§l§a"+ translate_textkeys("menu.settings.dictionary.changelog.general_changes", lang) +"§r\n\n";
     version_info.changelog.general_changes.forEach(change => {
       bodyText += `- ${change}\n\n`;
     });
   }
 
   if (version_info.changelog.bug_fixes.length > 0) {
-    bodyText += "§l§cBug fixes§r\n\n";
+    bodyText += "§l§c"+ translate_textkeys("menu.settings.dictionary.changelog.bug_fixes", lang) +"§r\n\n";
     version_info.changelog.bug_fixes.forEach(fix => {
       bodyText += `- ${fix}\n\n`;
     });
   }
 
-  bodyText += `§7As of ${build_date.day}.${build_date.month}.${build_date.year} (`+ getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix) + " ago)";
+  bodyText += "§7" + translate_textkeys("menu.settings.dictionary.changelog.build", lang, {
+    day: build_date.day,
+    month: build_date.month,
+    year: build_date.year,
+    relative_time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player)
+  });
 
   form.body(bodyText);
   form.button("");
@@ -5116,7 +5323,7 @@ function settings_rights_main(player, came_from_settings) {
     if (isOnline) {
       displayName += "\n§a(online)§r";
     } else {
-      displayName += "\n§o(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix) + " ago)§r";
+      displayName += "\n§o(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix, player) + " ago)§r";
     }
 
     if (entry.op) {
@@ -5210,7 +5417,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
       }
 
   } else {
-      body_text += "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix) + " ago)§r\n";
+      body_text += "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player) + " ago)§r\n";
   }
 
   body_text += "Live actionbar: " + render_live_actionbar(selected_save_data, false);
@@ -5438,10 +5645,12 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
 
 function settings_type(player) {
   let form = new ActionFormData();
-  form.title("Timer types");
-  form.body("Select an option!");
-
   let save_data = load_save_data();
+
+  form.title(translate_textkeys("menu.settings.type", save_data[save_data.findIndex(entry => entry.id === player.id)].lang));
+  form.body(translate_textkeys("menu.general.description", save_data[save_data.findIndex(entry => entry.id === player.id)].lang));
+
+
   let player_sd_index;
 
   if (save_data[0].global.status) {
