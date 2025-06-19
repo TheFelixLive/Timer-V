@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B019",
+  build: "B020",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750286099,
+  unix: 1750373791,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -261,13 +261,11 @@ const supportedLangs = [
   {
     id: "en_us",
     name: "English (US)",
-    creator: "TheFelixLive",
     ai: true
   },
   {
     id: "en_uk",
     name: "English (UK)",
-    creator: "TheFelixLive",
     ai: false
   },
   {
@@ -275,17 +273,260 @@ const supportedLangs = [
     name: "Deutsch (Deutschland)",
     creator: "TheFelixLive",
     ai: false
-  },
+  }/*,
   {
     id: "de_at",
     name: "Deutsch (Österreich)",
-    creator: "TheFelixLive",
     ai: true
-  }
+  },
+  {
+    id: "de_ch",
+    name: "Deutsch (Schweiz)",
+    ai: true
+  },
+  {
+    id: "fr_fr",
+    name: "Français (France)",
+    ai: true
+  },
+  {
+    id: "fr_be",
+    name: "Français (Belgique)",
+    ai: true
+  },
+  {
+    id: "fr_ch",
+    name: "Français (Suisse)",
+    ai: true
+  },
+  {
+    id: "fr_ca",
+    name: "Français (Canada)",
+    ai: true
+  },
+  {
+    id: "it_it",
+    name: "Italiano (Italia)",
+    ai: true
+  },
+  {
+    id: "es_cl",
+    name: "Español (Chile)",
+    ai: true
+  },
+  {
+    id: "es_ve",
+    name: "Español (Venezuela)",
+    ai: true
+  },
+  {
+    id: "es_ar",
+    name: "Español (Argentina)",
+    ai: true
+  },
+  {
+    id: "es_mx",
+    name: "Español (México)",
+    ai: true
+  },
+  {
+    id: "pt_pt",
+    name: "Português (Portugal)",
+    ai: true
+  },
+  {
+    id: "pt_br",
+    name: "Português (Brasil)",
+    ai: true
+  },
+  {
+    id: "is_is",
+    name: "Íslenska (Ísland)",
+    ai: true
+  },
+  {
+    id: "el_gr",
+    name: "Ελληνικά (Ελλάδα)",
+    ai: true
+  },
+  {
+    id: "ar_eg",
+    name: "العربية (مصر)",
+    ai: true
+  },
+  {
+    id: "ar_sa",
+    name: "العربية (السعودية)",
+    ai: true
+  },
+  {
+    id: "ar_ae",
+    name: "العربية (الإمارات)",
+    ai: true
+  },
+  {
+    id: "fi_fi",
+    name: "Suomi (Suomi)",
+    ai: true
+  },
+  {
+    id: "sv_se",
+    name: "Svenska (Sverige)",
+    ai: true
+  },
+  {
+    id: "ru_ru",
+    name: "Русский (Россия)",
+    ai: true
+  },
+  {
+    id: "ru_ua",
+    name: "Русский (Украина)",
+    ai: true
+  },
+  {
+    id: "tr_tr",
+    name: "Türkçe (Türkiye)",
+    ai: true
+  },
+  {
+    id: "fa_ir",
+    name: "فارسی (ایران)",
+    ai: true
+  },
+  {
+    id: "ps_af",
+    name: "پښتو (افغانستان)",
+    ai: true
+  },
+  {
+    id: "en_pk",
+    name: "English (Pakistan)",
+    ai: true
+  },
+  {
+    id: "ur_pk",
+    name: "اردو (پاکستان)",
+    ai: true
+  },
+  {
+    id: "en_in",
+    name: "English (India)",
+    ai: true
+  },
+  {
+    id: "hi_in",
+    name: "हिन्दी (भारत)",
+    ai: true
+  },
+  {
+    id: "si_lk",
+    name: "සිංහල (ශ්‍රී ලංකා)",
+    ai: true
+  },
+  {
+    id: "ta_in",
+    name: "தமிழ் (இந்தியா)",
+    ai: true
+  },
+  {
+    id: "ta_lk",
+    name: "தமிழ் (இலங்கை)",
+    ai: true
+  },
+  {
+    id: "ne_np",
+    name: "नेपाली (नेपाल)",
+    ai: true
+  },
+  {
+    id: "bn_bd",
+    name: "বাংলা (বাংলাদেশ)",
+    ai: true
+  },
+  {
+    id: "en_au",
+    name: "English (Australia)",
+    ai: true
+  },
+  {
+    id: "th_th",
+    name: "ไทย (ประเทศไทย)",
+    ai: true
+  },
+  {
+    id: "vi_vn",
+    name: "Tiếng Việt (Việt Nam)",
+    ai: true
+  },
+  {
+    id: "id_id",
+    name: "Bahasa Indonesia",
+    ai: true
+  },
+  {
+    id: "zh_cn",
+    name: "简体中文 (中国)",
+    ai: true
+  },
+  {
+    id: "en_sg",
+    name: "English (Singapore)",
+    ai: true
+  },
+  {
+    id: "ms_sg",
+    name: "Bahasa Melayu (Singapura)",
+    ai: true
+  },
+  {
+    id: "ta_sg",
+    name: "தமிழ் (சிங்கப்பூர்)",
+    ai: true
+  },
+  {
+    id: "ja_jp",
+    name: "日本語 (日本)",
+    ai: true
+  },
+  {
+    id: "ko_kr",
+    name: "한국어 (대한민국)",
+    ai: true
+  },
+  {
+    id: "en_nz",
+    name: "English (New Zealand)",
+    ai: true
+  },
+  {
+    id: "mi_nz",
+    name: "Te Reo Māori (Aotearoa)",
+    ai: true
+  },
+  {
+    id: "to_to",
+    name: "Lea Faka-Tonga",
+    ai: true
+  },
+  {
+    id: "en_ki",
+    name: "English (Kiribati)",
+    ai: true
+  },
+  {
+    id: "gil_ki",
+    name: "Gilbertese (Kiribati)",
+    ai: true
+  },
+  {
+    id: "ty_ty",
+    name: "Reo Tahiti",
+    ai: true
+  }*/
 ];
 
 
-// The system is done but it's basicly unused!
 const textkeys = {
   /*------------------------
   Messages
@@ -310,6 +551,9 @@ const textkeys = {
 
   // Messages
 
+  "message.shutdown": {
+    en: "Shutdown Server! The world will be frozen, please wait...",
+  },
 
 
   /*------------------------
@@ -398,7 +642,7 @@ const textkeys = {
 
   "menu.relative_time.three_quarters_hour": {
     en: "three quarters of an hour",
-    de: "drei Viertelstunde"
+    de: "eine drei Viertelstunde"
   },
 
   "menu.relative_time.few_seconds": {
@@ -424,12 +668,12 @@ const textkeys = {
   // Toggles
   "menu.toggle_on": {
     en: "§aon",
-    de: "§aAN"
+    de: "§aan"
   },
 
   "menu.toggle_off": {
     en: "§coff",
-    de: "§cAUS"
+    de: "§caus"
   },
 
   "menu.toggle_dynamic": {
@@ -454,6 +698,24 @@ const textkeys = {
   "menu.button_skip": {
     en: "Skip",
     de: "Überspringen"
+  },
+
+  "menu.disable": {
+    en: "Disable"
+  },
+
+  "menu.enable": {
+    en: "Enable"
+  },
+
+  "menu.yes": {
+    en: "yes",
+    de: "Ja"
+  },
+
+  "menu.no": {
+    en: "no",
+    de: "Nein"
   },
 
   "menu.button_continue": {
@@ -521,6 +783,20 @@ const textkeys = {
     "de": "Unter den aktuellen Bedingungen können keine Custom Sounds abgespielt werden.\n\n§7Überprüfe die Kompatibilität deines Ressourcenpakets und die Musiklautstärke vom Spiel."
   },
 
+  /*------------------------
+    Menu - Shared timer
+  -------------------------*/
+
+  "menu.popup.shared_timer.title": {
+    en: "Shared timer",
+    de: "Gemeinsamer Timer"
+  },
+
+  "menu.popup.shared_timer.yours_instead": {
+    en: "Share yours instead",
+    de: "Teile stattdessen deinen"
+  },
+
 
   /*------------------------
     Menu - Settings
@@ -554,6 +830,110 @@ const textkeys = {
     en: "About",
     de: "Über diese Version"
   },
+
+  /*------------------------
+    Menu - Permissions
+  -------------------------*/
+
+  // Select player
+  "menu.settings.permissions.title": {
+    en: "Permissions",
+    de: "Berechtigungen"
+  },
+
+  "menu.settings.permissions.title.player": {
+    en: "Edit %{name}%'s permission",
+    de: "Berechtigungen von %{name}% bearbeiten"
+  },
+
+  "menu.settings.permissions.title.you": {
+    en: "Edit your permission",
+    de: "Deine Berechtigungen bearbeiten"
+  },
+
+  "menu.settings.permissions.description": {
+    en: "Select a player!",
+    de: "Wähle einen Spieler aus!"
+  },
+
+  "menu.settings.permissions.online": {
+    en: "Online"
+  },
+
+  "menu.settings.permissions.offline": {
+    en: "last seen %{time}% ago",
+    de: "Zuletzt online vor %{time}%"
+  },
+
+  // View permission / status
+  "menu.settings.permissions.lable.name": {
+    en: "Name: %{name}% (%{id}%)"
+  },
+
+  "menu.settings.permissions.lable.actionbar": {
+    en: "Live actionbar: %{actionbar}%"
+  },
+
+  "menu.settings.permissions.cm": {
+    en: "Note: This save data cannot be managed because it is needed by the system due to the Challenge Mode.",
+    de: "Hinweis: Diese Speicherdaten können nicht verwaltet werden, da sie vom System im Challenge-Modus benötigt werden."
+  },
+
+  "menu.settings.permissions.manage_sd": {
+    en: "Manage save data",
+    de: "Speicherdaten verwalten"
+  },
+
+  "menu.settings.permissions.reset_sd": {
+    en: "Reset save data",
+    de: "Speicherdaten zurücksetzen"
+  },
+
+  "menu.settings.permissions.delete_sd": {
+    en: "Delete save data",
+    de: "Speicherdaten löschen"
+  },
+
+  "menu.settings.permissions.shared_timer.description": {
+    en: "%{name}% is currently sharing their timer. You must §cstop§f it%{replace_text}% before you can change their permission.\n\n§7Required for challenge mode.\n\n",
+    de: "%{name}% teilt derzeit seinen Timer. Du musst ihn §cstoppen§f%{replace_text}%, bevor du die Berechtigungen ändern kannst.\n\n§7Erforderlich für den Challenge-Modus.\n\n"
+  },
+
+  "menu.settings.permissions.shared_timer.replace_text": {
+    en: " or §ereplace§f it with your own time (%{own_time}%§r)",
+    de: " oder §eerersetzen§f durch deine eigene Zeit (%{own_time}%§r)"
+  },
+
+  "menu.settings.permissions.online_player.kick.title": {
+    en: "Online player information",
+    de: "Informationen zum Online-Spieler"
+  },
+
+  "menu.settings.permissions.online_player.kick.description": {
+    en: "Are you sure you want to remove %{name}%'s save data?\nThey must disconnect from the world!",
+    de: "Bist du sicher, dass du die Speicherdaten von %{name}% löschen möchtest?\nDer Spieler muss das Spiel verlassen!"
+  },
+
+  "menu.settings.permissions.online_player.kick.button": {
+    en: "Kick & Delete",
+    de: "Kicken & Löschen"
+  },
+
+  "menu.settings.permissions.online_player.kick.host.title": {
+    en: "Host player information",
+    de: "Informationen zum Host-Spieler"
+  },
+
+  "menu.settings.permissions.online_player.kick.host.description": {
+    en: "%{name}% is the host. To delete their data, the server must shut down. This usually takes 5 seconds",
+    de: "%{name}% ist der Host. Um dessen Daten zu löschen, muss der Server heruntergefahren werden. Dies dauert in der Regel 5 Sekunden."
+  },
+
+  "menu.settings.permissions.online_player.kick.host.button": {
+    en: "Shutdown & Delete",
+    de: "Herunterfahren & Löschen"
+  },
+
 
   /*------------------------
     Menu - Language
@@ -2324,7 +2704,7 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 
     if (event.id == "timerv:reset") {
       update_save_data(undefined)
-      close_world()
+      return close_world()
     }
   }
 
@@ -3399,6 +3779,7 @@ function main_menu_actions(player, form) {
   let actions = []
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let lang = save_data[player_sd_index].lang;
 
   if (form) {
     if (save_data[0].challenge.active && save_data[0].challenge.progress == 1) {
@@ -3409,7 +3790,7 @@ function main_menu_actions(player, form) {
       ]});
 
     } else {
-    form.body("Select an option!");
+    form.body(translate_textkeys("menu.general.description", lang));
     }
   }
 
@@ -4471,7 +4852,7 @@ function settings_main(player) {
       .map(e => e.name);
 
     if (names.length > 1) {
-      form.button("Permission\n" + (
+      form.button(translate_textkeys("menu.settings.permissions.title", save_data[player_sd_index].lang)+"\n" + (
         names.slice(0, -1).join(", ") + " & " + names[names.length - 1]
       ), "textures/ui/op");
 
@@ -4699,6 +5080,14 @@ function settings_lang(player, in_setup) {
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
       settings_main(player);
+    });
+  } else if (version_info.release_type == 0) {
+    form.button("Skip Setup");
+    actions.push(() => {
+      save_data[player_sd_index].setup = 100
+      update_save_data(save_data)
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 });
+      return main_menu(player)
     });
   }
 
@@ -5049,19 +5438,19 @@ function debug_main(player) {
   actions.push(() => {
     save_data[player_sd_index].setup = 0
     update_save_data(save_data)
-    close_world()
+    return close_world()
   });
 
   form.button("§cRemove \"save_data\"");
   actions.push(() => {
     world.setDynamicProperty("timerv:save_data", undefined);
-    close_world()
+    return close_world()
   });
 
 
   form.button("§cClose Server");
   actions.push(() => {
-    close_world()
+    return close_world()
   });
 
 
@@ -5278,9 +5667,10 @@ function settings_allow_unnecessary_inputs(player) {
 function settings_rights_main(player, came_from_settings) {
   let form = new ActionFormData();
   let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(e => e.id === player.id);
 
-  form.title("Permissions");
-  form.body("Select a player!");
+  form.title(translate_textkeys("menu.settings.permissions.title", save_data[player_sd_index].lang));
+  form.body(translate_textkeys("menu.settings.permissions.description", save_data[player_sd_index].lang));
 
 
   const players = world.getAllPlayers();
@@ -5321,9 +5711,9 @@ function settings_rights_main(player, came_from_settings) {
     let displayName = entry.name;
 
     if (isOnline) {
-      displayName += "\n§a(online)§r";
+      displayName += "\n§a("+translate_textkeys("menu.settings.permissions.online", save_data[player_sd_index].lang)+")§r";
     } else {
-      displayName += "\n§o(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix, player) + " ago)§r";
+      displayName += "\n§o(" +translate_textkeys("menu.settings.permissions.offline", save_data[player_sd_index].lang, {time: (getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix, player))}) + ")§r";
     }
 
     if (entry.op) {
@@ -5361,78 +5751,51 @@ function settings_rights_main(player, came_from_settings) {
 function settings_rights_data(viewing_player, selected_save_data) {
   let save_data = load_save_data()
   let selected_player = world.getAllPlayers().find(player => player.id == selected_save_data.id);
+  let viewing_player_sd_index = save_data.findIndex(e => e.id === viewing_player.id);
   let form = new ActionFormData();
 
-  let body_text = "";
+  let body_text =
+      translate_textkeys("menu.settings.permissions.lable.name", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name, id: selected_save_data.id}) + "\n" +
 
-  body_text += "Name: " + selected_save_data.name + " (id: " + selected_save_data.id + ")\n";
-  if (version_info.release_type === 0) {
-    body_text += "Language: " + supportedLangs.find(l=> l.id == selected_save_data.lang).name + "\n";
-  }
+      translate_textkeys("menu.settings.lang.title", save_data[viewing_player_sd_index].lang) +": " + supportedLangs.find(l => l.id == selected_save_data.lang).name + "\n" +
+      (
+          selected_player
+              ? (
+                  version_info.release_type === 0
+                      ? (
+                          translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+ translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang) +"\n" +
+                          "Platform: " + selected_player.clientSystemInfo.platformType + "\n" +
+                          (
+                              ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
+                                  ? "Client Total Memory: " +
+                                    ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
+                                  : ""
+                          ) + "\n" +
+                          (
+                              {
+                                  "Gamepad": "Input: Gamepad",
+                                  "KeyboardAndMouse": "Input: Mouse & Keyboard",
+                                  "MotionController": "Input: Motion controller",
+                                  "Touch": "Input: Touch"
+                              }[selected_player.inputInfo.lastInputModeUsed] || ""
+                          ) + "\n"
+                      )
+                      : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang)+"\n"
+              )
+              : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+translate_textkeys("menu.no", save_data[viewing_player_sd_index].lang)+" §7("+ translate_textkeys("menu.settings.permissions.offline", save_data[viewing_player_sd_index].lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player)}) +")§r\n"
+      ) + translate_textkeys("menu.settings.permissions.lable.actionbar", save_data[viewing_player_sd_index].lang, {actionbar: render_live_actionbar(selected_save_data, false)}) +
+      (
+          selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active
+              ? "§r§f\n\n§7" + translate_textkeys("menu.settings.permissions.cm", save_data[viewing_player_sd_index].lang) +"\n\n"
+              : "\n\n"
+      );
 
-  if (selected_player) {
-      if (version_info.release_type === 0) {
-          let memory_text = "";
-          switch (selected_player.clientSystemInfo.memoryTier) {
-              case 0:
-                  memory_text = "Client Total Memory: Under 1.5 GB (Super Low)";
-                  break;
-              case 1:
-                  memory_text = "Client Total Memory: 1.5 - 2.0 GB (Low)";
-                  break;
-              case 2:
-                  memory_text = "Client Total Memory: 2.0 - 4.0 GB (Mid)";
-                  break;
-              case 3:
-                  memory_text = "Client Total Memory: 4.0 - 8.0 GB (High)";
-                  break;
-              case 4:
-                  memory_text = "Client Total Memory: Over 8.0 GB (Super High)";
-                  break;
-          }
-
-          let input_text = "";
-          switch (selected_player.inputInfo.lastInputModeUsed) {
-              case "Gamepad":
-                  input_text = "Input: Gamepad";
-                  break;
-              case "KeyboardAndMouse":
-                  input_text = "Input: Mouse & Keyboard";
-                  break;
-              case "MotionController":
-                  input_text = "Input: Motion controller";
-                  break;
-              case "Touch":
-                  input_text = "Input: Touch";
-                  break;
-          }
-
-          body_text += "Online: yes\n";
-          body_text += "Platform: " + selected_player.clientSystemInfo.platformType + "\n";
-          body_text += memory_text + "\n";
-          body_text += input_text + "\n";
-
-      } else {
-          body_text += "Online: yes\n";
-      }
-
-  } else {
-      body_text += "Online: no §7(last seen " + getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player) + " ago)§r\n";
-  }
-
-  body_text += "Live actionbar: " + render_live_actionbar(selected_save_data, false);
-
-  if (selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active) {
-      body_text += "§r§f\n\n§7Note: This save data cannot be managed because it is needed by the system due to the Challenge Mode.\n\n";
-  } else {
-      body_text += "\n\n";
-  }
 
   form.body(body_text);
   let actions = [];
 
   if (selected_save_data.id !== viewing_player.id) {
-    form.title("Edit "+ selected_save_data.name +"'s permission");
+    form.title(translate_textkeys("menu.settings.permissions.title.player", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
     if (selected_save_data.op) {
 
       form.button("§cMake deop");
@@ -5469,11 +5832,11 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
     }
   } else {
-    form.title("Edit your permission");
+    form.title(translate_textkeys("menu.settings.permissions.title.you", save_data[viewing_player_sd_index].lang));
   }
 
   if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active)) {
-    form.button("Manage save data");
+    form.button(translate_textkeys("menu.settings.permissions.manage_sd", save_data[viewing_player_sd_index].lang));
     actions.push(() => {
       settings_rights_manage_sd(viewing_player, selected_save_data);
     });
@@ -5496,11 +5859,13 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
 function settings_rights_manage_sd(viewing_player, selected_save_data) {
   let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
+  let viewing_player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
   const form = new ActionFormData()
-    .title(`${selected_save_data.name}'s save data`)
-    .body("Select an option!")
-    .button("§dReset save data")
-    .button("§cDelete save data")
+    .title(selected_save_data.id !== viewing_player.id? translate_textkeys("menu.settings.permissions.title.player", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}) : translate_textkeys("menu.settings.permissions.title.you", save_data[viewing_player_sd_index].lang))
+    .body(translate_textkeys("menu.general.description", save_data[player_sd_index].lang))
+    .button("§d"+translate_textkeys("menu.settings.permissions.reset_sd", save_data[viewing_player_sd_index].lang))
+    .button("§c"+translate_textkeys("menu.settings.permissions.delete_sd", save_data[viewing_player_sd_index].lang))
     .button("");
 
   form.show(viewing_player).then(response => {
@@ -5531,20 +5896,19 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
         );
 
         const shared_form = new ActionFormData()
-          .title("Shared timer")
+          .title(translate_textkeys("menu.popup.shared_timer.title", save_data[viewing_player_sd_index].lang))
           .body(
-            `${selected_save_data.name} is currently sharing their timer. You must §cstop§f it${
-              save_data[0].global.last_player_id !== viewing_player.id
-                ? ` or §ereplace§f it with your own time (${own_time}§r§f)`
-                : ""
-            } to ${is_reset ? "reset" : "delete"} the save data.\n\n§7Required for challenge mode.\n\n`
+            translate_textkeys("menu.settings.permissions.shared_timer.description", save_data[viewing_player_sd_index].lang,{
+              name: selected_save_data.name,
+              replace_text: save_data[0].global.last_player_id !== viewing_player.id ? translate_textkeys("menu.settings.permissions.shared_timer.description", save_data[viewing_player_sd_index].lang,{own_time: own_time}) : ""
+            })
           );
 
         const isSharing = (save_data[0].global.last_player_id === viewing_player.id);
         if (!isSharing) {
-          shared_form.button("§eShare yours instead");
+          shared_form.button("§e"+translate_textkeys("menu.popup.shared_timer.yours_instead", save_data[viewing_player_sd_index].lang));
         }
-        shared_form.button("§cDisable");
+        shared_form.button("§c"+translate_textkeys("menu.disable", save_data[viewing_player_sd_index].lang));
         shared_form.button("")
 
         shared_form.show(viewing_player).then(global_response => {
@@ -5556,7 +5920,7 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
           const reload = () => {
             save_data = load_save_data();
             selected_save_data = save_data.find(e => e.id === selected_save_data.id);
-            handle_data_action(is_reset, is_delete, viewing_player, selected_save_data);
+            handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, save_data[viewing_player_sd_index].lang);
           };
 
           const shareIndex   = isSharing ? -1 : 0;
@@ -5579,7 +5943,7 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
 
 
     } else {
-      handle_data_action(is_reset, is_delete, viewing_player, selected_save_data);
+      handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, save_data[viewing_player_sd_index].lang);
     }
 
     if (response.selection === 2) {
@@ -5588,7 +5952,7 @@ function settings_rights_manage_sd(viewing_player, selected_save_data) {
   });
 }
 
-function handle_data_action(is_reset, is_delete, viewing_player, selected_save_data) {
+function handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, lang) {
   const selected_player = world.getAllPlayers().find(p => p.id === selected_save_data.id);
   if (is_reset) {
     delete_player_save_data(selected_save_data);
@@ -5599,10 +5963,10 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
   if (is_delete) {
     if (selected_player) {
       const confirm_form = new MessageFormData()
-        .title("Online player information")
-        .body(`Are you sure you want to remove ${selected_player.name}'s save data?\nThey must disconnect from the world!`)
+        .title(translate_textkeys("menu.settings.permissions.online_player.kick.title", lang))
+        .body(translate_textkeys("menu.settings.permissions.online_player.kick.description", lang, {name: selected_player.name}))
         .button1("")
-        .button2("§cKick & Delete");
+        .button2("§c"+translate_textkeys("menu.settings.permissions.online_player.kick.button", lang));
 
       confirm_form.show(viewing_player).then(confirm => {
         if (confirm.selection == undefined ) {
@@ -5611,10 +5975,10 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
         if (confirm.selection === 1) {
           if (!world.getDimension("overworld").runCommand(`kick ${selected_player.name}`).successCount) {
             const host_form = new MessageFormData()
-              .title("Host player information")
-              .body(`${selected_player.name} is the host. To delete their data, the server must shut down. This usually takes 5 seconds`)
+              .title(translate_textkeys("menu.settings.permissions.online_player.kick.host.title", lang))
+              .body(translate_textkeys("menu.settings.permissions.online_player.kick.host.description", lang, {name: selected_player.name}))
               .button1("")
-              .button2("§cShutdown & Delete");
+              .button2("§c"+translate_textkeys("menu.settings.permissions.online_player.kick.host.button", lang));
 
             host_form.show(viewing_player).then(host => {
               if (host.selection == undefined ) {
@@ -6014,7 +6378,19 @@ world.afterEvents.itemUseOn.subscribe(evt => updateActivity(evt.source));
 -------------------------*/
 
 function close_world() {
-  world.sendMessage("Closing World! Auto Save is disabled! Please wait...");
+  let save_data = load_save_data();
+  world.getAllPlayers().forEach(player => {
+    let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+    player.sendMessage(
+      "§l§7[§f" +
+      (independent
+        ? translate_textkeys("message.header.system", save_data[player_sd_index].lang || "en_us")
+        : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang || "en_us")
+      ) +
+      "§7]§r " +
+      translate_textkeys("message.shutdown", save_data[player_sd_index].lang)
+    );
+  });
   while (true) {}
 }
 
