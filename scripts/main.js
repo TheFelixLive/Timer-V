@@ -4,15 +4,15 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B020",
+  build: "B021",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750373791,
+  unix: 1750425037,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
     // new_features
     new_features: [
-      "Added language settings",
+      "Added full language support for over 55 languages",
       "Updated timezone settings",
       "Improved setup menu",
     ],
@@ -549,10 +549,31 @@ const textkeys = {
     en: "Note",
   },
 
+  "message.header.condition": {
+    en: "Condition",
+  },
+
   // Messages
 
-  "message.shutdown": {
+  "message.body.shutdown": {
     en: "Shutdown Server! The world will be frozen, please wait...",
+  },
+
+  "message.body.condition.resume": {
+    en: "The timer will resume!",
+  },
+
+  "message.body.condition.paused": {
+    en: "The timer is paused!",
+  },
+
+  "message.body.condition.expired": {
+    en: "The timer expired after %{time}% and has been paused",
+  },
+
+  // Title
+  "message.title.condition.expired": {
+    en: "Timer expired",
   },
 
 
@@ -709,12 +730,12 @@ const textkeys = {
   },
 
   "menu.yes": {
-    en: "yes",
+    en: "Yes",
     de: "Ja"
   },
 
   "menu.no": {
-    en: "no",
+    en: "No",
     de: "Nein"
   },
 
@@ -733,54 +754,185 @@ const textkeys = {
     de: "Wähle eine Option!"
   },
 
+  // Modes
 
+  "menu.mode.stopwatch": {
+    en: "Stopwatch",
+    de: "Stoppuhr"
+  },
+
+  "menu.mode.timer": {
+    en: "Timer"
+  },
+
+  "menu.mode.world_time": {
+    en: "World time",
+    de: "Welt Zeit"
+  },
+
+  "menu.mode.day_time": {
+    en: "day time",
+    de: "Tageszeit"
+  },
+
+  /*------------------------
+    Menu - Main menu
+  -------------------------*/
+
+  "menu.main.title": {
+    en: "Main menu",
+    de: "Haubtmenü"
+  },
+
+  "menu.main.reset.title": {
+    en: "Reset %{mode}%",
+    de: "Setze %{mode}% zurück"
+  },
+
+  "menu.main.afk.title": {
+    en: "Intelligent condition"
+  },
+
+  "menu.main.condition.paused": {
+    en: "paused"
+  },
+
+  "menu.main.condition.resumed": {
+    en: "resumed"
+  },
+
+  "menu.main.sync_day_time": {
+    en: "Clone real time"
+  },
+
+  /*------------------------
+    Menu - Difficulty
+  -------------------------*/
+
+  "menu.difficulty.title": {
+    en: "Difficulty"
+  },
+
+  "menu.difficulty.description": {
+    en: "Select your difficulty!"
+  },
+
+  "menu.difficulty.note": {
+    en: "Note: Hardcore difficulties are only available if the world was started in hardcore."
+  },
+
+  "menu.difficulty.note.hardcore": {
+    en: "Note: Easier difficulty levels are only available if you start the world normally."
+  },
+
+  /*------------------------
+    Menu - Goal
+  -------------------------*/
+
+  "menu.goal.title": {
+    en: "Goal"
+  },
+
+  "menu.goal.entity.prefix": {
+    en: "Defeat: "
+  },
+
+  "menu.goal.random.title": {
+    en: "§bR§ga§an§6d§4o§fm",
+    de: "§bZ§gu§af§6ä§4ll§fig"
+  },
+
+
+  /*------------------------
+    Menu - "Change / add time"
+  -------------------------*/
+
+  "menu.start_time.title": {
+    en: "Change time"
+  },
+
+  "menu.start_time.title.ca": {
+    en: "Start time"
+  },
+
+  "menu.start_time.submit": {
+    en: "Set & count down!"
+  },
+
+  "menu.start_time.unit.y": {
+    en: "Years"
+  },
+
+  "menu.start_time.unit.w": {
+    en: "Weeks"
+  },
+
+  "menu.start_time.unit.d": {
+    en: "Days"
+  },
+
+  "menu.start_time.unit.h": {
+    en: "Hours"
+  },
+
+  "menu.start_time.unit.m": {
+    en: "Minutes"
+  },
+
+  "menu.start_time.unit.s": {
+    en: "Seconds"
+  },
+
+    "menu.start_time.unit.ms": {
+    en: "Milliseconds"
+  },
 
   /*------------------------
     Menu - Custom Sounds
   -------------------------*/
 
   "menu.settings.cs.title": {
-    "en": "Custom Sounds"
+    en: "Custom Sounds"
   },
 
   "menu.settings.cs.description_0": {
-    "en": "Do you hear a test sound?",
-    "de": "Hörst du einen Testsound?"
+    en: "Do you hear a test sound?",
+    de: "Hörst du einen Testsound?"
   },
 
   "menu.settings.cs.description_1": {
-    "en": "Do you hear a test sound now?",
-    "de": "Hörst du jetzt einen Testsound?"
+    en: "Do you hear a test sound now?",
+    de: "Hörst du jetzt einen Testsound?"
   },
 
   "menu.settings.cs.button.yes": {
-    "en": "§2Yes, there is a sound",
-    "de": "§2Ja, ich höre einen Sound"
+    en: "§2Yes, there is a sound",
+    de: "§2Ja, ich höre einen Sound"
   },
 
   "menu.settings.cs.button.no": {
-    "en": "§4No, silence",
-    "de": "§4Nein"
+    en: "§4No, silence",
+    de: "§4Nein"
   },
 
   "menu.settings.cs.result.header": {
-    "en": "The setup process is now complete.",
-    "de": "Die Einrichtung ist nun abgeschlossen."
+    en: "The setup process is now complete.",
+    de: "Die Einrichtung ist nun abgeschlossen."
   },
 
   "menu.settings.cs.result.message_v1": {
-    "en": "The timer will now use custom sounds from the resource pack.",
-    "de": "Der Timer verwendet nun Custom Sounds aus dem Ressourcenpaket."
+    en: "The timer will now use custom sounds from the resource pack.",
+    de: "Der Timer verwendet nun Custom Sounds aus dem Ressourcenpaket."
   },
 
   "menu.settings.cs.result.message_v2": {
-    "en": "Your resources pack only supports legacy custom music, so not all timer sounds can be replaced.",
-    "de": "Dein Ressourcenpaket unterstützt nur legacy custom music, daher können nicht alle Timer-Sounds ersetzt werden."
+    en: "Your resources pack only supports legacy custom music, so not all timer sounds can be replaced.",
+    de: "Dein Ressourcenpaket unterstützt nur legacy custom music, daher können nicht alle Timer-Sounds ersetzt werden."
   },
 
   "menu.settings.cs.result.message_bad": {
-    "en": "Under current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.",
-    "de": "Unter den aktuellen Bedingungen können keine Custom Sounds abgespielt werden.\n\n§7Überprüfe die Kompatibilität deines Ressourcenpakets und die Musiklautstärke vom Spiel."
+    en: "Under current conditions, custom sounds cannot be played.\n\n§7Check your resource pack compatibility and in-game music volume.",
+    de: "Unter den aktuellen Bedingungen können keine Custom Sounds abgespielt werden.\n\n§7Überprüfe die Kompatibilität deines Ressourcenpakets und die Musiklautstärke vom Spiel."
   },
 
   /*------------------------
@@ -792,9 +944,46 @@ const textkeys = {
     de: "Gemeinsamer Timer"
   },
 
+  "menu.popup.shared_timer.by": {
+    en: "by %{player}%",
+    de: "von %{player}%"
+  },
+
   "menu.popup.shared_timer.yours_instead": {
     en: "Share yours instead",
     de: "Teile stattdessen deinen"
+  },
+
+  "menu.popup.shared_timer.description": {
+    en: "The shared timer feature coppies your timer to an additional timer that is enforced on all players. %{replace_text}%\n\n§7Required for challenge mode.\n\n",
+  },
+
+  "menu.popup.shared_timer.description.replace_time": {
+    en: "%{name}% is currently sharing his / her timer. You can §cstop§f this or §ereplace§f it with your own time (%{own_time}%§r)",
+  },
+
+  "menu.popup.shared_timer.description.contol": {
+    en: "Only admins can control it."
+  },
+
+  /*------------------------
+    Menu - CA
+  -------------------------*/
+
+  "menu.popup.ca.title": {
+    en: "Challenge mode"
+  },
+
+  "menu.popup.ca.description": {
+    en: "In this mode, the timer shifts from a supporting role to the main one. First, you set the guidelines and then plunge into the adventure of the survival mode!"
+  },
+
+  "menu.popup.ca.description_in_ca": {
+    en: "If this function is deactivated, the timer will operate more in the background and will no longer have any influence on the game mode."
+  },
+
+  "menu.popup.ca.note": {
+    en: "This setting will change the timer significantly."
   },
 
 
@@ -969,37 +1158,37 @@ const textkeys = {
   -------------------------*/
 
   "menu.settings.gestures.title": {
-    "en": "Gestures",
-    "de": "Gesten"
+    en: "Gestures",
+    de: "Gesten"
   },
 
   "menu.settings.gestures.description": {
-    "en": "Choose your own configuration of how the menu should open!",
-    "de": "Wähle deine eigene Konfiguration, wie das Menü geöffnet werden soll!"
+    en: "Choose your own configuration of how the menu should open!",
+    de: "Wähle deine eigene Konfiguration, wie das Menü geöffnet werden soll!"
   },
 
   "menu.settings.gestures.emote": {
-    "en": "Emote"
+    en: "Emote"
   },
 
   "menu.settings.gestures.sneak": {
-    "en": "Sneak",
-    "de": "Schleichen"
+    en: "Sneak",
+    de: "Schleichen"
   },
 
   "menu.settings.gestures.nod": {
-    "en": "Nod",
-    "de": "Nicken"
+    en: "Nod",
+    de: "Nicken"
   },
 
   "menu.settings.gestures.stick": {
-    "en": "Stick",
-    "de": "Mit einem Stock"
+    en: "Stick",
+    de: "Mit einem Stock"
   },
 
   "menu.settings.gestures.command": {
-    "en": "Command",
-    "de": "Befehl"
+    en: "Command",
+    de: "Befehl"
   },
 
   /*------------------------
@@ -1007,33 +1196,33 @@ const textkeys = {
   -------------------------*/
 
   "menu.settings.time_zone.title": {
-    "en": "Time zone",
-    "de": "Zeitzone"
+    en: "Time zone",
+    de: "Zeitzone"
   },
 
   "menu.settings.time_zone.description": {
-    "en": "Select your current time zone!",
-    "de": "Wähle deine aktuelle Zeitzone!"
+    en: "Select your current time zone!",
+    de: "Wähle deine aktuelle Zeitzone!"
   },
 
   "menu.settings.time_zone.show_later": {
-    "en": "Show later time zones",
-    "de": "Spätere Zeitzonen"
+    en: "Show later time zones",
+    de: "Spätere Zeitzonen"
   },
 
   "menu.settings.time_zone.show_previous": {
-    "en": "Show previous time zones",
-    "de": "Frühere Zeitzonen"
+    en: "Show previous time zones",
+    de: "Frühere Zeitzonen"
   },
 
   "menu.settings.time_zone.show_less": {
-    "en": "Show less",
-    "de": "Weniger anzeigen"
+    en: "Show less",
+    de: "Weniger anzeigen"
   },
 
   "menu.settings.time_zone.preview": {
-    "en": "Time zone: %{name}%\nUTC: %{utc}%\nTime: %{time}%§r\nLocation(s): %{location}%\n\nDo you want to use this time zone?\n ",
-    "de": "Zeitzone: %{name}%\nUTC: %{utc}%\nUhrzeit: %{time}%§r\nOrt(e): %{location}%\n\nMöchtest du diese Zeitzone verwenden?\n "
+    en: "Time zone: %{name}%\nUTC: %{utc}%\nTime: %{time}%§r\nLocation(s): %{location}%\n\nDo you want to use this time zone?\n ",
+    de: "Zeitzone: %{name}%\nUTC: %{utc}%\nUhrzeit: %{time}%§r\nOrt(e): %{location}%\n\nMöchtest du diese Zeitzone verwenden?\n "
   },
 
 
@@ -1103,13 +1292,18 @@ const textkeys = {
   },
 
   "menu.settings.dictionary.text": {
-    en: "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nBuild Date: %{build_date}%\n\n%{license}%",
-    de: "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nBuild Datum: %{build_date}%\n\n%{license}%"
+    en: "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nEdition: %{edition}%\nBuild Date: %{build_date}%\n\n%{license}%",
+    de: "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nEdition: %{edition}%\nBuild Datum: %{build_date}%\n\n%{license}%"
   },
 
-  "menu.settings.dictionary.text.utc": {
-    en: "Note: Set the time zone to see detailed information",
-    de: "Hinweis: Stelle die Zeitzone ein, um detaillierte Informationen zu sehen"
+  "menu.settings.dictionary.text.utc_empty": {
+    en: "%{time}% ago \n\n%7Note: Set the time zone to see detailed information",
+    de: "%{time}% her \n\n%7Hinweis: Stelle die Zeitzone ein, um detaillierte Informationen zu sehen"
+  },
+
+  "menu.settings.dictionary.text.build.update": {
+    en: "update time",
+    de: "Zeit zum updaten!"
   },
 
   "menu.settings.dictionary.text.dateformat": {
@@ -3243,6 +3437,7 @@ function check_health(configuration) {
 
 function render_task_list(player) {
   let save_data = load_save_data();
+  let lang = save_data[save_data.findIndex(entry => entry.id === player.id)].lang
   const lines = [];
 
   // difficulty
@@ -3781,6 +3976,7 @@ function main_menu_actions(player, form) {
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
   let lang = save_data[player_sd_index].lang;
 
+
   if (form) {
     if (save_data[0].challenge.active && save_data[0].challenge.progress == 1) {
       form.body({rawtext:[
@@ -3805,14 +4001,14 @@ function main_menu_actions(player, form) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
       if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && (!world.isHardcore || world.isHardcore && save_data[player_sd_index].allow_unnecessary_inputs))) {
-        if(form){form.button("Condition " + (world.isHardcore? translate_textkeys("menu.item_experimental", save_data[player_sd_index].lang) +"§r\n" : "\n") + (timedata.time.do_count === true ? "§aresumed" : "§cpaused"), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
+        if(form){form.button(translate_textkeys("message.header.condition", lang)+" " + (world.isHardcore? translate_textkeys("menu.item_experimental", save_data[player_sd_index].lang) +"§r\n" : "\n") + (timedata.time.do_count === true ? "§a"+translate_textkeys("menu.main.condition.resumed", lang) : "§c"+translate_textkeys("menu.main.condition.paused", lang)), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
           player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
           if (timedata.time.do_count === false) {
             timedata.time.do_count = true;
 
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
-              t.sendMessage("§l§2[§aCondition§2]§r The timer will resume!");
+              t.sendMessage("§l§2[§a"+ translate_textkeys("message.header.condition", lang) +"§2]§r "+translate_textkeys("message.body.condition.resume", lang));
               if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
                 player.queueMusic(translate_soundkeys("condition.resumed", t))
               } else {
@@ -3827,7 +4023,7 @@ function main_menu_actions(player, form) {
             timedata.time.do_count = false;
 
             (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
-              t.sendMessage("§l§4[§cCondition§4]§r The timer is stopped!");
+              t.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+translate_textkeys("message.body.condition.paused", lang));
               if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
                 player.queueMusic(translate_soundkeys("condition.paused", t))
               } else {
@@ -3845,7 +4041,7 @@ function main_menu_actions(player, form) {
 
       if (timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] > 0 && !save_data[0].challenge.active) {
         if (!save_data[0].global.status) {
-          if(form){form.button("Intelligent condition\n" + (save_data[player_sd_index].afk === true ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].afk === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
+          if(form){form.button(translate_textkeys("menu.main.afk.title", lang)+"\n" + (save_data[player_sd_index].afk === true ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].afk === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
           actions.push(() => {
             if (save_data[player_sd_index].afk) {
               save_data[player_sd_index].afk = false
@@ -3858,7 +4054,7 @@ function main_menu_actions(player, form) {
           });
         }
 
-        if(form){form.button("§cReset "+(timedata.counting_type == 1 ? "timer" : "stopwatch"), "textures/ui/recap_glyph_color_2x")}
+        if(form){form.button("§c"+translate_textkeys("menu.main.reset.title", lang, {mode: (timedata.counting_type == 1 ? translate_textkeys("menu.mode.timer", save_data[player_sd_index].lang) : translate_textkeys("menu.mode.stopwatch", save_data[player_sd_index].lang))}), "textures/ui/recap_glyph_color_2x")}
         actions.push(() => {
           timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
           timedata.time.do_count = false;
@@ -3914,13 +4110,12 @@ function main_menu_actions(player, form) {
 
       if (form) form.button({rawtext:
         [
-          { text: "§5Goal§9\n" },
+          { text: "§5"+translate_textkeys("menu.goal.title", lang)+"§9\n" },
           challenge.goal.pointer === 2
             ? { text: goal_event[challenge.goal.event_pos].name }
             : challenge.goal.pointer === 0
-            ? { text: "§bR§ga§an§6d§4o§fm" }
-            : ({ text: "Defeat: " },
-              { translate: "entity." + save_data[0].challenge.goal.entity_id.replace(/^minecraft:/, "") + ".name" })
+            ? { text: translate_textkeys("menu.goal.random.title", lang) }
+            : { translate: "entity." + save_data[0].challenge.goal.entity_id.replace(/^minecraft:/, "") + ".name" }
         ]},
         "textures/items/elytra"
       );
@@ -3930,7 +4125,7 @@ function main_menu_actions(player, form) {
         settings_goals_main(player);
       });
 
-      if (form) form.button("§cDifficulty\n" + difficulty[challenge.difficulty].name + "", difficulty[challenge.difficulty].icon);
+      if (form) form.button("§c"+translate_textkeys("menu.difficulty.title", lang)+"\n" + difficulty[challenge.difficulty].name + "", difficulty[challenge.difficulty].icon);
       actions.push(() => {
         player.playMusic(translate_soundkeys("music.menu.difficulty", player), { fade: 0.3 , loop: true});
         settings_difficulty(player);
@@ -3939,7 +4134,7 @@ function main_menu_actions(player, form) {
 
 
     if (save_data[player_sd_index].op && !challenge.active && timedata.counting_type !== 2) {
-      if(form){form.button("Shared timer\n§9" + (save_data[0].global.status ? "by "+ save_data.find(e => e.id === save_data[0].global.last_player_id)?.name : "off"), "textures/ui/FriendsIcon")};
+      if(form){form.button(translate_textkeys("menu.popup.shared_timer.title", lang)+ "\n§9" + (save_data[0].global.status ? translate_textkeys("menu.popup.shared_timer.by", lang, {player: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name}) : translate_textkeys("menu.toggle_off", lang)), "textures/ui/FriendsIcon")};
       actions.push(() => {
         splash_globalmode(player);
       });
@@ -3949,7 +4144,7 @@ function main_menu_actions(player, form) {
     if (!(challenge.active && challenge.progress > 0) && timedata.counting_type !== 2) {
       if (form) {
         form.button(
-          (challenge.active ? "Start time\n" : "Change time\n") +
+          (challenge.active ? translate_textkeys("menu.start_time.title.ca", lang)+"\n" : translate_textkeys("menu.start_time.title", lang)+"\n") +
           apply_design(
             (
               typeof save_data[player_sd_index].design === "number"
@@ -3971,7 +4166,7 @@ function main_menu_actions(player, form) {
 
   if ((save_data[player_sd_index].time_day_actionbar == true || timedata.counting_type == 3) && save_data[0].challenge.progress !== 2) {
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
-      if(form){form.button("Clone real time\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
+      if(form){form.button(translate_textkeys("menu.main.sync_day_time", lang)+"\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (!save_data[0].sync_day_time) {
           save_data[0].sync_day_time = true;
@@ -3985,20 +4180,19 @@ function main_menu_actions(player, form) {
   }
 
   if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore) {
-    if(form){form.button("Challenge mode\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+    if(form){form.button(translate_textkeys("menu.popup.ca.title", lang)+"\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
     actions.push(() => {
       splash_challengemode(player);
     });
   }
 
   // Button: Settings
-  if(form){form.button("Settings\nShow more!", "textures/ui/automation_glyph_color")}
+  if(form){form.button(translate_textkeys("menu.settings.title", lang), "textures/ui/automation_glyph_color")}
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
     settings_main(player);
   });
 
-  // Button: Settings
   if (!independent) {
     if(form){form.button("")}
     actions.push(() => {
@@ -4014,7 +4208,8 @@ function main_menu_actions(player, form) {
 function main_menu(player) {
   let form = new ActionFormData();
   let save_data = load_save_data()
-  form.title("Main menu");
+  let lang = save_data[save_data.findIndex(entry => entry.id === player.id)].lang
+  form.title(translate_textkeys("menu.main.title",lang));
 
   let actions = main_menu_actions(player, form);
 
@@ -4041,16 +4236,17 @@ function splash_challengemode(player, in_setup) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
 
-  form.title("Challenge mode");
+  form.title(translate_textkeys("menu.popup.ca.title", lang));
   form.body(
     (!save_data[0].challenge.active
-      ? "In this mode, the timer shifts from a supporting role to the main one. First, you set the guidelines and then plunge into the adventure of the survival mode!"
-      : "If this function is deactivated, the timer will operate more in the background and will no longer have any influence on the game mode.")
-    + "\n\n§7This setting will change the timer significantly.\n\n"
+      ? translate_textkeys("menu.popup.ca.description", lang)
+      : translate_textkeys("menu.popup.ca.description_in_ca", lang))
+    + "\n\n§7"+ translate_textkeys("menu.popup.ca.note", lang) +"\n\n"
   );
 
-  form.button(!save_data[0].challenge.active ? "§aEnable": "§cDisable");
+  form.button(!save_data[0].challenge.active ? "§a"+translate_textkeys("menu.enable", lang): "§c"+translate_textkeys("menu.disable", lang));
   form.button(in_setup? "Skip" : "");
 
 
@@ -4162,18 +4358,20 @@ function splash_globalmode(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let lang = save_data[player_sd_index].lang
   let design = (typeof save_data[player_sd_index].design === "number"? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "ui");
   let actions = [];
 
-  form.title("Shared timer");
-  form.body("The shared timer feature coppies your timer to an additional timer that is enforced on all players." +
-    (save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name + " is currently sharing his timer. You can §cstop§f this or §ereplace§f it with your own time ("+ apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"]) + "§r§f)." : "" :
+  form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
 
-    "\nOnly admins can control it.") + "\n\n§7Required for challenge mode.\n\n");
+  form.body(translate_textkeys("menu.popup.shared_timer.description", lang, {
+    replace_text: save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? translate_textkeys("menu.popup.shared_timer.description.replace_time", lang, {name: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name, own_time: apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"])}) : "" :
+    translate_textkeys("menu.popup.shared_timer.description.contol", lang)
+  }));
 
   if (save_data[0].global.status) {
     if (save_data[0].global.last_player_id !== player.id) {
-      form.button("§eShare yours instead");
+      form.button("§e"+translate_textkeys("menu.popup.shared_timer.yours_instead", lang));
       actions.push(() => {
         convert_global_to_local(true);
         convert_local_to_global(player.id);
@@ -4181,7 +4379,7 @@ function splash_globalmode(player) {
       });
     }
 
-    form.button("§cDisable");
+    form.button("§c"+translate_textkeys("menu.disable", lang));
     actions.push(() => {
       convert_global_to_local(true);
       player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
@@ -4190,7 +4388,7 @@ function splash_globalmode(player) {
 
 
   } else {
-    form.button("§aEnable");
+    form.button("§a"+translate_textkeys("menu.enable", lang));
     actions.push(() => {
       convert_local_to_global(player.id)
       player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
@@ -4221,8 +4419,9 @@ function splash_globalmode(player) {
 
 function settings_start_time(player) {
   const save = load_save_data();
-  const form = new ModalFormData().title(save[0].challenge.active ? "Start time" : "Change time");
   const idx  = save.findIndex(e => e.id === player.id);
+  const lang = save[idx].lang
+  const form = new ModalFormData().title(save[0].challenge.active ? translate_textkeys("menu.start_time.title.ca", lang) : translate_textkeys("menu.start_time.title", lang))
   const sd   = save[save[0].global.status ? 0 : idx];
   const allow = save[idx].allow_unnecessary_inputs;
 
@@ -4276,19 +4475,18 @@ function settings_start_time(player) {
     time.d += extraDays;
   }
 
-  // Slider bauen
   if (allow) {
-    form.slider("Years",        0,  9,   1, time.y);
-    form.slider("Weeks",        0, 52,   1, time.w);
-    form.slider("Days",         0,  6,   1, time.d);
+    form.slider(translate_textkeys("menu.start_time.unit.y", lang),        0,  9,   1, time.y);
+    form.slider(translate_textkeys("menu.start_time.unit.w", lang),        0, 52,   1, time.w);
+    form.slider(translate_textkeys("menu.start_time.unit.d", lang),         0,  6,   1, time.d);
   } else {
-    form.slider("Days",         0, 30,   1, time.d);
+    form.slider(translate_textkeys("menu.start_time.unit.d", lang),         0, 30,   1, time.d);
   }
-  form.slider("Hours",        0, 23,   1, time.h);
-  form.slider("Minutes",      0, 59,   1, time.m);
-  form.slider("Seconds",      0, 59,   1, time.s);
-  if (allow) form.slider("Milliseconds",0,950,  50, time.ms);
-  form.submitButton("Set & count down!");
+  form.slider(translate_textkeys("menu.start_time.unit.h", lang),        0, 23,   1, time.h);
+  form.slider(translate_textkeys("menu.start_time.unit.m", lang),      0, 59,   1, time.m);
+  form.slider(translate_textkeys("menu.start_time.unit.s", lang),      0, 59,   1, time.s);
+  if (allow) form.slider(translate_textkeys("menu.start_time.unit.ms", lang),0,950,  50, time.ms);
+  form.submitButton(translate_textkeys("menu.start_time.submit", lang));
 
   form.show(player).then(res => {
     if (res.canceled) return player.playMusic(translate_soundkeys("menu.close", player),{fade:0.3});
@@ -4323,12 +4521,13 @@ function settings_difficulty(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let lang = save_data[player_sd_index].lang
 
-  form.title("Difficulty");
-  form.body("Select your difficulty!" +
-  (save_data[player_sd_index].allow_unnecessary_inputs? "" : "\n§7Note: " + (!world.isHardcore
-    ? "Hardcore difficulties are only available if the world was started in hardcore."
-    : "Easier difficulty levels are only available if you start the world normally.")));
+  form.title(translate_textkeys("menu.difficulty.title", lang));
+  form.body(translate_textkeys("menu.difficulty.description", lang) +
+  (save_data[player_sd_index].allow_unnecessary_inputs? "" : (!world.isHardcore
+    ? "\n§7"+ translate_textkeys("menu.difficulty.note", lang)
+    : "\n§7"+ translate_textkeys("menu.difficulty.note.hardcore", lang))));
 
 
   let visibleDifficulties = [];
@@ -5262,11 +5461,12 @@ function dictionary_about_version(player) {
   form.body(translate_textkeys("menu.settings.dictionary.text", lang, {
     name: version_info.name,
     version: version_info.version,
-    build: ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? "§aupdate time§r" : version_info.build),
+    build: ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? "§a"+translate_textkeys("menu.settings.dictionary.text.build.update", lang)+"§r" : version_info.build),
+    edition: ["International", "German (BastiGHG)"][version_info.edition],
     release_type: ["dev", "preview", "stable"][version_info.release_type],
 
     build_date: ((save_data[0].utc == undefined)
-      ? (getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player) + " ago \n\n§7"+ translate_textkeys("menu.settings.dictionary.text.utc", lang))
+      ? translate_textkeys("menu.settings.dictionary.text.utc_empty", lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix)})
       : formattedDate),
 
     license: "§7© 2022-"+ build_date.year + " TheFelixLive. Licensed under the MIT License."
@@ -6388,7 +6588,7 @@ function close_world() {
         : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang || "en_us")
       ) +
       "§7]§r " +
-      translate_textkeys("message.shutdown", save_data[player_sd_index].lang)
+      translate_textkeys("message.body.shutdown", save_data[player_sd_index].lang)
     );
   });
   while (true) {}
@@ -6426,6 +6626,7 @@ function render_live_actionbar(selected_save_data, do_update) {
 function calcAB(update, id, dayFormat) {
   const data = load_save_data();
   let idx = data.findIndex(e => e.id === id);
+  let lang = data[idx].lang
   let counting_type, timevalue, timedata;
 
   if (data[0].global.status) {
@@ -6464,15 +6665,15 @@ function calcAB(update, id, dayFormat) {
               if (data[0].global.status) {
                 world.getAllPlayers().forEach(player => {
                   idx = data.findIndex(e => e.id === player.id);
-                  player.sendMessage("§l§4[§cCondition§4]§r The timer expired after "+ apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer) + " and has been paused")
+                  player.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+ translate_textkeys("message.body.condition.expired", lang, {time: apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer)}))
 
-                  player.onScreenDisplay.setTitle("§4Timer expired")
+                  player.onScreenDisplay.setTitle("§4"+translate_textkeys("message.title.condition.expired", lang))
                   player.playSound(translate_soundkeys("condition.expired", player))
                 });
               } else {
                 let player = world.getAllPlayers().find(player => player.id == id)
-                player.sendMessage("§l§4[§cCondition§4]§r The timer expired after "+ apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer) + " and has been paused")
-                player.onScreenDisplay.setTitle("§4Timer expired")
+                player.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+translate_textkeys("message.body.condition.expired", lang, {time: apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer)}))
+                player.onScreenDisplay.setTitle("§4"+translate_textkeys("message.title.condition.expired", lang))
                 player.playSound(translate_soundkeys("condition.expired", player))
               }
             }
