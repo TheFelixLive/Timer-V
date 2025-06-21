@@ -4,9 +4,9 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 const version_info = {
   name: "Timer V",
   version: "v.5.2.0",
-  build: "B022",
+  build: "B023",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750467311,
+  unix: 1750537201,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -2786,7 +2786,7 @@ const textkeys = {
 "menu.uu.description": {
   "en": "It looks like you've used the timer before.\nDo you want to update your save data from %{old_versio}% to " + version_info.version + "?\n\n§7Note: Once you update your save data to a newer version, you can no longer use it with the older version!",
   "de": "Es sieht so aus, als hättest du den Timer schon verwendet.\nMöchtest du deine Spieldaten von %{old_versio}% auf " + version_info.version + " aktualisieren?\n\n§7Hinweis: Wenn du deine Daten auf eine neuere Version aktualisierst, kannst du sie nicht mehr mit der älteren verwenden!",
-  "fr": "Il semble que vous ayez déjà utilisé le minuteur.\nVoulez‑vous mettre à jour vos données de %{old_versio}% vers " + version_info.version + " ?\n\n§7Remarque : une fois vos données mises à jour vers une version plus récente, vous ne pourrez plus les utiliser avec l’ancienne !",
+  "fr": "Il semble que vous ayez déjà utilisé le minuteur.\nVoulez‑vous mettre à jour vos données de %{old_versio}% vers " + version_info.version + " ?\n\n§7Remarque: une fois vos données mises à jour vers une version plus récente, vous ne pourrez plus les utiliser avec l’ancienne!",
   "it": "Sembra che tu abbia già usato il timer.\nVuoi aggiornare i tuoi dati di salvataggio da %{old_versio}% a " + version_info.version + "?\n\n§7Nota: una volta aggiornati i dati a una versione più recente, non potrai più usarli con quella vecchia!",
   "es": "Parece que ya has usado el temporizador.\n¿Quieres actualizar tus datos de %{old_versio}% a " + version_info.version + "?\n\n§7Nota: ¡una vez actualizados a una versión más reciente, ya no podrás usarlos con la anterior!",
   "pt": "Parece que você já usou o temporizador antes.\nDeseja atualizar seus dados de %{old_versio}% para " + version_info.version + "?\n\n§7Observação: uma vez atualizados para uma versão mais nova, você não poderá mais usá‑los na versão antiga!",
@@ -2891,7 +2891,7 @@ const textkeys = {
   "menu.uu.data_lost.title": {
     "en": "Some data will be lost!",
     "de": "Einige Daten gehen verloren!",
-    "fr": "Certaines données seront perdues !",
+    "fr": "Certaines données seront perdues!",
     "it": "Alcuni dati andranno persi!",
     "es": "¡Se perderán algunos datos!",
     "pt": "Alguns dados serão perdidos!",
@@ -2926,7 +2926,7 @@ const textkeys = {
   "menu.uu.data_lost.description": {
     "en": "This version contains save data for a total of %{totalPlayers}% players, %{onlinePlayers}% of which are online.\nOnly save data from players who are online can be transferred.\n\nThis would result in a data loss of §l§c%{dataLossPercent}% Percent§r!",
     "de": "Diese Version enthält Spieldaten von insgesamt %{totalPlayers}% Spielern, davon %{onlinePlayers}% online.\nNur die Daten von Spielern, die online sind, können übertragen werden.\n\nDies würde zu einem Datenverlust von §l§c%{dataLossPercent}% Prozent§r führen!",
-    "fr": "Cette version contient des données de sauvegarde pour %{totalPlayers}% joueurs, dont %{onlinePlayers}% sont en ligne.\nSeules les données des joueurs connectés peuvent être transférées.\n\nCela entraînerait une perte de données de §l§c%{dataLossPercent}% pourcent§r !",
+    "fr": "Cette version contient des données de sauvegarde pour %{totalPlayers}% joueurs, dont %{onlinePlayers}% sont en ligne.\nSeules les données des joueurs connectés peuvent être transférées.\n\nCela entraînerait une perte de données de §l§c%{dataLossPercent}%pourcent§r!",
     "it": "Questa versione contiene dati di salvataggio per un totale di %{totalPlayers}% giocatori, di cui %{onlinePlayers}% online.\nPossono essere trasferiti solo i dati dei giocatori attualmente online.\n\nQuesto comporterebbe una perdita di dati del §l§c%{dataLossPercent}% percento§r!",
     "es": "Esta versión contiene datos de guardado de %{totalPlayers}% jugadores, de los cuales %{onlinePlayers}% están en línea.\nSolo se pueden transferir los datos de los jugadores que estén en línea.\n\n¡Esto resultaría en una pérdida de datos del §l§c%{dataLossPercent}% por ciento§r!",
     "pt": "Esta versão contém dados salvos para um total de %{totalPlayers}% jogadores, %{onlinePlayers}% dos quais estão online.\nApenas os dados de jogadores que estão online podem ser transferidos.\n\nIsso resultaria em uma perda de dados de §l§c%{dataLossPercent}% porcento§r!",
@@ -2961,7 +2961,7 @@ const textkeys = {
   "menu.uu.compleat.description": {
     "en": "It's done!\nYou can now enjoy the new " + version_info.name,
     "de": "Geschafft!\nDu kannst jetzt das neue " + version_info.name + " genießen",
-    "fr": "C’est fait !\nVous pouvez désormais profiter du nouveau " + version_info.name,
+    "fr": "C’est fait!\nVous pouvez désormais profiter du nouveau " + version_info.name,
     "it": "Fatto!\nOra puoi goderti il nuovo " + version_info.name,
     "es": "¡Listo!\nAhora puedes disfrutar del nuevo " + version_info.name,
     "pt": "Concluído!\nAgora você pode aproveitar o novo " + version_info.name,
@@ -3071,7 +3071,7 @@ const textkeys = {
   "menu.main.description.ca": {
     "en": "Here's a brief overview, what you have setup:",
     "de": "Hier eine kurze Übersicht über deine Einstellungen:",
-    "fr": "Voici un aperçu rapide de ce que vous avez configuré :",
+    "fr": "Voici un aperçu rapide de ce que vous avez configuré:",
     "it": "Ecco una breve panoramica di ciò che hai impostato:",
     "es": "Aquí tienes un breve resumen de lo que has configurado:",
     "pt": "Aqui está uma visão geral rápida do que você configurou:",
@@ -3356,7 +3356,7 @@ const textkeys = {
   "menu.difficulty.description": {
     "en": "Select your difficulty!",
     "de": "Wähle deine Schwierigkeit!",
-    "fr": "Choisissez votre difficulté !",
+    "fr": "Choisissez votre difficulté!",
     "it": "Seleziona la tua difficoltà!",
     "es": "¡Selecciona tu dificultad!",
     "pt": "Selecione sua dificuldade!",
@@ -3391,7 +3391,7 @@ const textkeys = {
   "menu.difficulty.note": {
     "en": "Note: Hardcore difficulties are only available if the world was started in hardcore.",
     "de": "Hinweis: Hardcore-Schwierigkeitsgrade sind nur verfügbar, wenn die Welt im Hardcore-Modus gestartet wurde.",
-    "fr": "Remarque : les difficultés hardcore ne sont disponibles que si le monde a été lancé en mode hardcore.",
+    "fr": "Remarque: les difficultés hardcore ne sont disponibles que si le monde a été lancé en mode hardcore.",
     "it": "Nota: le difficoltà hardcore sono disponibili solo se il mondo è stato avviato in modalità hardcore.",
     "es": "Nota: las dificultades hardcore solo están disponibles si el mundo se inició en modo hardcore.",
     "pt": "Nota: as dificuldades hardcore só estão disponíveis se o mundo foi iniciado em modo hardcore.",
@@ -3426,7 +3426,7 @@ const textkeys = {
   "menu.difficulty.note.hardcore": {
     "en": "Note: Easier difficulty levels are only available if you start the world normally.",
     "de": "Hinweis: Einfachere Schwierigkeitsgrade sind nur verfügbar, wenn du die Welt im normalen Modus startest.",
-    "fr": "Remarque : les niveaux de difficulté plus faciles ne sont disponibles que si vous lancez le monde normalement.",
+    "fr": "Remarque: les niveaux de difficulté plus faciles ne sont disponibles que si vous lancez le monde normalement.",
     "it": "Nota: i livelli di difficoltà più facili sono disponibili solo se il mondo viene avviato normalmente.",
     "es": "Nota: los niveles de dificultad más fáciles solo están disponibles si inicias el mundo en modo normal.",
     "pt": "Nota: níveis de dificuldade mais fáceis só estão disponíveis se você iniciar o mundo normalmente.",
@@ -3747,14 +3747,38 @@ const textkeys = {
   "menu.goal.random.title": {
     "en": "§bR§ga§an§6d§4o§fm",
     "de": "§bZ§gu§af§6ä§4ll§fig",
-    "fr": "§bA§la§ae§6t§4o§fr§f",
-    "it": "§bC§ur§ba§6s§4vi§fa§le",
-    "es": "§bA§za§ar§6a§4ri§fo",
-    "pt": "§bA§le§ar§6at§4ór§fio",
-    "ru": "§bС§лу§ч§6ай§4ны§ft",
-    "es": "§bA§le§ar§6at§4ór§fio",
-    "it": "§bC§ur§ba§6s§4vi§fa§le"
+    "fr": "§bA§ll§ae§6a§4t§fo§ir§fe",
+    "it": "§bC§ua§as§6u§4a§lf§fo",
+    "es": "§bA§lz§aa§6r§4i§fo",
+    "pt": "§bA§le§az§6a§4r§fo",
+    "is": "§bT§gi§al§6v§4i§lf§ft",
+    "el": "§bΤ§gu§au§6χ§4α§fi§fο",
+    "ar": "§bع§gش§aو§6ائ§4ي§f",
+    "fi": "§bS§ga§at§6u§4n§fn§fa§il§f.",
+    "sv": "§bS§gl§au§6m§4p§fm§fa",
+    "ru": "§bС§gl§au§6ч§4а§fy§in§fy",
+    "tr": "§bR§ga§as§6g§4e§lf§le",
+    "fa": "§bت§gh§aص§6ف§4ی§f",
+    "ps": "§bا§gو§aت§6ن§4ی§fh§fa§if§f",
+    "ur": "§bب§gے§aت§6ر§4ت§fی§fb",
+    "hi": "§bय§gा§aदृ§6चि§4क§f",
+    "si": "§bඅ§gව§aය§6ෙ§4න§fd§fm",
+    "ta": "§bத§ga§am§6ி§4ழ§fh§fm",
+    "ne": "§bर§gै§aन§6ड§4म§f",
+    "bn": "§bএ§gক§aa§6ট§4ু§f",
+    "th": "§bส§gุ§aม§6§4§f",
+    "vi": "§bN§gg§aẫ§6u§4n§f",
+    "id": "§bA§cg§aa§6k§4§f",
+    "ms": "§bR§ga§and§6o§4m§f",
+    "zh": "§b随§g机",
+    "ja": "§bラ§gン§aダ§6ム",
+    "ko": "§b무§g작§a위",
+    "mi": "§bA§gr§ak§6e§4n§ga§fi",
+    "to": "§bF§ga§ak§6a§4t§fo§u",
+    "gil": "§bT§ga§ar§6a§4b§fi§k",
+    "ty": "§bM§ga§ata§6i§4r§fa"
   },
+
 
   "menu.goal.description": {
     "en": "Select your goal!",
@@ -3868,7 +3892,7 @@ const textkeys = {
   "menu.start_time.submit": {
     "en": "Set & count down!",
     "de": "Setzen & runterzählen!",
-    "fr": "Définir et lancer le compte à rebours !",
+    "fr": "Définir et lancer le compte à rebours!",
     "it": "Imposta e avvia il conto alla rovescia!",
     "es": "¡Establecer y contar regresivamente!",
     "pt": "Definir e iniciar contagem regressiva!",
@@ -4189,7 +4213,7 @@ const textkeys = {
   "menu.settings.cs.description_0": {
     "en": "Do you hear a test sound?",
     "de": "Hörst du einen Testsound?",
-    "fr": "Entendez‑vous un son de test ?",
+    "fr": "Entendez‑vous un son de test?",
     "it": "Senti un suono di prova?",
     "es": "¿Oyes un sonido de prueba?",
     "pt": "Você ouve um som de teste?",
@@ -4224,7 +4248,7 @@ const textkeys = {
   "menu.settings.cs.description_1": {
     "en": "Do you hear a test sound now?",
     "de": "Hörst du jetzt einen Testsound?",
-    "fr": "Entendez‑vous maintenant un son de test ?",
+    "fr": "Entendez‑vous maintenant un son de test?",
     "it": "Ora senti un suono di prova?",
     "es": "¿Oyes ahora un sonido de prueba?",
     "pt": "Você ouve agora um som de teste?",
@@ -4725,9 +4749,9 @@ const textkeys = {
   "menu.popup.ca.description": {
     "en": "In this mode, the timer shifts from a supporting role to the main one. First, you set the guidelines and then plunge into the adventure of the survival mode!",
     "de": "In diesem Modus wird der Timer von einer unterstützenden zu einer zentralen Funktion. Zuerst legst du die Regeln fest und stürzt dich dann ins Abenteuer des Überlebensmodus!",
-    "fr": "Dans ce mode, le minuteur passe d’un rôle de soutien à un rôle principal. D’abord, vous définissez les règles, puis vous vous lancez dans l’aventure du mode survie !",
+    "fr": "Dans ce mode, le minuteur passe d’un rôle de soutien à un rôle principal. D’abord, vous définissez les règles, puis vous vous lancez dans l’aventure du mode survie!",
     "it": "In questa modalità, il timer passa da ruolo di supporto a ruolo principale. Prima imposti le linee guida e poi ti tuffi nell’avventura della modalità sopravvivenza!",
-    "es": "En este modo, el temporizador pasa de un papel de apoyo a un papel principal. Primero estableces las pautas y luego te sumerges en la aventura del modo supervivencia !",
+    "es": "En este modo, el temporizador pasa de un papel de apoyo a un papel principal. Primero estableces las pautas y luego te sumerges en la aventura del modo supervivencia!",
     "pt": "Neste modo, o temporizador passa de um papel de apoio para o principal. Primeiro você define as diretrizes e depois mergulha na aventura do modo sobrevivência!",
     "is": "Í þessum ham færist tímaritari úr stuðningshlutverki í aðalhlutverk. Fyrst stillirðu reglurnar og svo dýfirðu þér í ævintýri lifnaðarhamarins!",
     "el": "Σε αυτή τη λειτουργία, ο χρονοδιακόπτης μεταβαίνει από δευτερεύοντα ρόλο σε κύριο. Πρώτα ορίζετε τις κατευθυντήριες γραμμές και μετά βυθίζεστε στην περιπέτεια της λειτουργίας επιβίωσης!",
@@ -4865,8 +4889,8 @@ const textkeys = {
   "menu.popup.ca.start.description": {
     "en": "You are trying to start a challenge. Once a challenge is started, many settings are no longer available.\n\nHere's a brief overview:\n",
     "de": "Du versuchst, einen Challenge-Modus zu starten. Sobald der Challenge-Modus startet, sind viele Einstellungen nicht mehr verfügbar.\n\nHier eine kurze Übersicht:\n",
-    "fr": "Vous essayez de démarrer un défi. Une fois le défi lancé, de nombreuses options ne seront plus disponibles.\n\nVoici un aperçu :\n",
-    "it": "Stai tentando di avviare una sfida. Una volta avviata, molte impostazioni non saranno più disponibili.\n\nEcco una panoramica :\n",
+    "fr": "Vous essayez de démarrer un défi. Une fois le défi lancé, de nombreuses options ne seront plus disponibles.\n\nVoici un aperçu:\n",
+    "it": "Stai tentando di avviare una sfida. Una volta avviata, molte impostazioni non saranno più disponibili.\n\nEcco una panoramica:\n",
     "es": "Estás intentando iniciar un desafío. Una vez iniciado, muchas configuraciones ya no estarán disponibles.\n\nAquí un breve resumen:\n",
     "pt": "Você está tentando iniciar um desafio. Uma vez iniciado, muitas configurações não estarão mais disponíveis.\n\nAqui está uma visão geral:\n",
     "is": "Þú ert að reyna að hefja áskorun. Þegar áskorun hefst eru margar stillingar ekki lengur í boði.\n\nHér er stutt yfirlit:\n",
@@ -4900,7 +4924,7 @@ const textkeys = {
   "menu.popup.give_up": {
     "en": "Give up!",
     "de": "Aufgeben!",
-    "fr": "Abandonner !",
+    "fr": "Abandonner!",
     "it": "Rinuncia!",
     "es": "¡Rendirse!",
     "pt": "Desistir!",
@@ -5365,13 +5389,13 @@ const textkeys = {
   "menu.settings.permissions.description": {
     "en": "Select a player!",
     "de": "Wähle einen Spieler aus!",
-    "fr": "Sélectionnez un joueur !",
+    "fr": "Sélectionnez un joueur!",
     "it": "Seleziona un giocatore!",
     "es": "¡Selecciona un jugador!",
     "pt": "Selecione um jogador!",
     "is": "Veldu leikmann!",
     "el": "Επιλέξτε έναν παίκτη!",
-    "ar": "اختر لاعبًا !",
+    "ar": "اختر لاعبًا!",
     "fi": "Valitse pelaaja!",
     "sv": "Välj en spelare!",
     "ru": "Выберите игрока!",
@@ -5470,7 +5494,7 @@ const textkeys = {
   "menu.settings.permissions.lable.name": {
     "en": "Name: %{name}% (%{id}%)",
     "de": "Name: %{name}% (%{id}%)",
-    "fr": "Nom : %{name}% (%{id}%)",
+    "fr": "Nom: %{name}% (%{id}%)",
     "it": "Nome: %{name}% (%{id}%)",
     "es": "Nombre: %{name}% (%{id}%)",
     "pt": "Nome: %{name}% (%{id}%)",
@@ -5505,7 +5529,7 @@ const textkeys = {
   "menu.settings.permissions.lable.actionbar": {
     "en": "Live actionbar: %{actionbar}%",
     "de": "Live-Actionbar: %{actionbar}%",
-    "fr": "Barre d’action en direct : %{actionbar}%",
+    "fr": "Barre d’action en direct: %{actionbar}%",
     "it": "Actionbar live: %{actionbar}%",
     "es": "Barra de acción en vivo: %{actionbar}%",
     "pt": "Barra de ação ao vivo: %{actionbar}%",
@@ -5540,7 +5564,7 @@ const textkeys = {
   "menu.settings.permissions.cm": {
     "en": "Note: This save data cannot be managed because it is needed by the system due to the Challenge Mode.",
     "de": "Hinweis: Diese Speicherdaten können nicht verwaltet werden, da sie vom System im Challenge-Modus benötigt werden.",
-    "fr": "Remarque : ces données de sauvegarde ne peuvent pas être gérées car elles sont nécessaires au système en mode défi.",
+    "fr": "Remarque: ces données de sauvegarde ne peuvent pas être gérées car elles sont nécessaires au système en mode défi.",
     "it": "Nota: questi dati di salvataggio non possono essere gestiti perché necessari al sistema in modalità sfida.",
     "es": "Nota: estos datos guardados no se pueden gestionar porque los necesita el sistema en modo desafío.",
     "pt": "Nota: estes dados salvos não podem ser gerenciados pois são necessários pelo sistema no modo desafio.",
@@ -5785,7 +5809,7 @@ const textkeys = {
   "menu.settings.permissions.online_player.kick.description": {
     "en": "Are you sure you want to remove %{name}%'s save data?\nThey must disconnect from the world!",
     "de": "Bist du sicher, dass du die Speicherdaten von %{name}% löschen möchtest?\nDer Spieler muss das Spiel verlassen!",
-    "fr": "Êtes-vous sûr de vouloir supprimer les données de %{name}% ?\nIl doit se déconnecter du monde !",
+    "fr": "Êtes-vous sûr de vouloir supprimer les données de %{name}%?\nIl doit se déconnecter du monde!",
     "it": "Sei sicuro di voler rimuovere i dati di %{name}%?\nDeve disconnettersi dal mondo!",
     "es": "¿Estás seguro de que deseas eliminar los datos de %{name}%?\n¡Debe desconectarse del mundo!",
     "pt": "Tem certeza de que deseja remover os dados de %{name}%?\nEle deve desconectar-se do mundo!",
@@ -5890,7 +5914,7 @@ const textkeys = {
   "menu.settings.permissions.online_player.kick.host.description": {
     "en": "%{name}% is the host. To delete their data, the server must shut down. This usually takes 5 seconds",
     "de": "%{name}% ist der Host. Um dessen Daten zu löschen, muss der Server heruntergefahren werden. Dies dauert in der Regel 5 Sekunden.",
-    "fr": "%{name}% est l’hôte. Pour supprimer ses données, le serveur doit s’arrêter. Cela prend généralement 5 secondes.",
+    "fr": "%{name}% est l’hôte. Pour supprimer ses données, le serveur doit s’arrêter. Cela prend généralement 5secondes.",
     "it": "%{name}% è l’host. Per eliminare i suoi dati, il server deve essere arrestato. Di solito ci vogliono 5 secondi.",
     "es": "%{name}% es el anfitrión. Para eliminar sus datos, el servidor debe apagarse. Suele tardar 5 segundos.",
     "pt": "%{name}% é o anfitrião. Para excluir seus dados, o servidor deve desligar. Geralmente leva 5 segundos.",
@@ -6036,12 +6060,12 @@ const textkeys = {
   "menu.settings.lang.preview.messages": {
     "en": "You have selected: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nI confirm that I have understood the sentence in the specified language and would like to use it.\n ",
     "de": "Du hast die Sprache %{name}% ausgewählt\n\n§o§8\"%{preview}%\"§r\n\nIch bestätige, dass ich den Satz in der angegebenen Sprache verstanden habe und sie verwenden möchte.\n ",
-    "fr": "Vous avez sélectionné : %{name}%\n\n§o§8\"%{preview}%\"§r\n\nJe confirme avoir compris la phrase dans la langue spécifiée et souhaite l’utiliser.\n ",
+    "fr": "Vous avez sélectionné: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nJe confirme avoir compris la phrase dans la langue spécifiée et souhaite l’utiliser.\n ",
     "it": "Hai selezionato: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nConfermo di aver compreso la frase nella lingua specificata e desidero usarla.\n ",
     "es": "Has seleccionado: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nConfirmo que he entendido la frase en el idioma especificado y deseo usarlo.\n ",
     "pt": "Você selecionou: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nConfirmo que entendi a frase no idioma especificado e gostaria de usá‑la.\n ",
     "is": "Þú valdir tungumálið: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nÉg staðfesti að ég skildi setninguna á tilgreindu tungumáli og vil nota hana.\n ",
-    "el": "Επιλέξατε : %{name}%\n\n§o§8\"%{preview}%\"§r\n\nΕπιβεβαιώνω ότι κατάλαβα την πρόταση στη συγκεκριμένη γλώσσα και θα ήθελα να τη χρησιμοποιήσω.\n ",
+    "el": "Επιλέξατε: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nΕπιβεβαιώνω ότι κατάλαβα την πρόταση στη συγκεκριμένη γλώσσα και θα ήθελα να τη χρησιμοποιήσω.\n ",
     "ar": "لقد اخترت: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nأؤكد أنني فهمت الجملة باللغة المحددة وأرغب في استخدامها.\n ",
     "fi": "Olet valinnut: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nVahvistan ymmärtäneeni lauseen määritetyllä kielellä ja haluan käyttää sitä.\n ",
     "sv": "Du har valt: %{name}%\n\n§o§8\"%{preview}%\"§r\n\nJag bekräftar att jag har förstått meningen på det angivna språket och vill använda det.\n ",
@@ -6071,13 +6095,29 @@ const textkeys = {
   "menu.settings.lang.preview.messages.ai": {
     "en": "Languages are constantly changing. Please share your experience, e.g., translation mistakes. For more infos check Contacts in the \"About\" section!\n\n§o§8\"%{preview}%\"§r\n\nI confirm that I have understood the sentence in the specified language and would like to use it.\n ",
     "de": "Sprachen verändern sich ständig. Bitte teile deine Erfahrungen, z.B. durch Meldung von Übersetzungsfehlern. Weitere Infos findest du unter \"Über diese Version\" im Abschnitt Kontakte!\n\n§o§8\"%{preview}%\"§r\n\nIch bestätige, dass ich den Satz in der angegebenen Sprache verstanden habe und sie verwenden möchte.\n ",
-    "fr": "Les langues évoluent constamment. Merci de partager votre expérience, p.ex. erreurs de traduction. Pour plus d’infos, consultez Contacts dans la section « À propos » !\n\n§o§8\"%{preview}%\"§r\n\nJe confirme avoir compris la phrase dans la langue spécifiée et souhaite l’utiliser.\n ",
+    "fr": "Les langues évoluent constamment. Merci de partager votre expérience, p.ex. erreurs de traduction. Pour plus d’infos, consultez Contacts dans la section «À propos»!\n\n§o§8\"%{preview}%\"§r\n\nJe confirme avoir compris la phrase dans la langue spécifiée et souhaite l’utiliser.\n ",
     "it": "Le lingue cambiano continuamente. Condividi la tua esperienza, es. errori di traduzione. Per più info vedi Contatti nella sezione \"Informazioni\"!\n\n§o§8\"%{preview}%\"§r\n\nConfermo di aver compreso la frase nella lingua specificata e desidero usarla.\n ",
-    "es": "Los idiomas cambian constantemente. Comparte tu experiencia, p.ej. errores de traducción. Para más info consulta Contactos en la sección \"Acerca de\" !\n\n§o§8\"%{preview}%\"§r\n\nConfirmo que he entendido la frase en el idioma especificado y deseo usarlo.\n ",
+    "es": "Los idiomas cambian constantemente. Comparte tu experiencia, p.ej. errores de traducción. Para más info consulta Contactos en la sección \"Acerca de\"!\n\n§o§8\"%{preview}%\"§r\n\nConfirmo que he entendido la frase en el idioma especificado y deseo usarlo.\n ",
     "pt": "As línguas estão em constante mudança. Compartilhe sua experiência, ex. erros de tradução. Para mais info, veja Contatos em \"Sobre\"!\n\n§o§8\"%{preview}%\"§r\n\nConfirmo que entendi a frase no idioma especificado e gostaria de usá‑la.\n ",
-    "es": "Los idiomas cambian constantemente. Comparte tu experiencia, p.ej. errores de traducción. Para más info consulta Contactos en la sección \"Acerca de\" !\n\n§o§8\"%{preview}%\"§r\n\nConfirmo que he entendido la frase en el idioma especificado y deseo usarlo.\n ",
-    "it": "Le lingue cambiano continuamente. Condividi la tua esperienza, es. errori di traduzione. Per più info vedi Contatti nella sezione \"Informazioni\"!\n\n§o§8\"%{preview}%\"§r\n\nConfermo di aver compreso la frase nella lingua specificata e desidero usarla.\n "
+    "nl": "Talen veranderen voortdurend. Deel je ervaring, bijv. vertaalfouten. Voor meer informatie, zie Contacten onder 'Over'!\n\n§o§8\"%{preview}%\"§r\n\nIk bevestig dat ik de zin in de opgegeven taal heb begrepen en deze wil gebruiken.\n ",
+    "pl": "Języki stale się zmieniają. Podziel się swoim doświadczeniem, np. błędami w tłumaczeniu. Więcej informacji znajdziesz w sekcji „O programie”!\n\n§o§8\"%{preview}%\"§r\n\nPotwierdzam, że zrozumiałem zdanie w podanym języku i chcę go używać.\n ",
+    "ro": "Limbile se schimbă constant. Împărtășește-ți experiența, ex. greșeli de traducere. Pentru mai multe informații, vezi secțiunea „Despre”!\n\n§o§8\"%{preview}%\"§r\n\nConfirm că am înțeles propoziția în limba specificată și doresc să o folosesc.\n ",
+    "ru": "Языки постоянно меняются. Поделитесь своим опытом, например, ошибками перевода. Больше информации в разделе «О программе»!\n\n§o§8\"%{preview}%\"§r\n\nЯ подтверждаю, что понял(а) это предложение на указанном языке и хочу его использовать.\n ",
+    "tr": "Diller sürekli değişiyor. Lütfen deneyimlerini paylaş, örneğin çeviri hataları. Daha fazla bilgi için \"Hakkında\" bölümündeki İletişim kısmına göz at!\n\n§o§8\"%{preview}%\"§r\n\nBelirtilen dildeki cümleyi anladığımı ve kullanmak istediğimi onaylıyorum.\n ",
+    "zh": "语言不断变化。请分享你的体验，例如翻译错误。更多信息请查看“关于”部分中的联系方式！\n\n§o§8\"%{preview}%\"§r\n\n我确认已理解所选语言中的句子，并希望使用它。\n ",
+    "ja": "言語は常に変化しています。翻訳ミスなど、あなたの経験を共有してください。「概要」セクションの連絡先をご確認ください。\n\n§o§8\"%{preview}%\"§r\n\n指定された言語の文を理解したことを確認し、使用したいと思います。\n ",
+    "ko": "언어는 끊임없이 변합니다. 번역 오류 등의 경험을 공유해주세요. 자세한 정보는 \"정보\" 섹션의 연락처를 확인하세요!\n\n§o§8\"%{preview}%\"§r\n\n해당 언어로 된 문장을 이해했고 사용하고 싶음을 확인합니다.\n ",
+    "sv": "Språk förändras ständigt. Dela gärna med dig av dina erfarenheter, t.ex. översättningsfel. Mer info hittar du under 'Om'!\n\n§o§8\"%{preview}%\"§r\n\nJag bekräftar att jag har förstått meningen på det angivna språket och vill använda den.\n ",
+    "no": "Språk endres hele tiden. Del gjerne dine erfaringer, f.eks. oversettelsesfeil. Se 'Om' for mer informasjon!\n\n§o§8\"%{preview}%\"§r\n\nJeg bekrefter at jeg har forstått setningen på det angitte språket og ønsker å bruke den.\n ",
+    "fi": "Kielet muuttuvat jatkuvasti. Jaa kokemuksesi, esim. käännösvirheet. Lisätietoa kohdasta \"Tietoa\"!\n\n§o§8\"%{preview}%\"§r\n\nVahvistan ymmärtäneeni lauseen kyseisellä kielellä ja haluan käyttää sitä.\n ",
+    "cs": "Jazyky se neustále mění. Podělte se o své zkušenosti, např. o chyby v překladu. Více informací najdete v části „O aplikaci“!\n\n§o§8\"%{preview}%\"§r\n\nPotvrzuji, že jsem větě v uvedeném jazyce porozuměl/a a chci ji použít.\n ",
+    "sk": "Jazyky sa neustále menia. Podeľ sa o svoje skúsenosti, napr. prekladové chyby. Viac informácií nájdeš v sekcii „O aplikácii“!\n\n§o§8\"%{preview}%\"§r\n\nPotvrdzujem, že som vetu v uvedenom jazyku pochopil/a a chcem ju použiť.\n ",
+    "hu": "A nyelvek folyamatosan változnak. Kérjük, oszd meg a tapasztalataidat, pl. fordítási hibák esetén. További információk a \"Névjegy\" részben!\n\n§o§8\"%{preview}%\"§r\n\nMegerősítem, hogy megértettem a megadott nyelvű mondatot, és szeretném használni.\n ",
+    "el": "Οι γλώσσες αλλάζουν συνεχώς. Μοιραστείτε την εμπειρία σας, π.χ. λάθη στη μετάφραση. Για περισσότερες πληροφορίες, δείτε την ενότητα «Σχετικά»!\n\n§o§8\"%{preview}%\"§r\n\nΕπιβεβαιώνω ότι κατάλαβα τη φράση στη συγκεκριμένη γλώσσα και θέλω να τη χρησιμοποιήσω.\n ",
+    "bg": "Езиците постоянно се променят. Споделете своя опит, напр. грешки в превода. Повече информация – в раздел „Относно“!\n\n§o§8\"%{preview}%\"§r\n\nПотвърждавам, че разбирам изречението на посочения език и искам да го използвам.\n ",
+    "uk": "Мови постійно змінюються. Поділіться своїм досвідом, наприклад, про помилки в перекладі. Більше інформації див. у розділі «Про програму»!\n\n§o§8\"%{preview}%\"§r\n\nПідтверджую, що зрозумів(ла) речення зазначеною мовою та хочу його використовувати.\n "
   },
+
 
   "menu.settings.lang.preview.test": {
     "en": "Mining diamonds at dawn is the best way to start a Minecraft adventure.",
@@ -6157,12 +6197,12 @@ const textkeys = {
   "menu.settings.gestures.description": {
     "en": "Choose your own configuration of how the menu should open!",
     "de": "Wähle deine eigene Konfiguration, wie das Menü geöffnet werden soll!",
-    "fr": "Choisissez votre propre configuration pour l’ouverture du menu !",
+    "fr": "Choisissez votre propre configuration pour l’ouverture du menu!",
     "it": "Scegli la tua configurazione su come deve aprirsi il menu!",
     "es": "¡Elige tu propia configuración de cómo debe abrirse el menú!",
     "pt": "Escolha sua própria configuração de como o menu deve abrir!",
     "is": "Veldu þína eigin stillingu fyrir hvernig valmyndin ætti að opnast!",
-    "el": "Επιλέξτε τη δική σας ρύθμιση για το πώς θα ανοίγει το μενού !",
+    "el": "Επιλέξτε τη δική σας ρύθμιση για το πώς θα ανοίγει το μενού!",
     "ar": "اختر تكوينك الخاص لكيفية فتح القائمة!",
     "fi": "Valitse oma kokoonpanosi, miten valikko avautuu!",
     "sv": "Välj din egen konfiguration för hur menyn ska öppnas!",
@@ -6375,13 +6415,13 @@ const textkeys = {
   "menu.settings.time_zone.description": {
     "en": "Select your current time zone!",
     "de": "Wähle deine aktuelle Zeitzone!",
-    "fr": "Sélectionnez votre fuseau horaire actuel !",
+    "fr": "Sélectionnez votre fuseau horaire actuel!",
     "it": "Seleziona il tuo fuso orario attuale!",
     "es": "¡Selecciona tu zona horaria actual!",
     "pt": "Selecione seu fuso horário atual!",
     "is": "Veldu núverandi tímabelti þitt!",
-    "el": "Επιλέξτε τη τρέχουσα ζώνη ώρας σας !",
-    "ar": "اختر منطقتك الزمنية الحالية !",
+    "el": "Επιλέξτε τη τρέχουσα ζώνη ώρας σας!",
+    "ar": "اختر منطقتك الزمنية الحالية!",
     "fi": "Valitse nykyinen aikavyöhykkeesi!",
     "sv": "Välj din aktuella tidszon!",
     "ru": "Выберите ваш текущий часовой пояс!",
@@ -6515,7 +6555,7 @@ const textkeys = {
   "menu.settings.time_zone.preview": {
     "en": "Time zone: %{name}%\nUTC: %{utc}%\nTime: %{time}%§r\nLocation(s): %{location}%\n\nDo you want to use this time zone?\n ",
     "de": "Zeitzone: %{name}%\nUTC: %{utc}%\nUhrzeit: %{time}%§r\nOrt(e): %{location}%\n\nMöchtest du diese Zeitzone verwenden?\n ",
-    "fr": "Fuseau horaire : %{name}%\nUTC : %{utc}%\nHeure : %{time}%§r\nLieu(x) : %{location}%\n\nVoulez‑vous utiliser ce fuseau horaire ?\n ",
+    "fr": "Fuseau horaire: %{name}%\nUTC: %{utc}%\nHeure: %{time}%§r\nLieu(x): %{location}%\n\nVoulez‑vous utiliser ce fuseau horaire?\n ",
     "it": "Fuso orario: %{name}%\nUTC: %{utc}%\nOra: %{time}%§r\nLocalità: %{location}%\n\nVuoi usare questo fuso orario?\n ",
     "es": "Zona horaria: %{name}%\nUTC: %{utc}%\nHora: %{time}%§r\nUbicación(es): %{location}%\n\n¿Quieres usar esta zona horaria?\n ",
     "pt": "Fuso horário: %{name}%\nUTC: %{utc}%\nHora: %{time}%§r\nLocalização(ões): %{location}%\n\nDeseja usar este fuso horário?\n ",
@@ -6735,12 +6775,12 @@ const textkeys = {
   "menu.settings.actionbar.design.button": {
     "en": "Change the look!",
     "de": "Ändere das Aussehen!",
-    "fr": "Changez l’apparence !",
+    "fr": "Changez l’apparence!",
     "it": "Cambia aspetto!",
     "es": "¡Cambia el aspecto!",
     "pt": "Mude a aparência!",
     "is": "Breyttu útlitinu!",
-    "el": "Αλλάξτε την εμφάνιση !",
+    "el": "Αλλάξτε την εμφάνιση!",
     "ar": "غير المظهر!",
     "fi": "Vaihda ulkoasua!",
     "sv": "Ändra utseendet!",
@@ -6805,7 +6845,7 @@ const textkeys = {
   "menu.settings.actionbar.design.description": {
     "en": "Select a template or create your own custom design!",
     "de": "Wählen Sie aus einer der Vorlagen aus oder erstellen Sie Ihr eigenes Design!",
-    "fr": "Sélectionnez un modèle ou créez votre propre design !",
+    "fr": "Sélectionnez un modèle ou créez votre propre design!",
     "it": "Seleziona un modello o crea il tuo design personalizzato!",
     "es": "¡Selecciona una plantilla o crea tu propio diseño personalizado!",
     "pt": "Selecione um modelo ou crie seu próprio design personalizado!",
@@ -6840,7 +6880,7 @@ const textkeys = {
   "menu.settings.actionbar.design.preview": {
     "en": "Here is a preview of your selected design. It shows all possible variables at once.\n\nScreen saver: %{screen_saver}%§r\n\nIn the menu: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPaused: %{paused}%§r\n\nFinished (CM only): %{finished}%§r\n\nDay-Time: %{day}%§r\n\nDo you like it?",
     "de": "Hier ist eine Vorschau deines Designs. Es zeigt alle möglichen Zeiten auf einmal:\n\nBildschirmschoner: %{screen_saver}%§r\n\nIm Menü: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPausiert: %{paused}%§r\n\nAbgeschlossen (Nur im CM): %{finished}%§r\n\nTageszeit: %{day}%§r\n\nGefällt es dir?",
-    "fr": "Voici un aperçu de votre design sélectionné. Il affiche toutes les variables possibles à la fois :\n\nÉconomiseur d’écran : %{screen_saver}%§r\n\nDans le menu : %{ui}%§r\n\nNormal : %{normal}%§r\n\nEn pause : %{paused}%§r\n\nTerminé (mode défi seulement) : %{finished}%§r\n\nHeure du jour : %{day}%§r\n\nÇa vous plaît ?",
+    "fr": "Voici un aperçu de votre design sélectionné. Il affiche toutes les variables possibles à la fois:\n\nÉconomiseur d’écran: %{screen_saver}%§r\n\nDans le menu: %{ui}%§r\n\nNormal: %{normal}%§r\n\nEn pause: %{paused}%§r\n\nTerminé (mode défi seulement): %{finished}%§r\n\nHeure du jour: %{day}%§r\n\nÇa vous plaît?",
     "it": "Ecco un’anteprima del design selezionato. Mostra tutte le variabili possibili in una volta:\n\nSalvaschermo: %{screen_saver}%§r\n\nNel menu: %{ui}%§r\n\nNormale: %{normal}%§r\n\nIn pausa: %{paused}%§r\n\nCompletato (solo CM): %{finished}%§r\n\nOra diurna: %{day}%§r\n\nTi piace?",
     "es": "Aquí tienes una vista previa de tu diseño seleccionado. Muestra todas las variables posibles de una vez:\n\nSalvapantallas: %{screen_saver}%§r\n\nEn el menú: %{ui}%§r\n\nNormal: %{normal}%§r\n\nEn pausa: %{paused}%§r\n\nTerminado (solo modo desafío): %{finished}%§r\n\nHora del día: %{day}%§r\n\n¿Te gusta?",
     "pt": "Aqui está uma prévia do design selecionado. Mostra todas as variáveis possíveis de uma vez:\n\nProtetor de tela: %{screen_saver}%§r\n\nNo menu: %{ui}%§r\n\nNormal: %{normal}%§r\n\nPausado: %{paused}%§r\n\nConcluído (apenas CM): %{finished}%§r\n\nHora do dia: %{day}%§r\n\nVocê gosta?",
@@ -6875,7 +6915,7 @@ const textkeys = {
   "menu.settings.actionbar.design.preview.apply": {
     "en": "§aApply!",
     "de": "§aAnwenden!",
-    "fr": "§aAppliquer !",
+    "fr": "§aAppliquer!",
     "it": "§aApplica!",
     "es": "§a¡Aplicar!",
     "pt": "§aAplicar!",
@@ -6950,7 +6990,7 @@ const textkeys = {
   "menu.settings.dictionary.text": {
     "en": "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nEdition: %{edition}%\nBuild Date: %{build_date}%\n\n%{license}%",
     "de": "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nEdition: %{edition}%\nBuild Datum: %{build_date}%\n\n%{license}%",
-    "fr": "Nom : %{name}%\nVersion : %{version}% (%{build}%)\nType de publication : %{release_type}%\nÉdition : %{edition}%\nDate de compilation : %{build_date}%\n\n%{license}%",
+    "fr": "Nom: %{name}%\nVersion: %{version}% (%{build}%)\nType de publication: %{release_type}%\nÉdition: %{edition}%\nDate de compilation: %{build_date}%\n\n%{license}%",
     "it": "Nome: %{name}%\nVersione: %{version}% (%{build}%)\nTipo di release: %{release_type}%\nEdizione: %{edition}%\nData build: %{build_date}%\n\n%{license}%",
     "es": "Nombre: %{name}%\nVersión: %{version}% (%{build}%)\nTipo de lanzamiento: %{release_type}%\nEdición: %{edition}%\nFecha de compilación: %{build_date}%\n\n%{license}%",
     "pt": "Nome: %{name}%\nVersão: %{version}% (%{build}%)\nTipo de release: %{release_type}%\nEdição: %{edition}%\nData de build: %{build_date}%\n\n%{license}%",
@@ -6985,7 +7025,7 @@ const textkeys = {
   "menu.settings.dictionary.text.utc_empty": {
     "en": "%{time}% ago\n\n§7Note: Set the time zone to see detailed information",
     "de": "%{time}% her\n\n§7Hinweis: Stelle die Zeitzone ein, um detaillierte Informationen zu sehen",
-    "fr": "il y a %{time}%\n\n§7Remarque : définissez le fuseau horaire pour voir les détails",
+    "fr": "il y a %{time}%\n\n§7Remarque: définissez le fuseau horaire pour voir les détails",
     "it": "%{time}% fa\n\n§7Nota: Imposta il fuso orario per vedere i dettagli",
     "es": "hace %{time}%\n\n§7Nota: Ajusta la zona horaria para ver información detallada",
     "pt": "há %{time}%\n\n§7Nota: Defina o fuso horário para ver mais detalhes",
@@ -7305,7 +7345,7 @@ const textkeys = {
   "menu.settings.dictionary.contact.description": {
     "en": "If you want to report a bug, need help, or have suggestions to improve the project, you can reach me via these platforms:",
     "de": "Wenn du einen Fehler melden, Hilfe benötigst oder Verbesserungsvorschläge für das Projekt hast, kannst du mich über diese Plattformen erreichen:",
-    "fr": "Si vous souhaitez signaler un bug, avez besoin d’aide ou des suggestions pour améliorer le projet, vous pouvez me contacter via ces plateformes :",
+    "fr": "Si vous souhaitez signaler un bug, avez besoin d’aide ou des suggestions pour améliorer le projet, vous pouvez me contacter via ces plateformes:",
     "it": "Se vuoi segnalare un bug, hai bisogno di aiuto o suggerimenti per migliorare il progetto, puoi contattarmi tramite queste piattaforme:",
     "es": "Si quieres reportar un error, necesitas ayuda o tienes sugerencias para mejorar el proyecto, puedes contactarme a través de estas plataformas:",
     "pt": "Se quiser relatar um bug, precisar de ajuda ou tiver sugestões para melhorar o projeto, você pode me alcançar através destas plataformas:",
