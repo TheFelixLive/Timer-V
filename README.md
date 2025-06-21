@@ -21,25 +21,24 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 If you are actively looking for the Timer Ultimate (v.4.2.2 or older), please use [this guide](https://github.com/TheFelixLive/Timer-Ultimate/tree/9dd11eccb10fe2d0877da4243555df7bc23d7413) instead!
 When you are using such a version, it can be simply updated be [follow these](#updating) steps.
 
+---
 
-# Setup
-First impressions are everything, so let's start with that. The timer greets each player with this or a slightly modified menu. This should sound familiar to old hands, as you as an admin can switch between Surivial and Creative.
-If you can't do anything with it, that's no problem. You can simply continue with the default settings by closing the menu, as we will cover everything in this guide. _Note: If you are using a **hardcore world**, please continue with [this](#challenge-mode-sometimes-called-mode-survival-mode) instead!_
+### Language barrier?
+This is no problem. The timer is now available in more than 30 languages[^4] ​, so your friends can also understand how to use the timer.
+> This features is relatively new so please [give me feedback](https://github.com/TheFelixLive/Timer-Ultimate/issues/new?template=translations.md) about your exsperiens
 
-![Image](https://github.com/user-attachments/assets/10ff20dd-b433-43cb-b36b-f8d60cf96047)
+# Usual main menu
+![Image](https://github.com/user-attachments/assets/6eb92f84-19f6-44b9-b4cb-83069312487d)
+
+Let's break this down into pieces. What do these buttons and how do I access it?
 
 # Control
-From now on every player can open the menu of the timer at any time using these methots (can be activated or deactivated [here](#settings)):
+Every player can open the menu of the timer using these methots (can be activated or deactivated [in settings](#settings)):
 - jumping and sneaking at the same time (jump gesture)
 - by interacting using a stick (right click)
 - by nodding (only in specator mode)
 - by emoting (is not enabled by default)
 - entering `/scriptevent timerv:menu`
-
-# Usual main menu
-![Image](https://github.com/user-attachments/assets/6eb92f84-19f6-44b9-b4cb-83069312487d)
-
-Let's break this down into pieces. What do these buttons?
 
 ## Condition
 This is as far as possible always available. It lets you **pause or resume** your stopwatch or [if set up the timer](#change-time).
@@ -55,9 +54,9 @@ Remember how I said at the beginning that a timer is a point in the future that 
 
 | Buttonname | Available | Function |
 |--------|--------|--------|
-| Intelligent condition | If no timer is shared and [challenge mode](#challenge-mode-sometimes-called-mode-survival-mode) is not used | If you have forgotten to pause your timer or stopwatch, it is no longer a problem because Intelligent Condition now takes care of this and pauses your timer or stopwatch and automatically resumes it. |
-| Shared timer | Only for [admins](#permission) and when the [challenge mode](#challenge-mode-sometimes-called-mode-survival-mode) is not used | This feature shares your timer with all other players on the world. If this is active, only admins can now manage the timer e.g. the [condition](#condition) |
-| Challenge mode | Only for [admins](#permission) if one of them is shareing there timer | Challenge Mode can be activated also in the main menu, if you don't know what that is, [take a look](#challenge-mode-sometimes-called-mode-survival-mode)! |
+| Intelligent condition | If no timer is shared and [challenge mode](#challenge-mode---survival) is not used | If you have forgotten to pause your timer or stopwatch, it is no longer a problem because Intelligent Condition now takes care of this and pauses your timer or stopwatch and automatically resumes it. |
+| Shared timer | Only for [admins](#permission) and when the [challenge mode](#challenge-mode---survival) is not used | This feature shares your timer with all other players on the world. If this is active, only admins can now manage the timer e.g. the [condition](#condition) |
+| Challenge mode | Only for [admins](#permission) if one of them is shareing there timer | Challenge Mode can be activated also in the main menu, if you don't know what that is, [take a look](#challenge-mode---survival)! |
 | Clone real time | Only for [admins](#permission) who enabled [time](#show-day-time--time-source) in the actionbar and set the [sources to real time](#show-day-time--time-source) | Take a break from your device and go out. What time is it? If you enable this option the same time will be in Minecraft! |
 
 
@@ -68,7 +67,7 @@ Settings are really always available and individual for each player so let's tak
 
 ## Type (sometimes called mode)
 As the name suggests, you can set the counter type here, e.g. change from timer to stopwatch.
-If no [timer is shared](#special-ones) and the [challenge mode](#challenge-mode-sometimes-called-mode-survival-mode) is not used you can also select: **World-time** 
+If no [timer is shared](#special-ones) and the [challenge mode](#challenge-mode---survival) is not used you can also select: **World-time** 
 
 ## Permission
 > [!NOTE]
@@ -90,20 +89,7 @@ Gives you permanent night vision. What can I say about it? That it always works.
 ## Custom Sounds
 Replaces all sounds from the timer with the ones you specify. It requires a compatible resource pack more on that [here](url)
 
-<!--
-
-## Language
-> [!NOTE]
-> Only available since 5.2.0
-
-Believe it or not, there are players who can't read English! And they can choose their language here.
-
--->
-
 ## Gestures
-> [!NOTE]
-> Only available since 5.1.0
-
 Let you choose your own configuration of how the menu should open!
 
 ## Actionbar
@@ -178,13 +164,13 @@ Now to pause the timer we have to use the menu for that[^1]:
 
 > During a break, **all players** are put into `spectator` mode[^2]!
 
-Speaking of which, we can see live what we have [set up](#challenge-mode-sometimes-called-mode-survival-mode).
+Speaking of which, we can see live what we have [set up](#challenge-mode---survival).
 Moveover in the menu we could give up, what results in a [negative ending](#negative-ending).
 
 ![Image](https://github.com/user-attachments/assets/cea9de99-2e72-47ce-bc70-5f2750cebfae)
 
 # Challenge Mode - Endings
-Different endings may occur depending on what you did [during the game](#challenge-mode---survival) or what you set [beforehand](#challenge-mode-sometimes-called-mode-survival-mode).
+Different endings may occur depending on what you did [during the game](#challenge-mode---survival) or what you set [beforehand](#challenge-mode---survival).
 In short, you can divide these ends into the following categories:
 
 ### Positive ending
@@ -297,3 +283,4 @@ This project is licensed under the [MIT License](./LICENSE).
 [^1]: This feature is experimental while using hardcore
 [^2]: While hardcore, they remain survival but invulnerable, until a mob 1 shots you e.g. the warden
 [^3]: You may need to confirm the update process several times. Under certain circumstances, not all data can be transferred.
+[^4]: As off v.5.2.0 or later
