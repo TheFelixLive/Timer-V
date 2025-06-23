@@ -3,39 +3,23 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 
 const version_info = {
   name: "Timer V",
-  version: "v.5.2.0",
-  build: "B023",
+  version: "v.5.3.0",
+  build: "B024",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1750537201,
+  unix: 1750710201,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
     // new_features
     new_features: [
-      "Added full language support for over 55 languages",
-      "Updated timezone settings",
-      "Improved setup menu",
     ],
     // general_changes
     general_changes: [
-      "Added a new design template \"v.2.0.0\" for the actionbar",
-      "Added UU-Support for v.4.0.0 & v.4.0.1",
-      "After an update of an older version, the design of this older version is now adopted",
-      "Changed the license to the mit license",
-      "The relative time is now more naturally formatted",
-      "The 'Screen Saver' is how hidden if some kind of day time is shown",
 
     ],
     // bug_fixes
     bug_fixes: [
-      "Fixed a bug that allowed invalid identities to be selected by a random goal",
-      "Partially fixed a bug that allowed players to disable almost all gestures, which could result in the menu being unavailable, especially in Hardcore mode.",
-      "Fixed a bug that caused the timer to end 5 milliseconds early and is therefore not able reset properly later",
-      "Fixed a bug that sometimes caused a softlock when the command /reload got executed",
-      "Fixed a bug where the timer would crash when Clone Realtime was enabled and your local time reached 6:00 AM in a timezone ahead of UTC (e.g., UTC+1 or higher)",
-      "Fixed a bug that caused a softlock when the goal was Time Goal and the timer got turned off in the settings menu",
-      "Fixed a bug that caused the timer to continue playing the music after the menu was closed in the settings type menu",
-      "Fixed a bug that players allowed to sleep if clone real time was enabled"
+      "Fixed a bug that prevented the menu from opening in spectator mode"
     ]
   }
 }
@@ -9398,7 +9382,7 @@ async function gesture_nod() {
   const now = Date.now();
 
   for (const player of world.getAllPlayers()) {
-    if (player.getGameMode() !== "spectator") continue;
+    if (player.getGameMode() == "spectator") continue;
 
     const { x: pitch } = player.getRotation();
 
@@ -9700,7 +9684,7 @@ function start_cm_timer() {
 
   world.getAllPlayers().forEach(t => {
     t.playSound(translate_soundkeys("challenge.starts", t));
-    t.sendMessage("§l§7[§f"+ (independent? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+translate_textkeys("message.body.challenge_start", save_data[save_data.findIndex(entry => entry.id === t.id)].lang))
+    t.sendMessage("§l§7[§f"+ (independent? translate_textkeys("message.header.system", save_data[save_data.findIndex(entry => entry.id === t.id)].lang) : translate_textkeys("message.header.system.client_mode", save_data[save_data.findIndex(entry => entry.id === t.id)].lang)) + "§7]§r "+translate_textkeys("message.body.challenge_start", save_data[save_data.findIndex(entry => entry.id === t.id)].lang))
   });
 
   update_save_data(save_data);
