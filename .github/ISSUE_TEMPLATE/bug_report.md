@@ -26,8 +26,8 @@ This only happens sometimes. If you run it again, it behaves as expected...
 
 ## 🧩 Environment
 <!-- Please complete the following information -->
-- Timer version: [e.g. v5.0.0]
-- Minecraft version: [e.g. v1.21.90]
+- Timer version: [e.g. v.5.0.0]
+- Minecraft version: [e.g. v.1.21.90]
 
 
 ## 💾 Latest SD Dump
