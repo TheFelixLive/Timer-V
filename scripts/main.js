@@ -9,22 +9,23 @@ import { translate_soundkeys } from "./sound.js";
 import { check_difficulty, check_health } from "./difficulty.js";
 import { apply_design, design_template  } from "./design.js";
 import { setup_menu, main_menu } from "./menu.js";
-import { timer_handshake, standallone } from "./communication_system.js";
+import { initialize_multiple_menu, multiple_menu, system_privileges } from "./communication_system.js";
 
 
 console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+version_info.build+") - Further debugging is "+ (version_info.release_type == 0? "enabled" : "disabled" ) + " by the version")
-let standallone = true
 
 /*------------------------
  Save Data
 -------------------------*/
 
 // Load & Save Save data
-import { finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data } from "./helper_function.js";
+import { finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
 
 // To prevent the save data from being loaded before the world is fully loaded
 system.run(() => {
+
+initialize_multiple_menu()
 
 // Creates or Updates Save Data if not present
 function initialize_save_data() {
@@ -74,31 +75,35 @@ function initialize_save_data() {
 initialize_save_data()
 
 /*------------------------
-  Player Join Messages
+  Player Join Messages / Trigger Setup Menu
 -------------------------*/
 
-world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
+world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
   create_player_save_data(playerId, playerName);
+})
 
-  await system.waitTicks(100);
+world.afterEvents.playerSpawn.subscribe(async(eventData) => {
+  const { player, initialSpawn } = eventData;
+
   let save_data = load_save_data()
-  let player = world.getAllPlayers().find(player => player.id == playerId)
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
 
   // Resets AFK
-  let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
-  let lang = save_data[player_sd_index].lang
   if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"] > 0)) {
     save_data[player_sd_index].time.do_count = true;
     update_save_data(save_data)
   }
 
+  await system.waitTicks(40); // Wait for the player to be fully joined
+
   if (version_info.release_type !== 2 && save_data[player_sd_index].setup == 100) {
-    player.sendMessage("§l§7[§f" + (standallone? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §l"+links[0].link)
+    player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ save_data[player_sd_index].name +" how is your experiences with "+ version_info.version +"? Does it meet your expectations? Would you like to change something and if so, what? Do you have a suggestion for a new feature? Share it at §l"+links[0].link)
     player.playSound(translate_soundkeys("message.beta.feedback", player))
   }
 
   // Help reminder: how to open the menu
-  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800) && standallone && save_data[player_sd_index].setup == 100) {
+  if (save_data[player_sd_index].last_unix > (Math.floor(Date.now() / 1000) + 604800) && system_privileges == 2 && save_data[player_sd_index].setup == 100) {
     player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.open_menu", lang))
   }
 
@@ -111,18 +116,13 @@ world.afterEvents.playerJoin.subscribe(async({ playerId, playerName }) => {
 -------------------------*/
 
 system.afterEvents.scriptEventReceive.subscribe(event=> {
-  // Have to be on the top to be able to trigger using getDimension.runCommand
-  if (event.id === "timerv:api_client_mode") {
-    return timer_handshake()
-  }
-
   let player = event.sourceEntity
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
   if (["timerv:reset", "timerv:sd_dump"].includes(event.id)) {
-    const notAvailableMsg = id => `§l§7[§f` + (standallone? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} is not available in stable releases!`;
-    const noPermissionMsg = id => `§l§7[§f` + (standallone? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} could not be changed because you do not have permission!`;
+    const notAvailableMsg = id => `§l§7[§f` + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} is not available in stable releases!`;
+    const noPermissionMsg = id => `§l§7[§f` + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} could not be changed because you do not have permission!`;
 
     if (!save_data[player_sd_index].op) {
       player.sendMessage(noPermissionMsg(event.id));
@@ -148,9 +148,10 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
   API Requests
 -------------------------*/
 
-  if (!standallone) {
-    if (event.id === "timerv:api_menu") {
-      initialize_main_menu(player, true, false);
+  if (!system_privileges == 2) {
+
+    if (event.id === "multiple_menu:open_c4d3852f-f902-4807-a8c8-51980fdae4c3") {
+      initialize_main_menu(player, true);
     }
 
     if (event.id === "timerv:api_show_actionbar") {
@@ -418,7 +419,11 @@ function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  if (standallone || lauched_by_addon) {
+  if (system_privileges == 1) {
+    return multiple_menu(player)
+  }
+
+  if (system_privileges == 2 || lauched_by_addon) {
 
     // open Setup menu
     if (save_data[player_sd_index].setup !== 100 && save_data[0].use_setup) {
@@ -459,9 +464,7 @@ function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
     if (lauched_by_joining) return -1
 
     // open Main menu
-    if (!lauched_by_addon) {
-      player.playSound(translate_soundkeys("menu.open", player));
-    }
+    if (!lauched_by_addon) player.playSound(translate_soundkeys("menu.open", player));
     player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
     return main_menu(player)
 

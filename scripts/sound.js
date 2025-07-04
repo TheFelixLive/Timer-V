@@ -3,6 +3,8 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 import { load_save_data, update_save_data } from "./helper_function.js";
 import { setup_menu, settings_main } from "./menu.js";
 import { translate_textkeys } from "./lang.js";
+import { version_info } from "./version.js";
+import { debug_main } from "./menu.js";
 
 /*------------------------
  Kyes

@@ -2,12 +2,12 @@ import { world, system } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
 import { version_info, links } from "./version.js";
-import { standallone } from "./communication_system.js";
+import { system_privileges, multiple_menu } from "./communication_system.js";
 import { apply_design, design_template  } from "./design.js";
 
 import { difficulty  } from "./difficulty.js";
 
-import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer } from "./helper_function.js";
+import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, close_world } from "./helper_function.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys, supportedLangs } from "./lang.js";
 import { timezone_list } from "./time_zone.js";
@@ -363,11 +363,11 @@ function main_menu_actions(player, form) {
     settings_main(player);
   });
 
-  if (!standallone) {
+  if (!standallone == 2) {
     if(form){form.button("")}
     actions.push(() => {
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-      player.runCommand("/scriptevent timerv:api_menu_parent")
+      player.runCommand("/scriptevent multiple_menu:open_main")
     });
   }
 
@@ -721,7 +721,7 @@ export function settings_main(player) {
   });
 
   // Button 2.5: Gestures
-  if (standallone) {
+  if (system_privileges == 2) {
     form.button(translate_textkeys("menu.settings.gestures.title", lang), "textures/ui/sidebar_icons/emotes");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.gestures", player), { fade: 0.3 , loop: true})
@@ -795,7 +795,7 @@ export function settings_main(player) {
   }
 
   // Button 5.5: Disable Setup
-  if (save_data[player_sd_index].op == true && version_info.edition !== 1 && standallone) {
+  if (save_data[player_sd_index].op == true && version_info.edition !== 1) {
     form.button(translate_textkeys("menu.settings.disable_setup", lang)+ "\n" + (!save_data[0].use_setup ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), !save_data[0].use_setup ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
     actions.push(() => {
       if (save_data[0].use_setup) {
@@ -982,6 +982,7 @@ function settings_type_info(player, response) {
   let save_data = load_save_data();
 
   let player_sd_index;
+  let lang = save_data[save_data.findIndex(entry => entry.id === player.id)].lang
 
   if (save_data[0].global.status) {
     player_sd_index = 0;
@@ -1126,6 +1127,9 @@ function settings_rights_data(viewing_player, selected_save_data) {
                       ? (
                           translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+ translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang) +"\n" +
                           "Platform: " + selected_player.clientSystemInfo.platformType + "\n" +
+                          "Graphics Mode: " + selected_player.graphicsMode + "\n" +
+                          "Level: " + selected_player.level + "\n" +
+                          "Solt: " + selected_player.selectedSlotIndex + "\n" +
                           (
                               ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
                                   ? "Client Total Memory: " +
@@ -1385,7 +1389,7 @@ import { settings_actionbar } from "./design.js";
     Gestures
 -------------------------*/
 
-function settings_gestures(player) {
+export function settings_gestures(player) {
   const form = new ActionFormData();
   const save_data = load_save_data();
   const idx = save_data.findIndex(e => e.id === player.id);
@@ -1448,6 +1452,10 @@ function settings_gestures(player) {
 
   form.button("");
   actions.push(() => {
+    if (system_privileges == 1) {
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3, loop: true });
+      return multiple_menu(player);
+    }
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
     settings_main(player);
   });
@@ -1504,7 +1512,7 @@ function settings_allow_unnecessary_inputs(player) {
     Debug
 -------------------------*/
 
-function debug_main(player) {
+export function debug_main(player) {
   let form = new ActionFormData()
   let actions = []
   let save_data = load_save_data()
@@ -1518,18 +1526,11 @@ function debug_main(player) {
     debug_sd_editor(player, () => debug_main(player), [])
   });
 
-
-  form.button("§aAdd player (save data)");
-  actions.push(() => {
-    return debug_add_fake_player(player);
-  });
-
   form.button("Trigger Setup");
   actions.push(async () => {
     save_data[player_sd_index].setup = 0
     update_save_data(save_data)
-    await system.waitTicks(30)
-    initialize_main_menu(player)
+    player.sendMessage("Setup triggered!");
   });
 
   form.button("§cRemove \"save_data\"");
@@ -1568,6 +1569,7 @@ function debug_main(player) {
 }
 
 function debug_sd_editor(player, onBack, path = []) {
+  let actions = [];
   const save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
@@ -1578,9 +1580,10 @@ function debug_sd_editor(player, onBack, path = []) {
 
   const returnToCurrentMenu = () => debug_sd_editor(player, onBack, path);
 
-  if (Array.isArray(current)) {
+  // === A) Array-Branch ===
+  if (path.length === 0 && Array.isArray(current)) {
     const form = new ActionFormData()
-      .title("Debug Editor v.1.1")
+      .title("SD notepad v.2.0")
       .body(`Path: §7save_data/`);
 
     current.forEach((entry, idx) => {
@@ -1588,36 +1591,51 @@ function debug_sd_editor(player, onBack, path = []) {
         ? `Server [${idx}]`
         : `${entry.name ?? `Player ${idx}`} [${entry.id ?? idx}]`;
       form.button(label, "textures/ui/storageIconColor");
+
+      // Push action for this entry
+      actions.push(() => {
+        debug_sd_editor(
+          player,
+          returnToCurrentMenu,
+          [...path, idx]
+        );
+      });
     });
 
-    form.button(""); // Back
+    form.button("§aAdd player");
+    actions.push(() => {
+      return debug_add_fake_player(player);
+    });
+
+    form.button(""); // Back (no action needed here)
 
     form.show(player).then(res => {
       if (res.canceled) return;
-      if (res.selection === current.length) {
+      if (res.selection === current.length + 1) { // Back button index
         return onBack();
       }
-      debug_sd_editor(
-        player,
-        returnToCurrentMenu,
-        [...path, res.selection]
-      );
+
+      // Execute selected action
+      actions[res.selection]?.();
     });
+
 
   // === B) Object-Branch ===
   } else if (current && typeof current === "object") {
     const keys = Object.keys(current);
+
     const displaySegments = path.map((seg, idx) => {
       if (idx === 0) {
         return seg === 0 ? "server" : save_data[Number(seg)]?.id ?? seg;
       }
       return seg;
     });
-  const displayPath = `save_data/${displaySegments.join("/")}`;
+    const displayPath = `save_data/${displaySegments.join("/")}`;
     const form = new ActionFormData()
-      .title("Debug Editor v.1.1")
+      .title("SD notepad v.2.0")
       .body(`Path: §7${displayPath}`);
 
+    // Dateneinträge als Buttons
     keys.forEach(key => {
       const val = current[key];
       if (typeof val === "boolean") {
@@ -1630,55 +1648,68 @@ function debug_sd_editor(player, onBack, path = []) {
       } else if (typeof val === "string") {
         form.button(`${key}: ${val}§r\n§9type: string`, "textures/ui/editIcon");
       } else {
-        form.button(`${key}`, "textures/ui/storageIconColor"); // verschachteltes Objekt/Array
+        form.button(`${key}`, "textures/ui/storageIconColor");
       }
+
+      // Aktionen pushen
+      actions.push(() => {
+        const nextPath = [...path, key];
+        const fresh = load_save_data();
+        let target = fresh;
+        for (const k of nextPath.slice(0, -1)) {
+          target = target[k];
+        }
+        const val = target[key];
+
+        if (typeof val === "boolean") {
+          target[key] = !val;
+          update_save_data(fresh);
+          returnToCurrentMenu();
+        } else if (typeof val === "number" || typeof val === "string") {
+          openTextEditor(
+            player,
+            String(val),
+            nextPath,
+            newText => {
+              target[key] = newText;
+              update_save_data(fresh);
+              returnToCurrentMenu();
+            },
+            () => {
+              player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+            }
+          );
+        } else {
+          debug_sd_editor(player, returnToCurrentMenu, nextPath);
+        }
+      });
     });
 
-    form.button(""); // Back
+    // Optional: Remove player
+    if (path.length === 1) {
+      form.button("§cRemove player");
+      actions.push(() => {
+        player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
+        return handle_data_action(false, true, player, save_data[Number(path[0])], save_data[player_sd_index].lang);
+      });
+    }
+
+    // Zurück-Button
+    form.button("");
+    actions.push(() => onBack());
 
     form.show(player).then(res => {
-      if (res.selection == undefined ) {
+      if (res.selection == undefined) {
         return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       }
-      // 1. Back-Button?
-      if (res.selection === keys.length) {
-        return onBack();
-      }
 
-      const key = keys[res.selection];
-      const nextPath = [...path, key];
-      const fresh = load_save_data();
-      let target = fresh;
-      for (const k of nextPath.slice(0, -1)) {
-        target = target[k];
-      }
-      const val = target[key];
-      if (typeof val === "boolean") {
-        // Boolean-Toggle
-        target[key] = !val;
-        update_save_data(fresh);
-        returnToCurrentMenu();
-
-      } else if (typeof val === "number" || typeof val === "string") {
-        // Number-Editor
-        openTextEditor(
-          player,
-          String(val),
-          nextPath,
-          newText => {
-            target[key] = newText;
-            update_save_data(fresh);
-            returnToCurrentMenu();
-          },
-          () => {
-            player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-          }
-        );
-
-      } else {
-        debug_sd_editor(player, returnToCurrentMenu, nextPath);
+      // Aktion ausführen
+      const action = actions[res.selection];
+      if (action) {
+        action();
       }
     });
+
   }
 }
 
@@ -1720,11 +1751,11 @@ function debug_add_fake_player(player) {
   form.submitButton("Add player")
 
   form.show(player).then((response) => {
-    if (response.selection == undefined ) {
+    if (response.canceled) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
     create_player_save_data(response.formValues[1], response.formValues[0])
-    return debug_main(player)
+    return debug_sd_editor(player, () => debug_main(player), [])
   });
 }
 
@@ -1823,7 +1854,7 @@ function dictionary_contact(player, build_date) {
   if (save_data[player_sd_index].op) {
     form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang) + (version_info.release_type !== 2? "\n"+translate_textkeys("menu.settings.dictionary.contact.sd.mode_0", lang) : ""));
     actions.push(() => {
-      player.sendMessage("§l§7[§f"+ (standallone? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("menu.settings.dictionary.contact.sd", lang) +":\n"+JSON.stringify(save_data))
+      player.sendMessage("§l§7[§f"+ (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("menu.settings.dictionary.contact.sd", lang) +":\n"+JSON.stringify(save_data))
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     });
 
@@ -1851,7 +1882,7 @@ function dictionary_contact(player, build_date) {
   });
 }
 
-function dictionary_about_version_changelog(player, build_date) {
+export function dictionary_about_version_changelog(player, build_date) {
   let form = new ActionFormData()
   let save_data = load_save_data()
   let player_sd_index = save_data.findIndex(e => e.id === player.id);

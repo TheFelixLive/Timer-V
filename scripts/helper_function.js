@@ -394,18 +394,6 @@ export function finished_cm_timer(rating, key_message, value, key_entity) {
 -------------------------*/
 
 export function close_world() {
-  let save_data = load_save_data();
-  world.getAllPlayers().forEach(player => {
-    let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-    player.sendMessage(
-      "§l§7[§f" +
-      (standallone
-        ? translate_textkeys("message.header.system", save_data[player_sd_index].lang || "en_us")
-        : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang || "en_us")
-      ) +
-      "§7]§r " +
-      translate_textkeys("message.body.shutdown", save_data[player_sd_index].lang)
-    );
-  });
+  world.sendMessage("Shutdown Server! The world will be frozen, please wait...")
   while (true) {}
 }
