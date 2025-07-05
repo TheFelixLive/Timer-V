@@ -391,7 +391,7 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
   }
 
   if (in_setup) {
-    form.button(translate_textkeys("menu.button_skip", player_sd.lang));
+    form.button(translate_textkeys("menu.button_skip", player_sd.lang), "textures/ui/sprint");
     actions.push(() => {
       player_sd.setup = 60
       update_save_data(save_data);

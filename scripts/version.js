@@ -1,9 +1,9 @@
 export const version_info = {
   name: "Timer V",
   version: "v.5.3.0",
-  build: "B025",
+  build: "B026",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1751733393,
+  unix: 1751743577,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   uuid: "c4d3852f-f902-4807-a8c8-51980fdae4c3",
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
@@ -33,3 +33,6 @@ export const links = [
   {name: "§8Curseforge:§r", link: "curseforge.com/projects/1259478"},
   {name: "§aMcpedl:§r", link: "mcpedl.com/timer"},
 ]
+
+
+// TODO: When the Daytime is toggelt on it saves the design to the sd. That's 10% unssasery data

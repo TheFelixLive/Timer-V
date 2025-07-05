@@ -1013,6 +1013,50 @@ const textkeys = {
     "en": "About",
   },
 
+  "menu.settings.label.timer": {
+    "en": "Timer",
+  },
+
+  "menu.settings.label.your_self": {
+    "en": "Your self",
+  },
+
+  "menu.settings.label.multiplayer": {
+    "en": "Multiplayer",
+  },
+
+  "menu.settings.label.features": {
+    "en": "Features",
+  },
+
+  "menu.settings.label.features": {
+    "en": "Features",
+  },
+
+  "menu.settings.label.advanced_settings": {
+    "en": "Advanced settings",
+  },
+
+  "menu.settings.label.version": {
+    "en": "Version",
+  },
+
+  /*------------------------
+    Menu - settings_type_info
+  -------------------------*/
+
+  "menu.settings.type_info.title": {
+    "en": "Information",
+  },
+
+  "menu.settings.type_info.description": {
+    "en": "Your %{current_counting_type}% is not paused! If you change now the mode to %{new_counting_type}% it will be paused!",
+  },
+
+  "menu.settings.type_info.change_to": {
+    "en": "Change to %{new_counting_type}%",
+  },
+
 
   /*------------------------
     Menu - Permissions
@@ -1108,8 +1152,20 @@ const textkeys = {
     "en": "Language",
   },
 
+  "menu.settings.lang.label.current": {
+    "en": "Current language",
+  },
+
+  "menu.settings.lang.label.recommendation": {
+    "en": "Recommended languages",
+  },
+
   "menu.settings.lang.recommendation": {
     "en": "based on your timezone",
+  },
+
+  "menu.settings.lang.show_all": {
+    "en": "More languages",
   },
 
   "menu.settings.lang.preview.messages": {
@@ -1349,88 +1405,270 @@ export function settings_lang(player, in_setup) {
   const player_sd_index = save_data.findIndex(e => e.id === player.id);
   let lang = save_data[player_sd_index].lang;
 
+  // Bestimme Zeitzonen-basierte Sprachen
   let timezone_langs = timezone_list.find(zone => zone.utc === save_data[0].utc)?.lang;
   if (!Array.isArray(timezone_langs)) timezone_langs = [];
 
   const selected = supportedLangs.find(l => l.id === lang);
   const enLang = supportedLangs.find(l => l.id === "en_us");
 
-  // Kategorie 4: alle übrigen Sprachen (noch ungefiltert)
-  let otherLangs = supportedLangs.filter(l => l.id !== selected.id && l.id !== "en_us");
+  // Erstelle Pools: alle außer Englisch und (wenn nicht im Setup) außer der aktuellen Sprache
+  let otherLangs = supportedLangs.filter(l => l.id !== "en_us" && (in_setup || l.id !== selected.id));
+  const timezoneLangsFiltered = otherLangs
+    .filter(l => timezone_langs.includes(l.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  otherLangs = otherLangs
+    .filter(l => !timezoneLangsFiltered.some(tz => tz.id === l.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  // Kategorie 3: Zeitzonen-Sprachen (nur wenn sie in otherLangs und supportedLangs sind)
+  // Baue Anzeige-Kategorien
+  const displayLangs = [];
+
+  // Aktuelle Sprache nur anzeigen, wenn nicht im Setup
+  if (!in_setup) {
+    displayLangs.push({
+      category: translate_textkeys("menu.settings.lang.label.current", lang),
+      items: [{
+        ...selected,
+        note: "\n" + translate_textkeys("menu.item_selected", lang)
+      }]
+    });
+  }
+
+  // Empfohlene Sprachen (Zeitzone + Englisch)
+  const recommendedItems = [];
+  if (enLang && enLang.id !== selected.id) {
+    const note = timezone_langs.includes(enLang.id)
+      ? "\n§5(" + translate_textkeys("menu.settings.lang.recommendation", lang) + ")§r"
+      : "";
+    recommendedItems.push({ ...enLang, note });
+  }
+  timezoneLangsFiltered.forEach(l => {
+    if (l.id !== selected.id) {
+      recommendedItems.push({
+        ...l,
+        note: "\n§5(" + translate_textkeys("menu.settings.lang.recommendation", lang) + ")§r"
+      });
+    }
+  });
+
+  // Bei Setup: aktuelle Sprache in Empfehlungen vorne hinzufügen
+  if (in_setup && !recommendedItems.some(l => l.id === selected.id)) {
+    recommendedItems.unshift({
+      ...selected,
+      note: ""
+    });
+  }
+
+  if (recommendedItems.length > 0) {
+    displayLangs.push({
+      category: translate_textkeys("menu.settings.lang.label.recommendation", lang),
+      items: recommendedItems
+    });
+  }
+
+  // Wenn Empfehlungen <2, zeige alle Sprachen (ohne die bereits gelistete aktuelle Sprache)
+  if (recommendedItems.length < 2) {
+    displayLangs.push({
+      category: translate_textkeys("menu.settings.lang.show_all", lang),
+      items: otherLangs.map(l => ({ ...l, note: "" }))
+    });
+  }
+
+  // Baue das Formular auf
+  form.title(translate_textkeys("menu.settings.lang.title", lang));
+  form.body(translate_textkeys("menu.general.description", lang));
+
+  const actions = [];
+  let firstCategory = true;
+  displayLangs.forEach(group => {
+    if (!firstCategory) form.divider();
+    form.label(group.category);
+    firstCategory = false;
+
+    let prevStem = null;
+    group.items.forEach(l => {
+      const stem = l.id.split('_')[0];
+      if (prevStem !== null && stem !== prevStem) form.divider();
+      form.button(
+        l.name + (l.note || ""),
+        l.ai ? "textures/ui/servers" : "textures/ui/sidebar_icons/my_characters"
+      );
+      actions.push(() => {
+        if (in_setup) {
+          save_data[player_sd_index].lang = l.id;
+          save_data[player_sd_index].setup = save_data[player_sd_index].op ? 20 : 50;
+          update_save_data(save_data);
+          setup_menu(player);
+        } else {
+          settings_lang_preview(player, l, 1);
+        }
+      });
+      prevStem = stem;
+    });
+  });
+
+  // Option: Zeige alle, wenn außerhalb Setup oder Release
+  if ((!in_setup || version_info.release_type === 0)) {
+    form.divider();
+    if (recommendedItems.length > 1) {
+      form.button(translate_textkeys("menu.settings.lang.show_all", lang));
+      actions.push(() => settings_lang_all(player, in_setup));
+    }
+  }
+
+  // Zurück- oder Skip-Buttons
+  if (!in_setup) {
+    form.button("");
+    actions.push(() => {
+      player.playMusic(
+        translate_soundkeys("music.menu.settings", player),
+        { fade: 0.3, loop: true }
+      );
+      settings_main(player);
+    });
+  } else if (version_info.release_type === 0) {
+    form.button("Skip Setup", "textures/ui/sprint");
+    actions.push(() => {
+      save_data[player_sd_index].setup = 100;
+      update_save_data(save_data);
+      player.playMusic(
+        translate_soundkeys("music.menu.main", player),
+        { fade: 0.3 }
+      );
+      return main_menu(player);
+    });
+  }
+
+  // Formular anzeigen und Aktion ausführen
+  form.show(player).then(response => {
+    if (response.selection === undefined) {
+      if (in_setup) {
+        player.sendMessage(
+          "§l§6[§e" + translate_textkeys("message.header.help", lang) + "§6]§r " +
+          translate_textkeys("message.body.help.setup.closed", lang)
+        );
+      }
+      return player.playMusic(
+        translate_soundkeys("menu.close", player),
+        { fade: 0.3 }
+      );
+    }
+    const sel = response.selection;
+    if (typeof actions[sel] === "function") actions[sel]();
+  });
+}
+
+
+
+function settings_lang_all(player, in_setup) {
+  const form = new ActionFormData();
+  const save_data = load_save_data();
+  const player_sd_index = save_data.findIndex(e => e.id === player.id);
+  let lang = save_data[player_sd_index].lang;
+
+  // —–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+  // 1) genau wie in settings_lang: UTC-abhängige Empfehlungen berechnen
+  let timezone_langs = timezone_list.find(zone => zone.utc === save_data[0].utc)?.lang;
+  if (!Array.isArray(timezone_langs)) timezone_langs = [];
+
+  const selected     = supportedLangs.find(l => l.id === lang);
+  const enLang       = supportedLangs.find(l => l.id === "en_us");
+
+  // Pool ohne selected und ohne en_us (für timezone-Filter)
+  let otherLangs = supportedLangs
+    .filter(l => l.id !== selected.id && l.id !== "en_us");
+
+  // Erster Teil: Sprachen, die zur Zeitzone passen
   const timezoneLangsFiltered = otherLangs
     .filter(l => timezone_langs.includes(l.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  // Entferne timezone-basierte Sprachen aus Kategorie 4
-  otherLangs = otherLangs.filter(l => !timezoneLangsFiltered.some(tz => tz.id === l.id));
-  otherLangs.sort((a, b) => a.name.localeCompare(b.name));
+  // Rest
+  otherLangs = otherLangs
+    .filter(l => !timezoneLangsFiltered.some(t => t.id === l.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  const displayLangs = [];
-
-  // Kategorie 1: ausgewählte Sprache
-  displayLangs.push({ ...selected, note: (in_setup? "" : "\n" + translate_textkeys("menu.item_selected", lang)) });
-
-  // Kategorie 2: Englisch US (falls nicht ausgewählt)
+  // Empfohlene Sprachen (en_us plus timezoneLangsFiltered), inkl. note
+  const recommendedItems = [];
   if (enLang && enLang.id !== selected.id) {
-    const note = timezone_langs.includes(enLang.id) ? "\n§5("+ translate_textkeys("menu.settings.lang.recommendation", lang) +")§r" : "";
-    displayLangs.push({ ...enLang, note });
+    const note = timezone_langs.includes(enLang.id)
+      ? "\n§5(" + translate_textkeys("menu.settings.lang.recommendation", lang) + ")§r"
+      : "";
+    recommendedItems.push({ ...enLang, note });
   }
-
-  // Kategorie 3: Zeitzonenbasierte Vorschläge
   timezoneLangsFiltered.forEach(l => {
-    displayLangs.push({ ...l, note: "\n§5("+ translate_textkeys("menu.settings.lang.recommendation", lang) +")§r" });
+    recommendedItems.push({
+      ...l,
+      note: "\n§5(" + translate_textkeys("menu.settings.lang.recommendation", lang) + ")§r"
+    });
   });
+  // —–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
-  // Kategorie 4: Restliche Sprachen
-  otherLangs.forEach(l => {
-    displayLangs.push({ ...l, note: "" });
-  });
+  // 2) Jetzt die komplette Liste alphabetisch, aber mit `note` gefüllt
+  const lang_list = supportedLangs
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(l => {
+      let note = "";
 
+      // aktuell ausgewählt?
+      if (l.id === selected.id) {
+        note = in_setup
+          ? ""
+          : "\n" + translate_textkeys("menu.item_selected", lang);
+      }
+      // in den Empfehlungen?
+      else {
+        const rec = recommendedItems.find(r => r.id === l.id);
+        if (rec) note = rec.note;
+      }
+
+      return { ...l, note };
+    });
+
+  // 3) Anzeige wie gehabt, nur benutzen wir jetzt `lang_list` mit notes
   const actions = [];
-
   form.title(translate_textkeys("menu.settings.lang.title", lang));
   form.body(translate_textkeys("menu.general.description", lang));
 
-  displayLangs.forEach(l => {
-    form.button(l.name + (l.note || ""), l.ai ? "textures/ui/servers" : "textures/ui/sidebar_icons/my_characters");
+  let prevStem = null;
+  lang_list.forEach(l => {
+    const stem = l.id.split('_')[0];
+    if (prevStem !== null && stem !== prevStem) form.divider();
 
+    form.button(
+      l.name + (l.note || ""),
+      l.ai ? "textures/ui/servers" : "textures/ui/sidebar_icons/my_characters"
+    );
     actions.push(() => {
       if (in_setup) {
-        save_data[player_sd_index].lang = l.id;
-        if (save_data[player_sd_index].op) {
-          save_data[player_sd_index].setup = 20;
-        } else {
-          save_data[player_sd_index].setup = 50;
-        }
+        save_data[player_sd_index].lang  = l.id;
+        save_data[player_sd_index].setup = save_data[player_sd_index].op ? 20 : 50;
         update_save_data(save_data);
         setup_menu(player);
       } else {
-        settings_lang_preview(player, l, in_setup)
+        settings_lang_preview(player, l, 1);
       }
     });
+
+    prevStem = stem;
   });
 
-  if (!in_setup) {
-    form.button("");
-    actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-      settings_main(player);
-    });
-  } else if (version_info.release_type == 0) {
-    form.button("Skip Setup");
-    actions.push(() => {
-      save_data[player_sd_index].setup = 100
-      update_save_data(save_data)
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 });
-      return main_menu(player)
-    });
-  }
+  form.divider();
+  form.button("");
+  actions.push(() => {
+    settings_lang(player, in_setup);
+  });
 
+  // Anzeigen
   form.show(player).then(response => {
     if (response.selection === undefined) {
-      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
+      if (in_setup) {
+        player.sendMessage(
+          "§l§6[§e" + translate_textkeys("message.header.help", lang) + "§6]§r "
+          + translate_textkeys("message.body.help.setup.closed", lang)
+        );
+      }
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
     const sel = response.selection;
@@ -1438,7 +1676,8 @@ export function settings_lang(player, in_setup) {
   });
 }
 
-function settings_lang_preview(player, selected_lang) {
+
+function settings_lang_preview(player, selected_lang, target) {
   const save_data = load_save_data();
   const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   let form = new MessageFormData();
@@ -1483,7 +1722,7 @@ function settings_lang_preview(player, selected_lang) {
       player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
       return settings_main(player);
     }
-    settings_lang(player);
+    target == 0? settings_lang(player) : settings_lang_all(player)
   });
 
 }

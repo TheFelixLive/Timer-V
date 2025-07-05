@@ -700,17 +700,50 @@ export function settings_main(player) {
 
   // Button 0: Type
   if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
+    form.label(translate_textkeys("menu.settings.label.timer", lang))
     form.button(
       translate_textkeys("menu.settings.type", lang) +
       "\n§9" + translate_textkeys(timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].label, lang),
       timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon
     );
     actions.push(() => settings_type(player));
+    form.divider()
   }
+
+
+  form.label(translate_textkeys("menu.settings.label.your_self", lang))
+
+  // Button 2.7: Language
+  if (version_info.edition !== 1) {
+    form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§r§9"+supportedLangs.find(l=> l.id == lang).name, "textures/ui/language_glyph_color");
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("music.menu.settings.lang", player), { fade: 0.3 , loop: true})
+      settings_lang(player)
+    });
+  }
+
+  // Button 2: Actionbar
+  form.button(translate_textkeys("menu.settings.actionbar.title", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 , loop: true})
+    settings_actionbar(player)
+  });
+
+  // Button 2.5: Gestures
+  if (system_privileges == 2) {
+    form.button(translate_textkeys("menu.settings.gestures.title", lang), "textures/ui/sidebar_icons/emotes");
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("music.menu.settings.gestures", player), { fade: 0.3 , loop: true})
+      settings_gestures(player)
+    });
+  }
+
 
 
   // Button 1: Permission
   if (save_data[player_sd_index].op) {
+    form.divider()
+    form.label(translate_textkeys("menu.settings.label.multiplayer", lang))
     const players = world.getAllPlayers();
     const ids = players.map(p => p.id);
     const names = save_data.slice(1)
@@ -732,31 +765,6 @@ export function settings_main(player) {
     }
   }
 
-
-  // Button 2: Actionbar
-  form.button(translate_textkeys("menu.settings.actionbar.title", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
-  actions.push(() => {
-    player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 , loop: true})
-    settings_actionbar(player)
-  });
-
-  // Button 2.5: Gestures
-  if (system_privileges == 2) {
-    form.button(translate_textkeys("menu.settings.gestures.title", lang), "textures/ui/sidebar_icons/emotes");
-    actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.settings.gestures", player), { fade: 0.3 , loop: true})
-      settings_gestures(player)
-    });
-  }
-
-  // Button 2.7: Language
-  if (version_info.edition !== 1) {
-    form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§r§9"+supportedLangs.find(l=> l.id == lang).name, "textures/ui/language_glyph_color");
-    actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.settings.lang", player), { fade: 0.3 , loop: true})
-      settings_lang(player)
-    });
-  }
 
   // Button 3: Time zone
   if (save_data[player_sd_index].op == true && version_info.edition !== 1) {
@@ -785,6 +793,9 @@ export function settings_main(player) {
     });
   }
 
+  form.divider()
+  form.label(translate_textkeys("menu.settings.label.features", lang))
+
   // Button 4: Fullbright
   form.button(translate_textkeys("menu.settings.fullbright", save_data[player_sd_index].lang)+"\n" + (save_data[player_sd_index].fullbright ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
   actions.push(() => {
@@ -812,6 +823,12 @@ export function settings_main(player) {
         settings_cs_setup(player)
       }
     });
+  }
+
+
+  if (version_info.release_type !== 2 || save_data[player_sd_index].op == true && version_info.edition !== 1) {
+    form.divider()
+    form.label(translate_textkeys("menu.settings.label.advanced_settings", lang))
   }
 
   // Button 5.5: Disable Setup
@@ -851,6 +868,9 @@ export function settings_main(player) {
     });
   }
 
+  form.divider()
+  form.label(translate_textkeys("menu.settings.label.version", lang))
+
   // Button 8: Update / Dictionary
   let gen = uu_find_gen()
 
@@ -860,13 +880,13 @@ export function settings_main(player) {
       universel_updater(player, gen)
       player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
     });
-  } else {
-    form.button(translate_textkeys("menu.settings.about", lang)+"\n", "textures/ui/infobulb");
-    actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
-      dictionary_about_version(player)
-    });
   }
+
+  form.button(translate_textkeys("menu.settings.about", lang), "textures/ui/infobulb");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
+    dictionary_about_version(player)
+  });
 
   // Skips the main menu to settings if not needed
 
@@ -885,12 +905,14 @@ export function settings_main(player) {
 
   // Well the skip function
   if (!(condition1 || condition2 || condition3 || condition4)) {
+    form.divider()
     form.button("");
     actions.push(() => {
         player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
         main_menu(player)
     });
   } else if (hasBackButton) {
+    form.divider()
     form.button("");
     actions.push(() => {
       return main_menu_actions(player, false)[1]()
@@ -1000,6 +1022,7 @@ function settings_type(player) {
   });
 
   // Zurück-Button
+  form.divider()
   form.button("");
   actions.push(() => {
     return settings_main(player);
@@ -1029,16 +1052,15 @@ function settings_type_info(player, response) {
     player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   }
 
-  print(timer_modes[response.selection].label)
+  form.title(translate_textkeys("menu.settings.type_info.title", lang));
 
-  form.title("Information");
-  form.body("Your " + (save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch") +
-    " is not paused! If you change now the mode to " + translate_textkeys(timer_modes[response.selection].label, lang) +
-    " it will be paused!");
+
+
+  form.body(translate_textkeys("menu.settings.type_info.description", lang, {current_counting_type: save_data[player_sd_index].counting_type == 1 ? translate_textkeys("menu.mode.timer", lang) : translate_textkeys("menu.mode.stopwatch", lang), new_counting_type: translate_textkeys(timer_modes[response.selection].label, lang)}));
 
   let actions = [];
 
-  form.button1("Change to: " + translate_textkeys(timer_modes[response.selection].label, lang));
+  form.button1(translate_textkeys("menu.settings.type_info.change_to", lang, {new_counting_type: translate_textkeys(timer_modes[response.selection].label, lang)}));
   actions.push(() => {
     save_data[player_sd_index].counting_type = response.selection;
     save_data[player_sd_index].time.do_count = false;
@@ -1491,6 +1513,7 @@ export function settings_gestures(player) {
     });
   });
 
+  form.divider()
   form.button("");
   actions.push(() => {
     if (system_privileges == 1) {
@@ -1642,7 +1665,7 @@ function debug_sd_editor(player, onBack, path = []) {
       });
     });
 
-    form.button("§aAdd player");
+    form.button("§aAdd player", "textures/ui/color_plus");
     actions.push(() => {
       return debug_add_fake_player(player);
     });
@@ -1726,7 +1749,7 @@ function debug_sd_editor(player, onBack, path = []) {
     });
     // Optional: Remove player
     if (path.length === 1 && path[0] !== 0) {
-      form.button("§cRemove player");
+      form.button("§cRemove player", "textures/blocks/barrier");
       actions.push(() => {
         player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
         return handle_data_action(false, true, player, save_data[Number(path[0])], save_data[player_sd_index].lang);
