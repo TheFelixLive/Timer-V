@@ -13,6 +13,12 @@ import { debug_main } from "./menu.js";
 const soundkeys = {
 
   // Music
+
+  "music.menu.multiple_menu": {
+    extern: "timer.music.menu.multiple_menu",
+    native: "music.overworld.cherry_grove"
+  },
+
   "music.menu.main": {
     extern: "timer.music.menu.main",
     extern_l: "timeru.music.menu_0",
@@ -51,7 +57,7 @@ const soundkeys = {
     hardcore: {
       extern: "timer.music.menu.difficulty.hardcore",
       extern_l: "timeru.music.menu.difficulty",
-      native: "music.game.nether"
+      native: "record.tears"
     }
   },
   "music.menu.goal": {
@@ -67,7 +73,7 @@ const soundkeys = {
   "music.menu.dictionary": {
     extern: "timer.music.menu.dictionary",
     extern_l: "timeru.music.menu.help",
-    native: "music.menu"
+    native: "record.lava_chicken"
   },
   "music.menu.settings": {
     extern: "timer.music.menu.settings",
@@ -176,7 +182,7 @@ export function translate_soundkeys(key, player) {
     mode = "native";
   }
 
-  if (world.isHardcore && entry.hardcore) {
+  if ((world.isHardcore || idx.allow_unnecessary_inputs) && entry.hardcore) {
     return entry.hardcore[mode];
   }
 

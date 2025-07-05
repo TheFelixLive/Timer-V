@@ -3,7 +3,7 @@ import { version_info, links } from "./version.js";
 import { load_save_data, update_save_data } from "./helper_function.js";
 import { timezone_list } from "./time_zone.js";
 import { translate_soundkeys } from "./sound";
-import { setup_menu, settings_main } from "./menu.js";
+import { setup_menu, settings_main, main_menu } from "./menu.js";
 
 /*------------------------
  Kyes
@@ -597,6 +597,17 @@ const textkeys = {
     "en": "day time",
   },
 
+  /*------------------------
+    Multiple menu
+  -------------------------*/
+
+  "menu.multiple_menu.title": {
+    "en": "Multiple menu %{version}%",
+  },
+
+  "menu.multiple_menu.description": {
+    "en": "Select an addon to open it's menu",
+  },
 
   /*------------------------
     Menu - render_task_list
@@ -1235,7 +1246,7 @@ const textkeys = {
   },
 
   "menu.settings.dictionary.text": {
-    "en": "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nEdition: %{edition}%\nBuild Date: %{build_date}%\n\n%{license}%",
+    "en": "Name: %{name}%\nVersion: %{version}% (%{build}%)\nRelease Type: %{release_type}%\nEdition: %{edition}%\nUUID: %{uuid}%\nBuild Date: %{build_date}%\n\n%{license}%",
   },
 
   "menu.settings.dictionary.text.utc_empty": {

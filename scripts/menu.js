@@ -127,7 +127,27 @@ export function main_menu(player) {
 
   let actions = main_menu_actions(player, form);
 
-  if (actions.length == 1 && !save_data[0].challenge.active || (actions.length == 1 && save_data[0].challenge.active && save_data[0].challenge.progress !== 1)) return actions[0]();
+  // Skips the main menu to settings if not needed
+
+  // Hilfsvariablen für Klarheit
+  const hasOneButton = actions.length == 1;
+  const hasTwoButton = actions.length == 2;
+  const isChallengeActive = save_data[0].challenge.active;
+  const isChallengeRunning = save_data[0].challenge.progress == 1;
+  const hasBackButton = system_privileges !== 2;
+
+  // condition for a skip
+  const condition1 = !hasBackButton && hasOneButton && !isChallengeActive;
+  const condition2 = hasBackButton && hasTwoButton && !isChallengeActive;
+  const condition3 = hasOneButton && isChallengeActive && !isChallengeRunning && !hasBackButton;
+  const condition4 = hasBackButton && hasTwoButton && isChallengeActive && !isChallengeRunning;
+
+  // Well the skip function
+  if (condition1 || condition2 || condition3 || condition4) {
+      return actions[0]();
+  }
+
+
 
   form.show(player).then((response) => {
     if (response.selection == undefined ) {
@@ -363,10 +383,10 @@ function main_menu_actions(player, form) {
     settings_main(player);
   });
 
-  if (!standallone == 2) {
+  if (system_privileges !== 2) {
     if(form){form.button("")}
     actions.push(() => {
-      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      if (system_privileges == 0) player.playMusic(translate_soundkeys("menu.close", player),{fade:0.3})
       player.runCommand("/scriptevent multiple_menu:open_main")
     });
   }
@@ -848,13 +868,32 @@ export function settings_main(player) {
     });
   }
 
-  // Back to main menu
+  // Skips the main menu to settings if not needed
 
-  if (main_menu_actions(player).length > 1) {
+  // Hilfsvariablen für Klarheit
+  const hasOneButton = main_menu_actions(player, false).length == 1;
+  const hasTwoButton = main_menu_actions(player, false).length == 2;
+  const isChallengeActive = save_data[0].challenge.active;
+  const isChallengeRunning = save_data[0].challenge.progress == 1;
+  const hasBackButton = system_privileges !== 2;
+
+  // condition for a skip
+  const condition1 = !hasBackButton && hasOneButton && !isChallengeActive;
+  const condition2 = hasBackButton && hasTwoButton && !isChallengeActive;
+  const condition3 = hasOneButton && isChallengeActive && !isChallengeRunning && !hasBackButton;
+  const condition4 = hasBackButton && hasTwoButton && isChallengeActive && !isChallengeRunning;
+
+  // Well the skip function
+  if (!(condition1 || condition2 || condition3 || condition4)) {
     form.button("");
     actions.push(() => {
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-      main_menu(player)
+        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+        main_menu(player)
+    });
+  } else if (hasBackButton) {
+    form.button("");
+    actions.push(() => {
+      return main_menu_actions(player, false)[1]()
     });
   }
 
@@ -990,6 +1029,8 @@ function settings_type_info(player, response) {
     player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   }
 
+  print(timer_modes[response.selection].label)
+
   form.title("Information");
   form.body("Your " + (save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch") +
     " is not paused! If you change now the mode to " + translate_textkeys(timer_modes[response.selection].label, lang) +
@@ -997,7 +1038,7 @@ function settings_type_info(player, response) {
 
   let actions = [];
 
-  form.button1("Change to: " + translate_textkeys(timer_modes[response.selection].label), lang);
+  form.button1("Change to: " + translate_textkeys(timer_modes[response.selection].label, lang));
   actions.push(() => {
     save_data[player_sd_index].counting_type = response.selection;
     save_data[player_sd_index].time.do_count = false;
@@ -1453,7 +1494,6 @@ export function settings_gestures(player) {
   form.button("");
   actions.push(() => {
     if (system_privileges == 1) {
-      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3, loop: true });
       return multiple_menu(player);
     }
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -1684,9 +1724,8 @@ function debug_sd_editor(player, onBack, path = []) {
         }
       });
     });
-
     // Optional: Remove player
-    if (path.length === 1) {
+    if (path.length === 1 && path[0] !== 0) {
       form.button("§cRemove player");
       actions.push(() => {
         player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
@@ -1789,7 +1828,7 @@ export function dictionary_about_version(player) {
     build: ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? "§a"+translate_textkeys("menu.settings.dictionary.text.build.update", lang)+"§r" : version_info.build),
     edition: ["International", "German (BastiGHG)"][version_info.edition],
     release_type: ["dev", "preview", "stable"][version_info.release_type],
-
+    uuid: version_info.uuid,
     build_date: ((save_data[0].utc == undefined)
       ? translate_textkeys("menu.settings.dictionary.text.utc_empty", lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player)})
       : formattedDate),

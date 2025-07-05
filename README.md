@@ -229,6 +229,7 @@ In most cases, everything should work, as these older versions are no longer ava
 | v.3.6.1 |  | - | | |
 | v.3.6.0 |  | - | | |
 | v.3.5.3 | - | - | | |
+| v.3.5.2 | - | - | | |
 | v.3.5.1 | - | - | | |
 | v.3.5.0 | - | - | | |
 | v.3.4.0 | - | - | - | |

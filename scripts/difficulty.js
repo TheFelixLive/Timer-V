@@ -60,6 +60,10 @@ export function check_health(configuration) {
 
     if (configuration == "infinity") {
       if (save_data[0].challenge.difficulty == 4) {
+        // Well they are aqute and don't do anything in infinity
+        player.removeEffect("regeneration");
+        player.removeEffect("absorption");
+
         player.applyDamage(health.currentValue - 1)
       }
 

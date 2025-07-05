@@ -3,7 +3,7 @@ import { version_info } from "./version.js";
 import { goal_event, goal_entity_list, goal_entity_blocklist } from "./goal.js";
 import { translate_soundkeys } from "./sound.js";
 import { apply_design, design_template  } from "./design.js";
-import { standallone } from "./communication_system.js";
+import { system_privileges } from "./communication_system.js";
 import { translate_textkeys } from "./lang.js";
 
 /*------------------------
@@ -348,7 +348,7 @@ export function start_cm_timer() {
 
   world.getAllPlayers().forEach(t => {
     t.playSound(translate_soundkeys("challenge.starts", t));
-    t.sendMessage("§l§7[§f"+ (standallone? translate_textkeys("message.header.system", save_data[save_data.findIndex(entry => entry.id === t.id)].lang) : translate_textkeys("message.header.system.client_mode", save_data[save_data.findIndex(entry => entry.id === t.id)].lang)) + "§7]§r "+translate_textkeys("message.body.challenge_start", save_data[save_data.findIndex(entry => entry.id === t.id)].lang))
+    t.sendMessage("§l§7[§f"+ (system_privileges == 2? translate_textkeys("message.header.system", save_data[save_data.findIndex(entry => entry.id === t.id)].lang) : translate_textkeys("message.header.system.client_mode", save_data[save_data.findIndex(entry => entry.id === t.id)].lang)) + "§7]§r "+translate_textkeys("message.body.challenge_start", save_data[save_data.findIndex(entry => entry.id === t.id)].lang))
   });
 
   update_save_data(save_data);

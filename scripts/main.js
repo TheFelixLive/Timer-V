@@ -4,7 +4,7 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 import { links, version_info } from "./version.js";
 
 import { translate_textkeys } from "./lang.js";
-import { translate_soundkeys } from "./sound.js";
+import { translate_soundkeys, soundkey_test } from "./sound.js";
 
 import { check_difficulty, check_health } from "./difficulty.js";
 import { apply_design, design_template  } from "./design.js";
@@ -22,7 +22,6 @@ console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+
 import { finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
 
-// To prevent the save data from being loaded before the world is fully loaded
 system.run(() => {
 
 initialize_multiple_menu()
@@ -84,6 +83,7 @@ world.afterEvents.playerJoin.subscribe(({ playerId, playerName }) => {
 
 world.afterEvents.playerSpawn.subscribe(async(eventData) => {
   const { player, initialSpawn } = eventData;
+  if (!initialSpawn) return -1
 
   let save_data = load_save_data()
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
@@ -112,10 +112,11 @@ world.afterEvents.playerSpawn.subscribe(async(eventData) => {
 });
 
 /*------------------------
-  Hidden Fetures
+  scriptEvent Commands
 -------------------------*/
 
 system.afterEvents.scriptEventReceive.subscribe(event=> {
+  if (!event.sourceEntity) return -1
   let player = event.sourceEntity
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
@@ -148,9 +149,8 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
   API Requests
 -------------------------*/
 
-  if (!system_privileges == 2) {
-
-    if (event.id === "multiple_menu:open_c4d3852f-f902-4807-a8c8-51980fdae4c3") {
+  if (system_privileges !== 2) {
+    if (event.id === "multiple_menu:open_"+version_info.uuid) {
       initialize_main_menu(player, true);
     }
 
@@ -283,7 +283,7 @@ async function gesture_nod() {
   const now = Date.now();
 
   for (const player of world.getAllPlayers()) {
-    if (player.getGameMode() == "spectator") continue;
+    if (player.getGameMode() !== "Spectator") return -1;
 
     const { x: pitch } = player.getRotation();
 
@@ -419,7 +419,8 @@ function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-  if (system_privileges == 1) {
+  if (system_privileges == 1 && !lauched_by_addon && !lauched_by_joining) {
+    player.playSound(translate_soundkeys("menu.open", player));
     return multiple_menu(player)
   }
 
