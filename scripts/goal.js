@@ -1,6 +1,6 @@
 import { world, system, EntityTypes } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
-import { load_save_data, update_save_data } from "./helper_function.js";
+import { load_save_data, update_save_data, getRelativeTime } from "./helper_function.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys } from "./lang.js";
 import { main_menu } from "./menu.js";
@@ -214,7 +214,7 @@ export function settings_goals_main(player) {
     translate_textkeys("menu.goal.random", lang)+"\n"+translate_textkeys("menu.goal.random.subtitle", lang),
     pointer === 0 ? "textures/ui/realms_slot_check" : undefined
   );
-
+  form.divider()
   form.button("");
 
   form.show(player).then((response) => {
@@ -329,8 +329,9 @@ async function settings_goals_select(player, type) {
         : `textures/items/spawn_eggs/spawn_egg_${goal.id.replace(/^minecraft:/, "")}`);
 
     form.button(labelText, icon);
+    if (isSelected & visibleGoals.length > 1) form.divider()
   });
-
+  form.divider()
   form.button("");
   form.show(player).then((response) => {
     if (response.canceled) {

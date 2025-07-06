@@ -48,7 +48,6 @@ export function create_player_save_data(playerId, playerName, modifier) {
   // Define the default structure for a new player's save data
   const default_player_save_data_structure = (is_op_initial) => ({
     id: playerId,
-    show_td_as_mode: false,
     time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
     custom_sounds: 0,
     afk: false,
@@ -268,11 +267,6 @@ export function convert_global_to_local(disable_global) {
 
   update_save_data(save_data)
 }
-
-/*------------------------
- render_task_list (Menu)
--------------------------*/
-
 
 
 /*------------------------

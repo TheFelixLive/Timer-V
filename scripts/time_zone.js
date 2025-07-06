@@ -372,11 +372,13 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
     let end = Math.min(timezone_list.length - 1, current_zone_index + 2);
 
     if (start > 0) navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 1);
+    form.divider();
     for (let i = start; i <= end; i++) renderZoneButton(timezone_list[i], i);
+    form.divider();
     if (end < timezone_list.length - 1) navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 2);
   } else {
     if (viewing_mode === 1) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 0);
-    if (viewing_mode === 2 && current_zone_index !== 0) navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 3);
+    if (viewing_mode === 2 && current_zone_index !== 0) {navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 3); form.divider();}
     if (viewing_mode === 3 && current_utc !== undefined) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 2);
 
     renderZones(i =>
@@ -385,7 +387,7 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
       (viewing_mode === 2 && i >= current_zone_index)
     );
 
-    if (viewing_mode === 1 && current_zone_index !== timezone_list.length) navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 3);
+    if (viewing_mode === 1 && current_zone_index !== timezone_list.length) {form.divider(); navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 3);}
     if (viewing_mode === 2) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 0);
     if (viewing_mode === 3 && current_utc !== undefined) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 1);
   }

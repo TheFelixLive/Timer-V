@@ -190,6 +190,7 @@ function main_menu_actions(player, form) {
   if (!save_data[0].global.status || save_data[0].global.status && save_data[player_sd_index].op) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
+      // Control
       if (((timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) && (!save_data[player_sd_index].afk || save_data[0].global.status || timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] == 0) &&  !save_data[0].challenge.active)  || (save_data[0].challenge.active && save_data[0].challenge.progress == 1 && (!world.isHardcore || world.isHardcore && save_data[player_sd_index].allow_unnecessary_inputs))) {
         if(form){form.button(translate_textkeys("message.header.condition", lang)+" " + (world.isHardcore? translate_textkeys("menu.item_experimental", save_data[player_sd_index].lang) +"§r\n" : "\n") + (timedata.time.do_count === true ? "§a"+translate_textkeys("menu.main.condition.resumed", lang) : "§c"+translate_textkeys("menu.main.condition.paused", lang)), (timedata.time.do_count === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
         actions.push(() => {
@@ -229,7 +230,9 @@ function main_menu_actions(player, form) {
         });
       }
 
+
       if (timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] > 0 && !save_data[0].challenge.active) {
+        // AFK
         if (!save_data[0].global.status) {
           if(form){form.button(translate_textkeys("menu.main.afk.title", lang)+"\n" + (save_data[player_sd_index].afk === true ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].afk === true ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))}
           actions.push(() => {
@@ -237,13 +240,14 @@ function main_menu_actions(player, form) {
               save_data[player_sd_index].afk = false
             } else {
               save_data[player_sd_index].afk = true
+              save_data[player_sd_index].time.do_count = true
             }
 
             update_save_data(save_data);
             main_menu(player);
           });
         }
-
+        // Reset timer
         if(form){form.button("§c"+translate_textkeys("menu.main.reset.title", lang, {mode: (timedata.counting_type == 1 ? translate_textkeys("menu.mode.timer", save_data[player_sd_index].lang) : translate_textkeys("menu.mode.stopwatch", save_data[player_sd_index].lang))}), "textures/ui/recap_glyph_color_2x")}
         actions.push(() => {
           timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
@@ -263,6 +267,7 @@ function main_menu_actions(player, form) {
     const challenge = save_data[0].challenge;
     const isHardcore = difficulty[challenge.difficulty].is_hardcore;
 
+    // Give up
     if (challenge.progress === 1) {
       if (form) form.button("§c"+translate_textkeys("menu.popup.give_up", lang), "textures/blocks/barrier");
       actions.push(() => {
@@ -270,9 +275,9 @@ function main_menu_actions(player, form) {
       });
     }
 
+    // Reset Challenge
     if (challenge.progress === 2 && (isHardcore && challenge.rating === 1 || !isHardcore)) {
       if (form) form.button("§a"+translate_textkeys("menu.main.reset.title.ca", lang), "textures/ui/recap_glyph_color_2x");
-
       actions.push(() => {
         if (challenge.rating === 1) {
           challenge.goal.pointer = 0;
@@ -289,13 +294,14 @@ function main_menu_actions(player, form) {
       });
     }
 
-
+    // Challenge Default
     if (challenge.active && challenge.progress == 0) {
       if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
         if (form) form.button("§2" + translate_textkeys("menu.popup.ca.start", lang) +"\n", "textures/gui/controls/right");
         actions.push(() => {
           splash_start_challenge(player);
         });
+        if(form) form.divider()
       }
 
       if (form) form.button({rawtext:
@@ -322,16 +328,8 @@ function main_menu_actions(player, form) {
       });
     }
 
-
-    if (save_data[player_sd_index].op && !challenge.active && timedata.counting_type !== 2) {
-      if(form){form.button(translate_textkeys("menu.popup.shared_timer.title", lang)+ "\n§9" + (save_data[0].global.status ? translate_textkeys("menu.popup.shared_timer.by", lang, {player: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name}) : translate_textkeys("menu.toggle_off", lang)), "textures/ui/FriendsIcon")};
-      actions.push(() => {
-        splash_globalmode(player);
-      });
-    }
-
     // "Change / add time" button
-    if (!(challenge.active && challenge.progress > 0) && timedata.counting_type !== 2) {
+    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || timedata.counting_type == 0 && save_data[player_sd_index].afk)) {
       if (form) {
         form.button(
           (challenge.active ? translate_textkeys("menu.start_time.title.ca", lang)+"\n" : translate_textkeys("menu.start_time.title", lang)+"\n") +
@@ -353,28 +351,7 @@ function main_menu_actions(player, form) {
     }
   }
 
-
-  if ((save_data[player_sd_index].time_day_actionbar == true || timedata.counting_type == 3) && save_data[0].challenge.progress == 0) {
-    if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
-      if(form){form.button(translate_textkeys("menu.main.sync_day_time", lang)+"\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
-      actions.push(() => {
-        if (!save_data[0].sync_day_time) {
-          save_data[0].sync_day_time = true;
-        } else {1
-          save_data[0].sync_day_time = false;
-        }
-        update_save_data(save_data);
-        main_menu(player);
-      });
-    }
-  }
-
-  if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && version_info.edition !== 1) {
-    if(form){form.button(translate_textkeys("menu.popup.ca.title", lang)+"\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
-    actions.push(() => {
-      splash_challengemode(player);
-    });
-  }
+  if(form && save_data[0].challenge.progress !== 1) form.divider()
 
   // Button: Settings
   if(form){form.button(translate_textkeys("menu.settings.title", lang), "textures/ui/automation_glyph_color")}
@@ -383,6 +360,7 @@ function main_menu_actions(player, form) {
     settings_main(player);
   });
 
+  // Multimenu
   if (system_privileges !== 2) {
     if(form){form.button("")}
     actions.push(() => {
@@ -390,7 +368,6 @@ function main_menu_actions(player, form) {
       player.runCommand("/scriptevent multiple_menu:open_main")
     });
   }
-
 
   return actions
 }
@@ -498,73 +475,8 @@ import { settings_goals_main, render_task_list, goal_event } from "./goal.js";
 import { settings_difficulty } from "./difficulty.js";
 
 /*------------------------
-    splash screens
+  Challenge Mode start / stop splash screens
 -------------------------*/
-
-function splash_challengemode(player, in_setup) {
-  let form = new ActionFormData();
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-  let lang = save_data[player_sd_index].lang
-
-  form.title(translate_textkeys("menu.popup.ca.title", lang));
-  form.body(
-    (!save_data[0].challenge.active
-      ? translate_textkeys("menu.popup.ca.description", lang)
-      : translate_textkeys("menu.popup.ca.description_in_ca", lang))
-    + "\n\n§7"+ translate_textkeys("menu.popup.ca.note", lang) +"\n\n"
-  );
-
-  form.button(!save_data[0].challenge.active ? "§a"+translate_textkeys("menu.enable", lang): "§c"+translate_textkeys("menu.disable", lang));
-  form.button(in_setup? translate_textkeys("menu.button_skip", lang) : "");
-
-
-  form.show(player).then((response) => {
-    if (response.canceled) {
-      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
-      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-    }
-
-    if (response.selection == 0) {
-      // Disable
-      if (save_data[0].challenge.active) {
-        convert_local_to_global(save_data[0].global.last_player_id);
-        save_data = load_save_data()
-
-      } /* Enable */ else {
-        if (in_setup) {
-          if (!save_data[0].global.status) convert_local_to_global(player.id); save_data = load_save_data()
-        }
-        convert_global_to_local(false);
-        save_data = load_save_data()
-
-        save_data[0].time.do_count = false
-        save_data[0].time.timer = 0
-        save_data[0].time.stopwatch = 0
-        world.setTimeOfDay(0);
-        world.getDimension("overworld").setWeather("Clear");
-
-        if (save_data[0].counting_type == 0 && save_data[0].challenge.goal.pointer == 2 && save_data[0].challenge.goal.event_pos == 0) {
-          save_data[0].challenge.goal.pointer = 0
-        }
-      }
-
-      save_data[0].challenge.active = save_data[0].challenge.active ? false : true,
-      update_save_data(save_data);
-      if (!in_setup) {
-        if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-      }
-    }
-    if (in_setup) {
-      save_data[player_sd_index].setup = 100
-      update_save_data(save_data);
-      return setup_menu(player);
-    }
-
-    return main_menu(player)
-  });
-}
 
 function splash_start_challenge(player) {
   let form = new MessageFormData();
@@ -626,64 +538,6 @@ function splash_end_challenge(player) {
   });
 }
 
-function splash_globalmode(player) {
-  let form = new ActionFormData();
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
-  let lang = save_data[player_sd_index].lang
-  let design = (typeof save_data[player_sd_index].design === "number"? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "ui");
-  let actions = [];
-
-  form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
-
-  form.body(translate_textkeys("menu.popup.shared_timer.description", lang, {
-    replace_text: save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? translate_textkeys("menu.popup.shared_timer.description.replace_time", lang, {name: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name, own_time: apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"])}) : "" :
-    translate_textkeys("menu.popup.shared_timer.description.contol", lang)
-  }));
-
-  if (save_data[0].global.status) {
-    if (save_data[0].global.last_player_id !== player.id) {
-      form.button("§e"+translate_textkeys("menu.popup.shared_timer.yours_instead", lang));
-      actions.push(() => {
-        convert_global_to_local(true);
-        convert_local_to_global(player.id);
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-      });
-    }
-
-    form.button("§c"+translate_textkeys("menu.disable", lang));
-    actions.push(() => {
-      convert_global_to_local(true);
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-    });
-
-
-
-  } else {
-    form.button("§a"+translate_textkeys("menu.enable", lang));
-    actions.push(() => {
-      convert_local_to_global(player.id)
-      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-    });
-  }
-
-  form.button("");
-  actions.push(() => {});
-
-
-  form.show(player).then((response) => {
-    if (response.selection == undefined ) {
-      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-    }
-
-    if (actions[response.selection]) {
-      actions[response.selection]();
-      main_menu(player);
-    }
-  });
-
-}
-
 /*------------------------
  Settings
 -------------------------*/
@@ -698,7 +552,11 @@ export function settings_main(player) {
   form.title(translate_textkeys("menu.settings.title", lang));
   form.body(translate_textkeys("menu.general.description", lang));
 
-  // Button 0: Type
+  /*------------------------
+    Timer
+  -------------------------*/
+
+  // Type
   if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
     form.label(translate_textkeys("menu.settings.label.timer", lang))
     form.button(
@@ -707,13 +565,26 @@ export function settings_main(player) {
       timer_modes[save_data[save_data[0].global.status ? 0 : player_sd_index].counting_type].icon
     );
     actions.push(() => settings_type(player));
+
+    // Challenge Mode
+    if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && version_info.edition !== 1) {
+      if(form){form.button(translate_textkeys("menu.popup.ca.title", lang)+"\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
+      actions.push(() => {
+        splash_challengemode(player);
+      });
+    }
+
+
     form.divider()
   }
 
+  /*------------------------
+   your_self
+  -------------------------*/
 
   form.label(translate_textkeys("menu.settings.label.your_self", lang))
 
-  // Button 2.7: Language
+  // Language
   if (version_info.edition !== 1) {
     form.button(translate_textkeys("menu.settings.lang.title", lang)+"\n§r§9"+supportedLangs.find(l=> l.id == lang).name, "textures/ui/language_glyph_color");
     actions.push(() => {
@@ -722,14 +593,14 @@ export function settings_main(player) {
     });
   }
 
-  // Button 2: Actionbar
+  // Actionbar
   form.button(translate_textkeys("menu.settings.actionbar.title", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/brewing_fuel_bar_empty");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3 , loop: true})
     settings_actionbar(player)
   });
 
-  // Button 2.5: Gestures
+  // Gestures
   if (system_privileges == 2) {
     form.button(translate_textkeys("menu.settings.gestures.title", lang), "textures/ui/sidebar_icons/emotes");
     actions.push(() => {
@@ -738,9 +609,11 @@ export function settings_main(player) {
     });
   }
 
+  /*------------------------
+   multiplayer
+  -------------------------*/
 
-
-  // Button 1: Permission
+  // Permission
   if (save_data[player_sd_index].op) {
     form.divider()
     form.label(translate_textkeys("menu.settings.label.multiplayer", lang))
@@ -765,8 +638,15 @@ export function settings_main(player) {
     }
   }
 
+  // shared_timer
+  if (save_data[player_sd_index].op && !save_data[0].challenge.active && save_data[player_sd_index].counting_type <= 1) {
+    if(form){form.button(translate_textkeys("menu.popup.shared_timer.title", lang)+ "\n§9" + (save_data[0].global.status ? translate_textkeys("menu.popup.shared_timer.by", lang, {player: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name}) : translate_textkeys("menu.toggle_off", lang)), "textures/ui/FriendsIcon")};
+    actions.push(() => {
+      splash_globalmode(player);
+    });
+  }
 
-  // Button 3: Time zone
+  // Time zone
   if (save_data[player_sd_index].op == true && version_info.edition !== 1) {
     if(form) {
       let zone = timezone_list.find(zone => zone.utc === save_data[0].utc), zone_text;
@@ -793,10 +673,14 @@ export function settings_main(player) {
     });
   }
 
+  /*------------------------
+   features
+  -------------------------*/
+
   form.divider()
   form.label(translate_textkeys("menu.settings.label.features", lang))
 
-  // Button 4: Fullbright
+  // Fullbright
   form.button(translate_textkeys("menu.settings.fullbright", save_data[player_sd_index].lang)+"\n" + (save_data[player_sd_index].fullbright ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[player_sd_index].fullbright ? "textures/items/potion_bottle_nightVision" : "textures/items/potion_bottle_empty"));
   actions.push(() => {
     if (!save_data[player_sd_index].fullbright) {
@@ -810,7 +694,7 @@ export function settings_main(player) {
   });
 
 
-  // Button 5: Custom Sounds
+  // Custom Sounds
   if (version_info.edition !== 1) {
     form.button(translate_textkeys("menu.settings.cs.title", lang)+ "\n" + (save_data[player_sd_index].custom_sounds > 0 ? save_data[player_sd_index].custom_sounds == 1 ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : "§aon (legacy)" : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[player_sd_index].custom_sounds > 0 ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
     actions.push(() => {
@@ -825,13 +709,32 @@ export function settings_main(player) {
     });
   }
 
+  // Daytime-Sync
+  if ((save_data[player_sd_index].time_day_actionbar == true || save_data[player_sd_index].counting_type == 3) && save_data[0].challenge.progress == 0) {
+    if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
+      if(form){form.button(translate_textkeys("menu.main.sync_day_time", lang)+"\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
+      actions.push(() => {
+        if (!save_data[0].sync_day_time) {
+          save_data[0].sync_day_time = true;
+        } else {1
+          save_data[0].sync_day_time = false;
+        }
+        update_save_data(save_data);
+        settings_main(player);
+      });
+    }
+  }
+
+  /*------------------------
+   advanced_settings
+  -------------------------*/
 
   if (version_info.release_type !== 2 || save_data[player_sd_index].op == true && version_info.edition !== 1) {
     form.divider()
     form.label(translate_textkeys("menu.settings.label.advanced_settings", lang))
   }
 
-  // Button 5.5: Disable Setup
+  // Disable Setup
   if (save_data[player_sd_index].op == true && version_info.edition !== 1) {
     form.button(translate_textkeys("menu.settings.disable_setup", lang)+ "\n" + (!save_data[0].use_setup ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), !save_data[0].use_setup ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
     actions.push(() => {
@@ -845,7 +748,7 @@ export function settings_main(player) {
     });
   }
 
-  // Button 6: Experimental features
+  // Experimental features
   if (version_info.release_type !== 2) {
     form.button(translate_textkeys("menu.settings.experimental_features", lang)+"\n" + (save_data[player_sd_index].allow_unnecessary_inputs ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), "textures/ui/Add-Ons_Nav_Icon36x36");
     actions.push(() => {
@@ -859,7 +762,7 @@ export function settings_main(player) {
     });
   }
 
-  // Button 7: Debug
+  // Debug
   if (version_info.release_type === 0 && save_data[player_sd_index].op) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => {
@@ -868,10 +771,14 @@ export function settings_main(player) {
     });
   }
 
+  /*------------------------
+   version
+  -------------------------*/
+
   form.divider()
   form.label(translate_textkeys("menu.settings.label.version", lang))
 
-  // Button 8: Update / Dictionary
+  // Convert
   let gen = uu_find_gen()
 
   if (typeof(gen) === 'number' && save_data[player_sd_index].op && version_info.edition !== 1) {
@@ -882,11 +789,16 @@ export function settings_main(player) {
     });
   }
 
+  // Dictionary
   form.button(translate_textkeys("menu.settings.about", lang), "textures/ui/infobulb");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
     dictionary_about_version(player)
   });
+
+  /*------------------------
+   Main menu
+  -------------------------*/
 
   // Skips the main menu to settings if not needed
 
@@ -931,7 +843,7 @@ export function settings_main(player) {
 }
 
 /*------------------------
-    Type Settings
+  Type Settings
 -------------------------*/
 
 const timer_modes = [
@@ -954,7 +866,7 @@ const timer_modes = [
     label: "menu.mode.day_time",
     icon: "textures/environment/sun",
     show_if: (save_data, player_sd_index) => {
-      return !save_data[0].global.status && save_data[player_sd_index].show_td_as_mode;
+      return !save_data[0].global.status && save_data[player_sd_index].allow_unnecessary_inputs;
     }
   }
 ];
@@ -1083,6 +995,135 @@ function settings_type_info(player, response) {
       actions[response_2.selection]();
     }
   });
+}
+
+/*------------------------
+  Challenge Mode
+-------------------------*/
+
+function splash_challengemode(player, in_setup) {
+  let form = new MessageFormData();
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
+
+  form.title(translate_textkeys("menu.popup.ca.title", lang));
+  form.body(
+    (!save_data[0].challenge.active
+      ? translate_textkeys("menu.popup.ca.description", lang)
+      : translate_textkeys("menu.popup.ca.description_in_ca", lang))
+    + "\n\n§7"+ translate_textkeys("menu.popup.ca.note", lang) +"\n\n"
+  );
+
+  form.button1(!save_data[0].challenge.active ? "§a"+translate_textkeys("menu.enable", lang): "§c"+translate_textkeys("menu.disable", lang));
+  form.button2(in_setup? translate_textkeys("menu.button_skip", lang) : "");
+
+
+  form.show(player).then((response) => {
+    if (response.canceled) {
+      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+    if (response.selection == 0) {
+      // Disable
+      if (save_data[0].challenge.active) {
+        convert_local_to_global(save_data[0].global.last_player_id);
+        save_data = load_save_data()
+
+      } /* Enable */ else {
+        if (in_setup) {
+          if (!save_data[0].global.status) convert_local_to_global(player.id); save_data = load_save_data()
+        }
+        convert_global_to_local(false);
+        save_data = load_save_data()
+
+        save_data[0].time.do_count = false
+        save_data[0].time.timer = 0
+        save_data[0].time.stopwatch = 0
+        world.setTimeOfDay(0);
+        world.getDimension("overworld").setWeather("Clear");
+
+        if (save_data[0].counting_type == 0 && save_data[0].challenge.goal.pointer == 2 && save_data[0].challenge.goal.event_pos == 0) {
+          save_data[0].challenge.goal.pointer = 0
+        }
+      }
+
+      save_data[0].challenge.active = save_data[0].challenge.active ? false : true,
+      update_save_data(save_data);
+      if (!in_setup) {
+        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+      }
+      return main_menu(player)
+    }
+
+    if (in_setup) {
+      save_data[player_sd_index].setup = 100
+      update_save_data(save_data);
+      return setup_menu(player);
+    }
+
+    return settings_main(player)
+  });
+}
+
+/*------------------------
+    shared_timer
+-------------------------*/
+
+function splash_globalmode(player) {
+  let form = new ActionFormData();
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
+  let lang = save_data[player_sd_index].lang
+  let design = (typeof save_data[player_sd_index].design === "number"? design_template.find(t => t.id == save_data[player_sd_index].design).content : save_data[player_sd_index].design).find(item => item.type === "ui");
+  let actions = [];
+
+  form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
+
+  form.body(translate_textkeys("menu.popup.shared_timer.description", lang, {
+    replace_text: save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? translate_textkeys("menu.popup.shared_timer.description.replace_time", lang, {name: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name, own_time: apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"])}) : "" :
+    translate_textkeys("menu.popup.shared_timer.description.contol", lang)
+  }));
+
+  if (save_data[0].global.status) {
+    if (save_data[0].global.last_player_id !== player.id) {
+      form.button("§e"+translate_textkeys("menu.popup.shared_timer.yours_instead", lang));
+      actions.push(() => {
+        convert_global_to_local(true);
+        convert_local_to_global(player.id);
+      });
+    }
+
+    form.button("§c"+translate_textkeys("menu.disable", lang));
+    actions.push(() => {
+      convert_global_to_local(true);
+    });
+
+
+
+  } else {
+    form.button("§a"+translate_textkeys("menu.enable", lang));
+    actions.push(() => {
+      convert_local_to_global(player.id)
+    });
+  }
+
+  form.button("");
+  actions.push(() => {});
+
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+    if (actions[response.selection]) {
+      actions[response.selection]();
+      settings_main(player);
+    }
+  });
+
 }
 
 /*------------------------
@@ -1614,6 +1655,15 @@ export function debug_main(player) {
     return soundkey_test(player, undefined)
   });
 
+  form.button("§cReset Design");
+  actions.push(() => {
+    save_data[player_sd_index].design = 0
+    update_save_data(save_data)
+    return debug_main(player)
+  });
+
+
+  form.divider()
   form.button("");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -1670,10 +1720,13 @@ function debug_sd_editor(player, onBack, path = []) {
       return debug_add_fake_player(player);
     });
 
+    form.divider()
     form.button(""); // Back (no action needed here)
 
     form.show(player).then(res => {
-      if (res.canceled) return;
+      if (res.selection == undefined) {
+        return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      }
       if (res.selection === current.length + 1) { // Back button index
         return onBack();
       }
@@ -1757,6 +1810,7 @@ function debug_sd_editor(player, onBack, path = []) {
     }
 
     // Zurück-Button
+    form.divider()
     form.button("");
     actions.push(() => onBack());
 
@@ -1870,7 +1924,7 @@ export function dictionary_about_version(player) {
   actions.push(() => {
     dictionary_contact(player, build_date)
   });
-
+  form.divider()
   form.button("");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -1905,13 +1959,12 @@ function dictionary_contact(player, build_date) {
 
   let actions = []
   form.title(translate_textkeys("menu.settings.dictionary.contact.title", lang))
-  let message = translate_textkeys("menu.settings.dictionary.contact.description", lang) + "\n\n";
+  form.body(translate_textkeys("menu.settings.dictionary.contact.description", lang) + "\n")
 
   for (const entry of links) {
-    message += `${entry.name} ${entry.link}\n\n`;
+    if (entry !== links[0]) form.divider()
+    form.label(`${entry.name}\n${entry.link}`);
   }
-
-  form.body(message);
 
   if (save_data[player_sd_index].op) {
     form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang) + (version_info.release_type !== 2? "\n"+translate_textkeys("menu.settings.dictionary.contact.sd.mode_0", lang) : ""));
@@ -1928,7 +1981,7 @@ function dictionary_contact(player, build_date) {
       });
     }
   }
-
+  form.divider()
   form.button("");
   actions.push(() => {
     dictionary_about_version(player, build_date)
@@ -1945,43 +1998,45 @@ function dictionary_contact(player, build_date) {
 }
 
 export function dictionary_about_version_changelog(player, build_date) {
-  let form = new ActionFormData()
   let save_data = load_save_data()
   let player_sd_index = save_data.findIndex(e => e.id === player.id);
   let lang = save_data[player_sd_index].lang;
 
+  const { new_features, general_changes, bug_fixes } = version_info.changelog;
+  const sections = [
+    { title: "§l§b"+translate_textkeys("menu.settings.dictionary.changelog.new_features", lang)+"§r", items: new_features },
+    { title: "§l§a"+translate_textkeys("menu.settings.dictionary.changelog.general_changes", lang)+"§r", items: general_changes },
+    { title: "§l§c"+translate_textkeys("menu.settings.dictionary.changelog.bug_fixes", lang)+"§r", items: bug_fixes }
+  ];
 
-  form.title(translate_textkeys("menu.settings.dictionary.changelog.title", lang)+" - "+version_info.version)
-  let bodyText = "";
-  if (version_info.changelog.new_features.length > 0) {
-    bodyText += "§l§b"+ translate_textkeys("menu.settings.dictionary.changelog.new_features", lang) +"§r\n\n";
-    version_info.changelog.new_features.forEach(feature => {
-      bodyText += `- ${feature}\n\n`;
-    });
+  const form = new ActionFormData().title(translate_textkeys("menu.settings.dictionary.changelog.title", lang)+" - "+version_info.version)
+
+  let bodySet = false;
+  for (let i = 0; i < sections.length; i++) {
+    const { title, items } = sections[i];
+    if (items.length === 0) continue;
+
+    const content = title + "\n\n" + items.map(i => `- ${i}`).join("\n\n");
+
+    if (!bodySet) {
+      form.body(content);
+      bodySet = true;
+    } else {
+      form.label(content);
+    }
+
+    // Add divider if there's at least one more section with items
+    if (sections.slice(i + 1).some(s => s.items.length > 0)) {
+      form.divider();
+    }
   }
 
-  if (version_info.changelog.general_changes.length > 0) {
-    bodyText += "§l§a"+ translate_textkeys("menu.settings.dictionary.changelog.general_changes", lang) +"§r\n\n";
-    version_info.changelog.general_changes.forEach(change => {
-      bodyText += `- ${change}\n\n`;
-    });
-  }
-
-  if (version_info.changelog.bug_fixes.length > 0) {
-    bodyText += "§l§c"+ translate_textkeys("menu.settings.dictionary.changelog.bug_fixes", lang) +"§r\n\n";
-    version_info.changelog.bug_fixes.forEach(fix => {
-      bodyText += `- ${fix}\n\n`;
-    });
-  }
-
-  bodyText += "§7" + translate_textkeys("menu.settings.dictionary.changelog.build", lang, {
+  form.label("§7"+translate_textkeys("menu.settings.dictionary.changelog.build", lang, {
     day: build_date.day,
     month: build_date.month,
     year: build_date.year,
     relative_time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player)
-  });
-
-  form.body(bodyText);
+  }));
   form.button("");
 
   form.show(player).then((response) => {

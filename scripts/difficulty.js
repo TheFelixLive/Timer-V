@@ -105,7 +105,7 @@ export function settings_difficulty(player) {
       visibleDifficulties.push({ diff, index });
     }
   });
-
+  form.divider()
   form.button("");
 
   form.show(player).then((response) => {

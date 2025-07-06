@@ -885,14 +885,22 @@ export function settings_actionbar(player) {
   form.title(translate_textkeys("menu.settings.actionbar.title", lang));
   form.body(translate_textkeys("menu.general.description", lang));
 
-  form.button(
-    translate_textkeys("menu.settings.actionbar.design.button", lang)+"\n" + render_live_actionbar(save_data[player_sd_index], false),
-    "textures/ui/mashup_PaintBrush"
-  );
+  /*------------------------
+    Change the look!
+  -------------------------*/
+
+  form.button(translate_textkeys("menu.settings.actionbar.design.button", lang) +"\n" + render_live_actionbar(save_data[player_sd_index], false), "textures/ui/mashup_PaintBrush");
   actions.push(() => {
-    design_template_ui(player);
     player.playMusic(translate_soundkeys("music.menu.settings.actionbar.design", player), { fade: 0.3, loop: true });
+    return design_template_ui(player);
   });
+
+
+
+
+  /*------------------------
+    Enable the actionbar
+  -------------------------*/
 
   form.button(
     translate_textkeys("menu.settings.actionbar.using", lang)+ "\n" + (save_data[player_sd_index].visibility_setting ? save_data[player_sd_index].absolute_visibility !== save_data[player_sd_index].visibility_setting? translate_textkeys("menu.toggle_dynamic", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)),
@@ -902,8 +910,12 @@ export function settings_actionbar(player) {
   actions.push(() => {
     save_data[player_sd_index].visibility_setting = !save_data[player_sd_index].visibility_setting;
     update_save_data(save_data);
-    settings_actionbar(player);
+    return settings_actionbar(player);
   });
+
+  /*------------------------
+    Real Time
+  -------------------------*/
 
   if (save_data[player_sd_index].counting_type !== 3) {
     form.button(
@@ -913,7 +925,7 @@ export function settings_actionbar(player) {
     actions.push(() => {
       save_data[player_sd_index].time_day_actionbar = !save_data[player_sd_index].time_day_actionbar;
       update_save_data(save_data);
-      settings_actionbar(player);
+      return settings_actionbar(player);
     });
   }
 
@@ -927,7 +939,7 @@ export function settings_actionbar(player) {
           save_data[player_sd_index].time_source = 0;
         }
         update_save_data(save_data);
-        settings_actionbar(player);
+        return settings_actionbar(player);
       });
     } else if (save_data[0].utc !== undefined) {
       save_data[player_sd_index].time_source = 1
@@ -936,6 +948,7 @@ export function settings_actionbar(player) {
   }
 
   // 5. back-Button
+  form.divider()
   form.button("");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
@@ -954,59 +967,73 @@ export function settings_actionbar(player) {
 }
 
 function design_template_ui(player) {
-  let form = new ActionFormData();
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  const form = new ActionFormData();
+  const actions = [];
+  const save_data = load_save_data();
+  const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  const lang = save_data[player_sd_index].lang;
 
+  form.title(translate_textkeys("menu.settings.actionbar.design.title", lang));
+  form.body(translate_textkeys("menu.settings.actionbar.design.description", lang));
 
-
-  form.title(translate_textkeys("menu.settings.actionbar.design.title", save_data[player_sd_index].lang));
-  form.body(translate_textkeys("menu.settings.actionbar.design.description", save_data[player_sd_index].lang));
-
-  var currentDesign = save_data[player_sd_index].design;
-
-  if (typeof save_data[player_sd_index].design == "number") {
-    currentDesign = design_template.find(t => t.id == save_data[player_sd_index].design).content
+  let currentDesign = save_data[player_sd_index].design;
+  if (typeof currentDesign === "number") {
+    currentDesign = design_template.find(t => t.id === currentDesign)?.content;
   }
 
-  let sortedDesigns = design_template
-    .filter(design => {
-      return (save_data[player_sd_index].allow_unnecessary_inputs || design.content !== undefined) && design.edition.includes(version_info.edition);
-    })
-    .sort((a, b) => (b.content === currentDesign) - (a.content === currentDesign));
+  const sortedDesigns = design_template
+    .filter(design =>
+      (save_data[player_sd_index].allow_unnecessary_inputs || design.content !== undefined) &&
+      design.edition.includes(version_info.edition)
+    )
+    .sort((a, b) =>
+      (JSON.stringify(b.content) === JSON.stringify(currentDesign)) - (JSON.stringify(a.content) === JSON.stringify(currentDesign))
+    );
 
-
-  let hasMatchingDesign = sortedDesigns.some(design => JSON.stringify(design.content) === JSON.stringify(currentDesign));
+  const hasMatchingDesign = sortedDesigns.some(d => JSON.stringify(d.content) === JSON.stringify(currentDesign));
+  let dividerInserted = false;
 
   sortedDesigns.forEach((design) => {
-    let buttonText = design.name + "\n" // + (apply_design(design.content.find(d => d.type === "screen_saver"), 0)+ " "); // Looks a bit off
-    if (JSON.stringify(design.content) === JSON.stringify(currentDesign) || (!hasMatchingDesign && design.content === undefined)) {
-      buttonText += "§r"+translate_textkeys("menu.item_selected", save_data[player_sd_index].lang);
+    const isCurrent = JSON.stringify(design.content) === JSON.stringify(currentDesign);
+    const isFirstNonCurrent = !isCurrent && !dividerInserted;
+
+    if (isFirstNonCurrent) {
+      form.divider();
+      dividerInserted = true;
     }
+
+    let buttonText = design.name + "\n";
+    if (isCurrent || (!hasMatchingDesign && design.content === undefined)) {
+      buttonText += "§r" + translate_textkeys("menu.item_selected", lang);
+    }
+
     form.button(buttonText);
+    actions.push(() => {
+      if (design.content === undefined) {
+        // return design_maker(player); // <- Optional: wieder aktivieren
+        return;
+      }
+      return design_preview(player, design.content, false);
+    });
   });
 
+  form.divider();
   form.button("");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3, loop: true });
+    return settings_actionbar(player);
+  });
 
   form.show(player).then((response) => {
-    if (response.selection == undefined ) {
+    if (response.selection === undefined) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (response.selection === sortedDesigns.length) {
-      player.playMusic(translate_soundkeys("music.menu.settings.actionbar", player), { fade: 0.3, loop: true });
-      return settings_actionbar(player);
-
-    } else {
-      let selectedDesign = sortedDesigns[response.selection];
-
-      if (selectedDesign.content === undefined) {
-        return //design_maker(player)
-      } else {
-        return design_preview(player, selectedDesign.content, false);
-      }
-    }
+    const action = actions[response.selection];
+    if (typeof action === "function") action();
   });
 }
+
+
 
 function design_preview(player, design, is_custom) {
   let form = new ActionFormData();
@@ -1024,6 +1051,23 @@ function design_preview(player, design, is_custom) {
 
   let screen_saver_preview = apply_design(design.find(d => d.type === "screen_saver"), 0)
 
+  form.body(translate_textkeys("menu.settings.actionbar.design.preview.description", save_data[player_sd_index].lang))
+
+  form.label("§l" + translate_textkeys("menu.settings.actionbar.design.preview.label.screen_saver", save_data[player_sd_index].lang) + ": §r" + screen_saver_preview + "§r");
+  form.divider();
+  form.label("§l" + translate_textkeys("menu.settings.actionbar.design.preview.label.ui", save_data[player_sd_index].lang) + ": §r" + ui_preview + "§r");
+  form.divider();
+  form.label("§l" + translate_textkeys("menu.settings.actionbar.design.preview.label.normal", save_data[player_sd_index].lang) + ": §r" + normal_preview + "§r");
+  form.divider();
+  form.label("§l" + translate_textkeys("menu.settings.actionbar.design.preview.label.paused", save_data[player_sd_index].lang) + ": §r" + paused_preview + "§r");
+  form.divider();
+  form.label("§l" + translate_textkeys("menu.settings.actionbar.design.preview.label.finished", save_data[player_sd_index].lang) + ": §r" + finished_preview + "§r");
+  form.divider();
+  form.label("§l" + translate_textkeys("menu.settings.actionbar.design.preview.label.day_time", save_data[player_sd_index].lang) + ": §r" + day_preview + "§r");
+
+
+
+  /*
   form.body(translate_textkeys(
     "menu.settings.actionbar.design.preview",
     save_data[player_sd_index].lang,
@@ -1036,7 +1080,7 @@ function design_preview(player, design, is_custom) {
       day: day_preview
     }
   ));
-
+  */
 
   form.button(translate_textkeys("menu.settings.actionbar.design.preview.apply", save_data[player_sd_index].lang));
 

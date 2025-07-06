@@ -21,6 +21,7 @@ console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+
 // Load & Save Save data
 import { finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
+let is_design_in_sorrage = false
 
 system.run(() => {
 
@@ -570,6 +571,12 @@ async function update_loop() {
         save_data = load_save_data();
         let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
+      if (!is_design_in_sorrage && typeof save_data[player_sd_index].design !== "number") {
+        print("design got printed to sorrage")
+        is_design_in_sorrage = true
+      }
+
+
         save_data[player_sd_index].last_unix = Math.floor(Date.now() / 1000) // Update last unix time
 
         // AFK
@@ -661,26 +668,32 @@ update_loop();
 
 export function render_live_actionbar(selected_save_data, do_update) {
   const data = load_save_data();
-
   let tv = calcAB(do_update, selected_save_data.id, false);
-  if (typeof selected_save_data.design === "number")
-    selected_save_data.design = design_template.find(item => item.id == selected_save_data.design).content;
+
+  const design = typeof selected_save_data.design === "number"
+    ? design_template.find(item => item.id == selected_save_data.design)?.content
+    : selected_save_data.design;
+
+  if (!Array.isArray(design)) {
+    console.warn("Invalid or missing design");
+    return "";
+  }
 
   let d0, d1;
   if (selected_save_data.counting_type !== 3) {
-    if (data[0].challenge.progress == 2) {
-      d0 = selected_save_data.design.find(d => d.type === "finished");
+    if (data[0]?.challenge?.progress == 2) {
+      d0 = design.find(d => d.type === "finished");
     } else {
       d0 = tv.do_count
-        ? selected_save_data.design.find(d => d.type === "normal")
+        ? design.find(d => d.type === "normal")
         : (tv.value === 0
-            ? selected_save_data.design.find(d => d.type === "screen_saver")
-            : selected_save_data.design.find(d => d.type === "paused"));
+            ? design.find(d => d.type === "screen_saver")
+            : design.find(d => d.type === "paused"));
     }
     if (selected_save_data.time_day_actionbar)
-      d1 = selected_save_data.design.find(d => d.type === "day");
+      d1 = design.find(d => d.type === "day");
   } else {
-    d0 = selected_save_data.design.find(d => d.type === "day");
+    d0 = design.find(d => d.type === "day");
   }
 
   if (d0?.type === "screen_saver" && d1) {
@@ -690,8 +703,8 @@ export function render_live_actionbar(selected_save_data, do_update) {
   return d1
     ? apply_design(d0, tv.value) + " §r§f| " + apply_design(d1, calcAB(true, selected_save_data.id, true).value)
     : apply_design(d0, tv.value);
-
 }
+
 
 function calcAB(update, id, dayFormat) {
   const data = load_save_data();
@@ -734,7 +747,7 @@ function calcAB(update, id, dayFormat) {
               if (data[0].global.status) {
                 world.getAllPlayers().forEach(player => {
                   idx = data.findIndex(e => e.id === player.id);
-                  let lang = save_data[idx].lang
+                  let lang = data[idx].lang
                   player.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+ translate_textkeys("message.body.condition.expired", lang, {time: apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer)}))
 
                   player.onScreenDisplay.setTitle("§4"+translate_textkeys("message.title.condition.expired", lang))
@@ -742,7 +755,8 @@ function calcAB(update, id, dayFormat) {
                 });
               } else {
                 let player = world.getAllPlayers().find(player => player.id == id)
-                let lang = save_data[save_data.findIndex(entry => entry.id === player.id)].lang
+                idx = data.findIndex(e => e.id === player.id);
+                let lang = data[idx].lang
                 player.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+translate_textkeys("message.body.condition.expired", lang, {time: apply_design((typeof data[idx].design === "number" ? design_template[data[idx].design].content : data[idx].design).find(item => item.type === "ui"), timedata.last_value_timer - timedata.timer)}))
                 player.onScreenDisplay.setTitle("§4"+translate_textkeys("message.title.condition.expired", lang))
                 player.playSound(translate_soundkeys("condition.expired", player))
