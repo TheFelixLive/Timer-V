@@ -18,9 +18,8 @@ export let system_privileges = 2;
 
 system.afterEvents.scriptEventReceive.subscribe(event=> {
   if (event.id === "multiple_menu:initialize") {
-    world.scoreboard.getObjective("multiple_menu_name").setScore(version_info.name, 1);
-    world.scoreboard.getObjective("multiple_menu_icon").setScore("textures/ui/timer", 1);
-    world.scoreboard.getObjective("multiple_menu_id").setScore(version_info.uuid, 1);
+    world.scoreboard.getObjective("multiple_menu_name").setScore(version_info.uuid + "_" + version_info.name, 1);
+    world.scoreboard.getObjective("multiple_menu_icon").setScore(version_info.uuid + "_" + "textures/ui/timer", 1);
     if (system_privileges == 2) system_privileges = 0;
   }
   if (event.id === "multiple_menu:open_main" && system_privileges == 1) {
@@ -38,7 +37,6 @@ export async function initialize_multiple_menu() {
 
   try {
     world.scoreboard.addObjective("multiple_menu_name");
-    world.scoreboard.addObjective("multiple_menu_id");
     world.scoreboard.addObjective("multiple_menu_icon");
     print("Multiple Menu: Initializing Host");
     system_privileges = 1;
@@ -53,9 +51,10 @@ export async function initialize_multiple_menu() {
   await system.waitTicks(2);
   print("Multiple Menu: successfully initialized as Host");
 
-  addon_name = world.scoreboard.getObjective("multiple_menu_name").getParticipants().map(p => p.displayName);
-  addon_id = world.scoreboard.getObjective("multiple_menu_id").getParticipants().map(p => p.displayName);
-  addon_icon = world.scoreboard.getObjective("multiple_menu_icon").getParticipants().map(p => p.displayName);
+  const participants = world.scoreboard.getObjective("multiple_menu_name").getParticipants();
+  addon_id = participants.map(p => p.displayName.split("_")[0]);
+  addon_name = participants.map(p => p.displayName.split("_").slice(1).join("_"));
+  addon_icon = world.scoreboard.getObjective("multiple_menu_icon").getParticipants().map(p => p.displayName.split("_").slice(1).join("_"));
 
   if (addon_id.length == 1) {
     print("Multiple Menu: no other plugin found");
@@ -63,7 +62,6 @@ export async function initialize_multiple_menu() {
   }
 
   world.scoreboard.removeObjective("multiple_menu_name")
-  world.scoreboard.removeObjective("multiple_menu_id")
   world.scoreboard.removeObjective("multiple_menu_icon")
 
 
@@ -81,8 +79,13 @@ export function multiple_menu(player) {
 
   player.playMusic(translate_soundkeys("music.menu.multiple_menu", player), { fade: 0.3, loop: true });
 
-  addon_name.forEach((name, index) => {
-    form.button(name, addon_icon[index]);
+  addon_id.forEach((addon, index) => {
+
+    if (addon_icon[index]) {
+      form.button(addon_name[index] == ""? addon: addon_name[index], addon_icon[index]);
+    } else {
+      form.button(addon_name[index] == ""? addon: addon_name[index]);
+    }
 
     actions.push(() => {
       if (addon_id[index] !== version_info.uuid) {

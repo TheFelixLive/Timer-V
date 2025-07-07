@@ -21,8 +21,6 @@ console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+
 // Load & Save Save data
 import { finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
-let is_design_in_sorrage = false
-
 system.run(() => {
 
 initialize_multiple_menu()
@@ -571,13 +569,8 @@ async function update_loop() {
         save_data = load_save_data();
         let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
 
-      if (!is_design_in_sorrage && typeof save_data[player_sd_index].design !== "number") {
-        print("design got printed to sorrage")
-        is_design_in_sorrage = true
-      }
-
-
         save_data[player_sd_index].last_unix = Math.floor(Date.now() / 1000) // Update last unix time
+        update_save_data(save_data)
 
         // AFK
         const wasAFK = isCurrentlyAFK.get(player.id) || false;
@@ -690,7 +683,7 @@ export function render_live_actionbar(selected_save_data, do_update) {
             ? design.find(d => d.type === "screen_saver")
             : design.find(d => d.type === "paused"));
     }
-    if (selected_save_data.time_day_actionbar)
+    if (selected_save_data.time_day_actionbar || data[0].sync_day_time)
       d1 = design.find(d => d.type === "day");
   } else {
     d0 = design.find(d => d.type === "day");

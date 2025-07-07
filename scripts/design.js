@@ -917,7 +917,7 @@ export function settings_actionbar(player) {
     Real Time
   -------------------------*/
 
-  if (save_data[player_sd_index].counting_type !== 3) {
+  if (save_data[player_sd_index].counting_type !== 3 && !save_data[0].sync_day_time) {
     form.button(
       translate_textkeys("menu.settings.actionbar.day_time", lang)+"\n" + (save_data[player_sd_index].time_day_actionbar ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)),
       save_data[player_sd_index].time_day_actionbar ? "textures/ui/toggle_on" : "textures/ui/toggle_off"
@@ -930,7 +930,7 @@ export function settings_actionbar(player) {
   }
 
   if (save_data[player_sd_index].time_day_actionbar || save_data[player_sd_index].counting_type == 3) {
-    if (!save_data[0].sync_day_time && save_data[0].utc !== undefined) {
+    if (save_data[0].utc !== undefined) {
       if(form){form.button(translate_textkeys("menu.settings.actionbar.time_source", save_data[player_sd_index].lang)+"\n§9" + (save_data[player_sd_index].time_source === 0 ? translate_textkeys("menu.settings.actionbar.time_source.in_game", save_data[player_sd_index].lang) : translate_textkeys("menu.settings.actionbar.time_source.real_life", save_data[player_sd_index].lang)), "textures/ui/share_microsoft")};
       actions.push(() => {
         if (save_data[player_sd_index].time_source === 0) {

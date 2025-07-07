@@ -388,7 +388,7 @@ export function render_task_list(player) {
   } else {
     // time available
     if (save_data[0].counting_type === 1) {
-      lines.push({ text: "-  " + translate_textkeys("menu.render_task_list.goal.event.time", lang) + getRelativeTime(save_data[0].time.timer / 20, player) + "§r§f\n" });
+      lines.push({ text: "- " + translate_textkeys("menu.render_task_list.goal.event.time", lang) + getRelativeTime(save_data[0].time.timer / 20, player) + "§r§f\n" });
     }
     // goal event
     if (save_data[0].challenge.goal.pointer === 2) {

@@ -2555,6 +2555,10 @@ const textkeys = {
     "en": "Permissions",
   },
 
+  "menu.settings.permissions.player": {
+    "en": "%{count}% Player",
+  },
+
   "menu.settings.permissions.title.player": {
     "en": "Edit %{name}%'s permission",
   },
@@ -2885,25 +2889,14 @@ export function translate_textkeys(key, lang, vars = {}) {
   const entry = textkeys[key];
   if (!entry) return key;
 
-  let str = entry[lang];
+  const tryLang = (l) => entry[l] ?? entry[l.split("_")[0]];
 
-  if (str == null) {
-    const baseLang = lang.split("_")[0];
-    str = entry[baseLang];
-  }
-
-  if (str == null) {
-    str = entry["en_us"];
-  }
-
+  let str = tryLang(lang) ?? tryLang("en_us");
   if (str == null) return key;
 
-  str = str.replace(/%\{(\w+)\}%/g, (_, name) => {
-    return vars[name] != null ? vars[name] : "";
-  });
-
-  return str;
+  return str.replace(/%\{(\w+)\}%/g, (_, name) => vars[name] ?? "");
 }
+
 
 /*------------------------
  Menus

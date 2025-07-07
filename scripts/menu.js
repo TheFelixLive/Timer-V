@@ -329,7 +329,7 @@ function main_menu_actions(player, form) {
     }
 
     // "Change / add time" button
-    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || timedata.counting_type == 0 && save_data[player_sd_index].afk)) {
+    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || timedata.counting_type == 0 && save_data[player_sd_index].afk || save_data[0].global.status)) {
       if (form) {
         form.button(
           (challenge.active ? translate_textkeys("menu.start_time.title.ca", lang)+"\n" : translate_textkeys("menu.start_time.title", lang)+"\n") +
@@ -615,8 +615,9 @@ export function settings_main(player) {
 
   // Permission
   if (save_data[player_sd_index].op) {
-    form.divider()
-    form.label(translate_textkeys("menu.settings.label.multiplayer", lang))
+    form.divider();
+    form.label(translate_textkeys("menu.settings.label.multiplayer", lang));
+
     const players = world.getAllPlayers();
     const ids = players.map(p => p.id);
     const names = save_data.slice(1)
@@ -627,9 +628,11 @@ export function settings_main(player) {
       .map(e => e.name);
 
     if (names.length > 1) {
-      form.button(translate_textkeys("menu.settings.permissions.title", save_data[player_sd_index].lang)+"\n" + (
-        names.slice(0, -1).join(", ") + " & " + names[names.length - 1]
-      ), "textures/ui/op");
+      const displayNames = (names.slice(0, -1).join(", ") + " & " + names[names.length - 1]);
+      const labelText = translate_textkeys("menu.settings.permissions.title", save_data[player_sd_index].lang) + "\n" +
+        (displayNames.length > 30 ? (translate_textkeys("menu.settings.permissions.player", save_data[player_sd_index].lang, {count: names.length})) : displayNames);
+
+      form.button(labelText, "textures/ui/op");
 
       actions.push(() => {
         settings_rights_main(player, true);
@@ -637,6 +640,7 @@ export function settings_main(player) {
       });
     }
   }
+
 
   // shared_timer
   if (save_data[player_sd_index].op && !save_data[0].challenge.active && save_data[player_sd_index].counting_type <= 1) {
@@ -710,7 +714,7 @@ export function settings_main(player) {
   }
 
   // Daytime-Sync
-  if ((save_data[player_sd_index].time_day_actionbar == true || save_data[player_sd_index].counting_type == 3) && save_data[0].challenge.progress == 0) {
+  if ((save_data[player_sd_index].time_day_actionbar || save_data[0].sync_day_time || save_data[player_sd_index].counting_type == 3) && save_data[0].challenge.progress == 0) {
     if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
       if(form){form.button(translate_textkeys("menu.main.sync_day_time", lang)+"\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
@@ -1052,11 +1056,11 @@ function splash_challengemode(player, in_setup) {
       save_data[0].challenge.active = save_data[0].challenge.active ? false : true,
       update_save_data(save_data);
       if (!in_setup) {
+        if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
         player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
       }
       return main_menu(player)
     }
-
     if (in_setup) {
       save_data[player_sd_index].setup = 100
       update_save_data(save_data);
@@ -1179,7 +1183,7 @@ function settings_rights_main(player, came_from_settings) {
     if (isOnline) {
       displayName += "\n§a("+translate_textkeys("menu.settings.permissions.online", save_data[player_sd_index].lang)+")§r";
     } else {
-      displayName += "\n§o(" +translate_textkeys("menu.settings.permissions.offline", save_data[player_sd_index].lang, {time: (getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix, player))}) + ")§r";
+      if (entry.last_unix) displayName += "\n§o(" +translate_textkeys("menu.settings.permissions.offline", save_data[player_sd_index].lang, {time: (getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix, player))}) + ")§r";
     }
 
     if (entry.op) {
@@ -1251,7 +1255,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
                       )
                       : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang)+"\n"
               )
-              : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+translate_textkeys("menu.no", save_data[viewing_player_sd_index].lang)+" §7("+ translate_textkeys("menu.settings.permissions.offline", save_data[viewing_player_sd_index].lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player)}) +")§r\n"
+              : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang) + ": " + translate_textkeys("menu.no", save_data[viewing_player_sd_index].lang) + (selected_save_data.last_unix ? " §7(" + translate_textkeys("menu.settings.permissions.offline", save_data[viewing_player_sd_index].lang, { time: getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player) }) + ")§r\n" : "\n")
       ) + translate_textkeys("menu.settings.permissions.lable.actionbar", save_data[viewing_player_sd_index].lang, {actionbar: render_live_actionbar(selected_save_data, false)}) +
       (
           selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active
@@ -1328,98 +1332,141 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
 function settings_rights_manage_sd(viewing_player, selected_save_data) {
   let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
   let viewing_player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
-  const form = new ActionFormData()
-    .title(selected_save_data.id !== viewing_player.id? translate_textkeys("menu.settings.permissions.title.player", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}) : translate_textkeys("menu.settings.permissions.title.you", save_data[viewing_player_sd_index].lang))
-    .body(translate_textkeys("menu.general.description", save_data[player_sd_index].lang))
-    .button("§d"+translate_textkeys("menu.settings.permissions.reset_sd", save_data[viewing_player_sd_index].lang))
-    .button("§c"+translate_textkeys("menu.settings.permissions.delete_sd", save_data[viewing_player_sd_index].lang))
-    .button("");
+  const lang = save_data[viewing_player_sd_index].lang;
 
+  const form = new ActionFormData();
+  const actions = [];
+
+  let resetIndex       = -1;
+  let deleteIndex      = -1;
+
+  // Titel und Beschreibung
+  form.title(
+    selected_save_data.id !== viewing_player.id
+      ? translate_textkeys("menu.settings.permissions.title.player", lang, { name: selected_save_data.name })
+      : translate_textkeys("menu.settings.permissions.title.you", lang)
+  );
+  form.body(translate_textkeys("menu.general.description", lang));
+
+  // Reset-Button
+  form.button("§d" + translate_textkeys("menu.settings.permissions.reset_sd", lang));
+  resetIndex = actions.length;
+  actions.push(() => {
+    handle_data_action(true, false, viewing_player, selected_save_data, lang);
+  });
+
+  // Delete-Button
+  form.button("§c" + translate_textkeys("menu.settings.permissions.delete_sd", lang));
+  deleteIndex = actions.length;
+  actions.push(() => {
+    handle_data_action(false, true, viewing_player, selected_save_data, lang);
+  });
+
+  if (version_info.release_type == 0) {
+    form.button("Open in SD Editor");
+    actions.push(() => {
+      viewing_player.playMusic(translate_soundkeys("music.menu.settings.debug", viewing_player), { fade: 0.3 , loop: true})
+      debug_sd_editor(
+        viewing_player,
+        () => debug_sd_editor(viewing_player, () => debug_main(viewing_player), []),
+        [save_data.findIndex(entry => entry.id === selected_save_data.id)]
+      );
+
+    });
+  }
+
+  // Zurück / Weiter zu Data Settings
+  form.button("");
+  actions.push(() => {
+    settings_rights_data(viewing_player, selected_save_data);
+  });
+
+  // Formular anzeigen
   form.show(viewing_player).then(response => {
-    if (response.selection == undefined ) {
+    if (response.selection === undefined) {
       return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
     }
 
-    const is_reset = response.selection === 0;
-    const is_delete = response.selection === 1;
+    const sel = response.selection;
+    const isResetOrDelete =
+      sel === sel === resetIndex || sel === deleteIndex;
 
-    const is_global = response.selection < 2 &&
-                      save_data[0].global.last_player_id === selected_save_data.id &&
-                      save_data[0].global.status;
+    const is_global = isResetOrDelete &&
+      save_data[0].global.last_player_id === selected_save_data.id &&
+      save_data[0].global.status;
+
 
     if (is_global) {
-      const player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
+      const isSharing = save_data[0].global.last_player_id === viewing_player.id;
 
-        const design_data = typeof save_data[player_sd_index].design === "number"
-          ? design_template.find(t => t.id == save_data[player_sd_index].design).content
-          : save_data[player_sd_index].design;
-        const design = design_data.find(item => item.type === "ui");
+      const design_data = typeof save_data[viewing_player_sd_index].design === "number"
+        ? design_template.find(t => t.id == save_data[viewing_player_sd_index].design).content
+        : save_data[viewing_player_sd_index].design;
 
-        const own_time = apply_design(
-          design,
-          save_data[player_sd_index].time[
-            save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"
-          ]
-        );
+      const design = design_data.find(item => item.type === "ui");
 
-        const shared_form = new ActionFormData()
-          .title(translate_textkeys("menu.popup.shared_timer.title", save_data[viewing_player_sd_index].lang))
-          .body(
-            translate_textkeys("menu.settings.permissions.shared_timer.description", save_data[viewing_player_sd_index].lang,{
-              name: selected_save_data.name,
-              replace_text: save_data[0].global.last_player_id !== viewing_player.id ? translate_textkeys("menu.settings.permissions.shared_timer.description", save_data[viewing_player_sd_index].lang,{own_time: own_time}) : ""
-            })
-          );
+      const own_time = apply_design(
+        design,
+        save_data[viewing_player_sd_index].time[
+          save_data[viewing_player_sd_index].counting_type == 1 ? "timer" : "stopwatch"
+        ]
+      );
 
-        const isSharing = (save_data[0].global.last_player_id === viewing_player.id);
-        if (!isSharing) {
-          shared_form.button("§e"+translate_textkeys("menu.popup.shared_timer.yours_instead", save_data[viewing_player_sd_index].lang));
-        }
-        shared_form.button("§c"+translate_textkeys("menu.disable", save_data[viewing_player_sd_index].lang));
-        shared_form.button("")
+      const shared_form = new ActionFormData();
+      const shared_actions = [];
 
-        shared_form.show(viewing_player).then(global_response => {
-          if (global_response.selection == undefined ) {
-            return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-          }
+      shared_form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
+      shared_form.body(
+        translate_textkeys("menu.settings.permissions.shared_timer.description", lang, {
+          name: selected_save_data.name,
+          replace_text: !isSharing
+            ? translate_textkeys("menu.settings.permissions.shared_timer.description", lang, { own_time })
+            : ""
+        })
+      );
 
-          const sel = global_response.selection;
-          const reload = () => {
-            save_data = load_save_data();
-            selected_save_data = save_data.find(e => e.id === selected_save_data.id);
-            handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, save_data[viewing_player_sd_index].lang);
-          };
-
-          const shareIndex   = isSharing ? -1 : 0;
-          const disableIndex = isSharing ? 0  : 1;
-          const settingsIndex = disableIndex + 1;
-
-          if (sel === shareIndex) {
-            convert_local_to_global(viewing_player.id);
-            reload();
-
-          } else if (sel === disableIndex) {
-            convert_global_to_local(true);
-            reload();
-
-          } else if (sel === settingsIndex) {
-            settings_rights_manage_sd(viewing_player, selected_save_data);
-          }
+      if (!isSharing) {
+        shared_form.button("§e" + translate_textkeys("menu.popup.shared_timer.yours_instead", lang));
+        shared_actions.push(() => {
+          convert_local_to_global(viewing_player.id);
+          reload_and_handle();
         });
+      }
 
+      shared_form.button("§c" + translate_textkeys("menu.disable", lang));
+      shared_actions.push(() => {
+        convert_global_to_local(true);
+        reload_and_handle();
+      });
 
+      shared_form.button("");
+      shared_actions.push(() => {
+        settings_rights_manage_sd(viewing_player, selected_save_data);
+      });
+
+      shared_form.show(viewing_player).then(global_response => {
+        if (global_response.selection === undefined) {
+          return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+        }
+
+        const shared_action = shared_actions[global_response.selection];
+        if (shared_action) shared_action();
+      });
+
+      function reload_and_handle() {
+        save_data = load_save_data();
+        selected_save_data = save_data.find(e => e.id === selected_save_data.id);
+        handle_data_action(sel === 0, sel === 1, viewing_player, selected_save_data, lang);
+      }
 
     } else {
-      handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, save_data[viewing_player_sd_index].lang);
-    }
-
-    if (response.selection === 2) {
-      settings_rights_data(viewing_player, selected_save_data);
+      const action = actions[sel];
+      if (action) action();
     }
   });
 }
+
 
 function delete_player_save_data(player) {
   let save_data = load_save_data();
@@ -1432,7 +1479,7 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
   const selected_player = world.getAllPlayers().find(p => p.id === selected_save_data.id);
   if (is_reset) {
     delete_player_save_data(selected_save_data);
-    create_player_save_data(selected_save_data.id, selected_save_data.name);
+    create_player_save_data(selected_save_data.id, selected_save_data.name, {last_unix: undefined});
     return settings_rights_main(viewing_player, false);
   }
 
@@ -1861,18 +1908,48 @@ function openTextEditor(player, current, path, onSave, onCancel) {
 
 function debug_add_fake_player(player) {
   let form = new ModalFormData();
+  let UniqueId = ""+generateEntityUniqueId()
 
   form.textField("Player name", player.name);
-  form.textField("Player id", player.id);
+  form.textField("Player id", UniqueId);
   form.submitButton("Add player")
 
   form.show(player).then((response) => {
     if (response.canceled) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    create_player_save_data(response.formValues[1], response.formValues[0])
+
+    let name = response.formValues[0]
+    let id = response.formValues[1]
+
+    if (id == "") {
+      id = UniqueId
+    }
+
+    if (name == "") {
+      name = player.name
+    }
+
+    create_player_save_data(id, name, {last_unix: undefined})
     return debug_sd_editor(player, () => debug_main(player), [])
   });
+}
+
+function generateEntityUniqueId() {
+  // Erzeuge eine zufällige 64-Bit Zahl als BigInt
+  // Wir erzeugen 2 * 32-Bit Teile und setzen sie zusammen
+  const high = BigInt(Math.floor(Math.random() * 0x100000000)); // obere 32 Bit
+  const low = BigInt(Math.floor(Math.random() * 0x100000000));  // untere 32 Bit
+
+  let id = (high << 32n) | low;
+
+  // Umwandlung in signed 64-Bit Bereich (zweier Komplement)
+  // Wenn das höchste Bit (63.) gesetzt ist, wird die Zahl negativ
+  if (id & (1n << 63n)) {
+    id = id - (1n << 64n);
+  }
+
+  return id;
 }
 
 /*------------------------
