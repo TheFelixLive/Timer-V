@@ -715,7 +715,7 @@ export function settings_main(player) {
 
   // Daytime-Sync
   if ((save_data[player_sd_index].time_day_actionbar || save_data[0].sync_day_time || save_data[player_sd_index].counting_type == 3) && save_data[0].challenge.progress == 0) {
-    if (save_data[player_sd_index].time_source === 1 && save_data[player_sd_index].op) {
+    if ((save_data[player_sd_index].time_source === 1 || save_data[0].sync_day_time) && save_data[player_sd_index].op) {
       if(form){form.button(translate_textkeys("menu.main.sync_day_time", lang)+"\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (!save_data[0].sync_day_time) {
@@ -1513,6 +1513,7 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
               }
               if (host.selection === 0) {
                 delete_player_save_data(selected_save_data);
+                viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
                 return close_world();
               } else {
                 settings_rights_manage_sd(viewing_player, selected_save_data);
@@ -1686,6 +1687,7 @@ export function debug_main(player) {
     save_data[player_sd_index].setup = 0
     update_save_data(save_data)
     player.sendMessage("Setup triggered!");
+    player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
   });
 
   form.button("§cRemove \"save_data\"");

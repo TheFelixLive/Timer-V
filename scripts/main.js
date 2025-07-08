@@ -478,6 +478,17 @@ function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
  AFK
 -------------------------*/
 
+// Reset AFK
+world.getAllPlayers().forEach((player) => {
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+
+  if (!save_data[0].global.status && save_data[player_sd_index].afk && (!save_data[player_sd_index].time.do_count && save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"] > 0)) {
+    save_data[player_sd_index].time.do_count = true;
+    update_save_data(save_data)
+  }
+})
+
 const AFK_THRESHOLD_MS = 15 * 1000;
 
 // Speicher-Maps
