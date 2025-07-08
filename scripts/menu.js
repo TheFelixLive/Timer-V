@@ -1271,7 +1271,7 @@ function settings_rights_data(viewing_player, selected_save_data) {
     form.title(translate_textkeys("menu.settings.permissions.title.player", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
     if (selected_save_data.op) {
 
-      form.button("§cMake deop");
+      form.button(translate_textkeys("menu.settings.permissions.deop", save_data[viewing_player_sd_index].lang));
       actions.push(() => {
         let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
         save_data[player_sd_index].op = false
@@ -1281,11 +1281,11 @@ function settings_rights_data(viewing_player, selected_save_data) {
 
     } else {
 
-      form.button("§aMake op");
+      form.button(translate_textkeys("menu.settings.permissions.op", save_data[viewing_player_sd_index].lang));
       actions.push(() => {
         form = new MessageFormData();
-        form.title("Op advantages");
-        form.body("Your are trying to add op advantages to "+selected_save_data.name+". With them he would be able to:\n\n- Mange other and your OP status\n- Mange Timer modes\n- Mange save data\n- Could delete the timer!\n\nAre you sure you want to add them?\n ");
+        form.title(translate_textkeys("menu.settings.permissions.op.title", save_data[viewing_player_sd_index].lang));
+        form.body(translate_textkeys("menu.settings.permissions.op.description", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
         form.button2("");
         form.button1("§aMake op");
         form.show(viewing_player).then((response) => {
@@ -1313,6 +1313,10 @@ function settings_rights_data(viewing_player, selected_save_data) {
     actions.push(() => {
       settings_rights_manage_sd(viewing_player, selected_save_data);
     });
+  }
+
+  if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active) || selected_save_data.id !== viewing_player.id) {
+    form.divider()
   }
 
   form.button("");
