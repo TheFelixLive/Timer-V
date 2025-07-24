@@ -3,7 +3,7 @@ export const version_info = {
   version: "v.5.3.0",
   build: "B030",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1752007004,
+  unix: 1753389726,
   update_message_period_unix: 15897600, // Normally 6 months = 15897600
   uuid: "c4d3852f-f902-4807-a8c8-51980fdae4c3",
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
