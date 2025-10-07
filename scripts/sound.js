@@ -277,7 +277,7 @@ export async function settings_cs_setup(player, in_setup) {
         return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       }
       if (in_setup) {
-        saveData[idx].setup = saveData[idx].op ? 90 : 100;
+        saveData[idx].setup = player.playerPermissionLevel === 2 ? 90 : 100;
         update_save_data(saveData);
         return setup_menu(player)
       }
@@ -337,7 +337,7 @@ export function soundkey_test(player, version) {
       soundkey_test(player, 1);
     });
 
-    if (version_info.release_type === 0 && save_data[player_sd_index].op) {
+    if (version_info.release_type === 0 && player.playerPermissionLevel === 2) {
       form.button("");
       actions.push(() => {
         debug_main(player);

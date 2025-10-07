@@ -7,7 +7,7 @@ import { apply_design, design_template  } from "./design.js";
 
 import { difficulty  } from "./difficulty.js";
 
-import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, close_world } from "./helper_function.js";
+import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, markdownToMinecraft, compareVersions, server_ip, github_data, close_world } from "./helper_function.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys, supportedLangs } from "./lang.js";
 import { timezone_list } from "./time_zone.js";
@@ -50,7 +50,7 @@ export function setup_menu(player) {
   }
 
   // Admin: UTC
-  if (save_data[player_sd_index].setup == 20 && save_data[player_sd_index].op) {
+  if (save_data[player_sd_index].setup == 20 && player.playerPermissionLevel === 2) {
     if (save_data[0].utc !== undefined) {
       save_data[player_sd_index].setup = 60
       update_save_data(save_data)
@@ -60,7 +60,7 @@ export function setup_menu(player) {
   }
 
   // Admin: Universel Updater
-  if (save_data[player_sd_index].setup == 60 && save_data[player_sd_index].op) {
+  if (save_data[player_sd_index].setup == 60 && player.playerPermissionLevel === 2) {
     let gen = uu_find_gen()
 
     if (typeof(gen) === 'number') {
@@ -73,12 +73,12 @@ export function setup_menu(player) {
   }
 
   // Custome Sounds
-  if ((save_data[player_sd_index].setup == 80 && save_data[player_sd_index].op) || save_data[player_sd_index].setup == 50 && !save_data[player_sd_index].op) {
+  if ((save_data[player_sd_index].setup == 80 && player.playerPermissionLevel === 2) || save_data[player_sd_index].setup == 50 && !player.playerPermissionLevel === 2) {
     return settings_cs_setup(player, true)
   }
 
   // Challenge Mode
-  if (save_data[player_sd_index].setup == 90 && save_data[player_sd_index].op) {
+  if (save_data[player_sd_index].setup == 90 && player.playerPermissionLevel === 2) {
     if (world.isHardcore || save_data[0].challenge.active) {
       save_data[player_sd_index].setup = 100
       update_save_data(save_data)
@@ -187,7 +187,7 @@ function main_menu_actions(player, form) {
     timedata = save_data[player_sd_index]
   }
 
-  if (!save_data[0].global.status || save_data[0].global.status && save_data[player_sd_index].op) {
+  if (!save_data[0].global.status || save_data[0].global.status && player.playerPermissionLevel === 2) {
     if (timedata.counting_type == 0 || timedata.counting_type == 1) {
 
       // Control
@@ -296,7 +296,7 @@ function main_menu_actions(player, form) {
 
     // Challenge Default
     if (challenge.active && challenge.progress == 0) {
-      if (timedata.counting_type == 0 || (timedata.counting_type == 1 & timedata.time.timer > 0)) {
+      if (timedata.counting_type !== 1 || timedata.time.timer > 0) {
         if (form) form.button("§2" + translate_textkeys("menu.popup.ca.start", lang) +"\n", "textures/gui/controls/right");
         actions.push(() => {
           splash_start_challenge(player);
@@ -329,7 +329,7 @@ function main_menu_actions(player, form) {
     }
 
     // "Change / add time" button
-    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || timedata.counting_type == 0 && save_data[player_sd_index].afk || save_data[0].global.status)) {
+    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || timedata.counting_type == 0 && (save_data[player_sd_index].afk || save_data[0].global.status))) {
       if (form) {
         form.button(
           (challenge.active ? translate_textkeys("menu.start_time.title.ca", lang)+"\n" : translate_textkeys("menu.start_time.title", lang)+"\n") +
@@ -354,7 +354,7 @@ function main_menu_actions(player, form) {
   if(form && save_data[0].challenge.progress !== 1) form.divider()
 
   // Button: Settings
-  if(form){form.button(translate_textkeys("menu.settings.title", lang), "textures/ui/automation_glyph_color")}
+  if(form) {form.button(translate_textkeys("menu.settings.title", lang), "textures/ui/automation_glyph_color")}
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
     settings_main(player);
@@ -362,10 +362,12 @@ function main_menu_actions(player, form) {
 
   // Multimenu
   if (system_privileges !== 2) {
-    if(form){form.button("")}
+    if(form) form.button("");
     actions.push(() => {
-      if (system_privileges == 0) player.playMusic(translate_soundkeys("menu.close", player),{fade:0.3})
-      player.runCommand("/scriptevent multiple_menu:open_main")
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      world.scoreboard.addObjective("mm_data");
+      world.scoreboard.getObjective("mm_data").setScore(JSON.stringify({event: "mm_open", data:{target: "main"}}), 1);
+      player.runCommand("scriptevent multiple_menu:data");
     });
   }
 
@@ -557,7 +559,7 @@ export function settings_main(player) {
   -------------------------*/
 
   // Type
-  if ((!save_data[0].global.status || (save_data[0].global.status && save_data[player_sd_index].op)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
+  if ((!save_data[0].global.status || (save_data[0].global.status && player.playerPermissionLevel === 2)) && ((save_data[0].challenge.active && save_data[0].challenge.progress == 0) || !save_data[0].challenge.active)) {
     form.label(translate_textkeys("menu.settings.label.timer", lang))
     form.button(
       translate_textkeys("menu.settings.type", lang) +
@@ -567,7 +569,7 @@ export function settings_main(player) {
     actions.push(() => settings_type(player));
 
     // Challenge Mode
-    if (save_data[player_sd_index].op && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && version_info.edition !== 1) {
+    if (player.playerPermissionLevel === 2 && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && version_info.edition !== 1) {
       if(form){form.button(translate_textkeys("menu.popup.ca.title", lang)+"\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
       actions.push(() => {
         splash_challengemode(player);
@@ -614,36 +616,14 @@ export function settings_main(player) {
   -------------------------*/
 
   // Permission
-  if (save_data[player_sd_index].op) {
+  if (player.playerPermissionLevel === 2) {
     form.divider();
     form.label(translate_textkeys("menu.settings.label.multiplayer", lang));
-
-    const players = world.getAllPlayers();
-    const ids = players.map(p => p.id);
-    const names = save_data.slice(1)
-      .sort((a, b) =>
-        ids.includes(a.id) && !ids.includes(b.id) ? -1 :
-        ids.includes(b.id) && !ids.includes(a.id) ? 1 : 0
-      )
-      .map(e => e.name);
-
-    if (names.length > 1) {
-      const displayNames = (names.slice(0, -1).join(", ") + " & " + names[names.length - 1]);
-      const labelText = translate_textkeys("menu.settings.permissions.title", save_data[player_sd_index].lang) + "\n" +
-        (displayNames.length > 30 ? (translate_textkeys("menu.settings.permissions.player", save_data[player_sd_index].lang, {count: names.length})) : displayNames);
-
-      form.button(labelText, "textures/ui/op");
-
-      actions.push(() => {
-        settings_rights_main(player, true);
-        player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
-      });
-    }
   }
 
 
   // shared_timer
-  if (save_data[player_sd_index].op && !save_data[0].challenge.active && save_data[player_sd_index].counting_type <= 1) {
+  if (player.playerPermissionLevel === 2 && !save_data[0].challenge.active && save_data[player_sd_index].counting_type <= 1) {
     if(form){form.button(translate_textkeys("menu.popup.shared_timer.title", lang)+ "\n§9" + (save_data[0].global.status ? translate_textkeys("menu.popup.shared_timer.by", lang, {player: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name}) : translate_textkeys("menu.toggle_off", lang)), "textures/ui/FriendsIcon")};
     actions.push(() => {
       splash_globalmode(player);
@@ -651,10 +631,9 @@ export function settings_main(player) {
   }
 
   // Time zone
-  if (save_data[player_sd_index].op == true && version_info.edition !== 1) {
+  if (player.playerPermissionLevel === 2 == true && version_info.edition !== 1) {
+    let zone = timezone_list.find(zone => zone.utc === save_data[0].utc), zone_text;
     if(form) {
-      let zone = timezone_list.find(zone => zone.utc === save_data[0].utc), zone_text;
-
       if (!zone) {
         if (zone !== undefined) {
           zone = timezone_list.reduce((closest, current) => {
@@ -673,6 +652,7 @@ export function settings_main(player) {
     };
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.time_zone", player), { fade: 0.3 , loop: true})
+      if (save_data[0].utc_auto) return settings_time_zone_preview(player, zone)
       settings_time_zone(player, 0);
     });
   }
@@ -715,7 +695,7 @@ export function settings_main(player) {
 
   // Daytime-Sync
   if ((save_data[player_sd_index].time_day_actionbar || save_data[0].sync_day_time || save_data[player_sd_index].counting_type == 3) && save_data[0].challenge.progress == 0) {
-    if ((save_data[player_sd_index].time_source === 1 || save_data[0].sync_day_time) && save_data[player_sd_index].op) {
+    if ((save_data[player_sd_index].time_source === 1 || save_data[0].sync_day_time) && player.playerPermissionLevel === 2) {
       if(form){form.button(translate_textkeys("menu.main.sync_day_time", lang)+"\n" + (save_data[0].sync_day_time ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), (save_data[0].sync_day_time ? "textures/ui/toggle_on" : "textures/ui/toggle_off"))};
       actions.push(() => {
         if (!save_data[0].sync_day_time) {
@@ -733,13 +713,13 @@ export function settings_main(player) {
    advanced_settings
   -------------------------*/
 
-  if (version_info.release_type !== 2 || save_data[player_sd_index].op == true && version_info.edition !== 1) {
+  if (version_info.release_type !== 2 || player.playerPermissionLevel === 2 == true && version_info.edition !== 1) {
     form.divider()
     form.label(translate_textkeys("menu.settings.label.advanced_settings", lang))
   }
 
   // Disable Setup
-  if (save_data[player_sd_index].op == true && version_info.edition !== 1) {
+  if (player.playerPermissionLevel === 2 == true && version_info.edition !== 1) {
     form.button(translate_textkeys("menu.settings.disable_setup", lang)+ "\n" + (!save_data[0].use_setup ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), !save_data[0].use_setup ? "textures/ui/toggle_on" : "textures/ui/toggle_off");
     actions.push(() => {
       if (save_data[0].use_setup) {
@@ -767,7 +747,7 @@ export function settings_main(player) {
   }
 
   // Debug
-  if (version_info.release_type === 0 && save_data[player_sd_index].op) {
+  if (version_info.release_type === 0 && player.playerPermissionLevel === 2) {
     form.button("Debug\n", "textures/ui/ui_debug_glyph_color");
     actions.push(() => {
       debug_main(player);
@@ -785,7 +765,7 @@ export function settings_main(player) {
   // Convert
   let gen = uu_find_gen()
 
-  if (typeof(gen) === 'number' && save_data[player_sd_index].op && version_info.edition !== 1) {
+  if (typeof(gen) === 'number' && player.playerPermissionLevel === 2 && version_info.edition !== 1) {
     form.button(translate_textkeys("menu.settings.update", lang)+"\n" + gen_list[gen] + " -> " + version_info.version, "textures/ui/icon_bell");
     actions.push(() => {
       universel_updater(player, gen)
@@ -794,10 +774,10 @@ export function settings_main(player) {
   }
 
   // Dictionary
-  form.button(translate_textkeys("menu.settings.about", lang), "textures/ui/infobulb");
+  form.button(translate_textkeys("menu.settings.about", lang) + (github_data? (compareVersions(version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag, version_info.version) !== 1? "" : "§9Update available!"): ""), "textures/ui/infobulb");
   actions.push(() => {
     player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
-    dictionary_about_version(player)
+    dictionary_about(player)
   });
 
   /*------------------------
@@ -847,7 +827,7 @@ export function settings_main(player) {
 }
 
 /*------------------------
-  Type Settings
+    Type Settings
 -------------------------*/
 
 const timer_modes = [
@@ -864,7 +844,7 @@ const timer_modes = [
   {
     label: "menu.mode.world_time",
     icon: "textures/ui/world_glyph_color",
-    show_if: (save_data) => !save_data[0].global.status
+    show_if: (save_data) => save_data[0].global.status
   },
   {
     label: "menu.mode.day_time",
@@ -1002,7 +982,7 @@ function settings_type_info(player, response) {
 }
 
 /*------------------------
-  Challenge Mode
+    Challenge Mode
 -------------------------*/
 
 function splash_challengemode(player, in_setup) {
@@ -1055,18 +1035,16 @@ function splash_challengemode(player, in_setup) {
 
       save_data[0].challenge.active = save_data[0].challenge.active ? false : true,
       update_save_data(save_data);
-      if (!in_setup) {
-        if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-      }
-      return main_menu(player)
     }
+
     if (in_setup) {
       save_data[player_sd_index].setup = 100
       update_save_data(save_data);
       return setup_menu(player);
+    } else {
+      player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+      return main_menu(player)
     }
-
     return settings_main(player)
   });
 }
@@ -1128,411 +1106,6 @@ function splash_globalmode(player) {
     }
   });
 
-}
-
-/*------------------------
-    Permissions
--------------------------*/
-
-function settings_rights_main(player, came_from_settings) {
-  let form = new ActionFormData();
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(e => e.id === player.id);
-
-  form.title(translate_textkeys("menu.settings.permissions.title", save_data[player_sd_index].lang));
-  form.body(translate_textkeys("menu.settings.permissions.description", save_data[player_sd_index].lang));
-
-
-  const players = world.getAllPlayers();
-  const playerIds = players.map(player => player.id);
-
-  let newList = save_data.slice(1);
-
-  newList.sort((a, b) => {
-    const now = Math.floor(Date.now() / 1000);
-
-    const aOnline = playerIds.includes(a.id);
-    const bOnline = playerIds.includes(b.id);
-
-    const aOp = a.op;
-    const bOp = b.op;
-
-    const aLastSeen = now - a.last_unix;
-    const bLastSeen = now - b.last_unix;
-
-    const aName = a.name.toLowerCase();
-    const bName = b.name.toLowerCase();
-
-    if (aOnline && !bOnline) return -1;
-    if (!aOnline && bOnline) return 1;
-
-    if (aOnline && bOnline) {
-      if (aOp && !bOp) return -1;
-      if (!aOp && bOp) return 1;
-
-      return aName.localeCompare(bName);
-    }
-    return aLastSeen - bLastSeen;
-  });
-
-
-  newList.forEach(entry => {
-    const isOnline = playerIds.includes(entry.id);
-    let displayName = entry.name;
-
-    if (isOnline) {
-      displayName += "\n§a("+translate_textkeys("menu.settings.permissions.online", save_data[player_sd_index].lang)+")§r";
-    } else {
-      if (entry.last_unix) displayName += "\n§o(" +translate_textkeys("menu.settings.permissions.offline", save_data[player_sd_index].lang, {time: (getRelativeTime(Math.floor(Date.now() / 1000) - entry.last_unix, player))}) + ")§r";
-    }
-
-    if (entry.op) {
-      form.button(displayName, "textures/ui/op");
-    } else {
-      form.button(displayName, "textures/ui/permissions_member_star");
-    }
-  });
-
-  form.button("");
-
-  if (newList.length == 1) {
-    if (came_from_settings) {
-      return settings_rights_data(player, newList[0]);
-    } else {
-      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-      return settings_main(player);
-    }
-  }
-
-
-  form.show(player).then((response) => {
-    if (response.selection == undefined ) {
-      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-    }
-    if (response.selection === newList.length) {
-      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-      return settings_main(player);
-    } else {
-      return settings_rights_data(player, newList[response.selection]);
-    }
-  });
-}
-
-function settings_rights_data(viewing_player, selected_save_data) {
-  let save_data = load_save_data()
-  let selected_player = world.getAllPlayers().find(player => player.id == selected_save_data.id);
-  let viewing_player_sd_index = save_data.findIndex(e => e.id === viewing_player.id);
-  let form = new ActionFormData();
-
-  let body_text =
-      translate_textkeys("menu.settings.permissions.lable.name", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name, id: selected_save_data.id}) + "\n" +
-
-      translate_textkeys("menu.settings.lang.title", save_data[viewing_player_sd_index].lang) +": " + supportedLangs.find(l => l.id == selected_save_data.lang).name + "\n" +
-      (
-          selected_player
-              ? (
-                  version_info.release_type === 0
-                      ? (
-                          translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+ translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang) +"\n" +
-                          "Platform: " + selected_player.clientSystemInfo.platformType + "\n" +
-                          "Graphics Mode: " + selected_player.graphicsMode + "\n" +
-                          "Level: " + selected_player.level + "\n" +
-                          "Solt: " + selected_player.selectedSlotIndex + "\n" +
-                          (
-                              ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
-                                  ? "Client Total Memory: " +
-                                    ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
-                                  : ""
-                          ) + "\n" +
-                          (
-                              {
-                                  "Gamepad": "Input: Gamepad",
-                                  "KeyboardAndMouse": "Input: Mouse & Keyboard",
-                                  "MotionController": "Input: Motion controller",
-                                  "Touch": "Input: Touch"
-                              }[selected_player.inputInfo.lastInputModeUsed] || ""
-                          ) + "\n"
-                      )
-                      : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang)+"\n"
-              )
-              : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang) + ": " + translate_textkeys("menu.no", save_data[viewing_player_sd_index].lang) + (selected_save_data.last_unix ? " §7(" + translate_textkeys("menu.settings.permissions.offline", save_data[viewing_player_sd_index].lang, { time: getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player) }) + ")§r\n" : "\n")
-      ) + translate_textkeys("menu.settings.permissions.lable.actionbar", save_data[viewing_player_sd_index].lang, {actionbar: render_live_actionbar(selected_save_data, false)}) +
-      (
-          selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active
-              ? "§r§f\n\n§7" + translate_textkeys("menu.settings.permissions.cm", save_data[viewing_player_sd_index].lang) +"\n\n"
-              : "\n\n"
-      );
-
-
-  form.body(body_text);
-  let actions = [];
-
-  if (selected_save_data.id !== viewing_player.id) {
-    form.title(translate_textkeys("menu.settings.permissions.title.player", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
-    if (selected_save_data.op) {
-
-      form.button(translate_textkeys("menu.settings.permissions.deop", save_data[viewing_player_sd_index].lang));
-      actions.push(() => {
-        let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
-        save_data[player_sd_index].op = false
-        update_save_data(save_data);
-        return settings_rights_data(viewing_player, save_data[player_sd_index])
-      });
-
-    } else {
-
-      form.button(translate_textkeys("menu.settings.permissions.op", save_data[viewing_player_sd_index].lang));
-      actions.push(() => {
-        form = new MessageFormData();
-        form.title(translate_textkeys("menu.settings.permissions.op.title", save_data[viewing_player_sd_index].lang));
-        form.body(translate_textkeys("menu.settings.permissions.op.description", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
-        form.button2("");
-        form.button1("§aMake op");
-        form.show(viewing_player).then((response) => {
-          if (response.selection == undefined ) {
-            return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-          }
-          if (response.selection == 0) {
-            let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
-            save_data[player_sd_index].op = true
-            selected_save_data = save_data[player_sd_index]
-            update_save_data(save_data);
-          }
-
-          return settings_rights_data(viewing_player, selected_save_data)
-        });
-      });
-
-    }
-  } else {
-    form.title(translate_textkeys("menu.settings.permissions.title.you", save_data[viewing_player_sd_index].lang));
-  }
-
-  if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active)) {
-    form.button(translate_textkeys("menu.settings.permissions.manage_sd", save_data[viewing_player_sd_index].lang));
-    actions.push(() => {
-      settings_rights_manage_sd(viewing_player, selected_save_data);
-    });
-  }
-
-  if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active) || selected_save_data.id !== viewing_player.id) {
-    form.divider()
-  }
-
-  form.button("");
-  actions.push(() => {
-    settings_rights_main(viewing_player, false);
-  });
-
-  form.show(viewing_player).then((response) => {
-    if (response.selection == undefined ) {
-      return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-    }
-    if (actions[response.selection]) {
-      actions[response.selection]();
-    }
-  });
-}
-
-function settings_rights_manage_sd(viewing_player, selected_save_data) {
-  let save_data = load_save_data();
-  let viewing_player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
-  const lang = save_data[viewing_player_sd_index].lang;
-
-  const form = new ActionFormData();
-  const actions = [];
-
-  let resetIndex       = -1;
-  let deleteIndex      = -1;
-
-  // Titel und Beschreibung
-  form.title(
-    selected_save_data.id !== viewing_player.id
-      ? translate_textkeys("menu.settings.permissions.title.player", lang, { name: selected_save_data.name })
-      : translate_textkeys("menu.settings.permissions.title.you", lang)
-  );
-  form.body(translate_textkeys("menu.general.description", lang));
-
-  // Reset-Button
-  form.button("§d" + translate_textkeys("menu.settings.permissions.reset_sd", lang));
-  resetIndex = actions.length;
-  actions.push(() => {
-    handle_data_action(true, false, viewing_player, selected_save_data, lang);
-  });
-
-  // Delete-Button
-  form.button("§c" + translate_textkeys("menu.settings.permissions.delete_sd", lang));
-  deleteIndex = actions.length;
-  actions.push(() => {
-    handle_data_action(false, true, viewing_player, selected_save_data, lang);
-  });
-
-  if (version_info.release_type == 0) {
-    form.button("Open in SD Editor");
-    actions.push(() => {
-      viewing_player.playMusic(translate_soundkeys("music.menu.settings.debug", viewing_player), { fade: 0.3 , loop: true})
-      debug_sd_editor(
-        viewing_player,
-        () => debug_sd_editor(viewing_player, () => debug_main(viewing_player), []),
-        [save_data.findIndex(entry => entry.id === selected_save_data.id)]
-      );
-
-    });
-  }
-
-  // Zurück / Weiter zu Data Settings
-  form.button("");
-  actions.push(() => {
-    settings_rights_data(viewing_player, selected_save_data);
-  });
-
-  // Formular anzeigen
-  form.show(viewing_player).then(response => {
-    if (response.selection === undefined) {
-      return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-    }
-
-    const sel = response.selection;
-    const isResetOrDelete =
-      sel === sel === resetIndex || sel === deleteIndex;
-
-    const is_global = isResetOrDelete &&
-      save_data[0].global.last_player_id === selected_save_data.id &&
-      save_data[0].global.status;
-
-
-    if (is_global) {
-      const isSharing = save_data[0].global.last_player_id === viewing_player.id;
-
-      const design_data = typeof save_data[viewing_player_sd_index].design === "number"
-        ? design_template.find(t => t.id == save_data[viewing_player_sd_index].design).content
-        : save_data[viewing_player_sd_index].design;
-
-      const design = design_data.find(item => item.type === "ui");
-
-      const own_time = apply_design(
-        design,
-        save_data[viewing_player_sd_index].time[
-          save_data[viewing_player_sd_index].counting_type == 1 ? "timer" : "stopwatch"
-        ]
-      );
-
-      const shared_form = new ActionFormData();
-      const shared_actions = [];
-
-      shared_form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
-      shared_form.body(
-        translate_textkeys("menu.settings.permissions.shared_timer.description", lang, {
-          name: selected_save_data.name,
-          replace_text: !isSharing
-            ? translate_textkeys("menu.settings.permissions.shared_timer.description", lang, { own_time })
-            : ""
-        })
-      );
-
-      if (!isSharing) {
-        shared_form.button("§e" + translate_textkeys("menu.popup.shared_timer.yours_instead", lang));
-        shared_actions.push(() => {
-          convert_local_to_global(viewing_player.id);
-          reload_and_handle();
-        });
-      }
-
-      shared_form.button("§c" + translate_textkeys("menu.disable", lang));
-      shared_actions.push(() => {
-        convert_global_to_local(true);
-        reload_and_handle();
-      });
-
-      shared_form.button("");
-      shared_actions.push(() => {
-        settings_rights_manage_sd(viewing_player, selected_save_data);
-      });
-
-      shared_form.show(viewing_player).then(global_response => {
-        if (global_response.selection === undefined) {
-          return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-        }
-
-        const shared_action = shared_actions[global_response.selection];
-        if (shared_action) shared_action();
-      });
-
-      function reload_and_handle() {
-        save_data = load_save_data();
-        selected_save_data = save_data.find(e => e.id === selected_save_data.id);
-        handle_data_action(sel === 0, sel === 1, viewing_player, selected_save_data, lang);
-      }
-
-    } else {
-      const action = actions[sel];
-      if (action) action();
-    }
-  });
-}
-
-
-function delete_player_save_data(player) {
-  let save_data = load_save_data();
-
-  save_data = save_data.filter(entry => entry.id !== player.id);
-  update_save_data(save_data);
-}
-
-function handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, lang) {
-  const selected_player = world.getAllPlayers().find(p => p.id === selected_save_data.id);
-  if (is_reset) {
-    delete_player_save_data(selected_save_data);
-    create_player_save_data(selected_save_data.id, selected_save_data.name, {last_unix: undefined});
-    return settings_rights_main(viewing_player, false);
-  }
-
-  if (is_delete) {
-    if (selected_player) {
-      const confirm_form = new MessageFormData()
-        .title(translate_textkeys("menu.settings.permissions.online_player.kick.title", lang))
-        .body(translate_textkeys("menu.settings.permissions.online_player.kick.description", lang, {name: selected_player.name}))
-        .button2("")
-        .button1("§c"+translate_textkeys("menu.settings.permissions.online_player.kick.button", lang));
-
-      confirm_form.show(viewing_player).then(confirm => {
-        if (confirm.selection == undefined ) {
-          return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-        }
-        if (confirm.selection === 0) {
-          if (!world.getDimension("overworld").runCommand(`kick ${selected_player.name}`).successCount) {
-            const host_form = new MessageFormData()
-              .title(translate_textkeys("menu.settings.permissions.online_player.kick.host.title", lang))
-              .body(translate_textkeys("menu.settings.permissions.online_player.kick.host.description", lang, {name: selected_player.name}))
-              .button2("")
-              .button1("§c"+translate_textkeys("menu.settings.permissions.online_player.kick.host.button", lang));
-
-            host_form.show(viewing_player).then(host => {
-              if (host.selection == undefined ) {
-                return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-              }
-              if (host.selection === 0) {
-                delete_player_save_data(selected_save_data);
-                viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
-                return close_world();
-              } else {
-                settings_rights_manage_sd(viewing_player, selected_save_data);
-              }
-            });
-          } else {
-            delete_player_save_data(selected_save_data);
-            settings_rights_main(viewing_player, false);
-          }
-        } else {
-          settings_rights_manage_sd(viewing_player, selected_save_data);
-        }
-      });
-
-    } else {
-      delete_player_save_data(selected_save_data);
-      settings_rights_main(viewing_player, false);
-    }
-  }
 }
 
 /*------------------------
@@ -1630,7 +1203,7 @@ export function settings_gestures(player) {
 -------------------------*/
 
 import { settings_lang } from "./lang.js";
-import { settings_time_zone } from "./time_zone.js";
+import { settings_time_zone, settings_time_zone_preview } from "./time_zone.js";
 
 /*------------------------
     Custom Sound
@@ -1855,10 +1428,10 @@ function debug_sd_editor(player, onBack, path = []) {
     });
     // Optional: Remove player
     if (path.length === 1 && path[0] !== 0) {
-      form.button("§cRemove player", "textures/blocks/barrier");
+      form.button("Open in Permissions", "textures/ui/op");
       actions.push(() => {
         player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
-        return handle_data_action(false, true, player, save_data[Number(path[0])], save_data[player_sd_index].lang);
+        return settings_rights_data(player, save_data[Number(path[0])]);
       });
     }
 
@@ -1958,55 +1531,379 @@ function generateEntityUniqueId() {
   return id;
 }
 
+// Permissions
+
+function settings_rights_data(viewing_player, selected_save_data) {
+  let save_data = load_save_data()
+  let selected_player = world.getAllPlayers().find(player => player.id == selected_save_data.id);
+  let viewing_player_sd_index = save_data.findIndex(e => e.id === viewing_player.id);
+  let form = new ActionFormData();
+
+  let body_text =
+      translate_textkeys("menu.settings.permissions.lable.name", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name, id: selected_save_data.id}) + "\n" +
+
+      translate_textkeys("menu.settings.lang.title", save_data[viewing_player_sd_index].lang) +": " + supportedLangs.find(l => l.id == selected_save_data.lang).name + "\n" +
+      (
+          selected_player
+              ? (
+                  version_info.release_type === 0
+                      ? (
+                          translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+ translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang) +"\n" +
+                          "Platform: " + selected_player.clientSystemInfo.platformType + "\n" +
+                          "Graphics Mode: " + selected_player.graphicsMode + "\n" +
+                          "Level: " + selected_player.level + "\n" +
+                          "Solt: " + selected_player.selectedSlotIndex + "\n" +
+                          (
+                              ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
+                                  ? "Client Total Memory: " +
+                                    ["Under 1.5 GB", "1.5 - 2.0 GB", "2.0 - 4.0 GB", "4.0 - 8.0 GB", "Over 8.0 GB"][selected_player.clientSystemInfo.memoryTier]
+                                  : ""
+                          ) + "\n" +
+                          (
+                              {
+                                  "Gamepad": "Input: Gamepad",
+                                  "KeyboardAndMouse": "Input: Mouse & Keyboard",
+                                  "MotionController": "Input: Motion controller",
+                                  "Touch": "Input: Touch"
+                              }[selected_player.inputInfo.lastInputModeUsed] || ""
+                          ) + "\n"
+                      )
+                      : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang)+ ": "+translate_textkeys("menu.yes", save_data[viewing_player_sd_index].lang)+"\n"
+              )
+              : translate_textkeys("menu.settings.permissions.online", save_data[viewing_player_sd_index].lang) + ": " + translate_textkeys("menu.no", save_data[viewing_player_sd_index].lang) + (selected_save_data.last_unix ? " §7(" + translate_textkeys("menu.settings.permissions.offline", save_data[viewing_player_sd_index].lang, { time: getRelativeTime(Math.floor(Date.now() / 1000) - selected_save_data.last_unix, viewing_player) }) + ")§r\n" : "\n")
+      ) + translate_textkeys("menu.settings.permissions.lable.actionbar", save_data[viewing_player_sd_index].lang, {actionbar: render_live_actionbar(selected_save_data, false)}) +
+      (
+          selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active
+              ? "§r§f\n\n§7" + translate_textkeys("menu.settings.permissions.cm", save_data[viewing_player_sd_index].lang) +"\n\n"
+              : "\n\n"
+      );
+
+
+  form.body(body_text);
+  let actions = [];
+
+  if (selected_save_data.id !== viewing_player.id) {
+    form.title(translate_textkeys("menu.settings.permissions.title.player", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
+    if (selected_player) {
+      if (player.playerPermissionLevel === 2) {
+
+        form.button(translate_textkeys("menu.settings.permissions.deop", save_data[viewing_player_sd_index].lang));
+        actions.push(() => {
+          let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
+          selected_player.runCommand("/deop @s")
+          update_save_data(save_data);
+          return settings_rights_data(viewing_player, save_data[player_sd_index])
+        });
+
+      } else {
+
+        form.button(translate_textkeys("menu.settings.permissions.op", save_data[viewing_player_sd_index].lang));
+        actions.push(() => {
+          form = new MessageFormData();
+          form.title(translate_textkeys("menu.settings.permissions.op.title", save_data[viewing_player_sd_index].lang));
+          form.body(translate_textkeys("menu.settings.permissions.op.description", save_data[viewing_player_sd_index].lang, {name: selected_save_data.name}));
+          form.button2("");
+          form.button1("§aMake op");
+          form.show(viewing_player).then((response) => {
+            if (response.selection == undefined ) {
+              return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+            }
+            if (response.selection == 0) {
+              let player_sd_index = save_data.findIndex(entry => entry.id === selected_save_data.id)
+              selected_player.runCommand("/op @s")
+              selected_save_data = save_data[player_sd_index]
+              update_save_data(save_data);
+            }
+
+            return settings_rights_data(viewing_player, selected_save_data)
+          });
+        });
+      }
+    }
+  } else {
+    form.title(translate_textkeys("menu.settings.permissions.title.you", save_data[viewing_player_sd_index].lang));
+  }
+
+  if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active)) {
+    form.button(translate_textkeys("menu.settings.permissions.manage_sd", save_data[viewing_player_sd_index].lang));
+    actions.push(() => {
+      settings_rights_manage_sd(viewing_player, selected_save_data);
+    });
+  }
+
+  if (!(selected_save_data.id == save_data[0].global.last_player_id && save_data[0].challenge.active) || selected_save_data.id !== viewing_player.id) {
+    form.divider()
+  }
+
+  form.button("");
+  actions.push(() => {
+    viewing_player.playMusic(translate_soundkeys("music.menu.settings.debug", viewing_player), { fade: 0.3 , loop: true})
+    debug_sd_editor(
+      viewing_player,
+      () => debug_sd_editor(viewing_player, () => debug_main(viewing_player), []),
+      [save_data.findIndex(entry => entry.id === selected_save_data.id)]
+    );
+  });
+
+  form.show(viewing_player).then((response) => {
+    if (response.selection == undefined ) {
+      return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+    }
+    if (actions[response.selection]) {
+      actions[response.selection]();
+    }
+  });
+}
+
+function settings_rights_manage_sd(viewing_player, selected_save_data) {
+  let save_data = load_save_data();
+  let viewing_player_sd_index = save_data.findIndex(entry => entry.id === viewing_player.id);
+  const lang = save_data[viewing_player_sd_index].lang;
+
+  const form = new ActionFormData();
+  const actions = [];
+
+  let resetIndex       = -1;
+  let deleteIndex      = -1;
+
+  // Titel und Beschreibung
+  form.title(
+    selected_save_data.id !== viewing_player.id
+      ? translate_textkeys("menu.settings.permissions.title.player", lang, { name: selected_save_data.name })
+      : translate_textkeys("menu.settings.permissions.title.you", lang)
+  );
+  form.body(translate_textkeys("menu.general.description", lang));
+
+  // Reset-Button
+  form.button("§d" + translate_textkeys("menu.settings.permissions.reset_sd", lang));
+  resetIndex = actions.length;
+  actions.push(() => {
+    handle_data_action(true, false, viewing_player, selected_save_data, lang);
+  });
+
+  // Delete-Button
+  form.button("§c" + translate_textkeys("menu.settings.permissions.delete_sd", lang));
+  deleteIndex = actions.length;
+  actions.push(() => {
+    handle_data_action(false, true, viewing_player, selected_save_data, lang);
+  });
+
+  // Zurück / Weiter zu Data Settings
+  form.button("");
+  actions.push(() => {
+    settings_rights_data(viewing_player, selected_save_data);
+  });
+
+  // Formular anzeigen
+  form.show(viewing_player).then(response => {
+    if (response.selection === undefined) {
+      return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+    }
+
+    const sel = response.selection;
+    const isResetOrDelete =
+      sel === sel === resetIndex || sel === deleteIndex;
+
+    const is_global = isResetOrDelete &&
+      save_data[0].global.last_player_id === selected_save_data.id &&
+      save_data[0].global.status;
+
+
+    if (is_global) {
+      const isSharing = save_data[0].global.last_player_id === viewing_player.id;
+
+      const design_data = typeof save_data[viewing_player_sd_index].design === "number"
+        ? design_template.find(t => t.id == save_data[viewing_player_sd_index].design).content
+        : save_data[viewing_player_sd_index].design;
+
+      const design = design_data.find(item => item.type === "ui");
+
+      const own_time = apply_design(
+        design,
+        save_data[viewing_player_sd_index].time[
+          save_data[viewing_player_sd_index].counting_type == 1 ? "timer" : "stopwatch"
+        ]
+      );
+
+      const shared_form = new ActionFormData();
+      const shared_actions = [];
+
+      shared_form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
+      shared_form.body(
+        translate_textkeys("menu.settings.permissions.shared_timer.description", lang, {
+          name: selected_save_data.name,
+          replace_text: !isSharing
+            ? translate_textkeys("menu.settings.permissions.shared_timer.description", lang, { own_time })
+            : ""
+        })
+      );
+
+      if (!isSharing) {
+        shared_form.button("§e" + translate_textkeys("menu.popup.shared_timer.yours_instead", lang));
+        shared_actions.push(() => {
+          convert_local_to_global(viewing_player.id);
+          reload_and_handle();
+        });
+      }
+
+      shared_form.button("§c" + translate_textkeys("menu.disable", lang));
+      shared_actions.push(() => {
+        convert_global_to_local(true);
+        reload_and_handle();
+      });
+
+      shared_form.button("");
+      shared_actions.push(() => {
+        settings_rights_manage_sd(viewing_player, selected_save_data);
+      });
+
+      shared_form.show(viewing_player).then(global_response => {
+        if (global_response.selection === undefined) {
+          return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+        }
+
+        const shared_action = shared_actions[global_response.selection];
+        if (shared_action) shared_action();
+      });
+
+      function reload_and_handle() {
+        save_data = load_save_data();
+        selected_save_data = save_data.find(e => e.id === selected_save_data.id);
+        handle_data_action(sel === 0, sel === 1, viewing_player, selected_save_data, lang);
+      }
+
+    } else {
+      const action = actions[sel];
+      if (action) action();
+    }
+  });
+}
+
+function delete_player_save_data(player) {
+  let save_data = load_save_data();
+
+  save_data = save_data.filter(entry => entry.id !== player.id);
+  update_save_data(save_data);
+}
+
+function handle_data_action(is_reset, is_delete, viewing_player, selected_save_data, lang) {
+  const selected_player = world.getAllPlayers().find(p => p.id === selected_save_data.id);
+  if (is_reset) {
+    delete_player_save_data(selected_save_data);
+    create_player_save_data(selected_save_data.id, selected_save_data.name, {last_unix: undefined});
+    viewing_player.playMusic(translate_soundkeys("music.menu.settings.rights", viewing_player), { fade: 0.3, loop: true });
+    return settings_rights_data(viewing_player, save_data[Number(path[0])]);
+  }
+
+  if (is_delete) {
+    if (selected_player) {
+      const confirm_form = new MessageFormData()
+        .title(translate_textkeys("menu.settings.permissions.online_player.kick.title", lang))
+        .body(translate_textkeys("menu.settings.permissions.online_player.kick.description", lang, {name: selected_player.name}))
+        .button2("")
+        .button1("§c"+translate_textkeys("menu.settings.permissions.online_player.kick.button", lang));
+
+      confirm_form.show(viewing_player).then(confirm => {
+        if (confirm.selection == undefined ) {
+          return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+        }
+        if (confirm.selection === 0) {
+          if (!world.getDimension("overworld").runCommand(`kick ${selected_player.name}`).successCount) {
+            const host_form = new MessageFormData()
+              .title(translate_textkeys("menu.settings.permissions.online_player.kick.host.title", lang))
+              .body(translate_textkeys("menu.settings.permissions.online_player.kick.host.description", lang, {name: selected_player.name}))
+              .button2("")
+              .button1("§c"+translate_textkeys("menu.settings.permissions.online_player.kick.host.button", lang));
+
+            host_form.show(viewing_player).then(host => {
+              if (host.selection == undefined ) {
+                return viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+              }
+              if (host.selection === 0) {
+                delete_player_save_data(selected_save_data);
+                viewing_player.playMusic(translate_soundkeys("menu.close", viewing_player), { fade: 0.3 });
+                return close_world();
+              } else {
+                settings_rights_manage_sd(viewing_player, selected_save_data);
+              }
+            });
+          } else {
+            delete_player_save_data(selected_save_data);
+            viewing_player.playMusic(translate_soundkeys("music.menu.settings.rights", player), { fade: 0.3, loop: true });
+            return settings_rights_data(viewing_player, save_data[Number(path[0])]);
+          }
+        } else {
+          settings_rights_manage_sd(viewing_player, selected_save_data);
+        }
+      });
+
+    } else {
+      delete_player_save_data(selected_save_data);
+      viewing_player.playMusic(translate_soundkeys("music.menu.settings.rights", viewing_player), { fade: 0.3, loop: true });
+      return settings_rights_data(viewing_player, save_data[Number(path[0])]);
+    }
+  }
+}
+
 /*------------------------
  Dictionary
 -------------------------*/
 
-export function dictionary_about_version(player) {
-  let save_data = load_save_data()
+// Todo: translation!
+
+function dictionary_about(player, show_ip = false) {
   let form = new ActionFormData()
   let actions = []
-  let build_date = convertUnixToDate(version_info.unix, save_data[0].utc || 2);
-  const player_sd_index = save_data.findIndex(e => e.id === player.id);
+
+  let save_data = load_save_data()
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   let lang = save_data[player_sd_index].lang;
 
-  const formattedDate = translate_textkeys("menu.settings.dictionary.text.dateformat", lang, {
-    day: build_date.day,
-    month: build_date.month,
-    year: build_date.year,
-    hours: build_date.hours,
-    minutes: build_date.minutes,
-    seconds: build_date.seconds,
-    utcOffset: (build_date.utcOffset >= 0 ? "+" : "") + build_date.utcOffset
-  });
-
-
+  let build_date = convertUnixToDate(version_info.unix, save_data[0].utc || 0);
   form.title(translate_textkeys("menu.settings.dictionary.title", lang))
-  form.body(translate_textkeys("menu.settings.dictionary.text", lang, {
-    name: version_info.name,
-    version: version_info.version,
-    build: ((Math.floor(Date.now() / 1000)) > (version_info.update_message_period_unix + version_info.unix)? "§a"+translate_textkeys("menu.settings.dictionary.text.build.update", lang)+"§r" : version_info.build),
-    edition: ["International", "German (BastiGHG)"][version_info.edition],
-    release_type: ["dev", "preview", "stable"][version_info.release_type],
-    uuid: version_info.uuid,
-    build_date: ((save_data[0].utc == undefined)
-      ? translate_textkeys("menu.settings.dictionary.text.utc_empty", lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player)})
-      : formattedDate),
 
-    license: "§7© 2022-"+ build_date.year + " TheFelixLive. Licensed under the MIT License."
-  }))
+  form.body("§lGeneral")
+  form.label(
+    "Name: " + version_info.name+ "\n"+
+    "UUID: "+ version_info.uuid+
+    (show_ip? "\n"+ "Public IP: "+server_ip : "")
+  )
+
+  form.label("§lVersion")
+  form.label(
+    "Version: " + version_info.version + "\n" +
+    "Build: " + version_info.build + "\n" +
+    "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
+    "Build date: " + (
+      save_data[0].utc === undefined
+        ? getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player) + " ago\n\n§7Note: Set the time zone to see detailed information"
+        : `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})`
+    ) + "\n" +
+    "Status: " + (github_data? (compareVersions((version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag), version_info.version) !== 1? "§aLatest version" : "§6Update available!"): "§cFailed to fetch!")
+  );
+
+  form.label("§7© "+ (build_date.year > 2025 ? "2025 - " + build_date.year : build_date.year ) + " TheFelixLive. Licensed under the MIT License.")
+
+  if (!show_ip && server_ip && player.playerPermissionLevel === 2) {
+    form.button("Show Public IP");
+    actions.push(() => {
+      dictionary_about(player, true)
+    });
+    form.divider()
+  }
 
   if (version_info.changelog.new_features.length > 0 || version_info.changelog.general_changes.length > 0 || version_info.changelog.bug_fixes.length > 0) {
-    form.button("§9"+ translate_textkeys("menu.settings.dictionary.changelog.title", lang));
+    form.button("§9Changelog"+(github_data?"s":""));
     actions.push(() => {
-      dictionary_about_version_changelog(player, build_date)
+      github_data? dictionary_about_changelog(player) : dictionary_about_changelog_legacy(player, build_date)
     });
   }
 
   form.button("§3"+ translate_textkeys("menu.settings.dictionary.contact.title", lang));
   actions.push(() => {
-    dictionary_contact(player, build_date)
+    dictionary_contact(player)
   });
+
   form.divider()
   form.button("");
   actions.push(() => {
@@ -2024,67 +1921,155 @@ export function dictionary_about_version(player) {
   });
 }
 
-function dictionary_contact(player, build_date) {
-  let form = new ActionFormData()
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-  let lang = save_data[player_sd_index].lang;
+function dictionary_about_changelog(player) {
+  const form = new ActionFormData();
+  let save_data = load_save_data()
+  let lang = save_data[save_data.findIndex(e => e.id === player.id)].lang;
+  const actions = [];
 
-  // Yes, that's right, you're not dumping the full "save_data". The player names are removed here for data protection reasons
-  save_data = save_data.map(entry => {
-    if ("name" in entry) {
-      return { ...entry, name: "" };
+  // ---- 1) Hilfsdaten ----------------------------------------------------
+  const installed   = version_info.version;        // z.B. "v1.5.0"
+  const buildName   = version_info.build;          // z.B. "B123"
+  const installDate = version_info.unix;           // z.B. "1700000000"
+
+  // ---- 3) Neue Instanzen finden -----------------------------------------
+  const latest_stable = github_data.find(r => !r.prerelease);
+  let   latest_beta   = github_data.find(r => r.prerelease);
+
+  // ---- 4) Beta-Versions-Filter (nach release_type) --------------------
+  if (version_info.release_type === 2) { // „nur Beta zulassen“
+    if (latest_beta && latest_stable) {
+      const isBetaNewer = compareVersions(latest_beta.name, latest_stable.name) > 0;
+      if (isBetaNewer) {
+        // Nur die neueste Beta behalten
+        github_data = github_data.filter(r => r === latest_beta || !r.prerelease);
+      } else {
+        // Stable neuer oder gleich → Betas entfernen
+        github_data = github_data.filter(r => !r.prerelease);
+        latest_beta = undefined;
+      }
+    } else {
+      // Sicherheit: Alle Betas entfernen
+      github_data = github_data.filter(r => !r.prerelease);
+      latest_beta = undefined;
     }
-    return entry;
-  });
-  // and this adds information about the dump date and version to ensure whether a dump matches a bug
-  save_data.push({ dump_unix:Math.floor(Date.now() / 1000), name:version_info.name, version:version_info.version, build:version_info.build });
-
-  let actions = []
-  form.title(translate_textkeys("menu.settings.dictionary.contact.title", lang))
-  form.body(translate_textkeys("menu.settings.dictionary.contact.description", lang) + "\n")
-
-  for (const entry of links) {
-    if (entry !== links[0]) form.divider()
-    form.label(`${entry.name}\n${entry.link}`);
+  } else {
+    // Wenn Stable neuer als Beta ist → Beta Label unterdrücken
+    if (latest_beta && latest_stable) {
+      const isStableNewer = compareVersions(latest_stable.name, latest_beta.name) > 0;
+      if (isStableNewer) {
+        latest_beta = undefined; // Kein Beta-Label später anzeigen
+      }
+    }
   }
 
-  if (save_data[player_sd_index].op) {
-    form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang) + (version_info.release_type !== 2? "\n"+translate_textkeys("menu.settings.dictionary.contact.sd.mode_0", lang) : ""));
-    actions.push(() => {
-      player.sendMessage("§l§7[§f"+ (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("menu.settings.dictionary.contact.sd", lang) +":\n"+JSON.stringify(save_data))
-      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+
+  // ---- 5) Alle Einträge, inkl. eventuell fehlenden Installations‑Eintrag --
+  const allData = [...github_data];
+
+  // Prüfen, ob die installierte Version überhaupt in der Liste vorkommt
+  const isInstalledListed = github_data.some(r => r.name === installed);
+  if (!isInstalledListed) {
+    // Dummy‑Objekt – so sieht es aus wie ein reguläres GitHub‑Release
+    allData.push({
+      name:        installed,
+      published_at: installDate,
+      prerelease:  false,          // wichtig, damit das Label nicht „(latest beta)“ bekommt
     });
-
-    if (version_info.release_type !== 2) {
-      form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang)+"\n" + translate_textkeys("menu.settings.dictionary.contact.sd.mode_1", lang));
-      actions.push(() => {
-        console.log(JSON.stringify(save_data))
-        player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-      });
-    }
   }
-  form.divider()
+
+  // Sortieren (nach Version)
+  allData.sort((a, b) => compareVersions(b.name, a.name));
+
+  // ---- 6) UI bauen ----------------------------------------------------
+  form.title(translate_textkeys("menu.settings.dictionary.title", lang))
+  form.body("Select a version");
+
+  allData.forEach(r => {
+    // Prüfen, ob r.published_at schon Unix-Sekunden ist
+    const publishedUnix = (typeof r.published_at === 'number' && r.published_at < 1e12)
+      ? r.published_at // schon in Sekunden
+      : Math.floor(new Date(r.published_at).getTime() / 1000); // in Sekunden umrechnen
+
+    let label;
+    let build_date = convertUnixToDate(publishedUnix, save_data[0].utc || 0);
+
+    let build_text = (
+      save_data[0].utc === undefined
+        ? getRelativeTime(Math.floor(Date.now() / 1000) - publishedUnix, player) + " ago"
+        : `${build_date.day}.${build_date.month}.${build_date.year}`
+    );
+
+    if (r === latest_beta && r.name === installed) {
+      label = `${r.name} (${buildName})\n${build_text} §9(latest beta)`;
+    } else {
+      label = `${r.name}\n${build_text}`;
+
+      if (r === latest_stable) {
+        label += ' §a(latest version)';
+      } else if (r === latest_beta) {
+        label += ' §9(latest beta)';
+      } else if (r.name === installed) {
+        label += ' §6(installed version)';
+      }
+    }
+
+    form.button(label);
+
+    actions.push(() => {
+      dictionary_about_changelog_view(player, r);
+    });
+  });
+
+
+  // ---- 7) Footer‑Button -------------------------------------------------
+  form.divider();
   form.button("");
   actions.push(() => {
-    dictionary_about_version(player, build_date)
+    dictionary_about(player);
   });
 
-  form.show(player).then((response) => {
+  // ---- 8) Anzeigen -----------------------------------------------------
+  form.show(player).then(response => {
     if (response.selection == undefined ) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (response.selection !== undefined && actions[response.selection]) {
-      actions[response.selection]();
-    }
+    if (actions[response.selection]) actions[response.selection]();
   });
 }
 
-export function dictionary_about_version_changelog(player, build_date) {
+function dictionary_about_changelog_view(player, version) {
   let save_data = load_save_data()
-  let player_sd_index = save_data.findIndex(e => e.id === player.id);
-  let lang = save_data[player_sd_index].lang;
+  let lang = save_data[save_data.findIndex(e => e.id === player.id)].lang;
+  const publishedUnix = (typeof version.published_at === 'number' && version.published_at < 1e12)
+  ? version.published_at
+  : Math.floor(new Date(version.published_at).getTime() / 1000);
 
+  let build_date = convertUnixToDate(publishedUnix, save_data[0].utc || 0);
+
+  if (version.name == version_info.version) return dictionary_about_changelog_legacy(player, build_date)
+  const form = new ActionFormData().title(translate_textkeys("menu.settings.dictionary.changelog.title", lang)+" - "+version.name);
+
+  form.body(markdownToMinecraft(version.body))
+
+  form.label("§7"+translate_textkeys("menu.settings.dictionary.changelog.build", lang, {
+    day: build_date.day,
+    month: build_date.month,
+    year: build_date.year,
+    relative_time: getRelativeTime(Math.floor(Date.now() / 1000) - publishedUnix, player)
+  }));
+  form.button("");
+
+  form.show(player).then(res => {
+    if (res.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (res.selection === 0) dictionary_about_changelog(player);
+  });
+}
+
+export function dictionary_about_changelog_legacy(player, build_date) {
+  let lang = load_save_data().find(e => e.id === player.id)?.lang;
   const { new_features, general_changes, bug_fixes } = version_info.changelog;
   const sections = [
     { title: "§l§b"+translate_textkeys("menu.settings.dictionary.changelog.new_features", lang)+"§r", items: new_features },
@@ -2122,12 +2107,68 @@ export function dictionary_about_version_changelog(player, build_date) {
   }));
   form.button("");
 
+  form.show(player).then(res => {
+    if (res.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (res.selection == 0) {
+      github_data? dictionary_about_changelog(player) : dictionary_about(player);
+    }
+  });
+}
+
+function dictionary_contact(player) {
+  let form = new ActionFormData()
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang;
+
+  // Yes, that's right, you're not dumping the full "save_data". The player names are removed here for data protection reasons
+  save_data = save_data.map(entry => {
+    if ("name" in entry) {
+      return { ...entry, name: "" };
+    }
+    return entry;
+  });
+  // and this adds information about the dump date and version to ensure whether a dump matches a bug
+  save_data.push({ dump_unix:Math.floor(Date.now() / 1000), name:version_info.name, version:version_info.version, build:version_info.build });
+
+  let actions = []
+  form.title(translate_textkeys("menu.settings.dictionary.contact.title", lang))
+  form.body(translate_textkeys("menu.settings.dictionary.contact.description", lang) + "\n")
+
+  for (const entry of links) {
+    if (entry !== links[0]) form.divider()
+    form.label(`${entry.name}\n${entry.link}`);
+  }
+
+  if (player.playerPermissionLevel === 2) {
+    form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang) + (version_info.release_type !== 2? "\n"+translate_textkeys("menu.settings.dictionary.contact.sd.mode_0", lang) : ""));
+    actions.push(() => {
+      player.sendMessage("§l§7[§f"+ (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("menu.settings.dictionary.contact.sd", lang) +":\n"+JSON.stringify(save_data))
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    });
+
+    if (version_info.release_type !== 2) {
+      form.button(translate_textkeys("menu.settings.dictionary.contact.sd", lang)+"\n" + translate_textkeys("menu.settings.dictionary.contact.sd.mode_1", lang));
+      actions.push(() => {
+        console.log(JSON.stringify(save_data))
+        player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      });
+    }
+  }
+  form.divider()
+  form.button("");
+  actions.push(() => {
+    dictionary_about(player)
+  });
+
   form.show(player).then((response) => {
     if (response.selection == undefined ) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (response.selection == 0) {
-      dictionary_about_version(player)
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
     }
   });
 }

@@ -1,31 +1,30 @@
 export const version_info = {
   name: "Timer V",
-  version: "v.5.3.0",
-  build: "B030",
+  version: "v.5.4.0",
+  build: "B031",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1753389726,
-  update_message_period_unix: 15897600, // Normally 6 months = 15897600
+  unix: 1759866189,
   uuid: "c4d3852f-f902-4807-a8c8-51980fdae4c3",
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
     // new_features
     new_features: [
-      "New menu structure"
+      "Achievements can now be earned with this add-on",
+      "Time zones can now be determined automatically",
+      "The About page got a redesign"
     ],
     // general_changes
     general_changes: [
-      "Added Multiple Menu Support",
-      "The Main menu will now be hidden if nessessary",
-      "The music in some menus has been changed",
-      "Language data has been improved",
-      "Added UUID to the about page"
+      "World time can now be used in challenges and as a shared timer.",
+      "World time can no longer be displayed for individual players",
+      "World time is now the default if the world is less than 10 minutes old",
+      "Permissions are now handled by Minecraft",
+      "Removed Permission Menu",
+      "Added multiple menu support for v2.0"
     ],
     // bug_fixes
     bug_fixes: [
-      "Fixed a bug that cause the menu to crash when the counting type was changed and the timer or stopwatch not paused",
-      "Fixed a bug that caused design templates to be unnecessarily saved to local storage when a player changed a settings related to the actionbar",
-      "Fixed a bug that caused the menu to not close correctly if the timer shut close the world",
-      "Fixed a bug that caused the timer to stop resuming if the intelligent state was used and /reload was entered 15 seconds before"
+      "Fixed a bug that caused the setup to not finish correctly at 90%"
     ]
   }
 }

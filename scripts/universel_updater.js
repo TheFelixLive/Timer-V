@@ -3,7 +3,7 @@ import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/serv
 import { load_save_data, update_save_data, create_player_save_data, print} from "./helper_function.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys } from "./lang.js";
-import { setup_menu, main_menu, dictionary_about_version_changelog } from "./menu.js";
+import { setup_menu, main_menu, dictionary_about_changelog_legacy } from "./menu.js";
 import { version_info } from "./version.js";
 
 export function uu_find_gen() {
@@ -389,7 +389,7 @@ function uu_gen_successfull(player, note_message) {
     }
     if (response.selection == 0) {
       player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
-      return dictionary_about_version_changelog(player, convertUnixToDate(version_info.unix, save_data[0].utc))
+      return dictionary_about_changelog_legacy(player, convertUnixToDate(version_info.unix, save_data[0].utc))
     }
     if (response.selection == 1) {
       player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });

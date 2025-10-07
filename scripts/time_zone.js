@@ -1,5 +1,5 @@
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
-import { load_save_data, update_save_data } from "./helper_function.js";
+import { load_save_data, update_save_data, server_utc } from "./helper_function.js";
 import { apply_design, design_template  } from "./design.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys } from "./lang.js";
@@ -308,15 +308,14 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
     return (adj / MILLIS_DAY) * TICKS;
   };
 
-  const renderZoneButton = (zone, index) => {
+  const renderZoneButton = (zone, index, switch_to_auto) => {
     const ticks = getTicks(zone.utc);
 
     const design = typeof player_sd.design === "number"
       ? design_template.find(t => t.id === player_sd.design).content
       : player_sd.design;
 
-    const label = (zone.name.length > 28 ? zone.short : zone.name) + "\n" +
-                  apply_design(design.find(i => i.type === "day"), ticks);
+    const label = (switch_to_auto? translate_textkeys("menu.settings.time_zone.automatically", player_sd.lang, {zone_short: zone.short}) : zone.name.length > 28 ? zone.short : zone.name) + "\n" + apply_design(design.find(i => i.type === "day"), ticks);
 
     const utcHours = (now.getUTCHours() + zone.utc + 24) % 24;
     const utcMinutes = now.getUTCMinutes();
@@ -338,7 +337,9 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
     form.button(label, icon);
 
     actions.push(() => {
-      if (icon === "textures/ui/realms_slot_check") {
+      if (switch_to_auto) {
+        settings_time_zone_preview(player, zone, viewing_mode, in_setup, true);
+      } else if (icon === "textures/ui/realms_slot_check") {
         save_data.forEach(entry => {
           if (entry.time_source === 1) {
             entry.time_source = 0;
@@ -348,17 +349,18 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
         update_save_data(save_data);
         settings_time_zone(player);
       } else {
-        settings_time_zone_preview(player, zone, viewing_mode, in_setup);
+        settings_time_zone_preview(player, zone, viewing_mode, in_setup, false);
       }
     });
   };
 
-
-
-
   const navButton = (label, icon, mode) => {
     form.button(label, icon);
     actions.push(() => settings_time_zone(player, mode));
+  };
+
+  const autoButton = () => {
+    renderZoneButton(timezone_list.find(zone => zone.utc === server_utc), undefined, true)
   };
 
   const renderZones = (filterFn) => {
@@ -371,15 +373,16 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
     let start = Math.max(0, current_zone_index - 2);
     let end = Math.min(timezone_list.length - 1, current_zone_index + 2);
 
-    if (start > 0) navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 1);
+    if (start > 0) navButton(navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 1));
     form.divider();
     for (let i = start; i <= end; i++) renderZoneButton(timezone_list[i], i);
     form.divider();
     if (end < timezone_list.length - 1) navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 2);
   } else {
+    if (server_utc) {autoButton(); form.divider();}
     if (viewing_mode === 1) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 0);
-    if (viewing_mode === 2 && current_zone_index !== 0) {navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 3); form.divider();}
-    if (viewing_mode === 3 && current_utc !== undefined) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 2);
+    if (viewing_mode === 2 && current_zone_index !== 0) {navButton(navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 3)); form.divider();}
+    if (viewing_mode === 3 && current_utc !== undefined) {navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/down_arrow", 2);}
 
     renderZones(i =>
       viewing_mode === 3 ||
@@ -388,8 +391,9 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
     );
 
     if (viewing_mode === 1 && current_zone_index !== timezone_list.length) {form.divider(); navButton(translate_textkeys("menu.settings.time_zone.show_later", player_sd.lang), "textures/ui/down_arrow", 3);}
-    if (viewing_mode === 2) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 0);
-    if (viewing_mode === 3 && current_utc !== undefined) navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 1);
+    if (viewing_mode === 2) {navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 0)}
+    if (viewing_mode === 3 && current_utc !== undefined) {navButton(translate_textkeys("menu.settings.time_zone.show_less", player_sd.lang), "textures/ui/up_arrow", 1)}
+    if (viewing_mode === 3 && current_utc == undefined) form.divider();
   }
 
   if (in_setup) {
@@ -418,7 +422,7 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
 }
 
 
-function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
+export function settings_time_zone_preview (player, zone, viewing_mode, in_setup, switch_to_auto) {
   const save_data = load_save_data();
   const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   let form = new MessageFormData();
@@ -439,13 +443,6 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
 
 
   form.title(translate_textkeys("menu.settings.time_zone.title", save_data[player_sd_index].lang));
-  form.body(
-    "Time zone: " + zone.name +
-    "\nUTC: "+ (zone.utc >= 0 ? "+" : "") + zone.utc +
-    "\nTime: " + apply_design(design.find(i => i.type === "day"), ticks) +
-    "§r\nLocation: " + zone.location.join(", ") +
-    "\n\nDo you want to use this time zone?\n "
-  )
 
   form.body(translate_textkeys(
     "menu.settings.time_zone.preview",
@@ -454,12 +451,13 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
       name: zone.name,
       utc: zone.utc,
       time: apply_design(design.find(i => i.type === "day"), ticks),
-      location: zone.location.join(", ")
+      location: zone.location.join(", "),
+      subtitle: save_data[0].utc_auto? translate_textkeys("menu.settings.time_zone.preview.subtitle.auto", save_data[player_sd_index].lang) : translate_textkeys("menu.settings.time_zone.preview.subtitle.manuel", save_data[player_sd_index].lang)
     }
 
   ))
 
-  form.button1(translate_textkeys("menu.button_switch", save_data[player_sd_index].lang, {name: zone.short}));
+  form.button1(save_data[0].utc_auto? translate_textkeys("menu.button_manually", save_data[player_sd_index].lang) : translate_textkeys("menu.button_switch", save_data[player_sd_index].lang, {name: zone.short}));
   form.button2("");
 
   form.show(player).then((response) => {
@@ -467,19 +465,43 @@ function settings_time_zone_preview (player, zone, viewing_mode, in_setup) {
       if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
-    if (response.selection == 0) {
-      save_data[0].utc = zone.utc;
 
-      if (in_setup) {
-        save_data[player_sd_index].setup = 60
+
+    if (response.selection == 0) {
+      // Disable UTC auto
+      if (save_data[0].utc_auto) {
+        save_data[0].utc_auto = false
+        save_data[0].utc = undefined
         update_save_data(save_data);
-        return setup_menu(player)
+        return settings_time_zone(player, 0);
+
+      // Enable UTC auto
+      } else if (switch_to_auto) {
+        save_data[0].utc_auto = true
+        save_data[0].utc = server_utc
+        update_save_data(save_data);
+        player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+        return settings_main(player);
+
+      } else {
+        // Save manuall UTC
+        save_data[0].utc = zone.utc;
+
+        if (in_setup) {
+          save_data[player_sd_index].setup = 60
+          update_save_data(save_data);
+          return setup_menu(player)
+        }
+
+        update_save_data(save_data);
+        player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+        return settings_main(player);
       }
-      update_save_data(save_data);
-      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-      return settings_main(player);
     }
-    settings_time_zone(player, viewing_mode, in_setup);
+    if (save_data[0].utc_auto) {
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+    }
+    return save_data[0].utc_auto? settings_main(player) : settings_time_zone(player, viewing_mode)
   });
 
 }

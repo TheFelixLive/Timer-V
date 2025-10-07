@@ -19,11 +19,13 @@ console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+
 -------------------------*/
 
 // Load & Save Save data
-import { finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
+import { update_github_data, update_server_utc, finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
 system.run(() => {
 
 initialize_multiple_menu()
+update_github_data()
+update_server_utc()
 
 // Creates or Updates Save Data if not present
 function initialize_save_data() {
@@ -124,7 +126,7 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     const notAvailableMsg = id => `§l§7[§f` + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} is not available in stable releases!`;
     const noPermissionMsg = id => `§l§7[§f` + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} could not be changed because you do not have permission!`;
 
-    if (!save_data[player_sd_index].op) {
+    if (!player.playerPermissionLevel === 2) {
       player.sendMessage(noPermissionMsg(event.id));
       return;
     }
@@ -149,10 +151,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 -------------------------*/
 
   if (system_privileges !== 2) {
-    if (event.id === "multiple_menu:open_"+version_info.uuid) {
-      initialize_main_menu(player, true);
-    }
-
     if (event.id === "timerv:api_show_actionbar") {
       save_data[player_sd_index].absolute_visibility = true
       update_save_data(save_data)
@@ -315,58 +313,6 @@ async function gesture_nod() {
   }
 }
 
-
-
-
-/*------------------------
- general helper functions
--------------------------*/
-
-function check_player_gamemode(player) {
-  const { challenge, time } = load_save_data()[0];
-  const gm = player.getGameMode();
-
-  if (challenge.progress === 0 && !world.isHardcore) {
-    const target = "Creative";
-    if (gm !== target) player.setGameMode(target);
-  }
-
-  if (challenge.progress === 1 && !world.isHardcore) {
-    const target = time.do_count ? "Survival" : "Spectator";
-    if (gm !== target) player.setGameMode(target);
-  }
-
-  if (challenge.progress === 2) {
-    let target;
-    if (challenge.rating === 1) {
-      target = "Creative";
-    } else {
-      target = "Spectator";
-    }
-    if (gm !== target) player.setGameMode(target);
-  }
-}
-
-
-
-function enable_gamerules(doDayLightCycle) {
-  world.gameRules.doDayLightCycle = doDayLightCycle;
-  world.gameRules.playerssleepingpercentage = doDayLightCycle? 101 : 100;
-  world.gameRules.doEntityDrops = true;
-  world.gameRules.doFireTick = true;
-  world.gameRules.doWeatherCycle = true;
-  world.gameRules.doMobSpawning = true;
-}
-
-function disable_gamerules() {
-  world.gameRules.doDayLightCycle = false;
-  world.gameRules.playerssleepingpercentage = 101;
-  world.gameRules.doEntityDrops = false;
-  world.gameRules.doFireTick = false;
-  world.gameRules.doWeatherCycle = false;
-  world.gameRules.doMobSpawning = false;
-}
-
 /*------------------------
  CA End trigger
 -------------------------*/
@@ -409,67 +355,6 @@ world.afterEvents.entityDie.subscribe(event => {
     }
   }
 });
-
-/*------------------------
- Menus
--------------------------*/
-
-function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
-  let save_data = load_save_data();
-  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
-
-  if (system_privileges == 1 && !lauched_by_addon && !lauched_by_joining) {
-    player.playSound(translate_soundkeys("menu.open", player));
-    return multiple_menu(player)
-  }
-
-  if (system_privileges == 2 || lauched_by_addon) {
-
-    // open Setup menu
-    if (save_data[player_sd_index].setup !== 100 && save_data[0].use_setup) {
-      if (!lauched_by_addon) player.playSound(translate_soundkeys("menu.open", player));
-      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3, loop: true });
-      return setup_menu(player)
-    }
-
-    // Version update popup
-    if (save_data[player_sd_index].op && (Math.floor(Date.now() / 1000)) > save_data[0].update_message_unix && lauched_by_joining) {
-      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
-      let form = new ActionFormData();
-      let lang = save_data[player_sd_index].lang
-      form.title(translate_textkeys("menu.update.title", lang));
-      form.body(translate_textkeys("menu.update.description", lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player)}));
-      form.button(translate_textkeys("menu.update.mute", lang));
-
-      const showForm = async () => {
-        form.show(player).then((response) => {
-          if (response.canceled && response.cancelationReason === "UserBusy") {
-            showForm()
-          } else {
-            if (response.selection === 0) {
-              save_data[0].update_message_unix = (Math.floor(Date.now() / 1000)) + version_info.update_message_period_unix;
-              update_save_data(save_data);
-            }
-            if (response.selection == undefined ) {
-              return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
-            }
-          }
-        });
-      };
-      showForm();
-    }
-
-
-    // Preventing the main menu from opening every time when a player joined the game
-    if (lauched_by_joining) return -1
-
-    // open Main menu
-    if (!lauched_by_addon) player.playSound(translate_soundkeys("menu.open", player));
-    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
-    return main_menu(player)
-
-  }
-}
 
 
 
@@ -667,6 +552,85 @@ update_loop();
 });
 
 /*------------------------
+ general helper functions
+-------------------------*/
+
+function check_player_gamemode(player) {
+  const { challenge, time } = load_save_data()[0];
+  const gm = player.getGameMode();
+
+  if (challenge.progress === 0 && !world.isHardcore) {
+    const target = "Creative";
+    if (gm !== target) player.setGameMode(target);
+  }
+
+  if (challenge.progress === 1 && !world.isHardcore) {
+    const target = time.do_count ? "Survival" : "Spectator";
+    if (gm !== target) player.setGameMode(target);
+  }
+
+  if (challenge.progress === 2) {
+    let target;
+    if (challenge.rating === 1) {
+      target = "Creative";
+    } else {
+      target = "Spectator";
+    }
+    if (gm !== target) player.setGameMode(target);
+  }
+}
+
+function enable_gamerules(doDayLightCycle) {
+  world.gameRules.doDayLightCycle = doDayLightCycle;
+  world.gameRules.playerssleepingpercentage = doDayLightCycle? 101 : 100;
+  world.gameRules.doEntityDrops = true;
+  world.gameRules.doFireTick = true;
+  world.gameRules.doWeatherCycle = true;
+  world.gameRules.doMobSpawning = true;
+}
+
+function disable_gamerules() {
+  world.gameRules.doDayLightCycle = false;
+  world.gameRules.playerssleepingpercentage = 101;
+  world.gameRules.doEntityDrops = false;
+  world.gameRules.doFireTick = false;
+  world.gameRules.doWeatherCycle = false;
+  world.gameRules.doMobSpawning = false;
+}
+
+/*------------------------
+ Menus
+-------------------------*/
+
+export function initialize_main_menu(player, lauched_by_addon, lauched_by_joining) {
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+
+  if (system_privileges == 1 && !lauched_by_addon && !lauched_by_joining) {
+    player.playSound(translate_soundkeys("menu.open", player));
+    return multiple_menu(player)
+  }
+
+  if (system_privileges == 2 || lauched_by_addon) {
+    // open Setup menu
+    if (save_data[player_sd_index].setup !== 100 && save_data[0].use_setup) {
+      if (!lauched_by_addon) player.playSound(translate_soundkeys("menu.open", player));
+      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3, loop: true });
+      return setup_menu(player)
+    }
+
+    // Preventing the main menu from opening every time when a player joined the game
+    if (lauched_by_joining) return -1
+
+    // open Main menu
+    if (!lauched_by_addon) player.playSound(translate_soundkeys("menu.open", player));
+    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+    return main_menu(player)
+
+  }
+}
+
+/*------------------------
  Render Actionbar & Count up
 -------------------------*/
 
@@ -730,7 +694,11 @@ function calcAB(update, id, dayFormat) {
 
 
   if (counting_type === 2) {
-    timevalue = { value: system.currentTick, do_count: true };
+    if (data[0].challenge.progress == 1 || !data[0].challenge.active) {
+      timevalue = { value: system.currentTick, do_count: true };
+    } else {
+      timevalue = { value: 0, do_count: false };
+    }
   }
 
 
@@ -739,7 +707,7 @@ function calcAB(update, id, dayFormat) {
       if (update && timedata.do_count && !dayFormat) {
         if (counting_type === 1) {
           if (timedata.timer == 0) {
-            if (data[0].challenge.progress == 1) {
+            if (data[0].challenge.progress == 1 && data[0].challenge.active) {
               if (data[0].challenge.goal.pointer == 2 && data[0].challenge.goal.event_pos == 0) {
                 finished_cm_timer(1, "message.body.challenge_end.time.good")
               } else {

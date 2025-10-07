@@ -1033,8 +1033,6 @@ function design_template_ui(player) {
   });
 }
 
-
-
 function design_preview(player, design, is_custom) {
   let form = new ActionFormData();
   let save_data = load_save_data();

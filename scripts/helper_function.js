@@ -3,7 +3,7 @@ import { version_info } from "./version.js";
 import { goal_event, goal_entity_list, goal_entity_blocklist } from "./goal.js";
 import { translate_soundkeys } from "./sound.js";
 import { apply_design, design_template  } from "./design.js";
-import { system_privileges } from "./communication_system.js";
+import { system_privileges, fetchViaInternetAPI } from "./communication_system.js";
 import { translate_textkeys } from "./lang.js";
 
 /*------------------------
@@ -13,7 +13,7 @@ import { translate_textkeys } from "./lang.js";
 export function default_save_data_structure() {
   return {
     time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
-    counting_type: 0,
+    counting_type: system.currentTick < 12000? 2 : 0,
     challenge: {
       active: (world.isHardcore || version_info.edition == 1),
       progress: 0,
@@ -28,14 +28,13 @@ export function default_save_data_structure() {
     sync_day_time: false,
     use_setup: version_info.edition == 1 ? false : true,
     utc: version_info.edition == 1 ? 2 : undefined,
-    update_message_unix: version_info.unix + version_info.update_message_period_unix
+    utc_auto: true
   };
 }
 
 export function update_save_data(input) {
   world.setDynamicProperty("timerv:save_data", JSON.stringify(input));
 }
-
 
 export function load_save_data() {
   let rawData = world.getDynamicProperty("timerv:save_data");
@@ -46,7 +45,7 @@ export function create_player_save_data(playerId, playerName, modifier) {
   let save_data = load_save_data();
 
   // Define the default structure for a new player's save data
-  const default_player_save_data_structure = (is_op_initial) => ({
+  const default_player_save_data_structure = () => ({
     id: playerId,
     time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
     custom_sounds: 0,
@@ -56,7 +55,6 @@ export function create_player_save_data(playerId, playerName, modifier) {
     allow_unnecessary_inputs: false,
     time_source: 0,
     name: playerName,
-    op: is_op_initial, // This will be determined when the player is first added
     visibility_setting: true,
     absolute_visibility: true,
     fullbright: false,
@@ -93,34 +91,18 @@ export function create_player_save_data(playerId, playerName, modifier) {
       }
   };
 
-  if (player_sd_index === -1) {
-      // Player does not exist, create new entry
-      let should_be_op = true;
 
-      for (let entry of save_data) {
-          if (entry.op === true) {
-              should_be_op = false;
-              break;
-          }
-      }
+  // Player exists, get their data
+  player_data = save_data[player_sd_index];
 
-      print(`Player ${playerName} (${playerId}) added with op=${should_be_op}!`);
-
-      player_data = default_player_save_data_structure(should_be_op);
-      save_data.push(player_data);
-  } else {
-      // Player exists, get their data
-      player_data = save_data[player_sd_index];
-
-      // Update player name if it's different
-      if (player_data.name !== playerName) {
-          player_data.name = playerName;
-      }
-
-      const dynamic_default_structure = default_player_save_data_structure(player_data.op);
-      merge_defaults(player_data, dynamic_default_structure);
-
+  // Update player name if it's different
+  if (player_data.name !== playerName) {
+      player_data.name = playerName;
   }
+
+  const dynamic_default_structure = default_player_save_data_structure();
+  merge_defaults(player_data, dynamic_default_structure);
+
 
   // Apply modifiers to the player's data
   for (let key in modifier) {
@@ -228,6 +210,7 @@ export function getRelativeTime(diff, player) {
 /*------------------------
   Local / Global Mode
 -------------------------*/
+
 export function convert_local_to_global(player_id) {
   let save_data = load_save_data();
   let player_save_data = save_data.findIndex(entry => entry.id === player_id);
@@ -267,7 +250,6 @@ export function convert_global_to_local(disable_global) {
 
   update_save_data(save_data)
 }
-
 
 /*------------------------
   Start / Stop Challenge
@@ -381,6 +363,274 @@ export function finished_cm_timer(rating, key_message, value, key_entity) {
   });
 
   update_save_data(save_data);
+}
+
+/*------------------------
+ Update data (github)
+-------------------------*/
+
+export let github_data
+
+export async function update_github_data() {
+  try {
+    fetchViaInternetAPI("https://api.github.com/repos/TheFelixLive/Timer-V/releases")
+    .then(result => {
+      print("API-Antwort erhalten");
+
+      github_data = result.map(release => {
+        const totalDownloads = release.assets?.reduce((sum, asset) => sum + (asset.download_count || 0), 0) || 0;
+        return {
+          tag: release.tag_name,
+          name: release.name,
+          prerelease: release.prerelease,
+          published_at: release.published_at,
+          body: release.body,
+          download_count: totalDownloads
+        };
+      });
+
+    })
+    .catch(err => {
+      print("Fehler beim Abruf: " + err);
+    });
+
+  } catch (e) {
+  }
+}
+
+export function compareVersions(version1, version2) {
+  if (!version1 || !version2) return 0;
+
+  // Entfernt 'v.' oder 'V.' am Anfang
+  version1 = version1.replace(/^v\./i, '').trim();
+  version2 = version2.replace(/^v\./i, '').trim();
+
+  // Extrahiere Beta-Nummer aus "_1" oder " Beta 1"
+  function extractBeta(version) {
+    const betaMatch = version.match(/^(.*?)\s*(?:_|\sBeta\s*)(\d+)$/i);
+    if (betaMatch) {
+      return {
+        base: betaMatch[1].trim(),
+        beta: parseInt(betaMatch[2], 10)
+      };
+    }
+    return {
+      base: version,
+      beta: null
+    };
+  }
+
+  const v1 = extractBeta(version1);
+  const v2 = extractBeta(version2);
+
+  const v1Parts = v1.base.split('.').map(Number);
+  const v2Parts = v2.base.split('.').map(Number);
+
+  // Vergleicht Major, Minor, Patch
+  for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
+    const num1 = v1Parts[i] || 0;
+    const num2 = v2Parts[i] || 0;
+    if (num1 > num2) return 1;
+    if (num1 < num2) return -1;
+  }
+
+  // Wenn gleich, vergleiche Beta
+  if (v1.beta !== null && v2.beta === null) return -1; // Beta < Vollversion
+  if (v1.beta === null && v2.beta !== null) return 1;  // Vollversion > Beta
+
+  if (v1.beta !== null && v2.beta !== null) {
+    if (v1.beta > v2.beta) return 1;
+    if (v1.beta < v2.beta) return -1;
+  }
+
+  return 0;
+}
+
+export function markdownToMinecraft(md) {
+  if (typeof md !== 'string') return '';
+
+  // normalize newlines
+  md = md.replace(/\r\n?/g, '\n');
+
+  const UNSUPPORTED_MSG = '§o§7Tabelles are not supported! Visit GitHub for this.';
+
+  // helper: map admonition type -> minecraft color code (choose sensible defaults)
+  function admonColor(type) {
+    const t = (type || '').toLowerCase();
+    if (['caution', 'warning', 'danger', 'important'].includes(t)) return '§c'; // red
+    if (['note', 'info', 'tip', 'hint'].includes(t)) return '§b'; // aqua
+    return '§e'; // fallback: yellow
+  }
+
+  // inline processor (handles code spans first, then bold/italic/strike, links/images, etc.)
+  function processInline(text) {
+    if (!text) return '';
+
+    // tokenise code spans to avoid further processing inside them
+    const tokens = [];
+    text = text.replace(/(`+)([\s\S]*?)\1/g, (m, ticks, code) => {
+      const safe = code.replace(/\n+/g, ' '); // inline code -> single line
+      const repl = '§7' + safe + '§r';
+      tokens.push(repl);
+      return `__MD_TOKEN_${tokens.length - 1}__`;
+    });
+
+    // images -> unsupported (replace whole image with message)
+    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, () => UNSUPPORTED_MSG);
+
+    // links -> keep link text only (no URL)
+    text = text.replace(/\[([^\]]+)\]\((?:[^)]+)\)/g, '$1');
+
+    // bold: **text** or __text__ -> §ltext§r
+    text = text.replace(/(\*\*|__)(?=\S)([\s\S]*?\S)\1/g, '§l$2§r');
+
+    // italic: *text* or _text_ -> §otext§r
+    // (do after bold so that **...** won't be partially matched)
+    text = text.replace(/(\*|_)(?=\S)([\s\S]*?\S)\1/g, '§o$2§r');
+
+    // strikethrough: ~~text~~ -> use italic+gray as fallback (no §m)
+    text = text.replace(/~~([\s\S]*?)~~/g, '§o§7$1§r');
+
+    // simple HTML tags or raw tags -> treat as unsupported (avoid exposing markup)
+    if (/<\/?[a-z][\s\S]*?>/i.test(text)) return UNSUPPORTED_MSG;
+
+    // restore code tokens
+    text = text.replace(/__MD_TOKEN_(\d+)__/g, (m, idx) => tokens[Number(idx)] || '');
+
+    return text;
+  }
+
+  // 1) Replace fenced code blocks (```...```) with unsupported message
+  md = md.replace(/```[\s\S]*?```/g, () => UNSUPPORTED_MSG);
+
+  // 2) Replace GitHub-style admonition blocks: ::: type\n...\n:::
+  md = md.replace(/::: *([A-Za-z0-9_-]+)\s*\n([\s\S]*?)\n:::/gmi, (m, type, content) => {
+    // flatten content lines, then process inline inside
+    const inner = processInline(content.replace(/\n+/g, ' ').trim());
+    const cap = type.charAt(0).toUpperCase() + type.slice(1);
+    return `§l${admonColor(type)}${cap}: ${inner}§r`;
+  });
+
+  // now process line-by-line for tables / headings / lists / blockquotes / admonitions-as-blockquotes
+  const lines = md.split('\n');
+  const out = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+
+    // trim trailing CR/ spaces
+    const raw = line;
+
+    //  ---- detect table: a row with '|' and a following separator row like "| --- | --- |" or "---|---"
+    const nextLine = lines[i + 1] || '';
+    const isTableRow = /\|/.test(line);
+    const nextIsSeparator = /^\s*\|?[:\-\s|]+$/.test(nextLine);
+    if (isTableRow && nextIsSeparator) {
+      // consume all contiguous table rows
+      out.push(UNSUPPORTED_MSG);
+      i++; // skip the separator
+      while (i + 1 < lines.length && /\|/.test(lines[i + 1])) i++;
+      continue;
+    }
+
+    //  ---- headings (#, ##, ###) -> §l + content + §r + \n
+    const hMatch = line.match(/^(#{1,3})\s*(.*)$/);
+    if (hMatch) {
+      const content = hMatch[2].trim();
+      out.push('§l' + processInline(content) + '§r\n');
+      continue;
+    }
+
+    //  ---- GitHub-style single-line admonition in > or plain "Caution: ..." at line start
+    const admonLineMatch = raw.match(/^\s*(?:>\s*)?(?:\*\*)?(Caution|Warning|Note|Tip|Important|Danger|Info)(?:\*\*)?:\s*(.+)$/i);
+    if (admonLineMatch) {
+      const type = admonLineMatch[1];
+      const content = admonLineMatch[2].trim();
+      out.push(`§l${admonColor(type)}${type}: ${processInline(content)}§r`);
+      continue;
+    }
+
+    //  ---- blockquote lines starting with '>'
+    if (/^\s*>/.test(line)) {
+      const content = line.replace(/^\s*>+\s?/, '');
+      out.push('§o' + processInline(content) + '§r');
+      continue;
+    }
+
+    //  ---- images or html inline -> unsupported
+    if (/^!\[.*\]\(.*\)/.test(line) || /<[^>]+>/.test(line)) {
+      out.push(UNSUPPORTED_MSG);
+      continue;
+    }
+
+    //  ---- unordered list (-, *, +) -> bullet + inline
+    if (/^\s*[-*+]\s+/.test(line)) {
+      const item = line.replace(/^\s*[-*+]\s+/, '');
+      out.push('• ' + processInline(item));
+      continue;
+    }
+
+    //  ---- ordered list (1. 2. ...) -> bullet as well
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const item = line.replace(/^\s*\d+\.\s+/, '');
+      out.push('• ' + processInline(item));
+      continue;
+    }
+
+    //  ---- default: process inline formatting
+    // empty line -> keep empty
+    if (line.trim() === '') {
+      out.push('');
+      continue;
+    }
+
+    out.push(processInline(line));
+  }
+
+  // join with newline and return
+  return out.join('\n');
+}
+
+/*------------------------
+ Auto Timezone
+-------------------------*/
+
+export let server_ip, server_utc
+
+export async function update_server_utc() {
+  try {
+    let response = await fetchViaInternetAPI("https://ipwho.is/?fields=ip,timezone");
+    server_ip = response.ip
+    server_utc = offsetToDecimal(response.timezone.utc)
+  } catch (e) {}
+
+  let save_data = load_save_data()
+
+  if (save_data[0].utc_auto) {
+    if (server_utc) {
+      save_data[0].utc = server_utc
+    } else if (!save_data[0].utc) {
+      save_data[0].utc_auto = false
+    }
+
+    update_save_data(save_data)
+  }
+}
+
+function offsetToDecimal(offsetStr) {
+    // Prüfe auf das richtige Format (z. B. +02:00 oder -03:30)
+    const match = offsetStr.match(/^([+-])(\d{2}):(\d{2})$/);
+    if (!match) {
+        throw new Error("Ungültiges Format. Erwartet wird z.B. '+02:00' oder '-03:30'");
+    }
+
+    const sign = match[1] === '+' ? 1 : -1;
+    const hours = parseInt(match[2], 10);
+    const minutes = parseInt(match[3], 10);
+
+    // Umwandlung in Kommazahl (Dezimalstunden)
+    const decimal = sign * (hours + minutes / 60);
+    return decimal;
 }
 
 /*------------------------
