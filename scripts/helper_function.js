@@ -14,6 +14,7 @@ export function default_save_data_structure() {
   return {
     time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
     counting_type: system.currentTick < 12000? 2 : 0,
+    counting_type_storage: 0, // used to store the world tick when a challenge ends
     challenge: {
       active: (world.isHardcore || version_info.edition == 1),
       progress: 0,
@@ -22,7 +23,7 @@ export function default_save_data_structure() {
       difficulty: world.isHardcore ? 2 : 1
     },
     global: {
-      status: (world.isHardcore || version_info.edition == 1),
+      status: (world.isHardcore || version_info.edition == 1 || system.currentTick < 12000),
       last_player_id: undefined
     },
     sync_day_time: false,
@@ -45,7 +46,7 @@ export function create_player_save_data(playerId, playerName, modifier) {
   let save_data = load_save_data();
 
   // Define the default structure for a new player's save data
-  const default_player_save_data_structure = () => ({
+  const default_player_save_data_structure = {
     id: playerId,
     time: { stopwatch: 0, timer: 0, last_value_timer: 0, do_count: false },
     custom_sounds: 0,
@@ -62,57 +63,93 @@ export function create_player_save_data(playerId, playerName, modifier) {
     design: version_info.edition == 1? 12:0,
     setup: 0, // Setup compleation: 0%
     last_unix: Math.floor(Date.now() / 1000),
-    gesture: { emote: false, sneak: true, nod: true, stick: true, command: true },
+    gesture: { emote: false, sneak: false, nod: false, stick: false },
     health: 20, // is used to save the heart level only in hardcore mode e.g. during a break
-    openend_menu_via_command: false,
-  });
-
-  let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
-  let player_data;
-
-  // Helper function to recursively merge default values
-  const merge_defaults = (target, defaults) => {
-      for (const key in defaults) {
-          if (defaults.hasOwnProperty(key)) {
-              if (!target.hasOwnProperty(key)) {
-                  // Key is missing, add it with default value
-                  target[key] = defaults[key];
-              } else if (typeof defaults[key] === 'object' && defaults[key] !== null && !Array.isArray(defaults[key])) {
-                  // If the default value is an object, recurse into it
-                  if (typeof target[key] !== 'object' || target[key] === null || Array.isArray(target[key])) {
-                      // If the existing value is not an object or is null/array, replace it with the default structure
-                      target[key] = defaults[key];
-                      changes_made = true;
-                  } else {
-                      merge_defaults(target[key], defaults[key]);
-                  }
-              }
-          }
-      }
   };
 
+  let player_sd_index = save_data.findIndex(entry => entry.id === playerId);
+  let player_data, changes_made = false;
 
-  // Player exists, get their data
-  player_data = save_data[player_sd_index];
+  // Helper function to recursively merge default values
+  function merge_defaults(target, defaults) {
+    function isPlainObject(v) {
+      return v !== null && typeof v === 'object' && !Array.isArray(v);
+    }
 
-  // Update player name if it's different
-  if (player_data.name !== playerName) {
-      player_data.name = playerName;
+    function deepClone(value) {
+      if (Array.isArray(value)) return value.map(deepClone);
+      if (isPlainObject(value)) {
+        const out = {};
+        for (const k of Object.keys(value)) out[k] = deepClone(value[k]);
+        return out;
+      }
+      return value;
+    }
+
+    if (!isPlainObject(target) || !isPlainObject(defaults)) {
+      throw new TypeError('Both target and defaults must be plain objects');
+    }
+
+    // 1) Fehlende Defaults hinzufügen / rekursiv mergen
+    for (const key of Object.keys(defaults)) {
+      const defVal = defaults[key];
+
+      if (!Object.prototype.hasOwnProperty.call(target, key)) {
+        target[key] = deepClone(defVal);
+      } else {
+        const tgtVal = target[key];
+
+        if (isPlainObject(defVal) && isPlainObject(tgtVal)) {
+          merge_defaults(tgtVal, defVal);
+        } else if (isPlainObject(defVal) && !isPlainObject(tgtVal)) {
+          target[key] = deepClone(defVal);
+        } else if (Array.isArray(defVal) && !Array.isArray(tgtVal)) {
+          target[key] = deepClone(defVal);
+        } else if (!isPlainObject(defVal) && isPlainObject(tgtVal)) {
+          target[key] = deepClone(defVal);
+        }
+      }
+    }
+
+    // 2) Überflüssige Keys löschen
+    for (const key of Object.keys(target)) {
+      if (!Object.prototype.hasOwnProperty.call(defaults, key)) {
+        delete target[key];
+      }
+    }
+
+    return target;
   }
 
-  const dynamic_default_structure = default_player_save_data_structure();
-  merge_defaults(player_data, dynamic_default_structure);
 
+  if (player_sd_index === -1) {
+      print(`Player ${playerName} (${playerId}) added!`);
+
+      player_data = default_player_save_data_structure;
+      save_data.push(player_data);
+  } else {
+      // Player exists, get their data
+      player_data = save_data[player_sd_index];
+
+      // Update player name if it's different
+      if (player_data.name !== playerName) {
+          player_data.name = playerName;
+      }
+
+      const dynamic_default_structure = default_player_save_data_structure;
+      merge_defaults(player_data, dynamic_default_structure);
+
+  }
 
   // Apply modifiers to the player's data
   for (let key in modifier) {
-      if (player_data.hasOwnProperty(key)) { // Only apply modifier if the key exists in player_data
+      if (player_data.hasOwnProperty(key)) {
         player_data[key] = modifier[key];
       }
   }
 
   update_save_data(save_data);
-  print(`Save data for player ${playerName} updated.`);
+  if (changes_made) print(`Save data for player ${playerName} updated.`);
 }
 
 
@@ -230,7 +267,7 @@ export function convert_global_to_local(disable_global) {
   let save_data = load_save_data();
   let player_save_data = save_data.findIndex(entry => entry.id === save_data[0].global.last_player_id);
 
-  if (player_save_data) {
+  if (player_save_data !== -1) {
     save_data[player_save_data].counting_type = save_data[0].counting_type
     save_data[player_save_data].time.do_count = save_data[0].time.do_count
     save_data[player_save_data].time.timer = save_data[0].time.timer
@@ -238,7 +275,7 @@ export function convert_global_to_local(disable_global) {
   } else {
       world.getAllPlayers().forEach(t => {
         let lang = save_data[save_data.findIndex(entry => entry.id === t.id)].lang
-        t.sendMessage("§l§7[§f"+ translate_textkeys("message.header.error", lang) + "§7]§r "+translate_textkeys("message.body.convert_global_to_local.error", lang, {name: save_data[0].global.last_player_id}))
+        t.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.convert_global_to_local.error", lang, {name: save_data[0].global.last_player_id}))
     });
   }
 
@@ -335,7 +372,11 @@ export function finished_cm_timer(rating, key_message, value, key_entity) {
   save_data[0].challenge.progress = 2
 
   save_data[0].challenge.rating = rating
-  save_data[0].time.do_count = false
+  if (save_data[0].counting_type === 2) {
+    save_data[0].counting_type_storage = system.currentTick
+  } else {
+    save_data[0].time.do_count = false
+  }
 
   // Have to be rawtext!
   let rawArray;

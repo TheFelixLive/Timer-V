@@ -281,7 +281,7 @@ export const timezone_list = [
   }
 ];
 
-export function settings_time_zone(player, viewing_mode, in_setup) {
+export function settings_time_zone(player, viewing_mode=0, in_setup=false) {
   const form = new ActionFormData();
   const actions = [];
   const save_data = load_save_data();
@@ -373,7 +373,7 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
     let start = Math.max(0, current_zone_index - 2);
     let end = Math.min(timezone_list.length - 1, current_zone_index + 2);
 
-    if (start > 0) navButton(navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 1));
+    if (start > 0) navButton(translate_textkeys("menu.settings.time_zone.show_previous", player_sd.lang), "textures/ui/up_arrow", 1);
     form.divider();
     for (let i = start; i <= end; i++) renderZoneButton(timezone_list[i], i);
     form.divider();
@@ -422,7 +422,7 @@ export function settings_time_zone(player, viewing_mode, in_setup) {
 }
 
 
-export function settings_time_zone_preview (player, zone, viewing_mode, in_setup, switch_to_auto) {
+export function settings_time_zone_preview(player, zone, viewing_mode, in_setup, switch_to_auto) {
   const save_data = load_save_data();
   const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
   let form = new MessageFormData();

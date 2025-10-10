@@ -1,4 +1,4 @@
-import { world, system } from "@minecraft/server";
+import { world, system, CustomCommandStatus, CommandPermissionLevel, CustomCommandParamType} from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
 import { links, version_info } from "./version.js";
@@ -15,11 +15,54 @@ import { initialize_multiple_menu, multiple_menu, system_privileges } from "./co
 console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+version_info.build+") - Further debugging is "+ (version_info.release_type == 0? "enabled" : "disabled" ) + " by the version")
 
 /*------------------------
+ Custom Commands
+-------------------------*/
+
+system.beforeEvents.startup.subscribe((init) => {
+  init.customCommandRegistry.registerEnum("timer:action", ["start", "stop", "reset", "pause", "resume", "share", "menu"]);
+
+  const main_command_sytak = {
+    name: "timer:timer",
+    description: "Opens a menu with information about the addon.",
+    permissionLevel: CommandPermissionLevel.Any,
+    cheatsRequired: false,
+    mandatoryParameters: [
+      { type: CustomCommandParamType.Enum, name: "timer:action" }
+    ]
+  };
+
+  init.customCommandRegistry.registerCommand(main_command_sytak, cc_response);
+});
+
+function cc_response(origin, actions) {
+    const player = origin.sourceEntity;
+
+    if (!player || player.typeId !== "minecraft:player") return {
+        status: CustomCommandStatus.Failure,
+        message: "The Menu can only be displayed to players!"
+    };
+
+    /*system.run(() => {
+
+    });*/
+    return {
+      status: CustomCommandStatus.Failure,
+      message: "This is not set up yet! Imput: "+actions
+    };
+
+    return {
+        status: CustomCommandStatus.Success,
+        message: "Opened the Menu to "+player.name
+    };
+}
+
+
+/*------------------------
  Save Data
 -------------------------*/
 
 // Load & Save Save data
-import { update_github_data, update_server_utc, finished_cm_timer, getRelativeTime, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
+import { update_github_data, update_server_utc, finished_cm_timer, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
 system.run(() => {
 
@@ -39,21 +82,53 @@ function initialize_save_data() {
       let changes_made = false;
 
       function merge_defaults(target, defaults) {
-          for (const key in defaults) {
-              if (defaults.hasOwnProperty(key)) {
-                  if (!target.hasOwnProperty(key)) {
-                      target[key] = defaults[key];
-                      changes_made = true;
-                  } else if (typeof defaults[key] === 'object' && defaults[key] !== null && !Array.isArray(defaults[key])) {
-                      if (typeof target[key] !== 'object' || target[key] === null || Array.isArray(target[key])) {
-                          target[key] = defaults[key];
-                          changes_made = true;
-                      } else {
-                          merge_defaults(target[key], defaults[key]);
-                      }
-                  }
-              }
+        function isPlainObject(v) {
+          return v !== null && typeof v === 'object' && !Array.isArray(v);
+        }
+
+        function deepClone(value) {
+          if (Array.isArray(value)) return value.map(deepClone);
+          if (isPlainObject(value)) {
+            const out = {};
+            for (const k of Object.keys(value)) out[k] = deepClone(value[k]);
+            return out;
           }
+          return value;
+        }
+
+        if (!isPlainObject(target) || !isPlainObject(defaults)) {
+          throw new TypeError('Both target and defaults must be plain objects');
+        }
+
+        // 1) Fehlende Defaults hinzufügen / rekursiv mergen
+        for (const key of Object.keys(defaults)) {
+          const defVal = defaults[key];
+
+          if (!Object.prototype.hasOwnProperty.call(target, key)) {
+            target[key] = deepClone(defVal);
+          } else {
+            const tgtVal = target[key];
+
+            if (isPlainObject(defVal) && isPlainObject(tgtVal)) {
+              merge_defaults(tgtVal, defVal);
+            } else if (isPlainObject(defVal) && !isPlainObject(tgtVal)) {
+              target[key] = deepClone(defVal);
+            } else if (Array.isArray(defVal) && !Array.isArray(tgtVal)) {
+              target[key] = deepClone(defVal);
+            } else if (!isPlainObject(defVal) && isPlainObject(tgtVal)) {
+              target[key] = deepClone(defVal);
+            }
+          }
+        }
+
+        // 2) Überflüssige Keys löschen
+        for (const key of Object.keys(target)) {
+          if (!Object.prototype.hasOwnProperty.call(defaults, key)) {
+            delete target[key];
+          }
+        }
+
+        return target;
       }
 
       merge_defaults(data_entry, default_save_data_structure());
@@ -342,6 +417,14 @@ world.afterEvents.entityDie.subscribe(event => {
   if (event.deadEntity?.typeId === "minecraft:player") {
     const player = event.deadEntity;
     const player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+    let time;
+    if (save_data[0].counting_type == 0) {
+      time = save_data[0].time.stopwatch
+    } else if (save_data[0].counting_type == 1) {
+      time = save_data[0].time.last_value_timer - save_data[0].time.timer
+    } else {
+      time = system.currentTick
+    }
 
     if (save_data[0].challenge.difficulty > 0 && save_data[0].challenge.progress == 1 && save_data[0].time.do_count) {
       finished_cm_timer(0, "message.body.challenge_end.bad", {time: apply_design(
@@ -349,8 +432,7 @@ world.afterEvents.entityDie.subscribe(event => {
           typeof save_data[player_sd_index].design === "number"
             ? design_template.find(t => t.id == save_data[player_sd_index].design).content
             : save_data[player_sd_index].design
-        ).find(item => item.type === "ui"),
-        (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
+        ).find(item => item.type === "ui"), time
       )})
     }
   }
@@ -696,7 +778,10 @@ function calcAB(update, id, dayFormat) {
   if (counting_type === 2) {
     if (data[0].challenge.progress == 1 || !data[0].challenge.active) {
       timevalue = { value: system.currentTick, do_count: true };
-    } else {
+    } else if (data[0].challenge.progress == 2 && data[0].challenge.active) {
+      timevalue = { value: data[0].counting_type_storage, do_count: false };
+    }
+    else {
       timevalue = { value: 0, do_count: false };
     }
   }

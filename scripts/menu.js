@@ -7,7 +7,7 @@ import { apply_design, design_template  } from "./design.js";
 
 import { difficulty  } from "./difficulty.js";
 
-import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, markdownToMinecraft, compareVersions, server_ip, github_data, close_world } from "./helper_function.js";
+import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, markdownToMinecraft, compareVersions, server_ip, github_data, close_world, server_utc } from "./helper_function.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys, supportedLangs } from "./lang.js";
 import { timezone_list } from "./time_zone.js";
@@ -520,6 +520,14 @@ function splash_end_challenge(player) {
 
   form.show(player).then((response) => {
     if (response.selection == 0) {
+        let time;
+        if (save_data[0].counting_type == 0) {
+          time = save_data[0].time.stopwatch
+        } else if (save_data[0].counting_type == 1) {
+          time = save_data[0].time.last_value_timer - save_data[0].time.timer
+        } else {
+          time = system.currentTick
+        }
         player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
         finished_cm_timer(0, "message.body.challenge_end.bad", {time: apply_design(
           (
@@ -527,7 +535,7 @@ function splash_end_challenge(player) {
               ? design_template.find(t => t.id == save_data[player_sd_index].design).content
               : save_data[player_sd_index].design
           ).find(item => item.type === "ui"),
-          (save_data[0].counting_type == 0? save_data[0].time.stopwatch : save_data[0].time.last_value_timer - save_data[0].time.timer)
+          (time)
         )})
     }
 
@@ -623,8 +631,8 @@ export function settings_main(player) {
 
 
   // shared_timer
-  if (player.playerPermissionLevel === 2 && !save_data[0].challenge.active && save_data[player_sd_index].counting_type <= 1) {
-    if(form){form.button(translate_textkeys("menu.popup.shared_timer.title", lang)+ "\n§9" + (save_data[0].global.status ? translate_textkeys("menu.popup.shared_timer.by", lang, {player: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name}) : translate_textkeys("menu.toggle_off", lang)), "textures/ui/FriendsIcon")};
+  if (player.playerPermissionLevel === 2 && !save_data[0].challenge.active && (save_data[0].counting_type !== 2 || !save_data[0].global.status)) {
+    if(form){form.button(translate_textkeys("menu.popup.shared_timer.title", lang)+ "\n§9" + (save_data[0].global.status ? (save_data[0].global.last_player_id? translate_textkeys("menu.popup.shared_timer.by", lang, {player: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name}) : translate_textkeys("menu.toggle_on", lang)) : translate_textkeys("menu.toggle_off", lang)), "textures/ui/FriendsIcon")};
     actions.push(() => {
       splash_globalmode(player);
     });
@@ -652,8 +660,8 @@ export function settings_main(player) {
     };
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.settings.time_zone", player), { fade: 0.3 , loop: true})
-      if (save_data[0].utc_auto) return settings_time_zone_preview(player, zone)
-      settings_time_zone(player, 0);
+      if (save_data[0].utc_auto && server_utc) return settings_time_zone_preview(player, zone)
+      settings_time_zone(player);
     });
   }
 
@@ -1064,7 +1072,7 @@ function splash_globalmode(player) {
   form.title(translate_textkeys("menu.popup.shared_timer.title", lang));
 
   form.body(translate_textkeys("menu.popup.shared_timer.description", lang, {
-    replace_text: save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? translate_textkeys("menu.popup.shared_timer.description.replace_time", lang, {name: save_data.find(e => e.id === save_data[0].global.last_player_id)?.name, own_time: apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"])}) : "" :
+    replace_text: save_data[0].global.status ? save_data[0].global.last_player_id !== player.id ? translate_textkeys("menu.popup.shared_timer.description.replace_time", lang, {name: (save_data[0].global.last_player_id? save_data.find(e => e.id === save_data[0].global.last_player_id)?.name: translate_textkeys("menu.popup.shared_timer.description.unknown_player", lang)), own_time: apply_design(design, save_data[player_sd_index].time[save_data[player_sd_index].counting_type == 1 ? "timer" : "stopwatch"])}) : "" :
     translate_textkeys("menu.popup.shared_timer.description.contol", lang)
   }));
 
@@ -1133,10 +1141,6 @@ export function settings_gestures(player) {
     { name: translate_textkeys("menu.settings.gestures.nod", lang), id: "nod", modes: ["sp"] },
     { name: translate_textkeys("menu.settings.gestures.stick", lang), id: "stick", modes: ["su", "a", "c"] },
   ];
-
-  if (save_data[idx].openend_menu_via_command) {
-    configured_gestures.push({ name: translate_textkeys("menu.settings.gestures.command", lang), id: "command", modes: ["su", "a", "c", "sp"] });
-  }
 
   form.title(translate_textkeys("menu.settings.gestures.title", lang));
   form.body(translate_textkeys("menu.settings.gestures.description", lang));

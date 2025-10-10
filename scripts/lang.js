@@ -5251,6 +5251,10 @@ const textkeys = {
     "ty_ty": "Te hāmani taime faatupu i te taime taa ê, e nehenehe e tāpiri i te taime faauehia no te mau taata atoa. %{replace_text}%\n\n§7Te tia i te faufaa a te ravea faatupu.\n\n",
   },
 
+  "menu.popup.shared_timer.description.unknown_player": {
+    "en": "Somebody",
+  },
+
   "menu.popup.shared_timer.description.replace_time": {
    "gil_ki": "E nanou n te timekeeper a %{name}% i te riki n te taeka. Kem pressa atiia ao kem maroroaia n te taaroa *§cstop§f*, ao *§creplace§f* n ara taeka (%{own_time}%§r)",
     "en": "%{name}% is currently sharing their timer. You can §cstop§f this or §ereplace§f it with your own time (%{own_time}%§r)",
