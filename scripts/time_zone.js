@@ -413,7 +413,7 @@ export function settings_time_zone(player, viewing_mode=0, in_setup=false) {
 
   form.show(player).then(res => {
     if (res.selection === undefined) {
-      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
+      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", player_sd.lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", player_sd.lang))
       player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     } else {
       actions[res.selection]?.();

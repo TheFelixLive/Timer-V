@@ -1,9 +1,9 @@
 export const version_info = {
   name: "Timer V",
   version: "v.5.4.0",
-  build: "B032",
+  build: "B033",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1760128965,
+  unix: 1760300877,
   uuid: "c4d3852f-f902-4807-a8c8-51980fdae4c3",
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -20,13 +20,15 @@ export const version_info = {
       "World time is now the default if the world is less than 10 minutes old",
       "Permissions are now handled by Minecraft",
       "Removed Permission Menu",
-      "Added multiple menu support for v2.0"
+      "Added multiple menu support for v2.0",
+      "About page is now admin only",
     ],
     // bug_fixes
     bug_fixes: [
       "Fixed a bug that caused the setup to not finish correctly at 90%",
       "Fixed a bug where the timer may fail to update player data",
       "Fixed a bug where the timer chrashed when the time couldn't be saved to a player profile",
+      "Fixed a bug where the challenge is over message got sent multiple times",
     ]
   }
 }

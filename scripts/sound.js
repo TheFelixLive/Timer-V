@@ -140,6 +140,10 @@ const soundkeys = {
     extern_l: "timeru.frozen",
     native: "resonate.amethyst_block"
   },
+  "condition.failed": {
+    extern: "timer.condition.failed",
+    native: "horn.call.7"
+  },
   "challenge.starts": {
     extern: "timer.condition.starts",
     extern_l: "timeru.reset_true",

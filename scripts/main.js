@@ -1,5 +1,5 @@
 import { world, system, CustomCommandStatus, CommandPermissionLevel, CustomCommandParamType} from "@minecraft/server";
-import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
+import { update_github_data, update_server_utc, finished_cm_timer, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world, control_timer } from "./helper_function.js";
 
 import { links, version_info } from "./version.js";
 
@@ -8,7 +8,7 @@ import { translate_soundkeys, soundkey_test } from "./sound.js";
 
 import { check_difficulty, check_health } from "./difficulty.js";
 import { apply_design, design_template  } from "./design.js";
-import { setup_menu, main_menu } from "./menu.js";
+import { setup_menu, main_menu, splash_start_challenge, splash_end_challenge, splash_globalmode } from "./menu.js";
 import { initialize_multiple_menu, multiple_menu, system_privileges } from "./communication_system.js";
 
 
@@ -34,6 +34,8 @@ system.beforeEvents.startup.subscribe((init) => {
   init.customCommandRegistry.registerCommand(main_command_sytak, cc_response);
 });
 
+// Error text messages or other Feedback is missing for custom commands!!!
+
 function cc_response(origin, actions) {
     const player = origin.sourceEntity;
 
@@ -42,27 +44,89 @@ function cc_response(origin, actions) {
         message: "The Menu can only be displayed to players!"
     };
 
-    /*system.run(() => {
+    system.run(() => {
+      let save_data = load_save_data();
+      let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+      let lang = save_data[player_sd_index].lang;
 
-    });*/
-    return {
-      status: CustomCommandStatus.Failure,
-      message: "This is not set up yet! Imput: "+actions
-    };
+      if (actions === "menu") {
+        initialize_main_menu(player);
+      }
 
-    return {
-        status: CustomCommandStatus.Success,
-        message: "Opened the Menu to "+player.name
-    };
+      // Start / Stop Challenge
+      if ((actions === "start" || actions === "stop" || actions === "reset") && save_data[0].challenge.active) {
+        if (player.playerPermissionLevel !== 2) {
+          player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.condition.failed", lang))
+          return;
+        }
+
+        if (actions === "start" && save_data[0].challenge.progress == 0) {
+          splash_start_challenge(player)
+        } else if (actions === "stop" && save_data[0].challenge.progress == 1) {
+          splash_end_challenge(player)
+        } else if (actions === "reset" && save_data[0].challenge.progress == 2) {
+          initialize_main_menu(player)
+        }
+        return;
+      }
+
+      // Share Timer
+      if (actions === "share") {
+        if (player.playerPermissionLevel === 2 && !save_data[0].challenge.active && (save_data[0].counting_type !== 2 || !save_data[0].global.status)) {
+          splash_globalmode(player);
+        }
+        else {
+          player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.condition.failed", lang))
+        }
+      }
+
+      // Reset Timer
+      if (actions === "reset") {
+        let timedata;
+        if (save_data[0].global.status) {
+          timedata = save_data[0];
+        } else {
+          timedata = save_data[player_sd_index];
+        }
+
+        if (player.playerPermissionLevel !== 2) {
+          player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.condition.failed", lang))
+          return;
+        }
+
+        if (timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] > 0 && !save_data[0].challenge.active) {
+          timedata.time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
+          timedata.time.do_count = false;
+          save_data[player_sd_index].afk = false
+        }
+
+        update_save_data(save_data);
+      }
+
+      // Pause / Resume Timer
+      if (actions === "pause" || actions === "resume" || actions === "start" || actions === "stop") {
+        let timedata;
+        if (save_data[0].global.status) {
+          timedata = save_data[0];
+        } else {
+          timedata = save_data[player_sd_index];
+        }
+
+        const controlAction = actions === "start" ? "resume"
+                            : actions === "stop"  ? "pause"
+                            : "";
+        if (controlAction === "") return;
+        control_timer(player, controlAction);
+      }
+    });
+
+
 }
 
 
 /*------------------------
  Save Data
 -------------------------*/
-
-// Load & Save Save data
-import { update_github_data, update_server_utc, finished_cm_timer, print, load_save_data, update_save_data, default_save_data_structure, create_player_save_data, close_world } from "./helper_function.js";
 
 system.run(() => {
 
@@ -201,7 +265,7 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
     const notAvailableMsg = id => `§l§7[§f` + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} is not available in stable releases!`;
     const noPermissionMsg = id => `§l§7[§f` + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + `§7]§r ${id} could not be changed because you do not have permission!`;
 
-    if (!player.playerPermissionLevel === 2) {
+    if (player.playerPermissionLevel !== 2) {
       player.sendMessage(noPermissionMsg(event.id));
       return;
     }

@@ -289,6 +289,68 @@ export function convert_global_to_local(disable_global) {
 }
 
 /*------------------------
+  Pause / Resume Timer
+-------------------------*/
+
+export function control_timer(player, pause_or_resume) {
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
+  let timedata;
+  if (save_data[0].global.status) {
+    timedata = save_data[0]
+  } else {
+    timedata = save_data[player_sd_index]
+  }
+
+  if ((save_data[0].global.status && player.playerPermissionLevel !== 2) || (save_data[0].challenge.active && save_data[0].challenge.progress !== 1)) {
+    player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.condition.failed", lang));
+    player.playSound(translate_soundkeys("condition.failed", player));
+    return;
+  }
+
+  if ((pause_or_resume === "resume" && timedata.time.do_count === true) || (pause_or_resume === "pause" && timedata.time.do_count === false)) {
+    player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.condition.failed.same", lang));
+    player.playSound(translate_soundkeys("condition.failed", player));
+    return;
+  }
+
+  if (pause_or_resume === "resume") {
+    timedata.time.do_count = true;
+
+    (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
+      t.sendMessage("§l§2[§a"+ translate_textkeys("message.header.condition", lang) +"§2]§r "+translate_textkeys("message.body.condition.resume", lang));
+      if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
+        player.queueMusic(translate_soundkeys("condition.resumed", t))
+      } else {
+        t.playSound(translate_soundkeys("condition.resumed", t));
+      }
+
+      if (world.isHardcore) {
+        player.applyDamage(20 - save_data[player_sd_index].health)
+      }
+    });
+  } else if (pause_or_resume === "pause") {
+    timedata.time.do_count = false;
+
+    (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
+      t.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+translate_textkeys("message.body.condition.paused", lang));
+      if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
+        player.queueMusic(translate_soundkeys("condition.paused", t))
+      } else {
+        t.playSound(translate_soundkeys("condition.paused", t));
+      }
+
+      if (world.isHardcore) {
+        save_data[player_sd_index].health = player.getComponent("health").currentValue
+      }
+    });
+  }
+
+  update_save_data(save_data);
+}
+
+/*------------------------
   Start / Stop Challenge
 -------------------------*/
 
@@ -396,7 +458,7 @@ export function finished_cm_timer(rating, key_message, value, key_entity) {
       rawArray = [prefix, {text: translate_textkeys(key_message[0], lang, value)}, {translate: key_entity}, {text: translate_textkeys(key_message[1], lang, value)}];
     }
 
-    world.sendMessage({ rawtext: rawArray });
+    t.sendMessage({ rawtext: rawArray });
 
 
     t.playSound(translate_soundkeys(rating == 1? "challenge.end.good" : "challenge.end.bad", t));

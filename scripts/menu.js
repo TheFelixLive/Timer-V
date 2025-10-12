@@ -7,7 +7,7 @@ import { apply_design, design_template  } from "./design.js";
 
 import { difficulty  } from "./difficulty.js";
 
-import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, markdownToMinecraft, compareVersions, server_ip, github_data, close_world, server_utc } from "./helper_function.js";
+import { load_save_data, update_save_data, create_player_save_data, convertUnixToDate, getRelativeTime, convert_local_to_global, convert_global_to_local, start_cm_timer, finished_cm_timer, markdownToMinecraft, compareVersions, server_ip, github_data, close_world, server_utc, control_timer } from "./helper_function.js";
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys, supportedLangs } from "./lang.js";
 import { timezone_list } from "./time_zone.js";
@@ -73,7 +73,7 @@ export function setup_menu(player) {
   }
 
   // Custome Sounds
-  if ((save_data[player_sd_index].setup == 80 && player.playerPermissionLevel === 2) || save_data[player_sd_index].setup == 50 && !player.playerPermissionLevel === 2) {
+  if ((save_data[player_sd_index].setup == 80 && player.playerPermissionLevel === 2) || save_data[player_sd_index].setup == 50 && player.playerPermissionLevel !== 2) {
     return settings_cs_setup(player, true)
   }
 
@@ -196,37 +196,10 @@ function main_menu_actions(player, form) {
         actions.push(() => {
           player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
           if (timedata.time.do_count === false) {
-            timedata.time.do_count = true;
-
-            (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
-              t.sendMessage("§l§2[§a"+ translate_textkeys("message.header.condition", lang) +"§2]§r "+translate_textkeys("message.body.condition.resume", lang));
-              if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
-                player.queueMusic(translate_soundkeys("condition.resumed", t))
-              } else {
-                t.playSound(translate_soundkeys("condition.resumed", t));
-              }
-
-              if (world.isHardcore) {
-                player.applyDamage(20 - save_data[player_sd_index].health)
-              }
-            });
+            control_timer(player, "resume")
           } else {
-            timedata.time.do_count = false;
-
-            (save_data[0].global.status ? world.getAllPlayers() : [player]).forEach(t => {
-              t.sendMessage("§l§4[§c"+translate_textkeys("message.header.condition", lang)+"§4]§r "+translate_textkeys("message.body.condition.paused", lang));
-              if (t.id == player.id && save_data[player_sd_index].custom_sounds > 0) {
-                player.queueMusic(translate_soundkeys("condition.paused", t))
-              } else {
-                t.playSound(translate_soundkeys("condition.paused", t));
-              }
-
-              if (world.isHardcore) {
-                save_data[player_sd_index].health = player.getComponent("health").currentValue
-              }
-            });
+            control_timer(player, "pause")
           }
-          update_save_data(save_data);
         });
       }
 
@@ -329,7 +302,7 @@ function main_menu_actions(player, form) {
     }
 
     // "Change / add time" button
-    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || timedata.counting_type == 0 && (save_data[player_sd_index].afk || save_data[0].global.status))) {
+    if (!(challenge.active && challenge.progress > 0) && (timedata.counting_type == 1 || (timedata.counting_type == 0 && (save_data[player_sd_index].afk || save_data[0].global.status)) || (timedata.counting_type == 2 && save_data[0].challenge.active))) {
       if (form) {
         form.button(
           (challenge.active ? translate_textkeys("menu.start_time.title.ca", lang)+"\n" : translate_textkeys("menu.start_time.title", lang)+"\n") +
@@ -480,7 +453,7 @@ import { settings_difficulty } from "./difficulty.js";
   Challenge Mode start / stop splash screens
 -------------------------*/
 
-function splash_start_challenge(player) {
+export function splash_start_challenge(player) {
   let form = new MessageFormData();
   let save_data = load_save_data()
   let lang = save_data[save_data.findIndex(entry => entry.id === player.id)].lang
@@ -506,7 +479,7 @@ function splash_start_challenge(player) {
   });
 }
 
-function splash_end_challenge(player) {
+export function splash_end_challenge(player) {
   let form = new MessageFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
@@ -767,26 +740,28 @@ export function settings_main(player) {
    version
   -------------------------*/
 
-  form.divider()
-  form.label(translate_textkeys("menu.settings.label.version", lang))
+  if (player.playerPermissionLevel === 2) {
+    form.divider()
+    form.label(translate_textkeys("menu.settings.label.version", lang))
 
-  // Convert
-  let gen = uu_find_gen()
+    // Convert
+    let gen = uu_find_gen()
 
-  if (typeof(gen) === 'number' && player.playerPermissionLevel === 2 && version_info.edition !== 1) {
-    form.button(translate_textkeys("menu.settings.update", lang)+"\n" + gen_list[gen] + " -> " + version_info.version, "textures/ui/icon_bell");
+    if (typeof(gen) === 'number' && version_info.edition !== 1) {
+      form.button(translate_textkeys("menu.settings.update", lang)+"\n" + gen_list[gen] + " -> " + version_info.version, "textures/ui/icon_bell");
+      actions.push(() => {
+        universel_updater(player, gen)
+        player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
+      });
+    }
+
+    // Dictionary
+    form.button(translate_textkeys("menu.settings.about", lang) + (github_data? (compareVersions(version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag, version_info.version) !== 1? "" : "§9"+translate_textkeys("menu.settings.dictionary.label.status.update", lang)): ""), "textures/ui/infobulb");
     actions.push(() => {
-      universel_updater(player, gen)
-      player.playMusic(translate_soundkeys("music.menu.setup", player), { fade: 0.3 });
+      player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
+      dictionary_about(player)
     });
   }
-
-  // Dictionary
-  form.button(translate_textkeys("menu.settings.about", lang) + (github_data? (compareVersions(version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag, version_info.version) !== 1? "" : "§9Update available!"): ""), "textures/ui/infobulb");
-  actions.push(() => {
-    player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
-    dictionary_about(player)
-  });
 
   /*------------------------
    Main menu
@@ -1061,7 +1036,7 @@ function splash_challengemode(player, in_setup) {
     shared_timer
 -------------------------*/
 
-function splash_globalmode(player) {
+export function splash_globalmode(player) {
   let form = new ActionFormData();
   let save_data = load_save_data();
   let player_sd_index = save_data.findIndex(entry => entry.id === player.id)
@@ -1165,12 +1140,14 @@ export function settings_gestures(player) {
     let alwaysActive = false;
 
     // Wenn diese Geste aktiv ist und in einem Modus die einzige aktive Geste ist → restricted
+    /*// Unused! Since "/timer menu" is allways anabled
     const restricted = isOn && modes.some(mode => modeCounts[mode] === 1);
     if (restricted) {
       label = name + "\n" + translate_textkeys("menu.toggle_restricted", lang);
       icon = "textures/ui/hammer_l_disabled";
       alwaysActive = true;
     }
+    */
 
     form.button(label, icon);
 
@@ -1853,8 +1830,6 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
  Dictionary
 -------------------------*/
 
-// Todo: translation!
-
 function dictionary_about(player, show_ip = false) {
   let form = new ActionFormData()
   let actions = []
@@ -1864,32 +1839,41 @@ function dictionary_about(player, show_ip = false) {
   let lang = save_data[player_sd_index].lang;
 
   let build_date = convertUnixToDate(version_info.unix, save_data[0].utc || 0);
+  const formattedDate = translate_textkeys("menu.settings.dictionary.label.build_date.dateformat", lang, {
+    day: build_date.day,
+    month: build_date.month,
+    year: build_date.year,
+    hours: build_date.hours,
+    minutes: build_date.minutes,
+    seconds: build_date.seconds,
+    utcOffset: (build_date.utcOffset >= 0 ? "+" : "") + build_date.utcOffset
+  });
+
   form.title(translate_textkeys("menu.settings.dictionary.title", lang))
 
-  form.body("§lGeneral")
+  form.body("§l"+translate_textkeys("menu.settings.dictionary.title.general", lang))
   form.label(
-    "Name: " + version_info.name+ "\n"+
-    "UUID: "+ version_info.uuid+
-    (show_ip? "\n"+ "Public IP: "+server_ip : "")
+    translate_textkeys("menu.settings.dictionary.label.name", lang)+ ": " + version_info.name+ "\n"+
+    translate_textkeys("menu.settings.dictionary.label.uuid", lang)+ ": "+ version_info.uuid+ "\n"+
+    translate_textkeys("menu.settings.dictionary.label.edition", lang)+ ": "+ ["International", "German (BastiGHG)"][version_info.edition]+
+    (show_ip? "\n"+ translate_textkeys("menu.settings.dictionary.label.ip", lang)+": "+server_ip : "")
   )
 
-  form.label("§lVersion")
+  form.body("§l"+translate_textkeys("menu.settings.dictionary.title.version", lang))
   form.label(
-    "Version: " + version_info.version + "\n" +
-    "Build: " + version_info.build + "\n" +
-    "Release type: " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
-    "Build date: " + (
-      save_data[0].utc === undefined
-        ? getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player) + " ago\n\n§7Note: Set the time zone to see detailed information"
-        : `${build_date.day}.${build_date.month}.${build_date.year} ${build_date.hours}:${build_date.minutes}:${build_date.seconds} (UTC${build_date.utcOffset >= 0 ? '+' : ''}${build_date.utcOffset})`
-    ) + "\n" +
-    "Status: " + (github_data? (compareVersions((version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag), version_info.version) !== 1? "§aLatest version" : "§6Update available!"): "§cFailed to fetch!")
+    translate_textkeys("menu.settings.dictionary.label.version", lang)+ ": " + version_info.version + "\n" +
+    translate_textkeys("menu.settings.dictionary.label.build", lang)+ ": " + version_info.build + "\n" +
+    translate_textkeys("menu.settings.dictionary.label.release_type", lang)+ ": " + ["dev", "preview", "stable"][version_info.release_type] + "\n" +
+    translate_textkeys("menu.settings.dictionary.label.build_date", lang)+ ": "+ ((save_data[0].utc == undefined)
+      ? translate_textkeys("menu.settings.dictionary.label.build_date.utc_empty", lang, {time: getRelativeTime(Math.floor(Date.now() / 1000) - version_info.unix, player)})
+      : formattedDate) + "\n" +
+    translate_textkeys("menu.settings.dictionary.label.status", lang)+ ": " + (github_data? (compareVersions((version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag), version_info.version) !== 1? "§a"+translate_textkeys("menu.settings.dictionary.label.status.latest", lang) : "§6"+translate_textkeys("menu.settings.dictionary.label.status.update", lang)): "§c"+translate_textkeys("menu.settings.dictionary.label.status.failed", lang))
   );
 
   form.label("§7© "+ (build_date.year > 2025 ? "2025 - " + build_date.year : build_date.year ) + " TheFelixLive. Licensed under the MIT License.")
 
   if (!show_ip && server_ip && player.playerPermissionLevel === 2) {
-    form.button("Show Public IP");
+    form.button(translate_textkeys("menu.settings.dictionary.button.ip", lang));
     actions.push(() => {
       dictionary_about(player, true)
     });
@@ -1897,7 +1881,7 @@ function dictionary_about(player, show_ip = false) {
   }
 
   if (version_info.changelog.new_features.length > 0 || version_info.changelog.general_changes.length > 0 || version_info.changelog.bug_fixes.length > 0) {
-    form.button("§9Changelog"+(github_data?"s":""));
+    form.button("§9"+(github_data? translate_textkeys("menu.settings.dictionary.changelogs", lang) : translate_textkeys("menu.settings.dictionary.changelog", lang)));
     actions.push(() => {
       github_data? dictionary_about_changelog(player) : dictionary_about_changelog_legacy(player, build_date)
     });
@@ -1987,7 +1971,7 @@ function dictionary_about_changelog(player) {
 
   // ---- 6) UI bauen ----------------------------------------------------
   form.title(translate_textkeys("menu.settings.dictionary.title", lang))
-  form.body("Select a version");
+  form.body(translate_textkeys("menu.settings.dictionary.changelog.select", lang));
 
   allData.forEach(r => {
     // Prüfen, ob r.published_at schon Unix-Sekunden ist
@@ -2010,11 +1994,11 @@ function dictionary_about_changelog(player) {
       label = `${r.name}\n${build_text}`;
 
       if (r === latest_stable) {
-        label += ' §a(latest version)';
+        label += ` §a(${translate_textkeys("menu.settings.dictionary.changelog.label.version", lang)})`;
       } else if (r === latest_beta) {
-        label += ' §9(latest beta)';
+        label += ` §9(${translate_textkeys("menu.settings.dictionary.changelog.label.beta", lang)})`;
       } else if (r.name === installed) {
-        label += ' §6(installed version)';
+        label += ` §6(${translate_textkeys("menu.settings.dictionary.changelog.label.installed", lang)})`;
       }
     }
 
@@ -2052,7 +2036,7 @@ function dictionary_about_changelog_view(player, version) {
   let build_date = convertUnixToDate(publishedUnix, save_data[0].utc || 0);
 
   if (version.name == version_info.version) return dictionary_about_changelog_legacy(player, build_date)
-  const form = new ActionFormData().title(translate_textkeys("menu.settings.dictionary.changelog.title", lang)+" - "+version.name);
+  const form = new ActionFormData().title(translate_textkeys("menu.settings.dictionary.changelog", lang)+" - "+version.name);
 
   form.body(markdownToMinecraft(version.body))
 
@@ -2081,7 +2065,7 @@ export function dictionary_about_changelog_legacy(player, build_date) {
     { title: "§l§c"+translate_textkeys("menu.settings.dictionary.changelog.bug_fixes", lang)+"§r", items: bug_fixes }
   ];
 
-  const form = new ActionFormData().title(translate_textkeys("menu.settings.dictionary.changelog.title", lang)+" - "+version_info.version)
+  const form = new ActionFormData().title(translate_textkeys("menu.settings.dictionary.changelog", lang)+" - "+version_info.version)
 
   let bodySet = false;
   for (let i = 0; i < sections.length; i++) {
