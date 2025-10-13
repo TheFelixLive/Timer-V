@@ -70,6 +70,11 @@ const soundkeys = {
     extern_l: "timeru.music.menu.time",
     native: "record.creator"
   },
+  "music.menu.challenge": {
+    extern: "timer.music.menu.challenge",
+    extern_l: "timeru.music.menu.addon",
+    native: "record.ward"
+  },
   "music.menu.dictionary": {
     extern: "timer.music.menu.dictionary",
     extern_l: "timeru.music.menu.help",

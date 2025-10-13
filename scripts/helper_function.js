@@ -3,7 +3,7 @@ import { version_info } from "./version.js";
 import { goal_event, goal_entity_list, goal_entity_blocklist } from "./goal.js";
 import { translate_soundkeys } from "./sound.js";
 import { apply_design, design_template  } from "./design.js";
-import { system_privileges, fetchViaInternetAPI } from "./communication_system.js";
+import { system_privileges, fetchViaInternetAPI, challenge_list } from "./communication_system.js";
 import { translate_textkeys } from "./lang.js";
 
 /*------------------------
@@ -20,7 +20,8 @@ export function default_save_data_structure() {
       progress: 0,
       rating: 0,
       goal: { pointer: 1, entity_id: "minecraft:ender_dragon", event_pos: 0 },
-      difficulty: world.isHardcore ? 2 : 1
+      difficulty: world.isHardcore ? 2 : 1,
+      external_challenge: [] // List of UUIDs which are active as challenge
     },
     global: {
       status: (world.isHardcore || version_info.edition == 1 || system.currentTick < 12000),
@@ -326,8 +327,17 @@ export function control_timer(player, pause_or_resume) {
         t.playSound(translate_soundkeys("condition.resumed", t));
       }
 
-      if (world.isHardcore) {
+      if (world.isHardcore && save_data[0].challenge.active) {
         player.applyDamage(20 - save_data[player_sd_index].health)
+      }
+
+      if (save_data[0].challenge.active) {
+        // Activate external challenges via CCS
+        if (save_data[0].challenge.external_challenge.length > 0) {
+          world.scoreboard.addObjective("ccs_data");
+          world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_start", data: { target: save_data[0].challenge.external_challenge} }), 1);
+          world.getDimension("overworld").runCommand("scriptevent ccs:data");
+        }
       }
     });
   } else if (pause_or_resume === "pause") {
@@ -341,8 +351,17 @@ export function control_timer(player, pause_or_resume) {
         t.playSound(translate_soundkeys("condition.paused", t));
       }
 
-      if (world.isHardcore) {
+      if (world.isHardcore && save_data[0].challenge.active) {
         save_data[player_sd_index].health = player.getComponent("health").currentValue
+      }
+
+      if (save_data[0].challenge.active) {
+        // Activate external challenges via CCS
+        if (save_data[0].challenge.external_challenge.length > 0) {
+          world.scoreboard.addObjective("ccs_data");
+          world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_stop", data: { target: save_data[0].challenge.external_challenge} }), 1);
+          world.getDimension("overworld").runCommand("scriptevent ccs:data");
+        }
       }
     });
   }
@@ -426,6 +445,13 @@ export function start_cm_timer() {
     t.sendMessage("§l§7[§f"+ (system_privileges == 2? translate_textkeys("message.header.system", save_data[save_data.findIndex(entry => entry.id === t.id)].lang) : translate_textkeys("message.header.system.client_mode", save_data[save_data.findIndex(entry => entry.id === t.id)].lang)) + "§7]§r "+translate_textkeys("message.body.challenge_start", save_data[save_data.findIndex(entry => entry.id === t.id)].lang))
   });
 
+  // Activate external challenges via CCS
+  if (save_data[0].challenge.external_challenge.length > 0) {
+    world.scoreboard.addObjective("ccs_data");
+    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_start", data: { target: save_data[0].challenge.external_challenge} }), 1);
+    world.getDimension("overworld").runCommand("scriptevent ccs:data");
+  }
+
   update_save_data(save_data);
 }
 
@@ -464,6 +490,13 @@ export function finished_cm_timer(rating, key_message, value, key_entity) {
     t.playSound(translate_soundkeys(rating == 1? "challenge.end.good" : "challenge.end.bad", t));
     t.onScreenDisplay.setTitle(rating == 1? translate_textkeys("message.title.challenge_end.good", lang) : translate_textkeys("message.title.challenge_end.bad", lang));
   });
+
+  // Deactivate external challenges via CCS
+  if (save_data[0].challenge.external_challenge.length > 0) {
+    world.scoreboard.addObjective("ccs_data");
+    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_stop", data: { target: save_data[0].challenge.external_challenge} }), 1);
+    world.getDimension("overworld").runCommand("scriptevent ccs:data");
+  }
 
   update_save_data(save_data);
 }

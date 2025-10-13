@@ -1,8 +1,8 @@
 import { system, world } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
-import { print, load_save_data } from "./helper_function.js";
+import { print, load_save_data, update_save_data, control_timer } from "./helper_function.js";
 import { translate_textkeys } from "./lang.js";
-import { settings_gestures } from "./menu.js";
+import { settings_gestures, dictionary_about, challenge_details } from "./menu.js";
 import { translate_soundkeys } from "./sound.js";
 import { version_info } from "./version.js";
 import { initialize_main_menu } from "./main.js";
@@ -74,7 +74,6 @@ system.afterEvents.scriptEventReceive.subscribe(async event=> {
 })
 
 // Host
-
 let addon_list; // When initialized properly, it contains the data of all supported add-ons
 
 export async function initialize_multiple_menu() {
@@ -162,6 +161,89 @@ export function multiple_menu(player) {
     }
   });
 }
+
+/*------------------------
+ Challenge Communication System V1
+-------------------------*/
+
+// Host
+export let challenge_list = []; // When initialized properly, it contains the data of all challenge
+
+export async function initialize_challenges() {
+  try {
+    world.scoreboard.addObjective("ccs_data");
+    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({event: "ccs_initializing", data:[]}), 1);
+  } catch (e) {
+    print("Challenge Communication System: Failed to fetch challenges");
+    return -1;
+  }
+
+  // Requests addon information. Look into the Client
+  world.getDimension("overworld").runCommand("scriptevent ccs:data");
+
+  await system.waitTicks(2);
+
+  // Evaluation of the add-on information
+  let data = JSON.parse(world.scoreboard.getObjective("ccs_data").getParticipants()[0].displayName)
+  world.scoreboard.removeObjective("ccs_data")
+
+  challenge_list = data.data
+  print("Challenge Communication System: Successfully fetched " + challenge_list.length + " challenge(s)");
+
+  let save_data = load_save_data();
+  // Cleans up challenge data
+  const validUUIDs = challenge_list.map(ch => ch.uuid);
+
+  save_data[0].challenge.external_challenge = save_data[0].challenge.external_challenge.filter(
+    uuid => validUUIDs.includes(uuid)
+  );
+  update_save_data(save_data);
+
+  // Deactivate external challenges via CCS
+  if (save_data[0].challenge.external_challenge.length > 0 && save_data[0].challenge.progress == 1 && save_data[0].challenge.active) {
+    world.scoreboard.addObjective("ccs_data");
+    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_start", data: { target: save_data[0].challenge.external_challenge} }), 1);
+    world.getDimension("overworld").runCommand("scriptevent ccs:data");
+  }
+
+}
+
+system.afterEvents.scriptEventReceive.subscribe(async event=> {
+   if (event.id === "ccs:data") {
+    let player = event.sourceEntity, data, scoreboard = world.scoreboard.getObjective("ccs_data")
+
+    // Reads data from the scoreboard
+    if (scoreboard) {
+      try {
+        data = JSON.parse(scoreboard.getParticipants()[0].displayName)
+      } catch (e) {
+        print("Wrong formated data: "+scoreboard.getParticipants()[0]) // Scoreboard IS available but contains garbisch
+        world.scoreboard.removeObjective("ccs_data")
+        return -1
+      }
+    } else {
+      // print("No Scoreboard!")
+      return -1 // Scoreboard is not available: happens when an addon has already processed the request e.g. "open main menu"
+    }
+
+    if (data.event == "ccs_about" && data.data.target == "main") {
+      dictionary_about(player);
+      world.scoreboard.removeObjective("ccs_data")
+    }
+
+    if (data.event == "ccs_main") {
+      challenge_details(player, challenge_list.find(challenge => challenge.uuid === data.data.source));
+      world.scoreboard.removeObjective("ccs_data")
+    }
+
+    if (data.event == "ccs_close_menu") {
+      player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+      world.scoreboard.removeObjective("ccs_data")
+    }
+
+
+   }
+})
 
 
 /*------------------------

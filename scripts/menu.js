@@ -2,7 +2,7 @@ import { world, system } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
 
 import { version_info, links } from "./version.js";
-import { system_privileges, multiple_menu } from "./communication_system.js";
+import { system_privileges, multiple_menu, challenge_list } from "./communication_system.js";
 import { apply_design, design_template  } from "./design.js";
 
 import { difficulty  } from "./difficulty.js";
@@ -299,6 +299,25 @@ function main_menu_actions(player, form) {
         player.playMusic(translate_soundkeys("music.menu.difficulty", player), { fade: 0.3 , loop: true});
         settings_difficulty(player);
       });
+
+      if (challenge_list.length > 0) {
+        if(form) {
+          let names = challenge_list
+            .filter(c => save_data[0]?.challenge?.external_challenge.includes(c.uuid))
+            .map(c => c.name);
+
+          let nameText = names.length > 1 ? names.slice(0,-1).join(", ") + " & " + names[names.length-1] : names[0] || "";
+
+          let buttonText = translate_textkeys("menu.challenge.title", lang) + (names.length > 0 ? "\n§9" + nameText : "");
+
+          form.button(buttonText, "textures/items/chain");
+
+        }
+        actions.push(() => {
+          player.playMusic(translate_soundkeys("music.menu.challenge", player), { fade: 0.3, loop: true });
+          challenge_main(player);
+        });
+      }
     }
 
     // "Change / add time" button
@@ -441,6 +460,169 @@ function settings_start_time(player) {
     return main_menu(player);
   });
 }
+
+/*------------------------
+    Challenge Menu
+-------------------------*/
+
+function challenge_main(player) {
+  let form = new ActionFormData();
+  let actions = [];
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang
+
+  form.title(translate_textkeys("menu.challenge.title", lang));
+
+  const activeUUIDs = new Set(save_data[0].challenge.external_challenge || []);
+  const active = challenge_list.filter(ch => activeUUIDs.has(ch.uuid));
+  const available = challenge_list.filter(ch => !activeUUIDs.has(ch.uuid));
+
+  // Unavailable anhand der Inkompatibilitäten aktiver Challenges bestimmen
+  const incompatible = new Set();
+  active.forEach(a => a.incompatibilities?.forEach(uuid => incompatible.add(uuid)));
+
+  const unavailable = available.filter(ch => incompatible.has(ch.uuid));
+  const availableFiltered = available.filter(ch => !incompatible.has(ch.uuid));
+
+  // Hilfsfunktion für Buttons
+  function addButton(challenge, onClick) {
+    if (challenge.icon) form.button(challenge.name, challenge.icon);
+    else form.button(challenge.name || challenge.uuid);
+    actions.push(onClick);
+  }
+
+  // --- Active Challenges ---
+
+  form.body(translate_textkeys("menu.challenge.label.active", lang));
+  if (active.length) {
+    active.forEach(ch =>
+      addButton(ch, () => {
+        challenge_details(player, ch);
+      })
+    );
+  } else {
+    form.label(translate_textkeys("menu.challenge.label.active.empty", lang));
+  }
+  form.divider();
+
+
+  // --- Available Challenges ---
+
+  form.label(translate_textkeys("menu.challenge.label.available", lang));
+  if (availableFiltered.length) {
+    availableFiltered.forEach(ch =>
+      addButton(ch, () => {
+        challenge_details(player, ch);
+      })
+    );
+  } else {
+    form.label(translate_textkeys("menu.challenge.label.available.empty", lang));
+  }
+  form.divider();
+
+  // --- Unavailable Challenges ---
+  if (unavailable.length) {
+    form.label(translate_textkeys("menu.challenge.label.unavailable", lang));
+    unavailable.forEach(ch =>
+      addButton(ch, () => challenge_details(player, ch))
+    );
+    form.divider();
+  }
+
+
+
+  form.button("");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3, loop: true });
+    return main_menu(player);
+  });
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
+    }
+  });
+}
+
+export function challenge_details(player, challenge) {
+  let form = new ActionFormData();
+  let actions = [];
+  let save_data = load_save_data();
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang;
+  form.title(challenge.name || challenge.uuid);
+
+  form.body(translate_textkeys("menu.general.description", lang));
+
+  const activeUUIDs = new Set(save_data[0].challenge.external_challenge || []);
+  const active = typeof challenge_list !== "undefined"
+    ? challenge_list.filter(ch => activeUUIDs.has(ch.uuid))
+    : [];
+  const incompatible = new Set();
+  active.forEach(a => a.incompatibilities?.forEach(uuid => incompatible.add(uuid)));
+
+  const isActive = activeUUIDs.has(challenge.uuid);
+  const isUnavailable = !isActive && incompatible.has(challenge.uuid);
+
+  if (!isUnavailable) {
+    form.button(
+      translate_textkeys("menu.challenge.button.active", lang) + "\n" +
+      (isActive ? translate_textkeys("menu.toggle_on", lang) : translate_textkeys("menu.toggle_off", lang)),
+      (isActive ? "textures/ui/toggle_on" : "textures/ui/toggle_off")
+    );
+    actions.push(() => {
+      if (isActive) {
+        save_data[0].challenge.external_challenge = save_data[0].challenge.external_challenge.filter(uuid => uuid !== challenge.uuid);
+      } else {
+        save_data[0].challenge.external_challenge.push(challenge.uuid);
+      }
+      update_save_data(save_data);
+      challenge_details(player, challenge);
+    });
+  }
+
+  if (challenge.config_available) {
+    form.button(translate_textkeys("menu.challenge.button.config", lang), "textures/ui/automation_glyph_color");
+    actions.push(() => {
+      world.scoreboard.addObjective("ccs_data");
+      world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_config", data: { target: challenge.uuid } }), 1);
+      player.runCommand("scriptevent ccs:data");
+    });
+  }
+
+  form.divider();
+
+  if (challenge.about_available) {
+    form.button(translate_textkeys("menu.settings.about", lang), "textures/ui/infobulb");
+    actions.push(() => {
+      player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
+      world.scoreboard.addObjective("ccs_data");
+      world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_about", data: { target: challenge.uuid } }), 1);
+      player.runCommand("scriptevent ccs:data");
+    });
+  }
+
+  form.divider();
+  form.button("");
+  actions.push(() => {
+    challenge_main(player);
+  });
+
+  form.show(player).then((response) => {
+    if (response.selection == undefined) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (response.selection !== undefined && actions[response.selection]) {
+      actions[response.selection]();
+    }
+  });
+}
+
 
 /*------------------------
     Other CA Menus & render_task_list
@@ -756,7 +938,7 @@ export function settings_main(player) {
     }
 
     // Dictionary
-    form.button(translate_textkeys("menu.settings.about", lang) + (github_data? (compareVersions(version_info.release_type === 2 ? github_data.find(r => !r.prerelease)?.tag : github_data[0]?.tag, version_info.version) !== 1? "" : "§9"+translate_textkeys("menu.settings.dictionary.label.status.update", lang)): ""), "textures/ui/infobulb");
+    form.button(translate_textkeys("menu.settings.about", lang), "textures/ui/infobulb");
     actions.push(() => {
       player.playMusic(translate_soundkeys("music.menu.dictionary", player), { fade: 0.3, loop: true });
       dictionary_about(player)
@@ -1830,7 +2012,53 @@ function handle_data_action(is_reset, is_delete, viewing_player, selected_save_d
  Dictionary
 -------------------------*/
 
-function dictionary_about(player, show_ip = false) {
+export function dictionary_about(player) {
+  let form = new ActionFormData()
+  let actions = []
+
+  let save_data = load_save_data()
+  let player_sd_index = save_data.findIndex(entry => entry.id === player.id);
+  let lang = save_data[player_sd_index].lang;
+
+  if (!challenge_list.some(ch => ch.about_available) || !save_data[0].challenge.active) return dictionary_about_timer(player)
+
+  form.title(translate_textkeys("menu.settings.dictionary.title", lang))
+  form.body(translate_textkeys("menu.general.description", lang))
+
+  form.button(version_info.name, "textures/ui/timer");
+  actions.push(() => {
+    dictionary_about_timer(player, false)
+  });
+
+  form.divider();
+
+  challenge_list
+  .filter(ch => ch.about_available)
+  .forEach(challenge => {
+    form.button(challenge.name, challenge.icon);
+    actions.push(() => {
+      world.scoreboard.addObjective("ccs_data");
+      world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({event: "ccs_about", data:{target: challenge.uuid}}), 1);
+      player.runCommand("scriptevent ccs:data");
+    });
+  });
+
+  form.divider();
+  form.button("");
+  actions.push(() => {
+    player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+    return settings_main(player)
+  });
+
+  form.show(player).then(response => {
+    if (response.selection == undefined ) {
+      return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
+    }
+    if (actions[response.selection]) actions[response.selection]();
+  });
+}
+
+function dictionary_about_timer(player, show_ip = false) {
   let form = new ActionFormData()
   let actions = []
 
@@ -1895,8 +2123,12 @@ function dictionary_about(player, show_ip = false) {
   form.divider()
   form.button("");
   actions.push(() => {
-    player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
-    return settings_main(player);
+    if (!challenge_list.some(ch => ch.about_available) || !save_data[0].challenge.active) {
+      player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+      return settings_main(player)
+    } else {
+      return dictionary_about(player)
+    }
   });
 
   form.show(player).then((response) => {
@@ -2014,7 +2246,7 @@ function dictionary_about_changelog(player) {
   form.divider();
   form.button("");
   actions.push(() => {
-    dictionary_about(player);
+    dictionary_about_timer(player);
   });
 
   // ---- 8) Anzeigen -----------------------------------------------------
@@ -2100,7 +2332,7 @@ export function dictionary_about_changelog_legacy(player, build_date) {
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
     if (res.selection == 0) {
-      github_data? dictionary_about_changelog(player) : dictionary_about(player);
+      github_data? dictionary_about_changelog(player) : dictionary_about_timer(player);
     }
   });
 }
@@ -2148,7 +2380,7 @@ function dictionary_contact(player) {
   form.divider()
   form.button("");
   actions.push(() => {
-    dictionary_about(player)
+    dictionary_about_timer(player)
   });
 
   form.show(player).then((response) => {

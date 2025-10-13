@@ -9,7 +9,7 @@ import { translate_soundkeys, soundkey_test } from "./sound.js";
 import { check_difficulty, check_health } from "./difficulty.js";
 import { apply_design, design_template  } from "./design.js";
 import { setup_menu, main_menu, splash_start_challenge, splash_end_challenge, splash_globalmode } from "./menu.js";
-import { initialize_multiple_menu, multiple_menu, system_privileges } from "./communication_system.js";
+import { initialize_multiple_menu, multiple_menu, system_privileges, initialize_challenges } from "./communication_system.js";
 
 
 console.log("Hello from " + version_info.name + " - "+version_info.version+" ("+version_info.build+") - Further debugging is "+ (version_info.release_type == 0? "enabled" : "disabled" ) + " by the version")
@@ -48,7 +48,7 @@ function cc_response(origin, actions) {
       let lang = save_data[player_sd_index].lang;
 
       if (actions === "menu") {
-        initialize_main_menu(player);
+        return initialize_main_menu(player);
       }
 
       // Start / Stop Challenge
@@ -120,8 +120,6 @@ function cc_response(origin, actions) {
         control_timer(player, controlAction);
       }
     });
-
-
 }
 
 
@@ -134,6 +132,7 @@ system.run(() => {
 initialize_multiple_menu()
 update_github_data()
 update_server_utc()
+initialize_challenges()
 
 // Creates or Updates Save Data if not present
 function initialize_save_data() {
@@ -305,12 +304,6 @@ system.afterEvents.scriptEventReceive.subscribe(event=> {
 /*------------------------
  Menu Requests
 -------------------------*/
-
-  if (event.id === "timerv:menu" && save_data[player_sd_index].gesture.command) {
-    save_data[player_sd_index].openend_menu_via_command = true
-    update_save_data(save_data)
-    initialize_main_menu(player);
-  }
 
 
   if (event.id === "timerv:menu_soundkey") {

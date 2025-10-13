@@ -4,6 +4,7 @@ import { load_save_data, update_save_data, getRelativeTime } from "./helper_func
 import { translate_soundkeys } from "./sound";
 import { translate_textkeys } from "./lang.js";
 import { main_menu } from "./menu.js";
+import { challenge_list } from "./communication_system.js";
 
 export const goal_event = [
   {
@@ -356,7 +357,7 @@ async function settings_goals_select(player, type) {
 export function render_task_list(player) {
   let save_data = load_save_data();
   let lang = save_data[save_data.findIndex(entry => entry.id === player.id)].lang
-  const lines = [];
+  let lines = [];
 
   // difficulty
   if ([2, 3, 4].includes(save_data[0].challenge.difficulty)) {
@@ -368,6 +369,14 @@ export function render_task_list(player) {
     });
   }
 
+  // challenge name
+  if (save_data[0].challenge.external_challenge) {
+    challenge_list.forEach(ch => {
+      if (save_data[0].challenge.external_challenge.includes(ch.uuid)) {
+        lines.push({ text: "- " + translate_textkeys("menu.render_task_list.challenge", lang, {name: ch.name}) + "\n" });
+      }
+    });
+  }
 
   // goals pointer 0 = random
   if (save_data[0].challenge.goal.pointer === 0) {
