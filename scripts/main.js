@@ -34,8 +34,6 @@ system.beforeEvents.startup.subscribe((init) => {
   init.customCommandRegistry.registerCommand(main_command_sytak, cc_response);
 });
 
-// Error text messages or other Feedback is missing for custom commands!!!
-
 function cc_response(origin, actions) {
     const player = origin.sourceEntity;
 
@@ -56,27 +54,37 @@ function cc_response(origin, actions) {
       // Start / Stop Challenge
       if ((actions === "start" || actions === "stop" || actions === "reset") && save_data[0].challenge.active) {
         if (player.playerPermissionLevel !== 2) {
-          player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.condition.failed", lang))
+          player.playSound(translate_soundkeys("message.cc.failed", player));
+          player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.cc.failed.no.permission", lang))
           return;
         }
 
-        if (actions === "start" && save_data[0].challenge.progress == 0) {
-          splash_start_challenge(player)
+        if ((actions === "start") && save_data[0].challenge.progress == 0) {
+          player.playMusic(translate_soundkeys("music.menu.main", player),{fade:0.3,loop:true});
+          return splash_start_challenge(player)
+
         } else if (actions === "stop" && save_data[0].challenge.progress == 1) {
-          splash_end_challenge(player)
+          player.playMusic(translate_soundkeys("music.menu.main", player),{fade:0.3,loop:true});
+          return splash_end_challenge(player)
+
         } else if (actions === "reset" && save_data[0].challenge.progress == 2) {
-          initialize_main_menu(player)
-        }
-        return;
+          return initialize_main_menu(player)
+        };
+
+        player.playSound(translate_soundkeys("message.cc.failed", player));
+        return player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+ translate_textkeys("message.body.cc.failed", lang, {actions: actions}) )
       }
 
       // Share Timer
       if (actions === "share") {
         if (player.playerPermissionLevel === 2 && !save_data[0].challenge.active && (save_data[0].counting_type !== 2 || !save_data[0].global.status)) {
-          splash_globalmode(player);
+          player.playMusic(translate_soundkeys("music.menu.settings", player), { fade: 0.3, loop: true });
+          return splash_globalmode(player);
         }
         else {
-          player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.condition.failed", lang))
+          let actions = "share"
+          player.playSound(translate_soundkeys("message.cc.failed", player));
+          player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.cc.failed", lang, {actions: actions}) )
         }
       }
 
@@ -89,8 +97,9 @@ function cc_response(origin, actions) {
           timedata = save_data[player_sd_index];
         }
 
-        if (player.playerPermissionLevel !== 2) {
-          player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.condition.failed", lang))
+        if (player.playerPermissionLevel !== 2 && save_data[0].global.status) {
+          player.playSound(translate_soundkeys("message.cc.failed", player));
+          player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.cc.failed.no.permission", lang))
           return;
         }
 
@@ -101,21 +110,13 @@ function cc_response(origin, actions) {
         }
 
         update_save_data(save_data);
+        player.sendMessage("§l§7[§f" + (system_privileges == 2? translate_textkeys("message.header.system", save_data[player_sd_index].lang) : translate_textkeys("message.header.system.client_mode", save_data[player_sd_index].lang)) + "§7]§r "+ translate_textkeys("message.body.timer_reset", lang) )
       }
 
       // Pause / Resume Timer
       if (actions === "pause" || actions === "resume" || actions === "start" || actions === "stop") {
-        let timedata;
-        if (save_data[0].global.status) {
-          timedata = save_data[0];
-        } else {
-          timedata = save_data[player_sd_index];
-        }
+        const controlAction = (actions === "start" || actions === "resume") ? "resume" : "pause";
 
-        const controlAction = actions === "start" ? "resume"
-                            : actions === "stop"  ? "pause"
-                            : "";
-        if (controlAction === "") return;
         control_timer(player, controlAction);
       }
     });

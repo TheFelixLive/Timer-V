@@ -303,15 +303,15 @@ export function control_timer(player, pause_or_resume) {
     timedata = save_data[player_sd_index]
   }
 
-  if ((save_data[0].global.status && player.playerPermissionLevel !== 2) || (save_data[0].challenge.active && save_data[0].challenge.progress !== 1)) {
-    player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.condition.failed", lang));
-    player.playSound(translate_soundkeys("condition.failed", player));
+  if ((save_data[0].global.status && player.playerPermissionLevel !== 2) || (save_data[0].challenge.active && save_data[0].challenge.progress !== 1) || save_data[0].counting_type === 2) {
+    player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.cc.failed", lang, {actions: pause_or_resume}) );
+    player.playSound(translate_soundkeys("message.cc.failed", player));
     return;
   }
 
   if ((pause_or_resume === "resume" && timedata.time.do_count === true) || (pause_or_resume === "pause" && timedata.time.do_count === false)) {
     player.sendMessage("§l§4[§c"+ translate_textkeys("message.header.error", lang) + "§4]§r "+translate_textkeys("message.body.condition.failed.same", lang));
-    player.playSound(translate_soundkeys("condition.failed", player));
+    player.playSound(translate_soundkeys("message.cc.failed", player));
     return;
   }
 

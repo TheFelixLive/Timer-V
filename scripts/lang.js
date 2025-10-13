@@ -619,12 +619,12 @@ const textkeys = {
     "ty_ty": "Te taima te ore nei i riro i te fa'aohiparau i te mata'i tamaiti (%{name}%) e ua fa'aore ia!",
   },
 
-  "message.body.condition.failed": {
-    "en": "The Timer can't be paused or resumed here!",
+  "message.body.cc.failed": {
+    "en": "You can't %{actions}% the timer right now!",
   },
 
-  "message.body.condition.failed.same": {
-    "en": "The Timer is allready in that state!",
+  "message.body.cc.failed.no.permission": {
+    "en": "You have no permission to control the timer!",
   },
 
 
@@ -731,6 +731,10 @@ const textkeys = {
     "mi_nz": "I pau te taima i muri i %{time}% ā kua whakatū",
     "to_to": "Naʻe ʻosi ʻa e taimi hili %{time}% pea kuo taʻofi",
     "ty_ty": "Ua pau te taimi i muri i %{time}% e ua fa'are'are'a",
+  },
+
+  "message.body.condition.failed.same": {
+    "en": "The Timer is allready in that state!",
   },
 
   "message.body.challenge_start": {

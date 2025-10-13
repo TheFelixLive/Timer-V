@@ -140,10 +140,6 @@ const soundkeys = {
     extern_l: "timeru.frozen",
     native: "resonate.amethyst_block"
   },
-  "condition.failed": {
-    extern: "timer.condition.failed",
-    native: "horn.call.7"
-  },
   "challenge.starts": {
     extern: "timer.condition.starts",
     extern_l: "timeru.reset_true",
@@ -162,6 +158,11 @@ const soundkeys = {
   "message.beta.feedback": {
     extern: "timer.message.beta.feedback",
     native: "random.orb"
+  },
+  "message.cc.failed": {
+    extern: "timer.condition.failed",
+    extern_l: "timeru.function_no_permissions",
+    native: "horn.call.7"
   },
 };
 

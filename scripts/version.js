@@ -1,9 +1,9 @@
 export const version_info = {
   name: "Timer V",
   version: "v.5.4.0",
-  build: "B033",
+  build: "B034",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1760300877,
+  unix: 1760343827,
   uuid: "c4d3852f-f902-4807-a8c8-51980fdae4c3",
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
@@ -11,7 +11,8 @@ export const version_info = {
     new_features: [
       "Achievements can now be earned with this add-on",
       "Time zones can now be determined automatically",
-      "The About page got a redesign"
+      "The About page got a redesign",
+      "Added custom Command support",
     ],
     // general_changes
     general_changes: [

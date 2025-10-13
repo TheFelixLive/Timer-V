@@ -3,7 +3,7 @@
 
 ## About
 When you think of a timer in Minecraft Bedrock, what comes to mind? Maybe a point in the future that you want to reach or something as banal as a stopwatch to keep you grounded.
-My idea of ​​it is the **Timer V**, you could say it redefines what a timer should do do in Minecraft Bedrock.
+My idea of ​​it is the **Timer V**, you could say it redefines what a timer should do in Minecraft Bedrock.
 Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate/issues/new?template=feature_request.md) you think about it!
 
 ---
@@ -13,7 +13,7 @@ Stay tuned and [let me know what](https://github.com/TheFelixLive/Timer-Ultimate
 - Statistics e.g. stores, for example, which blocks were mined or placed or how far someone has travelled (planed for `v.5.x.0`)
 - Players can create their own template (planed for `v.5.x.0`)
 - A global search for all features of the timer (planed for `v.5.x.0`)
-- The return of challenges (planed for `v.5.x.0`)
+- The return of challenges (planed for `v.5.4.0`)
 
 ---
 
