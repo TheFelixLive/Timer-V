@@ -79,7 +79,7 @@ export function setup_menu(player) {
 
   // Challenge Mode
   if (save_data[player_sd_index].setup == 90 && player.playerPermissionLevel === 2) {
-    if (world.isHardcore || save_data[0].challenge.active) {
+    if (save_data[0].challenge.active) {
       save_data[player_sd_index].setup = 100
       update_save_data(save_data)
       return setup_menu(player)
@@ -732,7 +732,7 @@ export function settings_main(player) {
     actions.push(() => settings_type(player));
 
     // Challenge Mode
-    if (player.playerPermissionLevel === 2 && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && version_info.edition !== 1) {
+    if (player.playerPermissionLevel === 2 && save_data[0].global.status && save_data[0].challenge.progress == 0 && !world.isHardcore && version_info.edition !== 1 && challenge_list.length == 0) {
       if(form){form.button(translate_textkeys("menu.popup.ca.title", lang)+"\n" + (save_data[0].challenge.active ? translate_textkeys("menu.toggle_on", save_data[player_sd_index].lang) : translate_textkeys("menu.toggle_off", save_data[player_sd_index].lang)), save_data[0].challenge.active ? "textures/ui/toggle_on" : "textures/ui/toggle_off")};
       actions.push(() => {
         splash_challengemode(player);
@@ -1182,7 +1182,8 @@ function splash_challengemode(player, in_setup) {
 
       } /* Enable */ else {
         if (in_setup) {
-          if (!save_data[0].global.status) convert_local_to_global(player.id); save_data = load_save_data()
+          if (!save_data[0].global.status) convert_local_to_global(player.id);
+          save_data = load_save_data()
         }
         convert_global_to_local(false);
         save_data = load_save_data()

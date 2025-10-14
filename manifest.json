@@ -4,7 +4,7 @@
       "description": "Keep track of the real time you spent in your Minecraft world",
       "name": "Timer V",
       "uuid": "c4d3852f-f902-4807-a8c8-51980fdae4c3",
-      "version": [ 5, 4, 0],
+      "version": [ 5, 4, 1],
       "min_engine_version": [1, 21, 100]
   },
   "modules": [

@@ -191,6 +191,19 @@ export async function initialize_challenges() {
   print("Challenge Communication System: Successfully fetched " + challenge_list.length + " challenge(s)");
 
   let save_data = load_save_data();
+
+  if (!save_data[0].challenge.active) {
+    save_data[0].time.do_count = false
+    save_data[0].time.timer = 0
+    save_data[0].time.stopwatch = 0
+    world.setTimeOfDay(0);
+    world.getDimension("overworld").setWeather("Clear");
+    save_data[0].challenge.active = true,
+    save_data[0].global.status = true
+
+    update_save_data(save_data);
+  }
+
   // Cleans up challenge data
   const validUUIDs = challenge_list.map(ch => ch.uuid);
 
@@ -199,7 +212,7 @@ export async function initialize_challenges() {
   );
   update_save_data(save_data);
 
-  // Deactivate external challenges via CCS
+  // Activate external challenges via CCS
   if (save_data[0].challenge.external_challenge.length > 0 && save_data[0].challenge.progress == 1 && save_data[0].challenge.active) {
     world.scoreboard.addObjective("ccs_data");
     world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_start", data: { target: save_data[0].challenge.external_challenge} }), 1);
