@@ -1,18 +1,20 @@
 export const version_info = {
   name: "Timer V",
   version: "v.5.4.2",
-  build: "B037",
+  build: "B038",
   release_type: 0, // 0 = Development version (with debug); 1 = Beta version (with adds); 2 = Stable version
-  unix: 1760703898,
+  unix: 1760717279,
   uuid: "c4d3852f-f902-4807-a8c8-51980fdae4c3",
   edition: 0, // 0 = Normal Edition; 1 = BastiGHG Edition
   changelog: {
     // new_features
     new_features: [
+      "Challenges can now be configured during the challenge",
     ],
     // general_changes
     general_changes: [
-      "Added Support for CCS V2"
+      "Added Support for CCS V2",
+      "If the timer gets reseted after a failed challenge in world mode, the mode will now be set to the stopwatch"
     ],
     // bug_fixes
     bug_fixes: [

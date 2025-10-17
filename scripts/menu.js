@@ -240,82 +240,87 @@ function main_menu_actions(player, form) {
     const challenge = save_data[0].challenge;
     const isHardcore = difficulty[challenge.difficulty].is_hardcore;
 
-    // Give up
-    if (challenge.progress === 1) {
-      if (form) form.button("§c"+translate_textkeys("menu.popup.give_up", lang), "textures/blocks/barrier");
-      actions.push(() => {
-        splash_end_challenge(player)
-      });
-    }
-
-    // Reset Challenge
-    if (challenge.progress === 2 && (isHardcore && challenge.rating === 1 || !isHardcore)) {
-      if (form) form.button("§a"+translate_textkeys("menu.main.reset.title.ca", lang), "textures/ui/recap_glyph_color_2x");
-      actions.push(() => {
-        if (challenge.rating === 1) {
-          challenge.goal.pointer = 0;
-        } else {
-          save_data[0].time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
-          world.setTimeOfDay(0);
-          world.getDimension("overworld").setWeather("Clear");
+    if (challenge.active) {
+      // Challenge Default
+      if (challenge.progress == 0) {
+        if (timedata.counting_type !== 1 || timedata.time.timer > 0) {
+          if (form) form.button("§2" + translate_textkeys("menu.popup.ca.start", lang) +"\n", "textures/gui/controls/right");
+          actions.push(() => {
+            splash_start_challenge(player);
+          });
+          if(form) form.divider()
         }
 
-        challenge.progress = 0;
-        update_save_data(save_data);
-        player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 , loop: true});
-        main_menu(player);
-      });
-    }
+        if (form) form.button({rawtext:
+          [
+            { text: "§5"+translate_textkeys("menu.goal.title", lang)+"§9\n" },
+            challenge.goal.pointer === 2
+              ? { text: goal_event[challenge.goal.event_pos].name }
+              : challenge.goal.pointer === 0
+              ? { text: translate_textkeys("menu.goal.random.title", lang) }
+              : { translate: "entity." + save_data[0].challenge.goal.entity_id.replace(/^minecraft:/, "") + ".name" }
+          ]},
+          "textures/items/elytra"
+        );
 
-    // Challenge Default
-    if (challenge.active && challenge.progress == 0) {
-      if (timedata.counting_type !== 1 || timedata.time.timer > 0) {
-        if (form) form.button("§2" + translate_textkeys("menu.popup.ca.start", lang) +"\n", "textures/gui/controls/right");
         actions.push(() => {
-          splash_start_challenge(player);
+          player.playMusic(translate_soundkeys("music.menu.goal", player), { fade: 0.3 , loop: true});
+          settings_goals_main(player);
         });
-        if(form) form.divider()
+
+        if (form) form.button("§c"+translate_textkeys("menu.difficulty.title", lang)+"\n" + difficulty[challenge.difficulty].name + "", difficulty[challenge.difficulty].icon);
+        actions.push(() => {
+          player.playMusic(translate_soundkeys("music.menu.difficulty", player), { fade: 0.3 , loop: true});
+          settings_difficulty(player);
+        });
       }
 
-      if (form) form.button({rawtext:
-        [
-          { text: "§5"+translate_textkeys("menu.goal.title", lang)+"§9\n" },
-          challenge.goal.pointer === 2
-            ? { text: goal_event[challenge.goal.event_pos].name }
-            : challenge.goal.pointer === 0
-            ? { text: translate_textkeys("menu.goal.random.title", lang) }
-            : { translate: "entity." + save_data[0].challenge.goal.entity_id.replace(/^minecraft:/, "") + ".name" }
-        ]},
-        "textures/items/elytra"
-      );
-
-      actions.push(() => {
-        player.playMusic(translate_soundkeys("music.menu.goal", player), { fade: 0.3 , loop: true});
-        settings_goals_main(player);
-      });
-
-      if (form) form.button("§c"+translate_textkeys("menu.difficulty.title", lang)+"\n" + difficulty[challenge.difficulty].name + "", difficulty[challenge.difficulty].icon);
-      actions.push(() => {
-        player.playMusic(translate_soundkeys("music.menu.difficulty", player), { fade: 0.3 , loop: true});
-        settings_difficulty(player);
-      });
-
-      if (challenge_list.length > 0) {
-        if(form) {
-          let names = challenge_list
-            .filter(c => save_data[0]?.challenge?.external_challenge.includes(c.uuid))
-            .map(c => c.name);
-
-          let nameText = names.length > 1 ? names.slice(0,-1).join(", ") + " & " + names[names.length-1] : names[0] || "";
-
-          let buttonText = translate_textkeys("menu.challenge.title", lang) + (names.length > 0 ? "\n§9" + nameText : "");
-
-          form.button(buttonText, "textures/items/chain");
-
-        }
+      // Give up
+      if (challenge.progress === 1) {
+        if (form) form.button("§c"+translate_textkeys("menu.popup.give_up", lang), "textures/blocks/barrier");
         actions.push(() => {
-          player.playMusic(translate_soundkeys("music.menu.challenge", player), { fade: 0.3, loop: true });
-          challenge_main(player);
+          splash_end_challenge(player)
+        });
+      }
+
+      // External Challenges
+      if (challenge_list.length > 0 && (challenge.progress == 0 || (challenge.progress == 1 && save_data[0].challenge.external_challenge.length > 0))) {
+          if(form) {
+            let names = challenge_list
+              .filter(c => save_data[0].challenge.external_challenge.includes(c.uuid))
+              .map(c => c.name);
+
+            let nameText = names.length > 1 ? names.slice(0,-1).join(", ") + " & " + names[names.length-1] : names[0] || "";
+
+            let buttonText = translate_textkeys("menu.challenge.title", lang) + (names.length > 0 ? "\n§9" + nameText : "");
+
+            form.button(buttonText, "textures/items/chain");
+
+          }
+          actions.push(() => {
+            player.playMusic(translate_soundkeys("music.menu.challenge", player), { fade: 0.3, loop: true });
+            challenge_main(player);
+          });
+        }
+
+      // Reset Challenge
+      if (challenge.progress === 2 && (isHardcore && challenge.rating === 1 || !isHardcore)) {
+        if (form) form.button("§a"+translate_textkeys("menu.main.reset.title.ca", lang), "textures/ui/recap_glyph_color_2x");
+        actions.push(() => {
+          if (challenge.rating === 1) {
+            challenge.goal.pointer = 0;
+          } else {
+            timedata.counting_type == 2? (timedata.counting_type = 0) : undefined;
+            save_data[0].time[timedata.counting_type == 1 ? "timer" : "stopwatch"] = 0;
+            save_data[0].time.do_count = false;
+            world.setTimeOfDay(0);
+            world.getDimension("overworld").setWeather("Clear");
+          }
+
+          challenge.progress = 0;
+          update_save_data(save_data);
+          player.playMusic(translate_soundkeys("music.menu.main", player), { fade: 0.3 , loop: true});
+          main_menu(player);
         });
       }
     }
@@ -518,25 +523,27 @@ function challenge_main(player) {
 
   // --- Available Challenges ---
 
-  form.label(translate_textkeys("menu.challenge.label.available", lang));
-  if (availableFiltered.length) {
-    availableFiltered.forEach(ch =>
-      addButton(ch, () => {
-        challenge_details(player, ch);
-      })
-    );
-  } else {
-    form.label(translate_textkeys("menu.challenge.label.available.empty", lang));
-  }
-  form.divider();
-
-  // --- Unavailable Challenges ---
-  if (unavailable.length) {
-    form.label(translate_textkeys("menu.challenge.label.unavailable", lang));
-    unavailable.forEach(ch =>
-      addButton(ch, () => challenge_details(player, ch))
-    );
+  if (save_data[0].challenge.progress == 0) {
+    form.label(translate_textkeys("menu.challenge.label.available", lang));
+    if (availableFiltered.length) {
+      availableFiltered.forEach(ch =>
+        addButton(ch, () => {
+          challenge_details(player, ch);
+        })
+      );
+    } else {
+      form.label(translate_textkeys("menu.challenge.label.available.empty", lang));
+    }
     form.divider();
+
+    // --- Unavailable Challenges ---
+    if (unavailable.length) {
+      form.label(translate_textkeys("menu.challenge.label.unavailable", lang));
+      unavailable.forEach(ch =>
+        addButton(ch, () => challenge_details(player, ch))
+      );
+      form.divider();
+    }
   }
 
 
@@ -582,7 +589,7 @@ export function challenge_details(player, challenge) {
     (challenge.incompatibilities?.some(uuid => activeUUIDs.has(uuid)))
   );
 
-  if (!isUnavailable) {
+  if (!isUnavailable && save_data[0].challenge.progress == 0) {
     form.button(
       translate_textkeys("menu.challenge.button.active", lang) + "\n" +
       (isActive ? translate_textkeys("menu.toggle_on", lang) : translate_textkeys("menu.toggle_off", lang)),
