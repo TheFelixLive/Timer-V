@@ -331,13 +331,11 @@ export function control_timer(player, pause_or_resume) {
         player.applyDamage(20 - save_data[player_sd_index].health)
       }
 
-      if (save_data[0].challenge.active) {
-        // Activate external challenges via CCS
-        if (save_data[0].challenge.external_challenge.length > 0) {
-          world.scoreboard.addObjective("ccs_data");
-          world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_start", data: { target: save_data[0].challenge.external_challenge} }), 1);
-          world.getDimension("overworld").runCommand("scriptevent ccs:data");
-        }
+      // Activate external challenges via CCS
+      if (save_data[0].challenge.active && save_data[0].challenge.external_challenge.length > 0) {
+        world.scoreboard.addObjective("ccs_data");
+        world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_resume", data: { target: save_data[0].challenge.external_challenge} }), 1);
+        world.getDimension("overworld").runCommand("scriptevent ccs:data");
       }
     });
   } else if (pause_or_resume === "pause") {
@@ -355,13 +353,11 @@ export function control_timer(player, pause_or_resume) {
         save_data[player_sd_index].health = player.getComponent("health").currentValue
       }
 
-      if (save_data[0].challenge.active) {
-        // Activate external challenges via CCS
-        if (save_data[0].challenge.external_challenge.length > 0) {
-          world.scoreboard.addObjective("ccs_data");
-          world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_stop", data: { target: save_data[0].challenge.external_challenge} }), 1);
-          world.getDimension("overworld").runCommand("scriptevent ccs:data");
-        }
+      // Activate external challenges via CCS
+      if (save_data[0].challenge.active && save_data[0].challenge.external_challenge.length > 0) {
+        world.scoreboard.addObjective("ccs_data");
+        world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_pause", data: { target: save_data[0].challenge.external_challenge} }), 1);
+        world.getDimension("overworld").runCommand("scriptevent ccs:data");
       }
     });
   }

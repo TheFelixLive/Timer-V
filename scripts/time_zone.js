@@ -462,7 +462,7 @@ export function settings_time_zone_preview(player, zone, viewing_mode, in_setup,
 
   form.show(player).then((response) => {
     if (response.selection == undefined ) {
-      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
+      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang) + " " + translate_textkeys("message.body.help.open_menu", lang))
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
 

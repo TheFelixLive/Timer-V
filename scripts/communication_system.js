@@ -163,7 +163,7 @@ export function multiple_menu(player) {
 }
 
 /*------------------------
- Challenge Communication System V1
+ Challenge Communication System V2
 -------------------------*/
 
 // Host
@@ -172,7 +172,7 @@ export let challenge_list = []; // When initialized properly, it contains the da
 export async function initialize_challenges() {
   try {
     world.scoreboard.addObjective("ccs_data");
-    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({event: "ccs_initializing", data:[]}), 1);
+    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({event: "ccs_initializing_v2", data:[]}), 1);
   } catch (e) {
     print("Challenge Communication System: Failed to fetch challenges");
     return -1;
@@ -192,7 +192,7 @@ export async function initialize_challenges() {
 
   let save_data = load_save_data();
 
-  if (!save_data[0].challenge.active) {
+  if (!save_data[0].challenge.active && challenge_list.length > 0) {
     save_data[0].time.do_count = false
     save_data[0].time.timer = 0
     save_data[0].time.stopwatch = 0

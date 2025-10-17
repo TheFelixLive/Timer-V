@@ -557,8 +557,9 @@ world.afterEvents.playerSpawn.subscribe(evt => {
   initPlayer(evt.player);
 });
 
-world.afterEvents.itemUse  .subscribe(evt => updateActivity(evt.source));
+world.afterEvents.itemUse.subscribe(evt => updateActivity(evt.source));
 world.afterEvents.itemStartUseOn.subscribe(evt => updateActivity(evt.source));
+
 
 /*------------------------
  Update loop
@@ -597,9 +598,6 @@ async function update_loop() {
       if (save_data[0].challenge.active) {
         check_difficulty()
       }
-
-
-
 
       for (const player of world.getAllPlayers()) {
         save_data = load_save_data();

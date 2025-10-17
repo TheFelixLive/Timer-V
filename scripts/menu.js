@@ -479,11 +479,20 @@ function challenge_main(player) {
   const available = challenge_list.filter(ch => !activeUUIDs.has(ch.uuid));
 
   // Unavailable anhand der Inkompatibilitäten aktiver Challenges bestimmen
+  // UND auch, wenn das zu prüfende Addon selbst aktive Addons in seinen incompatibilities auflistet.
   const incompatible = new Set();
   active.forEach(a => a.incompatibilities?.forEach(uuid => incompatible.add(uuid)));
 
-  const unavailable = available.filter(ch => incompatible.has(ch.uuid));
-  const availableFiltered = available.filter(ch => !incompatible.has(ch.uuid));
+  const unavailable = available.filter(ch =>
+    // 1) ein aktives Addon nennt diese UUID
+    incompatible.has(ch.uuid)
+    // 2) oder dieses Addon nennt irgendein aktives Addon (reziproke Inkompatibilität)
+    || (ch.incompatibilities?.some(uuid => activeUUIDs.has(uuid)))
+  );
+
+  const availableFiltered = available.filter(ch =>
+    !(incompatible.has(ch.uuid) || (ch.incompatibilities?.some(uuid => activeUUIDs.has(uuid))))
+  );
 
   // Hilfsfunktion für Buttons
   function addButton(challenge, onClick) {
@@ -567,7 +576,11 @@ export function challenge_details(player, challenge) {
   active.forEach(a => a.incompatibilities?.forEach(uuid => incompatible.add(uuid)));
 
   const isActive = activeUUIDs.has(challenge.uuid);
-  const isUnavailable = !isActive && incompatible.has(challenge.uuid);
+  // Berücksichtige jetzt beide Richtungen:
+  const isUnavailable = !isActive && (
+    incompatible.has(challenge.uuid) ||
+    (challenge.incompatibilities?.some(uuid => activeUUIDs.has(uuid)))
+  );
 
   if (!isUnavailable) {
     form.button(
@@ -584,6 +597,7 @@ export function challenge_details(player, challenge) {
       update_save_data(save_data);
       challenge_details(player, challenge);
     });
+    if (!challenge.config_available) form.divider();
   }
 
   if (challenge.config_available) {
@@ -593,9 +607,8 @@ export function challenge_details(player, challenge) {
       world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_config", data: { target: challenge.uuid } }), 1);
       player.runCommand("scriptevent ccs:data");
     });
+    form.divider();
   }
-
-  form.divider();
 
   if (challenge.about_available) {
     form.button(translate_textkeys("menu.settings.about", lang), "textures/ui/infobulb");
@@ -605,9 +618,9 @@ export function challenge_details(player, challenge) {
       world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_about", data: { target: challenge.uuid } }), 1);
       player.runCommand("scriptevent ccs:data");
     });
+    form.divider();
   }
 
-  form.divider();
   form.button("");
   actions.push(() => {
     challenge_main(player);
@@ -622,6 +635,7 @@ export function challenge_details(player, challenge) {
     }
   });
 }
+
 
 
 /*------------------------
@@ -1170,7 +1184,7 @@ function splash_challengemode(player, in_setup) {
 
   form.show(player).then((response) => {
     if (response.canceled) {
-      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
+      if (in_setup) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang) + " " + translate_textkeys("message.body.help.open_menu", lang))
       return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
     }
 

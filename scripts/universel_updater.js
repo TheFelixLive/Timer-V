@@ -55,7 +55,7 @@ export function universel_updater(player, gen) {
         uu_apply_gen(gen, player)
       }
       if (response.selection == undefined ) {
-        if (save_data[player_sd_index].setup !== 100) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang))
+        if (save_data[player_sd_index].setup !== 100) player.sendMessage("§l§6[§e"+translate_textkeys("message.header.help", lang)+"§6]§r "+translate_textkeys("message.body.help.setup.closed", lang) + " " + translate_textkeys("message.body.help.open_menu", lang))
         return player.playMusic(translate_soundkeys("menu.close", player), { fade: 0.3 });
       }
     }
