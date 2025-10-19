@@ -1,6 +1,6 @@
 import { system, world } from "@minecraft/server";
 import { ActionFormData, ModalFormData, MessageFormData  } from "@minecraft/server-ui"
-import { print, load_save_data, update_save_data, control_timer } from "./helper_function.js";
+import { print, load_save_data, update_save_data } from "./helper_function.js";
 import { translate_textkeys } from "./lang.js";
 import { settings_gestures, dictionary_about, challenge_details } from "./menu.js";
 import { translate_soundkeys } from "./sound.js";
@@ -215,7 +215,7 @@ export async function initialize_challenges() {
   // Activate external challenges via CCS
   if (save_data[0].challenge.external_challenge.length > 0 && save_data[0].challenge.progress == 1 && save_data[0].challenge.active) {
     world.scoreboard.addObjective("ccs_data");
-    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_start", data: { target: save_data[0].challenge.external_challenge} }), 1);
+    world.scoreboard.getObjective("ccs_data").setScore(JSON.stringify({ event: "ccs_resume", data: { target: save_data[0].challenge.external_challenge} }), 1);
     world.getDimension("overworld").runCommand("scriptevent ccs:data");
   }
 
